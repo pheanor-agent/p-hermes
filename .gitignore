@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+*.cab
+*.msi
+*.log
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Temporary files
+*.tmp
+*.temp
+
+# Editor swap/backup files
+*.swp
+*.swo
+*.swn
+*~
+*.bak
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Build artifacts
+*.pyc
+__pycache__/
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+.env.local
