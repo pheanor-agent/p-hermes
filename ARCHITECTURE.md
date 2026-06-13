@@ -6,68 +6,57 @@
 
 ## Overview
 
-Hermes Agent는 3계층 아키텍처를 기반으로 하는 자율 AI 에이전트 플랫폼입니다. 각 계층은 명확한 책임 분리를 가지며, 계층 간에는 잘 정의된 인터페이스를 통해 통신합니다.
+Hermes Agent는 자율 AI 에이전트 플랫폼입니다. 각 시스템은 독립적으로 운영되며, 명확한 인터페이스를 통해 연동합니다.
+
+### 시스템 구성
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Hermes Agent System                          │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │              Layer 1: Core Engine (핵심 엔진)            │   │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │   │
-│  │  │  Model &     │  │   Skill      │  │   Workflow   │  │   │
-│  │  │  Provider    │  │   System     │  │   Pipeline   │  │   │
-│  │  │              │  │              │  │              │  │   │
-│  │  │ • Multi-     │  │ • 144+       │  │ • 9-step     │  │   │
-│  │  │   provider   │  │   skills     │  │   pipeline   │  │   │
-│  │  │ • Fallback   │  │ • Category-  │  │ •            │  │   │
-│  │  │ • Routing    │  │   based      │  │   checkpoint │  │   │
-│  │  │ • Cost       │  │ • Trigger-   │  │   validation │  │   │
-│  │  │  tracking    │  │   based      │  │              │  │   │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘  │   │
-│  └─────────────────────────────────────────────────────────┘   │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
+│  │   Model &    │  │    Skill     │  │   Workflow   │         │
+│  │   Provider   │  │    System    │  │   Pipeline   │         │
+│  │              │  │              │  │              │         │
+│  │ • Multi-     │  │ • 146+       │  │ • 9-step     │         │
+│  │   provider   │  │   skills     │  │   pipeline   │         │
+│  │ • Fallback   │  │ • Category-  │  │ •            │         │
+│  │ • Routing    │  │   based      │  │   checkpoint │         │
+│  │ • Cost       │  │ • Trigger-   │  │   validation │         │
+│  │  tracking    │  │   based      │  │              │         │
+│  └──────────────┘  └──────────────┘  └──────────────┘         │
 │                                                                 │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │         Layer 2: Knowledge & State (지식 및 상태)         │   │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │   │
-│  │  │ Knowledge    │  │   Cron &     │  │ Blackboard & │  │   │
-│  │  │   System     │  │  Automation  │  │    Bridge    │  │   │
-│  │  │              │  │              │  │              │  │   │
-│  │  │ • Wiki       │  │ • Periodic   │  │ • Dual-agent │  │   │
-│  │  │   (T1/T2/T3) │  │   jobs       │  │   collab     │  │   │
-│  │  │ •            │  │ •            │  │ •            │  │   │
-│  │  │ References   │  │ No-agent     │  │ Blackboard   │  │   │
-│  │  │ • Lessons    │  │   mode       │  │ • JOB        │  │   │
-│  │  │ • News       │  │ •            │  │   management │  │   │
-│  │  │              │  │ Registry     │  │              │  │   │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘  │   │
-│  └─────────────────────────────────────────────────────────┘   │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
+│  │ Knowledge    │  │  Cron &      │  │ Blackboard & │         │
+│  │   System     │  │ Automation   │  │    Bridge    │         │
+│  │              │  │              │  │              │         │
+│  │ • Wiki       │  │ • Periodic   │  │ • Dual-agent │         │
+│  │   (domain)   │  │   jobs       │  │   collab     │         │
+│  │ •            │  │ •            │  │ •            │         │
+│  │ References   │  │ No-agent     │  │ Blackboard   │         │
+│  │ • Lessons    │  │   mode       │  │ • JOB        │         │
+│  │ • News       │  │ •            │  │   management │         │
+│  │              │  │ Registry     │  │              │         │
+│  └──────────────┘  └──────────────┘  └──────────────┘         │
 │                                                                 │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │        Layer 3: Integration & Output (연동 및 출력)       │   │
-│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │   │
-│  │  │  Messaging   │  │   Image      │  │   Content    │  │   │
-│  │  │  Platform    │  │   Generation │  │   Creation   │  │   │
-│  │  │              │  │              │  │              │  │   │
-│  │  │ • Telegram   │  │ • ComfyUI    │  │ • Novel      │  │   │
-│  │  │ • Discord    │  │ •            │  │   writing    │  │   │
-│  │  │ •            │  │ OpenRouter   │  │ •            │  │   │
-│  │  │ Channel      │  │   image      │  │ Creative     │  │   │
-│  │  │  routing     │  │   models     │  │   content    │  │   │
-│  │  └──────────────┘  └──────────────┘  └──────────────┘  │   │
-│  └─────────────────────────────────────────────────────────┘   │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
+│  │  Messaging   │  │   Image      │  │   Content    │         │
+│  │  Platform    │  │   Generation │  │   Creation   │         │
+│  │              │  │              │  │              │         │
+│  │ • Telegram   │  │ • ComfyUI    │  │ • Novel      │         │
+│  │ • Discord    │  │ •            │  │   writing    │         │
+│  │ •            │  │ OpenRouter   │  │ •            │         │
+│  │ Channel      │  │   image      │  │ Creative     │         │
+│  │  routing     │  │   models     │  │   content    │         │
+│  └──────────────┘  └──────────────┘  └──────────────┘         │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Layer 1: Core Engine (핵심 엔진)
-
-시스템의 핵심 처리 계층입니다. LLM 호출, 스킬 관리, 워크플로우 관리를 담당합니다.
-
-### 1.1 Model & Provider
+## Model & Provider
 
 다중 LLM 제공사를 지원하며, 작업 유형에 따라 최적의 모델을 선택합니다.
 
@@ -96,9 +85,11 @@ workflow-gate 단계별 모델 전환:
   test       → Qwen3.6 (검증)
 ```
 
-### 1.2 Skill System
+---
 
-144개 이상의 스킬을 30개 이상 카테고리로 관리합니다.
+## Skill System
+
+146개 이상의 스킬을 카테고리별로 관리합니다.
 
 **기능:**
 - **Category-based Loading**: custom/ > software-development/ > creative/ 등 계층적 상속
@@ -119,7 +110,9 @@ skills/
 └── ... (30+ categories)
 ```
 
-### 1.3 Workflow Pipeline
+---
+
+## Workflow Pipeline
 
 9단계 상태 머신을 기반으로 작업을 관리합니다.
 
@@ -138,11 +131,7 @@ request → investigation → design → review → approval → execution → t
 
 ---
 
-## Layer 2: Knowledge & State (지식 및 상태 관리)
-
-시스템이 학습하고 기억하는 계층입니다. 지식 축적, 자동화, 협업 상태를 관리합니다.
-
-### 2.1 Knowledge System
+## Knowledge System
 
 시스템의 지식 저장소입니다.
 
@@ -150,24 +139,22 @@ request → investigation → design → review → approval → execution → t
 
 | 구성 요소 | SSOT | 역할 |
 |-----------|------|------|
-| Wiki | `wiki/index.md` | 가공 지식, T1/T2/T3 중요도 분류 |
+| Wiki | `wiki/index.md` | 가공 지식, 도메인/태그 기반 분류 |
 | References | `references/` | 외부 원본 (GitHub, 논문, 가이드) |
 | Lessons | `lessons/` | 교훈 (JOB 완료 후 자동 생성) |
 | News | `news/` | 주기적 뉴스 수집/번역 |
 
-**T1/T2/T3 분류 (KPL 기반):**
+**Wiki 분류 (Domain 기반):**
 
-| 등급 | 점수 | 설명 |
-|------|------|------|
-| T1 | ≥ 0.7 | 핵심 지식 (반드시 참조) |
-| T2 | 0.4 ~ 0.69 | 참고 지식 |
-| T3 | < 0.4 | 보조 지식 |
+Wiki는 도메인과 태그 기반으로 조직됩니다. T1/T2/T3 계층 구조는 사용되지 않습니다.
 
 **갱신 파이프라인:**
 - `wiki-process-filings.sh` (5분 간격)
 - `build-scores.sh` (KPL 점수 계산)
 
-### 2.2 Cron & Automation
+---
+
+## Cron & Automation
 
 주기 작업을 자동화합니다.
 
@@ -190,7 +177,9 @@ request → investigation → design → review → approval → execution → t
 | Daily | 지식 파이프라인 |
 | Weekly | 이벤트 버스 정리 |
 
-### 2.3 Blackboard & Bridge
+---
+
+## Blackboard & Bridge
 
 듀얼 에이전트 협업 (Hermes + OpenClaw)을 지원합니다.
 
@@ -201,11 +190,7 @@ request → investigation → design → review → approval → execution → t
 
 ---
 
-## Layer 3: Integration & Output (연동 및 출력)
-
-외부 시스템과 연동하고 콘텐츠를 생성하는 계층입니다.
-
-### 3.1 Messaging Platform
+## Messaging Platform
 
 | 플랫폼 | 기능 |
 |--------|------|
@@ -213,7 +198,9 @@ request → investigation → design → review → approval → execution → t
 | Discord | 쓰레드별 타겟팅, 홈 채널 |
 | `send_message` | 메시지 전송 도구 |
 
-### 3.2 Image Generation
+---
+
+## Image Generation
 
 | 엔진 | 타입 | 기능 |
 |------|------|------|
@@ -221,7 +208,9 @@ request → investigation → design → review → approval → execution → t
 | OpenRouter | 클라우드 | Flux.2, Seedream 등 이미지 모델 |
 | Queue | — | 배치 처리 + 그룹 격리 |
 
-### 3.3 Content Creation
+---
+
+## Content Creation
 
 | 유형 | 설명 |
 |------|------|
@@ -261,17 +250,17 @@ request → investigation → design → review → approval → execution → t
 ~/.hermes/
 ├── config.yaml                  # 메인 설정
 ├── AGENTS.md                    # 에이전트 설정
-├── scripts/                     # 168개 스크립트
-├── skills/                      # 144개 스킬
+├── scripts/                     # 스크립트
+├── skills/                      # 146개 스킬
 │   ├── custom/                  # 사용자 정의 (최우선)
 │   ├── software-development/    # 소프트웨어 개발
 │   ├── creative/                # 창의적 작업
 │   ├── system-common/           # 공통 유틸리티
 │   └── ...
-├── hooks/                       # 4개 훅
-├── plugins/                     # 5개 플러그인
+├── hooks/                       # 훅
+├── plugins/                     # 플러그인
 ├── knowledge/                   # 지식 시스템
-│   ├── wiki/                    # Wiki (T1/T2/T3, 1094+ 페이지)
+│   ├── wiki/                    # Wiki (domain/tag 기반)
 │   ├── references/              # References (210개)
 │   ├── lessons/                 # Lessons (자동 생성)
 │   └── news/                    # News (주기 수집)
@@ -290,9 +279,9 @@ request → investigation → design → review → approval → execution → t
 │   ├── tier1/                   # Hot (24h)
 │   └── tier2/                   # Warm (7d)
 └── workspace/                   # 작업 공간
-    ├── jobs/                    # 714개 JOB
-    ├── projects/                # 7개 프로젝트
-    ├── novels/                  # 9개 시리즈
+    ├── jobs/                    # JOB
+    ├── projects/                # 프로젝트
+    ├── novels/                  # 소설
     ├── reports/
     └── research/
 ```
@@ -303,9 +292,5 @@ request → investigation → design → review → approval → execution → t
 
 - [README.md](README.md) — 시스템 개요, Quick Start
 - [PORTING.md](PORTING.md) — 포팅 가이드
-- [docs/layer1-core-engine.md](docs/layer1-core-engine.md) — Layer 1 상세
-- [docs/layer2-knowledge-state.md](docs/layer2-knowledge-state.md) — Layer 2 상세
-- [docs/layer3-integration.md](docs/layer3-integration.md) — Layer 3 상세
-- [docs/workflow-pipeline.md](docs/workflow-pipeline.md) — 9단계 파이프라인
-- [docs/skill-system.md](docs/skill-system.md) — 스킬 시스템
+- [docs/systems/overview.md](docs/systems/overview.md) — 시스템 종합
 - [docs/systems/](docs/systems/) — 시스템별 심화 문서

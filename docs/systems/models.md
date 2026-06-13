@@ -180,6 +180,5 @@ workflow-gate.sh 호출
 
 ## 참조
 
-- [ARCHITECTURE.md](../ARCHITECTURE.md) — 전체 아키텍처
-- [docs/layer1-core-engine.md](../layer1-core-engine.md) — Layer 1 (Core Engine)
-- [docs/systems/overview.md](overview.md) — 시스템 종합
+- [시스템 종합](overview.md) — 전체 시스템 현황
+- [인덱스](../index.md) — 문서 탐색

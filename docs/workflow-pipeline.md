@@ -49,10 +49,10 @@ request → investigation → design → review → approval → execution → t
 | 입력 | 작업 요청 내용 |
 | 출력 | 조사 결과, 참조 자료 |
 | 모델 | Qwen3.6 |
-| 지식 읽기 | Wiki T1/T2 관련 항목 |
+| 지식 읽기 | Wiki domain 기반 관련 항목 |
 
 **조사와정:**
-- 기존 Wiki T1/T2 지식 스캔
+- 기존 Wiki domain 기반 지식 스캔
 - References 검색
 - 관련 JOB 이력 확인
 - 외부 자료 수집
@@ -305,6 +305,6 @@ emit_event "wf.completed" "$JOB_DIR"
 
 ## 참조
 
-- [ARCHITECTURE.md](../ARCHITECTURE.md) — 전체 아키텍처
-- [docs/layer1-core-engine.md](layer1-core-engine.md) — Layer 1 (Core Engine)
-- [docs/systems/overview.md](systems/overview.md) — JOB 시스템
+- [시스템 종합](systems/overview.md) — 전체 시스템 현황
+- [스킬 시스템](skill-system.md) — 146개 스킬
+- [인덱스](index.md) — 문서 탐색

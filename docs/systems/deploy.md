@@ -165,6 +165,5 @@ echo "✅ 배포 완료"
 
 ## 참조
 
-- [ARCHITECTURE.md](../ARCHITECTURE.md) — 전체 아키텍처
-- [docs/layer3-integration.md](../layer3-integration.md) — Layer 3 (Integration)
-- [docs/systems/overview.md](overview.md) — 시스템 종합
+- [시스템 종합](overview.md) — 전체 시스템 현황
+- [인덱스](../index.md) — 문서 탐색

@@ -184,6 +184,6 @@ fi
 
 ## 참조
 
-- [ARCHITECTURE.md](../ARCHITECTURE.md) — 전체 아키텍처
-- [docs/layer2-knowledge-state.md](../layer2-knowledge-state.md) — Layer 2
-- [docs/systems/knowledge.md](knowledge.md) — 지식 시스템 (갱신 연동)
+- [시스템 종합](overview.md) — 전체 시스템 현황
+- [인덱스](../index.md) — 문서 탐색
+- [지식 시스템](knowledge.md) — 갱신 연동

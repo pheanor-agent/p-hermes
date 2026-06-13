@@ -176,6 +176,6 @@ echo "✅ 복구 완료: $BACKUP_FILE"
 
 ## 참조
 
-- [ARCHITECTURE.md](../ARCHITECTURE.md) — 전체 아키텍처
-- [docs/systems/overview.md](overview.md) — 시스템 종합
-- [docs/systems/cron.md](cron.md) — Cron 연동
+- [시스템 종합](overview.md) — 전체 시스템 현황
+- [인덱스](../index.md) — 문서 탐색
+- [크론 시스템](cron.md) — Cron 연동
