@@ -8,7 +8,7 @@
 | 지식 | ✅ 활성 | Wiki T1/T2/T3, References, Lessons |
 | 크론 | ✅ 활성 | 주기 작업, no-agent 모드 |
 | 백업 | ✅ 활성 | Tier 1/2, pre-delete-backup |
-| 배포 | ✅ 활성 | ComfyUI, GPU Health, Pod 관리 |
+| 인프라 | ✅ 활성 | GPU/ComfyUI 물리적 실행 환경 |
 | 스킬 | ✅ 활성 | 144+ 스킬, 카테고리 기반 |
 | 워크플로우 | ✅ 활성 | 9단계 파이프라인 |
 | 메시지 | ✅ 활성 | Discord, Telegram 연동 |
@@ -17,4 +17,3 @@
 ## 자동 갱신 정보
 
 마지막 동기화: {{TIMESTAMP}}
-
