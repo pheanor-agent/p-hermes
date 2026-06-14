@@ -148,6 +148,6 @@ Signal Detector (변경 감지)
 
 ## 참조
 
-- [시스템 종합](systems/overview.md) — 전체 시스템 현황
-- [크론 시스템](systems/cron.md) — 갱신 자동화
+- [시스템 종합](./overview.md) — 전체 시스템 현황
+- [크론 시스템](./cron.md) — 갱신 자동화
 - [인덱스](../index.md) — 문서 탐색

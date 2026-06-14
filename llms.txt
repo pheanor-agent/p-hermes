@@ -1,0 +1,16 @@
+# p-hermes Documentation
+
+This repository contains Hermes Agent system documentation, published via GitHub Pages.
+
+## Quick Start
+- Main index: docs/index.md
+- Systems overview: docs/systems/overview.md
+- Full docs: llms-full.txt
+
+## Structure
+- docs/systems/ — System documentation (6 systems)
+- docs/workflow-pipeline.md — 9-step workflow
+- docs/skill-system.md — 146+ skills
+
+## Deploy
+bash src/deploy.sh

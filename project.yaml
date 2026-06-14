@@ -1,0 +1,18 @@
+project_id: proj-20260614-p-hermes
+name: "p-hermes (Hermes Documentation)"
+slug: p-hermes
+created: "2026-06-14"
+status: active
+description: "Hermes Agent 시스템 문서화 및 GitHub Pages 배포"
+code_path: "~/.hermes/workspace/projects/p-hermes"
+tech_stack: [markdown, github-pages, bash]
+tags:
+  - documentation
+  - github-pages
+  - expression
+jobs:
+  - JOB-1624
+artifacts: []
+lessons_refs: []
+github_repo: "pheanor-agent/p-hermes"
+github_pages_url: "https://pheanor-agent.github.io/p-hermes/"

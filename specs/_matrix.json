@@ -1,0 +1,9 @@
+{
+  "specs": [
+    {"spec_id": "SPEC-D01", "domain": "documentation", "status": "proposed"},
+    {"spec_id": "SPEC-D02", "domain": "deployment", "status": "proposed"},
+    {"spec_id": "SPEC-D03", "domain": "expression", "status": "proposed"}
+  ],
+  "dependencies": [],
+  "generated_at": "2026-06-14T00:00:00Z"
+}

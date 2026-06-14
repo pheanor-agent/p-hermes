@@ -1,0 +1,17 @@
+# Spec Index
+specs:
+  - spec_id: SPEC-D01
+    title: "문서 구조 (SSOT)"
+    status: proposed
+    domain: documentation
+    path: active/SPEC-D01.md
+  - spec_id: SPEC-D02
+    title: "GitHub Pages 자동 배포"
+    status: proposed
+    domain: deployment
+    path: active/SPEC-D02.md
+  - spec_id: SPEC-D03
+    title: "Expression D1 연동 가이드라인"
+    status: proposed
+    domain: expression
+    path: active/SPEC-D03.md
