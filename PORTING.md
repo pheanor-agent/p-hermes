@@ -116,4 +116,4 @@ hermes start
 
 - **[Guide Wiki](./docs/wiki/index.md)**: 사용 가이드
 - **[Dev Blog](./docs/blog/index.md)**: 기술 심층 분석
-- **[Slides](./pages/index.html)**: 시스템 구조 시각화
+- **[Slides](./docs/index.html)**: 시스템 구조 시각화

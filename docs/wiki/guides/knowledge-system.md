@@ -75,4 +75,4 @@ bash ~/.hermes/knowledge/scripts/wiki-cleanup.sh
 ## 🔗 관련 문서
 
 - [지식 시스템 설계](../../blog/posts/knowledge-system-design.md)
-- [슬라이드: 지식 시스템](../../../pages/slides/decks/knowledge-system.html)
+- [슬라이드: 지식 시스템](../../slides/decks/knowledge-system.html)
