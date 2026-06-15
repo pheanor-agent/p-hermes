@@ -51,13 +51,13 @@ check_path() {
         local inode=$(stat -c %i "$target" 2>/dev/null || stat -f %i "$target" 2>/dev/null)
         local device=$(stat -c %d "$target" 2>/dev/null || stat -f %d "$target" 2>/dev/null)
         
-        # symlink된 jobs 폴더 확인
+        # 공유 폴더 확인
         if [[ "$target" == *"/workspace/jobs"* ]]; then
             echo "📁 작업 폴더: $target"
             echo "   Inode: $inode, Device: $device"
             
             # 다른 경로에서 동일한 inode 확인
-            for alt in $HERMES_ROOT/workspace/jobs ~/.openclaw/workspace/jobs; do
+            for alt in $HERMES_ROOT/workspace/jobs; do
                 if [[ -d "$alt" && "$alt" != "$target" ]]; then
                     local alt_inode=$(stat -c %i "$alt" 2>/dev/null || stat -f %i "$alt" 2>/dev/null)
                     if [[ "$alt_inode" == "$inode" ]]; then

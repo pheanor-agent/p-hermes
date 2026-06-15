@@ -179,14 +179,7 @@ Wiki는 도메인과 태그 기반으로 조직됩니다. T1/T2/T3 계층 구조
 
 ---
 
-## Blackboard & Bridge
-
-듀얼 에이전트 협업 (Hermes + OpenClaw)을 지원합니다.
-
-**기능:**
-- **Blackboard**: 상태 공유 파일 시스템 (`~/.hermes/state/`)
-- **Bridge API**: 에이전트 간 통신
-- **JOB Management**: 통합 JOB 번호 체계
+## Hermes-Standalone Architecture\n\nHermes는 단일 자율 에이전트로서 모든 상태와 워크플로우를 자체적으로 관리합니다. 외부 에이전트와의 협업 대신, 내장된 상태 머신과 지식 시스템을 통해 작업을 완결합니다.\n\n**핵심 구조:**\n- **State-Centric**: 모든 작업 상태는 `.workflow-state` JSON 파일에 기록되어 세션 간 연속성을 보장합니다.\n- **Unified Pipeline**: Request부터 Done까지의 9단계 파이프라인이 단일 에이전트 내에서 순차적으로 실행됩니다.\n- **Knowledge Loop**: 작업 결과가 자동으로 Wiki와 Lessons로 피드백되어 시스템 지능이 누적됩니다.
 
 ---
 
@@ -292,5 +285,5 @@ Wiki는 도메인과 태그 기반으로 조직됩니다. T1/T2/T3 계층 구조
 
 - [README.md](README.md) — 시스템 개요, Quick Start
 - [PORTING.md](PORTING.md) — 포팅 가이드
-- [docs/systems/overview.md](docs/systems/overview.md) — 시스템 종합
+- [docs/wiki/index.md](docs/wiki/index.md) — 시스템 종합
 - [docs/systems/](docs/systems/) — 시스템별 심화 문서

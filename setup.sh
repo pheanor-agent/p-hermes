@@ -36,19 +36,21 @@ fi
 
 # 3. 스크립트 배치
 echo "📜 스크립트 배치..."
-cp "$SCRIPT_DIR/core/scripts/"*.sh "$HERMES_HOME/core/scripts/ 2>/dev/null || true
+cp "$SCRIPT_DIR/core/scripts/"*.sh "$HERMES_HOME/core/scripts/" 2>/dev/null || true
+cp -r "$SCRIPT_DIR/core/lib/"* "$HERMES_HOME/core/lib/" 2>/dev/null || true
 chmod +x "$HERMES_HOME/core/scripts/"*.sh
 echo "  ✅ 스크립트 배치 완료"
 
 # 4. 스킬 배치
 echo "🧠 스킬 배치..."
-cp -r "$SCRIPT_DIR/core/skills/"* "$HERMES_HOME/core/skills/ 2>/dev/null || true
+mkdir -p "$HERMES_HOME/skills"
+cp -r "$SCRIPT_DIR/core/skills/"* "$HERMES_HOME/skills/" 2>/dev/null || true
 echo "  ✅ 스킬 배치 완료"
 
 # 5. Gateway 훅 배치
 echo "🪝 Gateway 훅 배치..."
-cp -r "$SCRIPT_DIR/hooks/"* "$HERMES_HOME/hooks/ 2>/dev/null || true
-echo "  ✅ 훅 배치 완료"
+# hooks 디렉토리가 삭제되었으므로 건너뜁니다.
+echo "  ⚠️ hooks 디렉토리가 없어 건너뜁니다."
 
 # 6. 크론 레지스트리 초기화
 echo "⏰ 크론 레지스트리 초기화..."

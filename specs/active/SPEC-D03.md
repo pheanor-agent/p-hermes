@@ -1,38 +1,77 @@
 ---
 spec_id: SPEC-D03
-version: 0.1.0
+version: 1.1.0
 parent: null
-status: proposed
-changed_at: "2026-06-14T00:00:00Z"
+status: approved
+changed_at: "2026-06-15T00:00:00Z"
 type: guideline
-title: "Expression System D1 연동 가이드라인"
+title: "p-hermes 문서 작성 및 표현력 시스템(Expression) 표준"
 domain: expression
-tags: [expression, d1, non-technical]
+tags: [expression, d1, documentation-standard, multi-level]
 ---
 
-# SPEC-D03: Expression System D1 연동 가이드라인
+# SPEC-D03: p-hermes 문서 작성 및 표현력 시스템 표준
 
-## 정의
-p-hermes 문서 작성 시 Expression System D1(비기술적) 도메인을 참고하여 문서를 생성하는 가이드라인입니다. expression-system은 에이전트 스킬이므로 자동화 artifact는 포함되지 않습니다.
+## 1. 정의 및 목적
 
-## Contract
-### Preconditions
-- expression-system 스킬 가용
+본 사양서는 p-hermes 프로젝트의 모든 공개 문서(Wiki, Blog, Slides)가 일관된 품질과 톤, 깊이를 유지하도록 강제하는 작성 표준입니다. 단순히 정보를 전달하는 것을 넘어, 기술적 배경이 다른 다양한 독자가 단계적으로 지식을 습득할 수 있는 **'다층적 지식 전달 체계'** 구축을 목적으로 합니다.
 
-### Postconditions
-- D1 tier/tone 적용된 문서 생성
+---
 
-### Invariants
-- D1 도메인만 적용 (기술적 문서 제외)
+## 2. 핵심 작성 원칙
 
-## Acceptance Criteria
-Given: 시스템 문서 작성 요청
-When: 에이전트가 expression-system D1 실행 후 docs/에 저장
-Then: 비기술적 tone 적용된 문서가 docs/에 생성
+### 2.1 다층적 지식 전달 구조 (The Layered Approach)
+모든 문서는 다음의 구조를 엄격히 준수하여, 독자가 자신의 지식 수준에 맞춰 읽을 수 있도록 구성합니다.
 
-## Examples
-- 시스템 종합 문서 D1로 생성: domain=D1, intent=explain, topic="Hermes 아키텍처" → tier=[L1,L2,L3], tone=non-technical
+| 섹션 | 목적 | 타겟 독자 | 필수 내용 |
+|---|---|---|---|
+| **💡 한 줄 요약** | 핵심 메시지 즉시 전달 | 모든 독자 | 50자 이내의 명확한 요약 |
+| **🌱 기본 개념** | 진입 장벽 제거 | 비기술자 / 입문자 | 일상적 비유, 기본 용어 정의, "왜 필요한가?" |
+| **🔍 문제 상황** | 설계 동기 부여 | 입문자 / 개발자 | 기존의 통증(Pain point), 실제 사고 사례, 한계점 |
+| **🏗️ 기술 설계** | 구현 메커니즘 상세화 | 개발자 / 전문가 | 구체적 로직, 파일 경로, 변수, 알고리즘, 공학적 이유 |
+| **📊 구조/흐름도** | 시각적 이해 | 모든 독자 | Mermaid 다이어그램 (Flowchart, Sequence 등) |
+| **💡 활용 예시** | 실용성 검증 | 모든 독자 | 구체적인 설정값, 실행 명령어, 결과물 예시 |
+| **🔗 관련 주제** | 지식 확장 | 모든 독자 | 내부 문서 교차 링크 (GitHub Pages URL) |
 
-## 참고
-- expression-system은 CLI 스크립트가 아닌 에이전트 스킬이므로, 에이전트 세션 내에서만 실행 가능
-- p-hermes 문서가 비기술적 대상 독자를 위해 재작성될 때 참고
+### 2.2 기술 서술의 깊이 (Technical Depth)
+"동작한다"는 결과보다 **"어떻게 동작하는가"**라는 과정에 집중합니다.
+
+- **구체성**: "상태를 관리한다" $\rightarrow$ "`.workflow-state` JSON 파일에 상태를 기록하고 `flock`으로 동시성을 제어한다"
+- **원리 서술**: 사용된 기술의 공학적 근거 제시 (예: 지수 백오프를 사용하는 이유 $\rightarrow$ Thundering Herd 문제 방지)
+- **예외 처리**: Happy Path뿐만 아니라, 에러 발생 시의 복구 시나리오(Fallback)를 반드시 포함.
+- **독립성**: 각 문서는 해당 주제를 80% 이상 자립적으로 이해할 수 있을 만큼 충분한 양의 정보를 포함해야 함.
+  - **최소 분량**: Wiki 가이드 $\ge$ 1,500자, Blog 포스트 $\ge$ 3,000자.
+
+### 2.3 표현력 시스템 D1 적용 (Tone & Manner)
+비기술적 대상 독자를 위해 **Expression System D1** 톤을 적용합니다.
+
+- **친근한 비유**: 복잡한 아키텍처를 일상적인 역할(예: 팀장-사원, 비서-사장)에 비유하여 설명.
+- **단계적 확장**: 쉬운 용어 $\rightarrow$ 기술 용어 $\rightarrow$ 심화 개념 순으로 전개.
+- **능동적 문체**: "되어진다" $\rightarrow$ "합니다/입니다" 등 명확하고 자신감 있는 전문적 어조.
+
+---
+
+## 3. 포맷 및 제약 사항 (Contract)
+
+### 3.1 시각 요소 표준
+- **다이어그램**: ASCII Art 절대 금지 $\rightarrow$ **Mermaid JS** 포맷만 사용.
+- **색상/테마**: 라이트 테마(흰색 배경, 짙은 회색 텍스트) 기준의 스타일 적용.
+- **링크**: README 및 외부 문서에서는 **GitHub Pages 절대 URL** 사용.
+
+### 3.2 용어 정합성
+- **사양서 기반 개발 (Spec-Driven Dev)**: "사양서(Spec)가 SSOT가 되어 코드를 제어하는 프로세스"로 정의.
+- **스크립트 활용 정책**: "명령어 복붙 대신 스크립트를 작성/활용하는 에이전트의 행동 규칙"으로 정의.
+- 두 용어를 혼용하지 않고, 각각 '프로세스'와 '정책'으로 명확히 구분하여 서술.
+
+---
+
+## 4. Acceptance Criteria (검증 기준)
+
+**Given**: 에이전트가 문서를 생성/수정함
+**When**: 아래 기준을 모두 충족함
+1. [ ] 구조: `한 줄 요약` $\rightarrow$ `기본 개념` $\rightarrow$ `문제` $\rightarrow$ `설계` $\rightarrow$ `흐름도` $\rightarrow$ `예시` 순서 준수
+2. [ ] 분량: Wiki $\ge$ 1,500자 또는 Blog $\ge$ 3,000자 충족
+3. [ ] 기술: 단순 결과 서술이 아닌 구체적 메커니즘(함수, 파일, 로직)이 포함됨
+4. [ ] 시각: 모든 다이어그램이 Mermaid 포맷임
+5. [ ] 링크: 외부 링크가 `https://pheanor-agent.github.io/p-hermes/...` 형태임
+**Then**: 문서 승인 및 배포 대상으로 확정

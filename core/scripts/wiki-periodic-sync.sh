@@ -29,10 +29,10 @@ else
     exit 1
 fi
 
-# rsync-to-openclaw.sh 호출 (OpenClaw 동기화)
-if [[ -f $HERMES_ROOT/core/scripts/rsync-to-openclaw.sh ]]; then
-    bash $HERMES_ROOT/core/scripts/rsync-to-openclaw.sh 2>>"$LOG"
-    log "rsync-to-openclaw 완료"
+# rsync-to-local.sh 호출 (로컬 동기화)
+if [[ -f $HERMES_ROOT/core/scripts/rsync-to-local.sh ]]; then
+    bash $HERMES_ROOT/core/scripts/rsync-to-local.sh 2>>"$LOG"
+    log "rsync-to-local 완료"
 fi
 
 log "=== 위키 주기 동기화 완료 ==="

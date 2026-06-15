@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# wiki-sync.sh - Sync Wiki from OpenClaw to Shared Knowledge Base
-# Uses rsync for efficient incremental sync
+# wiki-sync.sh - Sync Wiki from Local Knowledge Base\n# Uses rsync for efficient incremental sync
 
 set -euo pipefail
 

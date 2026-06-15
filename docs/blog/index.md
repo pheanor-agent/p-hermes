@@ -11,7 +11,6 @@ Hermes의 기술적 결정과 설계 철학을 기록하는 공간입니다. 단
 |---|---|---|---|
 | **왜 9단계 상태머신인가?** | #workflow | 설계 사유 및 상태 전이 로직 | [읽기](./posts/why-9-step-workflow.md) |
 | **5-Tier 물리 계층화 설계** | #architecture | 물리적 경로 격리와 도메인 분리 | [읽기](./posts/why-5-tier-architecture.md) |
-| **초기 설계: 워커 vs 오케스트레이터 분리의 교훈** | #architecture #deprecated | Dual-Peer → Hot Standby 아키텍처 진화 | [읽기](./posts/dual-agent-design.md) |
 | **지식 분류 시스템 설계** | #knowledge | domain/tag 기반의 계층적 지식 구조 | [읽기](./posts/knowledge-system-design.md) |
 | **Cron 3계층 분리 구조** | #cron | Registry $\rightarrow$ Wrapper $\rightarrow$ Runner | [읽기](./posts/cron-3layer-separation.md) |
 | **이벤트 기반 도메인 통신** | #architecture | 직접 호출 제거 및 상태 파일 기반 통신 | [읽기](./posts/event-driven-communication.md) |

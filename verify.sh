@@ -48,7 +48,7 @@ done
 # 4. 스킬 확인
 echo ""
 echo "🧠 스킬 확인..."
-SKILL_COUNT=$(find "$HERMES_HOME/core/skills" -name "SKILL.md" 2>/dev/null | wc -l)
+SKILL_COUNT=$(find "$HERMES_HOME/skills" -name "SKILL.md" 2>/dev/null | wc -l)
 if [[ $SKILL_COUNT -gt 0 ]]; then
   echo "  ✅ 스킬: $SKILL_COUNT개"
 else

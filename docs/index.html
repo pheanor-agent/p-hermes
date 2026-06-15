@@ -6,22 +6,22 @@
 <title>p-hermes: The Orchestrated Intelligence Agent</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0d1117;color:#c9d1d9;line-height:1.6;max-width:900px;margin:0 auto;padding:2rem 1rem}
-  a{color:#58a6ff;text-decoration:none}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#ffffff;color:#24292f;line-height:1.6;max-width:900px;margin:0 auto;padding:2rem 1rem}
+  a{color:#0969da;text-decoration:none}
   a:hover{text-decoration:underline}
-  h1{font-size:2.2rem;color:#f0f6fc;margin-bottom:.5rem}
-  h2{font-size:1.4rem;color:#f0f6fc;margin:2rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid #21262d}
-  h3{font-size:1.1rem;color:#c9d1d9;margin:1.2rem 0 .6rem}
-  .subtitle{color:#8b949e;font-size:1.1rem;margin-bottom:2rem}
-  .card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:1.2rem;margin-bottom:1rem}
+  h1{font-size:2.2rem;color:#1f2328;margin-bottom:.5rem}
+  h2{font-size:1.4rem;color:#1f2328;margin:2rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid #d0d7de}
+  h3{font-size:1.1rem;color:#24292f;margin:1.2rem 0 .6rem}
+  .subtitle{color:#57606a;font-size:1.1rem;margin-bottom:2rem}
+  .card{background:#f6f8fa;border:1px solid #d0d7de;border-radius:8px;padding:1.2rem;margin-bottom:1rem}
   .card h3{margin-top:0}
-  .card p{color:#8b949e;font-size:.95rem}
+  .card p{color:#57606a;font-size:.95rem}
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem}
   ul{list-style:none;padding-left:0}
   li{padding:.3rem 0}
-  li::before{content:"→ ";color:#484f58}
-  .tag{display:inline-block;font-size:.75rem;padding:2px 8px;border-radius:12px;background:#21262d;color:#8b949e;margin-left:.5rem}
-  .deprecated{color:#f85149}
+  li::before{content:"→ ";color:#57606a}
+  .tag{display:inline-block;font-size:.75rem;padding:2px 8px;border-radius:12px;background:#d0d7de;color:#57606a;margin-left:.5rem}
+  .deprecated{color:#cf222e}
 </style>
 </head>
 <body>
@@ -31,29 +31,14 @@
   <h2>📚 문서 탐색</h2>
   <div class="grid">
     <div class="card">
-      <h3><a href="wiki/">📖 가이드 위키</a></h3>
-      <p>Hermes의 기능을 최대한 활용하기 위한 사용자 중심 가이드</p>
+      <h3><a href="https://pheanor-agent.github.io/p-hermes/docs/slides/index.md">🖼️ 컨셉 슬라이드</a></h3>
+      <p>시스템의 핵심 컨셉과 구조를 시각적으로 빠르게 파악할 수 있는 슬라이드 덱입니다.</p>
       <ul>
-        <li><a href="wiki/getting-started/install.md">설치 및 환경 설정</a></li>
-        <li><a href="wiki/getting-started/first-job.md">첫 작업 요청하기</a></li>
-        <li><a href="wiki/getting-started/configuration.md">기본 설정 가이드</a></li>
-        <li><a href="wiki/guides/request-task.md">작업 요청 및 워크플로우</a></li>
-        <li><a href="wiki/guides/use-skills.md">스킬 시스템 활용</a></li>
-        <li><a href="wiki/guides/knowledge-search.md">지식 검색 및 활용</a></li>
-        <li><a href="wiki/guides/project-management.md">개인 프로젝트 관리</a></li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3><a href="blog/">✍️ 기술 블로그</a></h3>
-      <p>기술적 결정과 설계 철학을 기록하는 공간</p>
-      <ul>
-        <li><a href="blog/posts/why-9-step-workflow.md">왜 9단계 상태머신인가?</a></li>
-        <li><a href="blog/posts/why-5-tier-architecture.md">5-Tier 물리 계층화 설계</a></li>
-        <li><a href="blog/posts/dual-agent-design.md">초기 설계: 워커 vs 오케스트레이터 <span class="tag deprecated">폐기</span></a></li>
-        <li><a href="blog/posts/knowledge-system-design.md">지식 분류 시스템 설계</a></li>
-        <li><a href="blog/posts/cron-3layer-separation.md">3-Layer Cron 아키텍처</a></li>
-        <li><a href="blog/posts/model-routing-design.md">모델 라우팅 전략</a></li>
-        <li><a href="blog/posts/lessons-from-failures.md">실패에서 배운 교훈</a></li>
+        <li><a href="https://pheanor-agent.github.io/p-hermes/docs/slides/decks/system-overview.html">시스템 조감도</a></li>
+        <li><a href="https://pheanor-agent.github.io/p-hermes/docs/slides/decks/workflow-pipeline.html">9단계 워크플로우</a></li>
+        <li><a href="https://pheanor-agent.github.io/p-hermes/docs/slides/decks/knowledge-system.html">지식 시스템</a></li>
+        <li><a href="https://pheanor-agent.github.io/p-hermes/docs/slides/decks/cron-system.html">크론 자동화</a></li>
+        <li><a href="https://pheanor-agent.github.io/p-hermes/docs/slides/decks/architecture-5tier.html">5-Tier 아키텍처</a></li>
       </ul>
     </div>
   </div>
@@ -63,7 +48,6 @@
     <ul>
       <li><a href="../README.md">README.md</a> — 프로젝트 개요</li>
       <li><a href="../PORTING.md">PORTING.md</a> — 포팅 가이드</li>
-      <li><a href="wiki/faq.md">FAQ</a> — 자주 묻는 질문</li>
       <li><a href="https://github.com/pheanor-agent/p-hermes">GitHub 레포지토리</a></li>
     </ul>
   </div>

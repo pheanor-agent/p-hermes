@@ -10,11 +10,32 @@ model:
   default: "High-Speed-Coding-Model"
   provider: custom
 
+# 모델 라우팅 설정
+model_routing:
+  coding: "zai-coding-model"
+  reasoning: "openai-o1"
+  creative: "claude-3-5-sonnet"
+  default: "High-Speed-Coding-Model"
+
 providers:
-  # 추가 프로바이더 설정 예시 (필요시 주석 해제 후 수정)
-  # my_provider:
-  #   base_url: "YOUR_ENDPOINT"
-  #   api_key: "${YOUR_API_KEY}"
+  zai:
+    base_url: "https://api.zai.ai/v1"
+    api_key: "${ZAI_API_KEY}"
+  airouter:
+    base_url: "https://api.airouter.ai/v1"
+    api_key: "${AIROUTER_API_KEY}"
+  custom:
+    base_url: "YOUR_API_ENDPOINT"
+    api_key: "${HERMES_API_KEY}"
+
+# 채널별 프롬프트 설정
+channel_prompts:
+  discord:
+    system: "You are a helpful assistant on Discord. Keep responses concise and use markdown."
+    prefix: "[Discord] "
+  telegram:
+    system: "You are a helpful assistant on Telegram."
+    prefix: "[Telegram] "
 
 workflow:
   checkpoint_validation: true

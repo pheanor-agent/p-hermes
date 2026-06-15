@@ -7,9 +7,9 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
 # 검증 대상 디렉토리 및 파일 정의 (SPEC-D01 반영)
 TARGETS=(
-  "$PROJECT_DIR/wiki"
-  "$PROJECT_DIR/blog"
-  "$PROJECT_DIR/slides"
+  "$PROJECT_DIR/docs/wiki"
+  "$PROJECT_DIR/docs/blog"
+  "$PROJECT_DIR/docs/slides"
   "$PROJECT_DIR/README.md"
   "$PROJECT_DIR/ARCHITECTURE.md"
 )
