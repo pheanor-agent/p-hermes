@@ -96,7 +96,7 @@ jobs:
       - file
 
   - id: job-news-digest
-    name: "주간 뉴스 소消化"
+    name: "주간 뉴스 소소화"
     schedule: "0 9 * * 1"  # 매주 월요일 오전 9시
     model:
       provider: openrouter
@@ -295,12 +295,12 @@ if __name__ == '__main__':
 
 ## 실제 운영 사례
 
-### 성공 사례: 주간 뉴스 소消化
+### 성공 사례: 주간 뉴스 소소화
 
 **설정**:
 ```yaml
 - id: job-news-digest
-  name: "주간 뉴스 소消化"
+  name: "주간 뉴스 소소화"
   schedule: "0 9 * * 1"  # 매주 월요일 오전 9시
   deliver: "telegram"
   enabled: true

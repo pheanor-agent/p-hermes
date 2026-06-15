@@ -151,7 +151,7 @@ atomic_write_blackboard(
 **문제 정의**: 두 에이전트가 서로 다른 사실을 기억하게 되는 현상
 
 ```
-시간軸:
+시간축:
   Hermes: "JOB-1001 완료됨" → Blackboard에 기록
   OpenClaw: Blackboard 읽기 → "JOB-1001 완료됨" 인식
   Hermes: "JOB-1001 수정됨" → Blackboard에 기록
@@ -181,7 +181,7 @@ atomic_write_blackboard(
 │    (Primary / 메인)  │        │   (Hot Standby)      │
 ├──────────────────────┤        ├──────────────────────┤
 │ • 모든 작업 수행     │        │ • Health 모니터링    │
-│ • 파일 조작          │        │ •緊急時 복구용       │
+│ • 파일 조작          │        │ • 긴급시 복구용       │
 │ • 코드 실행          │        │ • 평소 비활성화      │
 │ • 시스템 관리        │        │                     │
 │ • 지식 동기화        │        │                     │
@@ -191,7 +191,7 @@ atomic_write_blackboard(
 
 **Key Changes**:
 - OpenClaw는 **Hot Standby**로만 사용 (평소 health 모니터링만)
-- Bridge API는 **单向 통신** (OpenClaw→Hermes health only)으로 변경
+- Bridge API는 **단방향 통신** (OpenClaw→Hermes health only)으로 변경
 - 현재 Bridge 디렉토리 삭제로 **완전 비활성화** 상태
 
 ---
