@@ -23,4 +23,4 @@ Hermes의 기술적 결정과 설계 철학을 기록하는 공간입니다. 단
 
 ## 🔗 관련 링크
 - [어떻게 쓰는가? (Guide Wiki)](../wiki/index.md)
-- [시스템 구조 한눈에 보기 (Slides)](../slides/index.md)
+- [시스템 구조 한눈에 보기 (Slides)](../../pages/index.html)

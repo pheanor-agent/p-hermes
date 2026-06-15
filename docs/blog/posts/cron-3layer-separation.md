@@ -339,7 +339,7 @@ if __name__ == '__main__':
 
 - [이벤트 기반 도메인 통신](./event-driven-communication.md)
 - [역할 기반 모델 라우팅 설계](./model-routing-design.md)
-- [실패 패턴에서 배운 교훈](./lessons-from-fures.md)
+- [실패 패턴에서 배운 교훈](./lessons-from-failures.md)
 
 ---
 

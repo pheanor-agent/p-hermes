@@ -22,5 +22,5 @@
 
 ## 🔗 관련 링크
 
-- [어떻게 쓰는가? (Guide Wiki)](../wiki/index.md)
-- [왜 그렇게 설계했나? (Dev Blog)](../blog/index.md)
+- [어떻게 쓰는가? (Guide Wiki)](../../docs/wiki/index.md)
+- [왜 그렇게 설계했나? (Dev Blog)](../../docs/blog/index.md)

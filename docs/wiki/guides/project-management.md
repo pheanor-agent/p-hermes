@@ -214,8 +214,8 @@ bash archive-project.sh kernel-chat --reason "프로젝트 완료"
 
 ## 관련 포스트
 
-- [왜 9단계 상태머신인가?](../blog/posts/why-9-step-workflow.md)
-- [이벤트 기반 도메인 통신](../blog/posts/event-driven-communication.md)
+- [왜 9단계 상태머신인가?](../../blog/posts/why-9-step-workflow.md)
+- [이벤트 기반 도메인 통신](../../blog/posts/event-driven-communication.md)
 
 ---
 
