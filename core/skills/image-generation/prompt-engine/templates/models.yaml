@@ -1,0 +1,108 @@
+# 모델별 프롬프트 특화 설정
+
+flux2_pro:
+  name: "black-forest-labs/flux.2-pro"
+  direct_ok: true
+  story_needed: false
+  resolution: "1024x768"
+  timeout: 180
+  prompt_style: "concise"
+  exposure_keywords:
+    - "braless"
+    - "sideless"
+    - "backless"
+    - "wide open armhole"
+    - "high-cut"
+    - "deep V-neck"
+  notes: "가장 허용적, 간결한 프롬프트 OK"
+
+flux2_klein:
+  name: "black-forest-labs/flux.2-klein-4b"
+  direct_ok: false
+  story_needed: true
+  resolution: "variable"
+  timeout: 180
+  prompt_style: "narrative"
+  exposure_keywords:
+    - "elegant"
+    - "fashion"
+    - "editorial"
+    - "design"
+  notes: "스토리 컨텍스트 필수, Magazine/Editorial은 차단"
+
+flux2_max:
+  name: "black-forest-labs/flux.2-max"
+  direct_ok: false
+  story_needed: true
+  resolution: "variable"
+  timeout: 180
+  prompt_style: "narrative"
+  exposure_keywords:
+    - "elegant"
+    - "fashion"
+    - "editorial"
+    - "design"
+  notes: "스토리 컨텍스트 필수, Klein과 유사"
+
+gpt5_4:
+  name: "openai/gpt-5.4-image-2"
+  direct_ok: true
+  story_needed: false
+  resolution: "variable"
+  timeout: 300
+  prompt_style: "detailed"
+  exposure_keywords:
+    - "deep V-neck"
+    - "high-cut"
+    - "backless"
+    - "cleavage"
+    - "side exposure"
+  notes: "복잡한 설명 OK, 300초+ 타임아웃 필수, 텍스트 렌더링 우수"
+
+gemini:
+  name: "google/gemini-3.1-flash-image-preview"
+  direct_ok: false
+  story_needed: true
+  resolution: "variable"
+  timeout: 180
+  prompt_style: "cinematic"
+  exposure_keywords:
+    - "elegant"
+    - "artistic"
+    - "portrait"
+    - "cinematic"
+  notes: "사진 사실감 최상, 서사 컨텍스트 필수"
+
+seedream:
+  name: "seedream/seedream-4.5"
+  direct_ok: true
+  story_needed: false
+  resolution: "2048x2048"
+  timeout: 180
+  prompt_style: "high_res"
+  exposure_keywords:
+    - "detailed"
+    - "photorealistic"
+    - "crystalline"
+    - "high resolution"
+  notes: "고해상도 2048x2048 고정, 고정 가격 $0.04"
+
+comfyui:
+  name: "comfyui-local"
+  direct_ok: true
+  story_needed: false
+  resolution: "configurable"
+  timeout: 120
+  prompt_style: "flexible"
+  exposure_keywords:
+    - "all"
+    - "no_filter"
+    - "side breast"
+    - "nude"
+    - "topless"
+  lora_support: true
+  lora_recommendations:
+    - "koreandoll2.safetensors (0.5)"
+    - "Flux Klein - NSFW v2.safetensors (1.0)"
+    - "eastmix_beautiful_asian_girl_face.safetensors (0.5)"
+  notes: "필터 없음, LoRA 조합 가능, Regional Prompter 지원"

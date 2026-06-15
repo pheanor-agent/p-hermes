@@ -1,0 +1,34 @@
+# p-hermes 설정 파일 템플릿
+# 사용법: 이 파일을 ~/.hermes/config.yaml로 복사 후 [필수] 필드를 수정하세요
+
+model:
+  # [필수] 실제 API 키로 변경하세요 (환경변수 사용 권장)
+  api_key: "${HERMES_API_KEY}"
+  # [필수] 실제 API 엔드포인트로 변경하세요
+  base_url: "YOUR_API_ENDPOINT"
+  # [필수] 기본 모델명으로 변경하세요
+  default: "High-Speed-Coding-Model"
+  provider: custom
+
+providers:
+  # 추가 프로바이더 설정 예시 (필요시 주석 해제 후 수정)
+  # my_provider:
+  #   base_url: "YOUR_ENDPOINT"
+  #   api_key: "${YOUR_API_KEY}"
+
+workflow:
+  checkpoint_validation: true
+  auto_transition: true
+  state_file: ".workflow-state"
+
+knowledge:
+  wiki_path: "~/.hermes/knowledge/wiki"
+  update_interval: 300
+
+cron:
+  registry: "~/.hermes/infra/cron/registry.yaml"
+  history_dir: "~/.hermes/infra/cron/history"
+
+backup:
+  snapshots_dir: "~/.hermes/backups/snapshots"
+  jobs_dir: "~/.hermes/backups/jobs"

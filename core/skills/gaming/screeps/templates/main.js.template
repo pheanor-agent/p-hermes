@@ -1,0 +1,174 @@
+/**
+ * Screeps Main Loop - {{ROOM}}
+ * 
+ * 기능:
+ * - 다중 소스 하베스트
+ * - 컨트롤러 업그레이드
+ * - 효율적 크립 스폰
+ * - 에너지 관리 최적화
+ */
+
+const ROOM = '{{ROOM}}';
+const MAX_CREEPS = {{MAX_CREEPS}};
+const SPAWN_ENERGY_THRESHOLD = {{SPAWN_ENERGY_THRESHOLD}};
+const LOG_INTERVAL = {{LOG_INTERVAL}};
+
+let lastLog = 0;
+let lastSpawn = 0;
+let creepCounter = 0;
+
+/**
+ * 컨트롤러 레벨에 따른 최적 바디 계산
+ */
+function getOptimalBody(energyAvailable, controllerLevel) {
+    const body = [];
+    let remaining = energyAvailable;
+    
+    const workParts = Math.min(3 + Math.floor(controllerLevel / 2), 5);
+    const carryParts = 2;
+    const moveParts = 2;
+    
+    for (let i = 0; i < workParts && remaining >= 100; i++) {
+        body.push(WORK);
+        remaining -= 100;
+    }
+    for (let i = 0; i < carryParts && remaining >= 50; i++) {
+        body.push(CARRY);
+        remaining -= 50;
+    }
+    for (let i = 0; i < moveParts && remaining >= 50; i++) {
+        body.push(MOVE);
+        remaining -= 50;
+    }
+    
+    return body;
+}
+
+/**
+ * 크립 이름 생성 (충돌 방지)
+ */
+function getCreepName(role) {
+    creepCounter++;
+    return `${role}_${creepCounter}_${Game.time}`;
+}
+
+/**
+ * 가장 가까운 소스 찾기
+ */
+function findNearestSource(creep, sources) {
+    let nearest = null;
+    let nearestRange = Infinity;
+    
+    for (const source of sources) {
+        const range = creep.pos.getRangeTo(source);
+        if (range < nearestRange) {
+            nearestRange = range;
+            nearest = source;
+        }
+    }
+    
+    return nearest;
+}
+
+/**
+ * 하버스터 크립 행동
+ */
+function runHarvester(creep, sources, controller) {
+    const source = findNearestSource(creep, sources);
+    if (!source) return;
+    
+    const energy = creep.store[RESOURCE_ENERGY];
+    const capacity = creep.store.getCapacity();
+    
+    if (energy < capacity * 0.3) {
+        if (creep.pos.getRangeTo(source) > 1) {
+            creep.moveTo(source);
+        } else {
+            creep.harvest(source);
+        }
+    }
+    else if (energy > capacity * 0.8) {
+        if (creep.pos.getRangeTo(controller) > 3) {
+            creep.moveTo(controller);
+        } else {
+            creep.upgradeController(controller);
+        }
+    }
+}
+
+/**
+ * 메인 루프
+ */
+module.exports.loop = function() {
+    const room = Game.rooms[ROOM];
+    if (!room) return;
+
+    const spawns = room.find(FIND_MY_STRUCTURES, { 
+        filter: s => s.structureType === STRUCTURE_SPAWN 
+    });
+    const controller = room.controller;
+    const sources = room.find(FIND_SOURCES);
+    const extensions = room.find(FIND_MY_STRUCTURES, {
+        filter: s => s.structureType === STRUCTURE_EXTENSION
+    });
+
+    if (!controller || !sources.length) return;
+
+    // 총 에너지 계산
+    let totalEnergy = 0;
+    for (const spawn of spawns) {
+        totalEnergy += spawn.store[RESOURCE_ENERGY];
+    }
+    for (const ext of extensions) {
+        totalEnergy += ext.store[RESOURCE_ENERGY];
+    }
+
+    const activeCreeps = Object.keys(Game.creeps);
+    const controllerLevel = controller.level;
+
+    // 크립 스폰
+    if (Game.time - lastSpawn > 100 && 
+        activeCreeps.length < MAX_CREEPS && 
+        totalEnergy >= SPAWN_ENERGY_THRESHOLD) {
+        
+        const availableSpawn = spawns.find(s => s.cooldown === 0);
+        if (availableSpawn) {
+            const body = getOptimalBody(totalEnergy, controllerLevel);
+            if (body.length > 0) {
+                const name = getCreepName('harvester');
+                const result = availableSpawn.spawnCreep(body, name);
+                
+                if (result === OK) {
+                    console.log(`[SPAWN] ✅ ${name} created`);
+                } else {
+                    console.log(`[SPAWN] ❌ ${name} failed: ${result}`);
+                }
+                lastSpawn = Game.time;
+            }
+        }
+    }
+
+    // 크립 행동
+    for (const name in Game.creeps) {
+        const creep = Game.creeps[name];
+        try {
+            runHarvester(creep, sources, controller);
+        } catch (e) {
+            console.log(`[ERROR] ${creep.name}: ${e.message}`);
+        }
+    }
+
+    // 상태 로그
+    if (Game.time - lastLog >= LOG_INTERVAL) {
+        let creepInfo = [];
+        for (const name in Game.creeps) {
+            const c = Game.creeps[name];
+            creepInfo.push(`${name}:${c.store[RESOURCE_ENERGY]}⚡️@${c.pos.x},${c.pos.y}`);
+        }
+        
+        console.log(`[STATUS] T:${Game.time} | Energy:${totalEnergy}⚡️ | ` +
+                    `Ctrl:L${controllerLevel} | Creeps:${activeCreeps.length}/${MAX_CREEPS} | ` +
+                    `[${creepInfo.join(',')}]`);
+        lastLog = Game.time;
+    }
+};

@@ -1,0 +1,34 @@
+# AGENTS.md - 에이전트 프로필 템플릿
+
+# 사용법: 이 파일을 ~/.hermes/AGENTS.md로 복사 후 수정하세요
+
+## 에이전트 정의
+
+- **이름**: Hermes Agent
+- **역할**: 작업 수행 에이전트 (UI/App/Execution)
+
+## 설정 경로
+
+- **skills_path**: `~/.hermes/core/skills`
+- **knowledge_path**: `~/.hermes/knowledge`
+- **workspace**: `~/.hermes/workspace`
+- **state**: `~/.hermes/runtime/state`
+
+## 모델 라우팅 (예시)
+
+| 단계 | 모델 타입 | 역할 |
+|------|----------|------|
+| Design/Review | High-Reasoning-Model | 추론/검증 |
+| Execution | High-Speed-Coding-Model | 코드 작성 |
+| Investigation | General-Purpose-Model | 조사 |
+
+## 작업 규칙
+
+- **[JOB-XXXX]**: 공식 작업 요청 (9단계 워크플로우)
+- **[TASK]**: 단순 작업 (워크플로우 우회)
+- **[FEEDBACK]**: 피드백 제공
+
+## 승인 프로토콜
+
+- 설계서 작성이 완료된 후 사용자에게 승인을 요청합니다
+- 승인 시 "진행해" 또는 "approve"라고 응답하세요

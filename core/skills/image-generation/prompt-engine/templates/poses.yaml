@@ -1,0 +1,96 @@
+# 포즈/동작 템플릿
+
+walking:
+  description: "걷는 동작 - 자연스러운 이동"
+  action: "walking {direction} {surface}"
+  variations:
+    - "along the shoreline with gentle waves lapping at bare feet"
+    - "toward the ocean at sunset with dress fluttering in ocean breeze"
+    - "away from camera with long hair cascading down exposed back"
+    - "parallel to water's edge with confident stride"
+    - "through shallow water with sand between toes"
+  body_language:
+    - "one hand slightly raised, lifting hem of dress"
+    - "arms swinging naturally at sides"
+    - "head turned slightly, gazing toward horizon"
+    - "relaxed shoulders, confident posture"
+  hair:
+    - "long dark hair blowing naturally in wind"
+    - "hair cascading down back, catching backlight"
+    - "wind-swept strands framing face"
+
+playing:
+  description: "노는 동작 - 생동감, 활기"
+  action: "playing in {element} with {emotion}"
+  variations:
+    - "gentle ocean waves splashing, laughing joyfully with water droplets"
+    - "sea foam on sandy beach, dynamic movement with arms raised"
+    - "tide pools, crouching to touch starfish with curious expression"
+    - "running through shallow water with splashing waves trailing behind"
+    - "jumping with bare feet, capturing mid-air moment"
+  body_language:
+    - "arms outstretched, embracing the moment"
+    - "knees slightly bent, ready to move"
+    - "head tilted back in laughter"
+    - "dynamic pose with motion blur suggestion"
+  hair:
+    - "hair flying wildly in wind and motion"
+    - "water droplets caught in strands"
+    - "messy beach hair with natural texture"
+
+serene:
+  description: "평화로운 동작 - 명상, 평화"
+  action: "standing {position} with {expression}"
+  variations:
+    - "eyes gently closed, face tilted toward warm sunlight"
+    - "gazing at horizon, lost in peaceful contemplation"
+    - "arms slightly outstretched, embracing ocean breeze"
+    - "head tilted back, breathing in the salt air"
+    - "standing still, allowing moment to wash over"
+  body_language:
+    - "relaxed posture, weight evenly distributed"
+    - "hands resting naturally at sides"
+    - "shoulders relaxed, breathing visible"
+    - "face serene with subtle smile"
+  hair:
+    - "hair flowing gently in soft breeze"
+    - "strands catching golden hour light"
+    - "natural movement, not wind-swept"
+
+dynamic:
+  description: "동적인 동작 - 에너지, 운동감"
+  action: "{action} with {movement}"
+  variations:
+    - "spinning with dress flowing dramatically around body"
+    - "running through shallow water with splashing waves"
+    - "jumping with arms raised, hair flying in wind"
+    - "dancing freely on beach, capturing motion"
+    - "leaping over wave, frozen in mid-air"
+  body_language:
+    - "limbs extended, maximum expression"
+    - "torsos twisted for dynamic lines"
+    - "weight shifted, suggesting movement"
+    - "face showing joy and abandon"
+  hair:
+    - "hair flying dramatically in all directions"
+    - "motion blur suggesting speed"
+    - "wild, untamed beach hair"
+
+posed:
+  description: "포즈 - 모델링, 의도적"
+  action: "posing {style} for {purpose}"
+  variations:
+    - "confident stance with hand on hip, looking directly at camera"
+    - "three-quarter turn, highlighting silhouette"
+    - "seated on beach rocks, legs extended toward water"
+    - "leaning against palm tree, relaxed but intentional"
+    - "power pose with shoulders back, chin up"
+  body_language:
+    - "intentional placement of limbs"
+    - "conscious angle for best presentation"
+    - "eye contact with lens or deliberate avoidance"
+    - "controlled breathing, steady pose"
+  hair:
+    - "styled beach waves"
+    - "intentional wind effect"
+    - "perfectly messy but controlled"

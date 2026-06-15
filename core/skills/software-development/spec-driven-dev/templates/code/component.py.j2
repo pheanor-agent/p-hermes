@@ -1,0 +1,49 @@
+"""
+{{ spec_title }}
+
+Spec: {{ spec_id }}
+Status: {{ status }}
+Version: {{ version }}
+
+{% if examples %}
+Examples:
+{% for example in examples %}
+  - {{ example.name }}: {{ example.input }} → {{ example.expected }}
+{% endfor %}
+{% endif %}
+"""
+
+{% if contract %}
+# Contract:
+# Preconditions:
+{% for pre in contract.preconditions %}
+#   - {{ pre }}
+{% endfor %}
+# Postconditions:
+{% for post in contract.postconditions %}
+#   - {{ post }}
+{% endfor %}
+{% if contract.invariants %}
+# Invariants:
+{% for inv in contract.invariants %}
+#   - {{ inv }}
+{% endfor %}
+{% endif %}
+{% endif %}
+
+
+class {{ class_name }}:
+    """{{ spec_title }}"""
+    
+{% if actions %}
+{% for action in actions %}
+    def {{ action }}(self, *args, **kwargs):
+        """{{ action }}
+        
+        SPEC-{{ spec_id }}
+        """
+        # TODO: Implement {{ action }}
+        pass
+
+{% endfor %}
+{% endif %}

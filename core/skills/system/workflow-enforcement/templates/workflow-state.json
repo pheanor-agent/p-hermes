@@ -1,0 +1,29 @@
+{
+  "jobId": "JOB-XXXX",
+  "status": "running",
+  "currentStep": "investigation",
+  "steps": [
+    { "name": "request", "status": "done", "completedAt": "2026-06-14T10:00:00+09:00" },
+    { "name": "investigation", "status": "in_progress", "completedAt": null },
+    { "name": "design", "status": "pending", "completedAt": null },
+    { "name": "review", "status": "pending", "completedAt": null },
+    { "name": "approval", "status": "pending", "completedAt": null },
+    { "name": "execution", "status": "pending", "completedAt": null },
+    { "name": "test", "status": "pending", "completedAt": null },
+    { "name": "execution_review", "status": "pending", "completedAt": null },
+    { "name": "done", "status": "pending", "completedAt": null }
+  ],
+  "stepModels": [
+    {
+      "step": "investigation",
+      "recommended": "Qwen3.6",
+      "actual": "Qwen3.6",
+      "matched": true,
+      "reason": null,
+      "recordedAt": "2026-06-14T10:00:00+09:00"
+    }
+  ],
+  "startedAt": "2026-06-14T10:00:00+09:00",
+  "updatedAt": "2026-06-14T10:00:00+09:00",
+  "artifacts": []
+}

@@ -1,0 +1,52 @@
+/**
+ * {{ spec_title }}
+ * 
+ * Spec: {{ spec_id }}
+ * Status: {{ status }}
+ * Version: {{ version }}
+{% if examples %}
+ * 
+ * Examples:
+{% for example in examples %} *   - {{ example.name }}: {{ example.input }} → {{ example.expected }}
+{% endfor %}
+{% endif %}
+ */
+
+{% if contract %}
+// Contract:
+// Preconditions:
+{% for pre in contract.preconditions %}
+//   - {{ pre }}
+{% endfor %}
+// Postconditions:
+{% for post in contract.postconditions %}
+//   - {{ post }}
+{% endfor %}
+{% endif %}
+
+class {{ class_name }} {
+    /**
+     * {{ spec_title }}
+     * 
+     * SPEC-{{ spec_id }}
+     */
+    constructor() {
+        // Initialize
+    }
+
+{% if actions %}
+{% for action in actions %}
+    /**
+     * {{ action }}
+     * 
+     * SPEC-{{ spec_id }}
+     */
+    {{ action }}(...args) {
+        // TODO: Implement {{ action }}
+    }
+
+{% endfor %}
+{% endif %}
+}
+
+module.exports = {{ class_name }};

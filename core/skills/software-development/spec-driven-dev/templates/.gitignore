@@ -1,0 +1,39 @@
+# Hermes Spec-driven Project — .gitignore 템플릿
+
+# Hermes Agent files (백업 충돌 방지)
+.hermes/
+.openclaw/
+.shared/
+
+# JOB files
+jobs/
+
+# 환경 변수
+.env
+.env.local
+.env.*.local
+*.secret
+*.key
+
+# Build artifacts
+dist/
+build/
+*.pyc
+__pycache__/
+
+# Node.js
+node_modules/
+
+# Logs/DBs
+*.log
+*.db
+*.sqlite
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

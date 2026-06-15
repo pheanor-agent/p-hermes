@@ -1,0 +1,258 @@
+{
+  "flux2_pro": {
+    "prompt_patterns": {},
+    "success_rates": {
+      "exposure_keywords:braless,sideless": {
+        "total": 2,
+        "success": 2
+      },
+      "story_context:A photograph from": {
+        "total": 1,
+        "success": 0
+      },
+      "exposure_keywords:wide open armhole,high-cut": {
+        "total": 1,
+        "success": 0
+      },
+      "structure_description:The design features,front panel and back panel": {
+        "total": 3,
+        "success": 2
+      },
+      "pose_type:posed,standing": {
+        "total": 3,
+        "success": 2
+      },
+      "style:magazine": {
+        "total": 1,
+        "success": 0
+      },
+      "genre:tropical,beach": {
+        "total": 1,
+        "success": 0
+      },
+      "character_detail:25-year-old,art student": {
+        "total": 1,
+        "success": 0
+      },
+      "pose_type:posed": {
+        "total": 6,
+        "success": 6
+      },
+      "lighting:sunrise,golden hour,natural light": {
+        "total": 1,
+        "success": 1
+      },
+      "genre:tropical,beach,portrait": {
+        "total": 2,
+        "success": 2
+      },
+      "story_context:A still from": {
+        "total": 3,
+        "success": 3
+      },
+      "exposure_keywords:braless,sideless,high-cut": {
+        "total": 1,
+        "success": 1
+      },
+      "lighting:golden hour": {
+        "total": 4,
+        "success": 4
+      },
+      "style:editorial": {
+        "total": 2,
+        "success": 2
+      },
+      "genre:beach,ocean": {
+        "total": 1,
+        "success": 1
+      },
+      "character_detail:27-year-old,art student": {
+        "total": 4,
+        "success": 4
+      },
+      "story_context:A promotional image": {
+        "total": 3,
+        "success": 3
+      },
+      "exposure_keywords:high-cut,minimal coverage,high-cut": {
+        "total": 1,
+        "success": 1
+      },
+      "lighting:golden hour,golden hour,sunset,backlight": {
+        "total": 1,
+        "success": 1
+      },
+      "style:cinematic": {
+        "total": 1,
+        "success": 1
+      },
+      "genre:beach": {
+        "total": 2,
+        "success": 2
+      },
+      "character_detail:29-year-old,art student": {
+        "total": 1,
+        "success": 1
+      },
+      "structure_description:The design features,completely open,Zero side coverage": {
+        "total": 4,
+        "success": 4
+      },
+      "lighting:golden hour,golden hour": {
+        "total": 1,
+        "success": 1
+      },
+      "style:professional,photography": {
+        "total": 1,
+        "success": 1
+      },
+      "genre:beach,ocean,beach": {
+        "total": 1,
+        "success": 1
+      },
+      "character_detail:23-year-old,art student": {
+        "total": 1,
+        "success": 1
+      },
+      "exposure_keywords:minimal coverage,sideless": {
+        "total": 1,
+        "success": 1
+      },
+      "lighting:golden hour,golden hour,sunset,backlight,natural light": {
+        "total": 1,
+        "success": 1
+      },
+      "character_detail:24-year-old,art student": {
+        "total": 1,
+        "success": 1
+      },
+      "exposure_keywords:micro bikini": {
+        "total": 1,
+        "success": 1
+      },
+      "genre:beach,beach": {
+        "total": 1,
+        "success": 1
+      },
+      "story_context:An illustration from": {
+        "total": 1,
+        "success": 1
+      },
+      "exposure_keywords:sideless": {
+        "total": 1,
+        "success": 1
+      },
+      "structure_description:The design features,completely open,completely open,Zero side coverage": {
+        "total": 1,
+        "success": 1
+      },
+      "style:fashion": {
+        "total": 1,
+        "success": 1
+      },
+      "genre:beach,fashion": {
+        "total": 1,
+        "success": 1
+      }
+    },
+    "optimal_settings": {},
+    "last_updated": "2026-05-31T16:09:50.984690"
+  },
+  "comfyui": {
+    "prompt_patterns": {},
+    "success_rates": {},
+    "optimal_settings": {},
+    "last_updated": "2026-05-31T12:08:19.964875"
+  },
+  "seedream": {
+    "prompt_patterns": {},
+    "success_rates": {
+      "story_context:A still from": {
+        "total": 2,
+        "success": 0
+      },
+      "exposure_keywords:deep V-neck": {
+        "total": 1,
+        "success": 0
+      },
+      "structure_description:The design features,front panel and back panel": {
+        "total": 6,
+        "success": 0
+      },
+      "pose_type:posed": {
+        "total": 6,
+        "success": 0
+      },
+      "lighting:golden hour": {
+        "total": 1,
+        "success": 0
+      },
+      "style:editorial": {
+        "total": 3,
+        "success": 0
+      },
+      "genre:beach": {
+        "total": 4,
+        "success": 0
+      },
+      "character_detail:24-year-old,art student": {
+        "total": 1,
+        "success": 0
+      },
+      "exposure_keywords:braless,sideless": {
+        "total": 1,
+        "success": 0
+      },
+      "lighting:golden hour,golden hour": {
+        "total": 2,
+        "success": 0
+      },
+      "style:magazine": {
+        "total": 2,
+        "success": 0
+      },
+      "character_detail:25-year-old,art student": {
+        "total": 1,
+        "success": 0
+      },
+      "exposure_keywords:wide open armhole,high-cut": {
+        "total": 1,
+        "success": 0
+      },
+      "lighting:golden hour,golden hour,sunset,backlight": {
+        "total": 1,
+        "success": 0
+      },
+      "style:professional,photography": {
+        "total": 1,
+        "success": 0
+      },
+      "genre:tropical,beach,beach": {
+        "total": 1,
+        "success": 0
+      },
+      "exposure_keywords:backless": {
+        "total": 1,
+        "success": 0
+      },
+      "exposure_keywords:deep V-neck,high-cut": {
+        "total": 1,
+        "success": 0
+      },
+      "exposure_keywords:high-cut,minimal coverage": {
+        "total": 1,
+        "success": 0
+      },
+      "lighting:sunset,sunset,backlight": {
+        "total": 1,
+        "success": 0
+      },
+      "genre:beach,ocean": {
+        "total": 1,
+        "success": 0
+      }
+    },
+    "optimal_settings": {},
+    "last_updated": "2026-05-31T13:46:39.374506"
+  }
+}

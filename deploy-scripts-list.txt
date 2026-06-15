@@ -1,0 +1,28 @@
+# p-hermes 배포용 핵심 스크립트 목록 (실제 존재하는 것만)
+# 총: 18개
+
+# 워크플로우/JOB 관리
+workflow-gate.sh
+create-job.sh
+verify-file-mutation.sh
+atomic_write.sh
+blackboard-write.sh
+create-project.sh
+archive-project.sh
+
+# 리포트/모니터링
+daily-report.sh
+verify-model-roles.sh
+
+# 지식 파이프라인
+wiki-periodic-sync.sh
+wiki-sync.sh
+knowledge-sync.sh
+
+# 세션 관리
+archive-sessions.sh
+
+# 유틸리티
+check-symlink.sh
+pre-delete-backup.sh
+verify.sh
