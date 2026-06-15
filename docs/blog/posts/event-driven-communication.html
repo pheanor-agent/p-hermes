@@ -1,16 +1,27 @@
-# 이벤트 기반 도메인 통신
-
-> 태그: #architecture #workflow
-> 읽는 시간: ~10분
-
----
-
-## TL;DR
-
-시스템이 복잡해지면, 각 컴포넌트가 서로를 직접 호출하게 됩니다. 이는 치명적인 결합을 의미합니다. Hermes는 **\"도메인 간 직접 호출을 금지\"**하고, 대신 상태 파일과 이벤트를 통한 비동기 통신을 채택했습니다.
-
-```
-┌─────────────────────────────────────────────────────┐
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>이벤트 기반 도메인 통신 | p-hermes</title>
+<style>
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; line-height: 1.6; color: #333; }
+code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; }
+pre { background: #f5f5f5; padding: 12px; border-radius: 5px; overflow-x: auto; }
+a { color: #0366d6; }
+blockquote { border-left: 4px solid #ddd; margin: 0; padding-left: 16px; color: #666; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+th { background: #f5f5f5; }
+h1, h2, h3 { margin-top: 24px; }
+</style>
+</head>
+<body><h1>이벤트 기반 도메인 통신</h1>
+<blockquote>
+<p>태그: #architecture #workflow
+읽는 시간: ~10분</p>
+</blockquote>
+<hr />
+<h2>TL;DR</h2>
+<p>시스템이 복잡해지면, 각 컴포넌트가 서로를 직접 호출하게 됩니다. 이는 치명적인 결합을 의미합니다. Hermes는 <strong>\"도메인 간 직접 호출을 금지\"</strong>하고, 대신 상태 파일과 이벤트를 통한 비동기 통신을 채택했습니다.</p>
+<pre><code>┌─────────────────────────────────────────────────────┐
 │              이벤트 기반 통신 아키텍처                 │
 ├─────────────────────────────────────────────────────┤
 │                                                     │
@@ -24,18 +35,12 @@
 │                                                      │
 │  이벤트 파일: ~/.hermes/state/events/                │
 └─────────────────────────────────────────────────────┘
-```
-
----
-
-## 배경: "동기 호출의 지옥"
-
-### 초기 시스템의 문제
-
-2025년 초, Hermes 시스템에서 지식 업데이트 스크립트가 실행되면, 이 스크립트가 직접 백업 스크립트를 호출했습니다. 백업 스크립트가 끝나면 다시 세션 정리 스크립트를 호출했습니다.
-
-```bash
-# 초기 시스템: 직접 호출 연쇄
+</code></pre>
+<hr />
+<h2>배경: "동기 호출의 지옥"</h2>
+<h3>초기 시스템의 문제</h3>
+<p>2025년 초, Hermes 시스템에서 지식 업데이트 스크립트가 실행되면, 이 스크립트가 직접 백업 스크립트를 호출했습니다. 백업 스크립트가 끝나면 다시 세션 정리 스크립트를 호출했습니다.</p>
+<pre><code class="language-bash"># 초기 시스템: 직접 호출 연쇄
 #!/bin/bash
 # knowledge-sync.sh
 
@@ -47,36 +52,27 @@ bash backup.sh
 
 # 3. 세션 정리 (직접 호출)
 bash session-cleanup.sh
-```
-
-**3가지 치명적 문제**:
-
-1. **블로킹 (Block)**: A가 B를 호출하면, A는 B가 끝날 때까지 멈춰 서 있어야 함
-2. **연쇄 반응**: B에서 오류가 발생하면 A도 함께 죽음
-3. **동시성 붕괴**: 두 에이전트가 동시에 하나의 스크립트 호출 시 데이터 손상
-
-### 실제 사고 사례
-
-**2025-11-20 연쇄 실패**
+</code></pre>
+<p><strong>3가지 치명적 문제</strong>:</p>
+<ol>
+<li><strong>블로킹 (Block)</strong>: A가 B를 호출하면, A는 B가 끝날 때까지 멈춰 서 있어야 함</li>
+<li><strong>연쇄 반응</strong>: B에서 오류가 발생하면 A도 함께 죽음</li>
+<li><strong>동시성 붕괴</strong>: 두 에이전트가 동시에 하나의 스크립트 호출 시 데이터 손상</li>
+</ol>
+<h3>실제 사고 사례</h3>
+<p><strong>2025-11-20 연쇄 실패</strong>
 - 지식 업데이트 스크립트 실패 → 백업 스크립트도 함께 실패
 - 결과: 지식 데이터 손실 + 백업 데이터도 손상됨
-- 복구 시간: 4시간 (데이터베이스 롤백 필요)
-
-**2026-01-05 동시성 충돌**
+- 복구 시간: 4시간 (데이터베이스 롤백 필요)</p>
+<p><strong>2026-01-05 동시성 충돌</strong>
 - Hermes와 OpenClaw가 동시에 backup.sh 호출
 - 파일 락 충돌 → 백업 데이터 손상
-- 결과: 24시간 분량의 백업 데이터 손실
-
----
-
-## 설계 결정: 상태 파일 기반 이벤트 통신
-
-Hermes는 **"함수 호출"을 "파일 변경 이벤트"로 대체**했습니다.
-
-### 핵심 원칙: 도메인 간 직접 호출 금지
-
-```
-┌─────────────────────────────────────────────────────┐
+- 결과: 24시간 분량의 백업 데이터 손실</p>
+<hr />
+<h2>설계 결정: 상태 파일 기반 이벤트 통신</h2>
+<p>Hermes는 <strong>"함수 호출"을 "파일 변경 이벤트"로 대체</strong>했습니다.</p>
+<h3>핵심 원칙: 도메인 간 직접 호출 금지</h3>
+<pre><code>┌─────────────────────────────────────────────────────┐
 │              직접 호출 금지 원칙                      │
 ├─────────────────────────────────────────────────────┤
 │                                                     │
@@ -88,27 +84,23 @@ Hermes는 **"함수 호출"을 "파일 변경 이벤트"로 대체**했습니다
 │  ⚠️ 예외: Gateway 스크립트 (메시징 연동용)           │
 │                                                     │
 └─────────────────────────────────────────────────────┘
-```
-
-### 1. 상태 파일 작성 (Atomic Write)
-
-에이전트가 작업을 완료하면, 공유 폴더에 상태 파일을 원자적으로 갱신합니다.
-
-```python
-# atomic_write.py - 원자적 파일 쓰기
+</code></pre>
+<h3>1. 상태 파일 작성 (Atomic Write)</h3>
+<p>에이전트가 작업을 완료하면, 공유 폴더에 상태 파일을 원자적으로 갱신합니다.</p>
+<pre><code class="language-python"># atomic_write.py - 원자적 파일 쓰기
 import fcntl
 import json
 import tempfile
 import os
 
 def atomic_write(path: str, data: dict):
-    """
+    &quot;&quot;&quot;
     원자적으로 파일을 씁니다.
     실패 시 원본 파일은 변경되지 않습니다.
-    """
+    &quot;&quot;&quot;
     dir_path = os.path.dirname(path)
     tmp_fd, tmp_path = tempfile.mkstemp(dir=dir_path)
-    
+
     try:
         with os.fdopen(tmp_fd, 'w') as f:
             json.dump(data, f, indent=2)
@@ -129,158 +121,156 @@ atomic_write(
         'timestamp': '2026-05-27T10:00:00Z'
     }
 )
-```
-
-### 2. 비동기 감지 및 처리
-
-다른 도메인은 주기적으로 상태 파일을 스캔하여 변경 사항을 감지합니다.
-
-```bash
-#!/bin/bash
+</code></pre>
+<h3>2. 비동기 감지 및 처리</h3>
+<p>다른 도메인은 주기적으로 상태 파일을 스캔하여 변경 사항을 감지합니다.</p>
+<pre><code class="language-bash">#!/bin/bash
 # event-scanner.sh - 이벤트 스캐너 (주기적 실행)
 
-STATE_DIR="$HOME/.hermes/state"
-LAST_SCAN_FILE="$HOME/.hermes/state/.last_scan"
+STATE_DIR=&quot;$HOME/.hermes/state&quot;
+LAST_SCAN_FILE=&quot;$HOME/.hermes/state/.last_scan&quot;
 
 # 1. 마지막 스캔 시간 확인
-LAST_SCAN=$(cat "$LAST_SCAN_FILE" 2>/dev/null || echo "0")
+LAST_SCAN=$(cat &quot;$LAST_SCAN_FILE&quot; 2&gt;/dev/null || echo &quot;0&quot;)
 
 # 2. 변경된 상태 파일 확인
-for state_file in "$STATE_DIR"/*.json; do
-    MODIFIED=$(stat -c %Y "$state_file" 2>/dev/null || echo "0")
-    
-    if [ "$MODIFIED" -gt "$LAST_SCAN" ]; then
-        echo "[Event] 변경 감지: $state_file"
-        
+for state_file in &quot;$STATE_DIR&quot;/*.json; do
+    MODIFIED=$(stat -c %Y &quot;$state_file&quot; 2&gt;/dev/null || echo &quot;0&quot;)
+
+    if [ &quot;$MODIFIED&quot; -gt &quot;$LAST_SCAN&quot; ]; then
+        echo &quot;[Event] 변경 감지: $state_file&quot;
+
         # 3. 이벤트 처리
-        handle_event "$state_file"
+        handle_event &quot;$state_file&quot;
     fi
 done
 
 # 4. 스캔 시간 갱신
-date +%s > "$LAST_SCAN_FILE"
-```
-
-### 3. 이벤트 처리 로직
-
-```python
-# event_handler.py - 이벤트 처리기
+date +%s &gt; &quot;$LAST_SCAN_FILE&quot;
+</code></pre>
+<h3>3. 이벤트 처리 로직</h3>
+<pre><code class="language-python"># event_handler.py - 이벤트 처리기
 import json
 import os
 
 def handle_event(state_file: str):
-    """상태 파일 변경 이벤트를 처리합니다."""
-    
+    &quot;&quot;&quot;상태 파일 변경 이벤트를 처리합니다.&quot;&quot;&quot;
+
     with open(state_file, 'r') as f:
         state = json.load(f)
-    
+
     job_id = state.get('jobId')
     status = state.get('status')
-    
+
     if status == 'completed':
         # 백업 실행
         trigger_backup(job_id)
-        
+
         # 지식 시스템 동기화
         sync_knowledge(job_id)
-        
+
     elif status == 'failed':
         # 실패 알림 전송
         send_failure_alert(job_id)
-```
-
----
-
-## 이벤트 버스 아키텍처 (JOB-1568, 2026-06-13)
-
-**업데이트**: 단일 진입점 (`event.sh`)으로 통합된 이벤트 버스 시스템으로 진화했습니다.
-
-```bash
-# event.sh - 이벤트 버스 진입점
+</code></pre>
+<hr />
+<h2>이벤트 버스 아키텍처 (JOB-1568, 2026-06-13)</h2>
+<p><strong>업데이트</strong>: 단일 진입점 (<code>event.sh</code>)으로 통합된 이벤트 버스 시스템으로 진화했습니다.</p>
+<pre><code class="language-bash"># event.sh - 이벤트 버스 진입점
 #!/bin/bash
 
-event_type="$1"
-payload="$2"
+event_type=&quot;$1&quot;
+payload=&quot;$2&quot;
 
 # 1. mutex 기반 원자적 이벤트 처리
-exec 200>/tmp/.event-mutex.lock
-flock -n 200 || { echo "Event already processing"; exit 1; }
+exec 200&gt;/tmp/.event-mutex.lock
+flock -n 200 || { echo &quot;Event already processing&quot;; exit 1; }
 
 # 2. 이벤트 저장 (JSONL)
-echo "{\"type\": \"$event_type\", \"payload\": $payload, \"timestamp\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" \
-  >> ~/.hermes/state/event-history.jsonl
+echo &quot;{\&quot;type\&quot;: \&quot;$event_type\&quot;, \&quot;payload\&quot;: $payload, \&quot;timestamp\&quot;: \&quot;$(date -u +%Y-%m-%dT%H:%M:%SZ)\&quot;}&quot; \
+  &gt;&gt; ~/.hermes/state/event-history.jsonl
 
 # 3. 이벤트 처리
-case "$event_type" in
+case &quot;$event_type&quot; in
   job_completed)
-    handle_job_completed "$payload"
+    handle_job_completed &quot;$payload&quot;
     ;;
   job_failed)
-    handle_job_failed "$payload"
+    handle_job_failed &quot;$payload&quot;
     ;;
   system_alert)
-    handle_system_alert "$payload"
+    handle_system_alert &quot;$payload&quot;
     ;;
 esac
 
 # 4. mutex 해제
 flock -u 200
-```
-
-**특징**:
-- **mkdir atomic mutex**: 동시 이벤트 처리 방지
-- **JSONL history**: 모든 이벤트 기록 유지
-- **silent-on-success**: 성공 시 무음 처리
-
----
-
-## 다른 대안과의 비교
-
-| 대안 | 문제점 | 이벤트 기반 통신 |
-|------|--------|-----------------|
-| **함수/스크립트 직접 호출** | 결합도 높고 오류 연쇄 전파 | 도메인 간 완전한 비동기 격리 |
-| **Message Queue (RabbitMQ 등)** | 운영 및 유지보수 너무 복잡 | 파일 시스템 자체를 큐로 활용 |
-| **DB Trigger** | 데이터베이스 스키마 변경 필요 | 별도 인프라 설정 불필요 |
-| **gRPC/microservice** | 네트워크 오버헤드, 설정 복잡 | 로컬 파일 시스템으로 최소 오버헤드 |
-
----
-
-## 실제 운영 사례
-
-### 성공 사례: 지식 동기화 파이프라인
-
-**이벤트 흐름**:
-```
-1. 에이전트: 작업 완료 → 상태 파일 작성
+</code></pre>
+<p><strong>특징</strong>:
+- <strong>mkdir atomic mutex</strong>: 동시 이벤트 처리 방지
+- <strong>JSONL history</strong>: 모든 이벤트 기록 유지
+- <strong>silent-on-success</strong>: 성공 시 무음 처리</p>
+<hr />
+<h2>다른 대안과의 비교</h2>
+<table>
+<thead>
+<tr>
+<th>대안</th>
+<th>문제점</th>
+<th>이벤트 기반 통신</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>함수/스크립트 직접 호출</strong></td>
+<td>결합도 높고 오류 연쇄 전파</td>
+<td>도메인 간 완전한 비동기 격리</td>
+</tr>
+<tr>
+<td><strong>Message Queue (RabbitMQ 등)</strong></td>
+<td>운영 및 유지보수 너무 복잡</td>
+<td>파일 시스템 자체를 큐로 활용</td>
+</tr>
+<tr>
+<td><strong>DB Trigger</strong></td>
+<td>데이터베이스 스키마 변경 필요</td>
+<td>별도 인프라 설정 불필요</td>
+</tr>
+<tr>
+<td><strong>gRPC/microservice</strong></td>
+<td>네트워크 오버헤드, 설정 복잡</td>
+<td>로컬 파일 시스템으로 최소 오버헤드</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>실제 운영 사례</h2>
+<h3>성공 사례: 지식 동기화 파이프라인</h3>
+<p><strong>이벤트 흐름</strong>:</p>
+<pre><code>1. 에이전트: 작업 완료 → 상태 파일 작성
 2. 이벤트 스캐너: 변경 감지 → 백업 트리거
 3. 백업 스크립트: 실행 → 백업 완료 상태 파일 작성
 4. 이벤트 스캐너: 변경 감지 → 지식 동기화 트리거
 5. 지식 동기화: 실행 → 완료 상태 파일 작성
-```
-
-**결과**:
+</code></pre>
+<p><strong>결과</strong>:
 - 연쇄 실패율: 0% (이전 15%에서)
-- 복구 시간: 5분 (이전 4시간에서)
-
-### 실패 사례: 경합 조건 (Race Condition)
-
-**문제**:
+- 복구 시간: 5분 (이전 4시간에서)</p>
+<h3>실패 사례: 경합 조건 (Race Condition)</h3>
+<p><strong>문제</strong>:
 - 파일 변경이 감지되기도 전에 다른 에이전트가 같은 파일 덮어씀
-- 결과: 이벤트 누락 또는 중복 처리
-
-**해결**:
-- `flock` 기반 Atomic Write 도입
+- 결과: 이벤트 누락 또는 중복 처리</p>
+<p><strong>해결</strong>:
+- <code>flock</code> 기반 Atomic Write 도입
 - 이벤트 처리 시 mutex 로킹
-- JSONL history로 이벤트 추적 가능
-
----
-
-## 관련 포스트
-
-- [5-Tier 물리 계층화 설계](./why-5-tier-architecture.md)
-- [Cron 3계층 분리 아키텍처](./cron-3layer-separation.md)
-- [초기 설계: 워커 vs 오케스트레이터 분리의 교훈](./dual-agent-design.md)
-
----
-
-_이벤트 기반 통신은 시스템의 결합도를 극단적으로 낮춥니다. 상태 파일은 도메인 간 통신의 핵심 메커니즘입니다._
+- JSONL history로 이벤트 추적 가능</p>
+<hr />
+<h2>관련 포스트</h2>
+<ul>
+<li><a href="./why-5-tier-architecture.md">5-Tier 물리 계층화 설계</a></li>
+<li><a href="./cron-3layer-separation.md">Cron 3계층 분리 아키텍처</a></li>
+<li><a href="./dual-agent-design.md">초기 설계: 워커 vs 오케스트레이터 분리의 교훈</a></li>
+</ul>
+<hr />
+<p><em>이벤트 기반 통신은 시스템의 결합도를 극단적으로 낮춥니다. 상태 파일은 도메인 간 통신의 핵심 메커니즘입니다.</em></p></body>
+</html>
