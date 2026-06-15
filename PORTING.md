@@ -27,44 +27,39 @@ bash setup.sh ~/.hermes
 
 ---
 
-## 🔧 수동 설치
+## 🔧 수동 설치 (setup.sh 실행 시 에러 발생 시만)
 
-### 1. 5-Tier 디렉토리 구조 생성
+`setup.sh` 실행 후에도 오류가 발생한다면 다음 단계를 수동으로 진행하세요.
 
-```bash
-HERMES_HOME=$HOME/.hermes
-mkdir -p $HERMES_HOME/{core/{scripts,skills},runtime/{state,workspace},interfaces/session,infra/{cron,backups},release/{wiki,blog,slides}}
-mkdir -p $HERMES_HOME/knowledge/wiki/{system,dev,custom,knowledge}
-```
-
-### 2. 설정 파일 생성
+### 1. 설정 파일 수정
 
 ```bash
-# 설정 템플릿 복사
-cp config.yaml.example $HERMES_HOME/config.yaml
-cp AGENTS.md.example $HERMES_HOME/AGENTS.md
+# 설정 파일 위치: ~/.hermes/config.yaml
 
-# [필수] config.yaml의 다음 필드를 수정하세요:
+# [필수] 다음 필드를 수정하세요:
 #   - model.api_key: 실제 API 키 또는 환경변수
 #   - model.base_url: 실제 API 엔드포인트
 #   - model.default: 기본 모델명
 ```
 
-### 3. 스크립트/스킬 배치
+### 2. 크론 레지스트리 초기화
 
 ```bash
-# 스크립트 복사
-cp -r core/scripts/* $HERMES_HOME/core/scripts/
-chmod +x $HERMES_HOME/core/scripts/*.sh
-
-# 스킬 복사
-cp -r core/skills/* $HERMES_HOME/core/skills/
+# 크론 스케줄 파일: ~/.hermes/infra/cron/registry.yaml
 ```
 
-### 4. 크론 레지스트리 초기화
+### 참고: 폴더 구조
 
-```bash
-cp infra/cron/registry.yaml.example $HERMES_HOME/infra/cron/registry.yaml
+`setup.sh`는 다음 5-Tier 구조를 자동으로 생성합니다:
+
+```
+~/.hermes/
+├── core/          # 정적 설정 (스크립트, 스킬)
+├── runtime/       # 동적 상태 (세션, 워크스페이스)
+├── interfaces/    # 휘발성 데이터 (디스코드, 텔레그램 연동)
+├── infra/         # 상태 관리 (크론, 백업)
+└── release/       # 선택적 배포 (wiki, 블로그, 슬라이드)
+└── knowledge/     # 지식 시스템 (원본 → 가공 파이프라인 → Wiki DB)
 ```
 
 ---
