@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>p-hermes System Overview</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background: #f8f9fa; color: #333; }
+        .slide-container { width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .slide { display: none; width: 80%; max-width: 1000px; text-align: center; }
+        .slide.active { display: block; animation: fadeIn 0.5s; }
+        h1 { font-size: 3rem; margin-bottom: 1rem; color: #2c3e50; }
+        h2 { font-size: 2.2rem; color: #34495e; }
+        p, li { font-size: 1.5rem; line-height: 1.6; }
+        ul { text-align: left; margin: 20px auto; max-width: 800px; }
+        .box-diagram { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 30px 0; }
+        .box { background: #ffffff; border: 2px solid #3498db; padding: 20px; border-radius: 10px; width: 200px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .box h3 { margin: 0; color: #3498db; }
+        .nav-btn { position: absolute; bottom: 20px; padding: 10px 20px; font-size: 1.2rem; cursor: pointer; background: #3498db; color: white; border: none; border-radius: 5px; }
+        .nav-btn#next { right: 20px; }
+        .nav-btn#prev { left: 20px; }
+        .progress { position: fixed; bottom: 0; left: 0; height: 5px; background: #3498db; transition: width 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .details { display: none; background: #eef; padding: 15px; border-radius: 8px; margin-top: 15px; font-size: 1.2rem; }
+        .toggle-btn { background: #2ecc71; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="progress" id="progress"></div>
+        <button class="nav-btn" id="prev">이전</button>
+        <button class="nav-btn" id="next">다음</button>
+    </div>
+    <script>
+        const slides = [
+            { title: "p-hermes: Orchestrated Intelligence Agent", content: "<p>고도의 자율성을 가진 AI 에이전트 시스템</p><p>설계-검증-실행-회고하는 Spec-Driven Development 파이프라인</p>" },
+            { title: "Hermes의 핵심 가치", content: "<ul><li><b>신뢰성</b>: 무분별한 실행을 차단하고 검증된 결과만 제공</li><li><b>추적성</b>: 모든 작업은 추적 가능한 JOB으로 기록</li><li><b>확장성</b>: 78개 이상의 스킬과 지식 베이스로 기능 확장</li><li><b>안전성</b>: 9단계 상태머신과 스크립트 기반 규칙 강제</li></ul>" },
+            { title: "시스템 논리 구조 (9 Systems)", content: "<div class='box-diagram'><div class='box'><h3>Workflow</h3>9-Step State Machine</div><div class='box'><h3>Knowledge</h3>Domain-based Wiki</div><div class='box'><h3>Cron</h3>3-Layer Automation</div><div class='box'><h3>Messaging</h3>Multi-platform</div></div><button class='toggle-btn' onclick='toggle(this)'>상세 보기</button><div class='details'>Hermes는 9개의 논리 시스템으로 구성되어 있습니다. Workflow, Knowledge, Cron, Messaging, Backup, Skill, etc.</div>" },
+            { title: "5-Tier 물리 구조", content: "<div class='box-diagram'><div class='box'><h3>Core</h3>정적 설정</div><div class='box'><h3>Runtime</h3>동적 상태</div><div class='box'><h3>Interfaces</h3>외부 인터페이스</div><div class='box'><h3>Infra</h3>지속적 상태</div><div class='box'><h3>Release</h3>배포 데이터</div></div><button class='toggle-btn' onclick='toggle(this)'>상세 보기</button><div class='details'>파일 시스템의 구조가 아키텍처를 반영합니다. 도메인별 물리적 격리로 의존성 순환 및 데이터 오염을 근본적으로 차단합니다.</div>" },
+            { title: "듀얼 에이전트 아키텍처", content: "<p><b>Hermes (워커)</b>: 사용자 요청 처리, 코드 작성, 파일 수정</p><p><b>OpenClaw (관리자)</b>: 시스템 모니터링, 백업, 지식 동기화</p><p style='margin-top:20px;'>두 에이전트는 <b>Blackboard 패턴</b>을 통해 비동기적으로 통신합니다.</p>" },
+            { title: "지식 시스템 파이프라인", content: "<p>1. 원본 수집 (Session, JOB, News)</p><p>2. 가공 파이프라인 (LLM 요약, 도메인 분류)</p><p>3. Wiki DB 저장 (FTS5 기반 초고속 검색)</p><p>4. 에이전트 로드 (Context-aware Injection)</p>" },
+            { title: "자동화(Cron) 3계층", content: "<p><b>1. Registry</b>: 모든 작업의 SSOT</p><p><b>2. Wrapper</b>: 환경 변수 로드 및 세션 설정</p><p><b>3. Runner</b>: 실제 에이전트 루프 또는 스크립트 수행</p><button class='toggle-btn' onclick='toggle(this)'>상세 보기</button><div class='details'>실패 격리와 관측성을 확보했습니다. 실패 시 지수 백오프(1초→2초→4초)로 3회 재시도합니다.</div>" },
+            { title: "Spec-Driven Development", content: "<p><b>사양서(SSOT) $\rightarrow$ 설계서 $\rightarrow$ 코드 $\rightarrow$ 검증</p><p>에이전트는 사양서에 명시된 Postconditions을 스크립트로 통과해야 작업이 완료됩니다.</p><p>텍스트 규칙이 아닌 <b>실행 가능한 코드</b>로 강제합니다.</p>" },
+            { title: "문서화 3-트랙 시스템", content: "<div class='box-diagram'><div class='box'><h3>Wiki</h3>How-to (사용 가이드)</div><div class='box'><h3>Blog</h3>Why (기술 심층)</div><div class='box'><h3>Slides</h3>What (시각화 덱)</div></div><p>목적과 독자에 최적화된 3개의 트랙으로 전체 콘텐츠를 구성합니다.</p>" },
+            { title: "Reference & Links", content: "<p>자세한 내용은 아래 링크에서 확인하세요.</p><ul><li>Guide Wiki: <a href='../wiki/index.html'>wiki/</a></li><li>Dev Blog: <a href='../blog/index.html'>blog/</a></li><li>Architecture: <a href='../ARCHITECTURE.html'>architecture/</a></li></ul>" }
+        ];
+        let current = 0;
+        function showSlide(n) {
+            const container = document.querySelector('.slide-container');
+            container.querySelectorAll('.slide').forEach(s => s.remove());
+            const div = document.createElement('div');
+            div.className = 'slide active';
+            div.innerHTML = `<h1>${slides[n].title}</h1>${slides[n].content}`;
+            container.insertBefore(div, document.querySelector('.progress'));
+            document.getElementById('progress').style.width = ((n+1)/slides.length*100) + '%';
+        }
+        document.getElementById('next').onclick = () => { current = (current+1)%slides.length; showSlide(current); };
+        document.getElementById('prev').onclick = () => { current = (current-1+slides.length)%slides.length; showSlide(current); };
+        function toggle(btn) { const d = btn.nextElementSibling; d.style.display = d.style.display === 'block' ? 'none' : 'block'; }
+        showSlide(0);
+    </script>
+</body>
+</html>

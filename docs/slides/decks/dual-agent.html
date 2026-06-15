@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>p-hermes Dual Agent Collaboration</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #f2f3f4; color: #333; }
+        .slide-container { width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .slide { display: none; width: 80%; max-width: 1000px; text-align: center; }
+        .slide.active { display: block; animation: fadeIn 0.5s; }
+        h1 { font-size: 2.8rem; color: #2c3e50; }
+        p, li { font-size: 1.4rem; line-height: 1.6; }
+        .agent { display: inline-block; border: 2px solid #8e44ad; background: #fff; padding: 20px; margin: 10px; width: 250px; border-radius: 8px; vertical-align: top; }
+        .agent h3 { margin: 0; color: #8e44ad; }
+        .nav-btn { position: absolute; bottom: 20px; padding: 10px 20px; font-size: 1.2rem; cursor: pointer; background: #8e44ad; color: white; border: none; border-radius: 5px; }
+        .nav-btn#next { right: 20px; } .nav-btn#prev { left: 20px; }
+        .progress { position: fixed; bottom: 0; left: 0; height: 5px; background: #8e44ad; transition: width 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .details { display: none; background: #ebdef0; padding: 15px; border-radius: 8px; margin-top: 15px; font-size: 1.1rem; text-align: left; }
+        .toggle-btn { background: #16a085; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="progress" id="progress"></div>
+        <button class="nav-btn" id="prev">이전</button>
+        <button class="nav-btn" id="next">다음</button>
+    </div>
+    <script>
+        const slides = [
+            { title: "듀얼 에이전트 협업 아키텍처", content: "<p>워커(Worker)는 오직 작업을 수행하고,<br>오케스트레이터(Orchestrator)는 오직 관리를 수행합니다.</p>" },
+            { title: "에이전트 2대 분업 구조", content: "<div class='agent'><h3>Hermes (워커)</h3><p>사용자 요청 처리<br>코드 작성 및 파일 수정<br>웹 검색, 브라우저 제어</p></div><div class='agent'><h3>OpenClaw (관리자)</h3><p>시스템 건강 상태 모니터링<br>백업 관리 및 지식 동기화<br>세션 DB 관리</p></div><p style='margin-top:20px;'>두 에이전트는 직접 호출하지 않고 <b>Blackboard</b>를 통해 통신합니다.</p>" },
+            { title: "Blackboard 패턴 (판 통신)", content: "<p>공유 상태 파일을 통한 비동기 통신:</p><ul><li><b>1. Hermes</b>가 작업을 완료하면 Blackboard에 결과 파일 경로를 기록합니다.</li><li><b>2. OpenClaw</b>는 주기적으로 Blackboard를 스캔하여 변경 사항을 감지합니다.</li><li><b>3. OpenClaw</b>가 백업 및 동기화를 실행합니다.</li></ul><button class='toggle-btn' onclick='toggle(this)'>상세 보기</button><div class='details'>이러한 방식은 Hermes의 작업을 방해하지 않으면서도 시스템 관리를 지속할 수 있게 해줍니다.</div>" },
+            { title: "상태 불일치(State Drift) 해결", content: "<p>문제가 생긴 적이 있습니다:</p><p>'두 에이전트가 서로 다른 사실을 기억하고 있어 충돌한다'</p><p style='margin-top:20px;'><b>해결책:</b> Blackboard 파일의 원자성(Atomic Write)을 <b>flock 기반 락킹</b>으로 강화하여, 동시 쓰기 충돌을 근본적으로 차단했습니다.</p>" },
+            { title: "이벤트 기반 도메인 통신", content: "<p>도메인 간 직접 스크립트 실행을 금지합니다.</p><ul><li>A 도메인이 B 도메인의 스크립트를 직접 호출(X)</li><li>A 도메인이 상태 파일을 갱신하고, B가 변경을 감지하여 처리(O)</li></ul><p>이는 결합도를 낮추고 오류의 연쇄 전파를 막습니다.</p>" },
+            { title: "Reference & Links", content: "<p>자세한 내용은 아래 링크에서 확인하세요.</p><ul><li>Guide Wiki: <a href='../wiki/index.html'>wiki/</a></li><li>Dev Blog: <a href='../blog/index.html'>blog/</a></li><li>Architecture: <a href='../ARCHITECTURE.html'>architecture/</a></li></ul>" }
+        ];
+        let current = 0;
+        function showSlide(n) {
+            const container = document.querySelector('.slide-container');
+            container.querySelectorAll('.slide').forEach(s => s.remove());
+            const div = document.createElement('div');
+            div.className = 'slide active';
+            div.innerHTML = `<h1>${slides[n].title}</h1>${slides[n].content}`;
+            container.insertBefore(div, document.querySelector('.progress'));
+            document.getElementById('progress').style.width = ((n+1)/slides.length*100) + '%';
+        }
+        document.getElementById('next').onclick = () => { current = (current+1)%slides.length; showSlide(current); };
+        document.getElementById('prev').onclick = () => { current = (current-1+slides.length)%slides.length; showSlide(current); };
+        function toggle(btn) { const d = btn.nextElementSibling; d.style.display = d.style.display === 'block' ? 'none' : 'block'; }
+        showSlide(0);
+    </script>
+</body>
+</html>
