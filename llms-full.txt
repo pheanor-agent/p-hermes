@@ -1,7 +1,8 @@
 # p-hermes Full Documentation Index
 
 ## Files
-- **docs/blog/index.md** (21 lines): ✍️ p-hermes Dev Blog
+- **docs/blog/index.md** (22 lines): ✍️ p-hermes Dev Blog
+- **docs/blog/posts/content-system-design.md** (108 lines): 콘텐츠 시스템 설계: AI의 표현력을 구조화하는 법
 - **docs/blog/posts/cron-3layer-separation.md** (343 lines): ⏰ 잊지 않고 일하는 AI의 비결: 크론(Cron) 3계층 아키텍처
 - **docs/blog/posts/event-driven-communication.md** (346 lines): 이벤트 기반 도메인 통신: 결합도를 낮추고 유연성을 높이는 법
 - **docs/blog/posts/knowledge-system-design.md** (333 lines): 지식 분류 시스템 설계: AI의 기억을 구조화하는 법
