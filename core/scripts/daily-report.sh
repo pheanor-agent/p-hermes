@@ -22,8 +22,8 @@ set -e
 # ─── 원자적 쓰기 라이브러리 ────────────────────────────────────────────────
 source $HERMES_ROOT/core/scripts/lib/atomic.sh 2>/dev/null || true
 
-WORKSPACE="/home/bot/.hermes/workspace"
-WORKSPACE_IMAGE="/home/bot/.hermes/workspace_image"
+WORKSPACE="/home/bot/.openclaw/workspace"
+WORKSPACE_IMAGE="/home/bot/.openclaw/workspace_image"
 MEMORY_DIR="$WORKSPACE/memory"
 LOG_DIR="$WORKSPACE/memory/logs"
 REPORT_DIR="$MEMORY_DIR/daily-reports"
