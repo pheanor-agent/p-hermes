@@ -60,7 +60,7 @@ p-hermes는 AI 기반 자율 에이전트 시스템으로, 설계-검증-실행-
 - **검증**: `spec-drift.sh`, `spec-rollback.sh`
 - **Matrix**: `specs/_matrix.json`
 
-### 3.3 Expression System
+### 3.3 Content System
 - **엔진**: `tier-generator.py`, `tone-adapter.py`, `validator.py`
 - **템플릿**: 교육, 내러티브, 시각, 프레젠테이션, 이미지
 - **검증**: `anti-slop-library.json`
@@ -119,7 +119,7 @@ p-hermes/
 
 | 항목 | 상태 | 설명 |
 |------|------|------|
-| Expression System | ❌ | engine/, templates/, tests/ 전체 |
+| Content System | ❌ | engine/, templates/, tests/ 전체 |
 | Custom Skills | ❌ | workflow, knowledge, cron 등 26개 |
 | 운영 스크립트 | ❌ | health-check, knowledge-process 등 125개 |
 
@@ -128,7 +128,7 @@ p-hermes/
 ## 7. 추가 계획
 
 ### Phase 1: 핵심 시스템
-1. Expression System engine 전체 추가
+1. Content System engine 전체 추가
 2. Custom skills 중 핵심 10개 추가
 3. 운영 스크립트 중 핵심 20개 추가
 

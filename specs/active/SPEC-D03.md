@@ -43,7 +43,7 @@ tags: [expression, d1, documentation-standard, multi-level]
   - **최소 분량**: Wiki 가이드 $\ge$ 1,500자, Blog 포스트 $\ge$ 3,000자.
 
 ### 2.3 표현력 시스템 D1 적용 (Tone & Manner)
-비기술적 대상 독자를 위해 **Expression System D1** 톤을 적용합니다.
+비기술적 대상 독자를 위해 **Content System D1** 톤을 적용합니다.
 
 - **친근한 비유**: 복잡한 아키텍처를 일상적인 역할(예: 팀장-사원, 비서-사장)에 비유하여 설명.
 - **단계적 확장**: 쉬운 용어 $\rightarrow$ 기술 용어 $\rightarrow$ 심화 개념 순으로 전개.

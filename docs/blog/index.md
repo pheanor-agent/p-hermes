@@ -17,5 +17,6 @@ Hermes의 기술적 결정과 설계 철학을 기록하는 공간입니다. 단
 | **역할 기반 모델 라우팅** | #architecture | 작업 특성별 모델 자동 배정 메커니즘 | [읽기](./posts/model-routing-design.md) |
 | **텍스트 규칙의 코드 강제** | #spec-driven | Spec → Script → Validation 루프 | [읽기](./posts/structural-enforcement.md) |
 | **실패 패턴에서 배운 교훈** | #lessons-learned | 반복되는 오류를 시스템적으로 막는 법 | [읽기](./posts/lessons-from-failures.md) |
+| **콘텐츠 시스템 설계** | #content | 표현력을 자동화하는 파이프라인 | [읽기](./posts/content-system-design.md) |
 
 ---

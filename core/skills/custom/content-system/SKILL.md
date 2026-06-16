@@ -6,7 +6,7 @@ tags: ["documentation", "content", "creative", "routing"]
 related_skills: ["seminar-slides", "baoyu-comic", "baoyu-infographic", "architecture-diagram", "novel-writing", "comfyui-remote"]
 ---
 
-# 표현력 시스템 (Expression System)
+# 콘텐츠 시스템 (Expression System)
 
 > "단순 요약이 아닌, 이해와 흥미를 전달하는 콘텐츠"
 
@@ -170,7 +170,7 @@ analogy = find_analogy(concept="docker", target="non-technical")
 
 ## 6. 기존 스킬과의 관계
 
-표현력 시스템은 기존 스킬을 파괴하지 않습니다. 메타 스킬이 하위 도메인으로 래핑하여 공유 엔진을 제공합니다.
+콘텐츠 시스템은 기존 스킬을 파괴하지 않습니다. 메타 스킬이 하위 도메인으로 래핑하여 공유 엔진을 제공합니다.
 
 | 기존 스킬 | 새로운 역할 |
 |-----------|-------------|
