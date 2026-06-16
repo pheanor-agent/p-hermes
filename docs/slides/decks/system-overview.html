@@ -41,7 +41,7 @@
             { title: "자동화(Cron) 3계층", content: "<p><b>1. Registry</b>: 모든 작업의 SSOT</p><p><b>2. Wrapper</b>: 환경 변수 로드 및 세션 설정</p><p><b>3. Runner</b>: 실제 에이전트 루프 또는 스크립트 수행</p><button class='toggle-btn' onclick='toggle(this)'>상세 보기</button><div class='details'>실패 격리와 관측성을 확보했습니다. 실패 시 지수 백오프(1초→2초→4초)로 3회 재시도합니다.</div>" },
             { title: "Spec-Driven Development", content: "<p><b>사양서(SSOT) $\rightarrow$ 설계서 $\rightarrow$ 코드 $\rightarrow$ 검증</p><p>에이전트는 사양서에 명시된 Postconditions을 스크립트로 통과해야 작업이 완료됩니다.</p><p>텍스트 규칙이 아닌 <b>실행 가능한 코드</b>로 강제합니다.</p>" },
             { title: "문서화 3-트랙 시스템", content: "<div class='box-diagram'><div class='box'><h3>Wiki</h3>How-to (사용 가이드)</div><div class='box'><h3>Blog</h3>Why (기술 심층)</div><div class='box'><h3>Slides</h3>What (시각화 덱)</div></div><p>목적과 독자에 최적화된 3개의 트랙으로 전체 콘텐츠를 구성합니다.</p>" },
-            { title: "Reference & Links", content: "<p>자세한 내용은 아래 링크에서 확인하세요.</p><ul><li>Guide Wiki: <a href='../wiki/index.html'>wiki/</a></li><li>Dev Blog: <a href='../blog/index.html'>blog/</a></li><li>Architecture: <a href='../ARCHITECTURE.html'>architecture/</a></li></ul>" }
+            { title: "Reference & Links", content: "<p>자세한 내용은 아래 링크에서 확인하세요.</p><ul><li>Guide Wiki: <a href='../wiki/index.md'>wiki/</a></li><li>Dev Blog: <a href='../blog/index.md'>blog/</a></li><li>Architecture: <a href='../ARCHITECTURE.md'>architecture/</a></li></ul>" }
         ];
         let current = 0;
         function showSlide(n) {

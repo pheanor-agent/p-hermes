@@ -33,7 +33,33 @@
             { title: "Blackboard 패턴 (판 통신)", content: "<p>공유 상태 파일을 통한 비동기 통신:</p><ul><li><b>1. Hermes</b>가 작업을 완료하면 Blackboard에 결과 파일 경로를 기록합니다.</li><li><b>2. OpenClaw</b>는 주기적으로 Blackboard를 스캔하여 변경 사항을 감지합니다.</li><li><b>3. OpenClaw</b>가 백업 및 동기화를 실행합니다.</li></ul><button class='toggle-btn' onclick='toggle(this)'>상세 보기</button><div class='details'>이러한 방식은 Hermes의 작업을 방해하지 않으면서도 시스템 관리를 지속할 수 있게 해줍니다.</div>" },
             { title: "상태 불일치(State Drift) 해결", content: "<p>문제가 생긴 적이 있습니다:</p><p>'두 에이전트가 서로 다른 사실을 기억하고 있어 충돌한다'</p><p style='margin-top:20px;'><b>해결책:</b> Blackboard 파일의 원자성(Atomic Write)을 <b>flock 기반 락킹</b>으로 강화하여, 동시 쓰기 충돌을 근본적으로 차단했습니다.</p>" },
             { title: "이벤트 기반 도메인 통신", content: "<p>도메인 간 직접 스크립트 실행을 금지합니다.</p><ul><li>A 도메인이 B 도메인의 스크립트를 직접 호출(X)</li><li>A 도메인이 상태 파일을 갱신하고, B가 변경을 감지하여 처리(O)</li></ul><p>이는 결합도를 낮추고 오류의 연쇄 전파를 막습니다.</p>" },
-            { title: "Reference & Links", content: "<p>자세한 내용은 아래 링크에서 확인하세요.</p><ul><li>Guide Wiki: <a href='../wiki/index.html'>wiki/</a></li><li>Dev Blog: <a href='../blog/index.html'>blog/</a></li><li>Architecture: <a href='../ARCHITECTURE.html'>architecture/</a></li></ul>" }
+            { title: "Blackboard 파일 구조 (실제 예제)", content: "<p>Blackboard는 JSON 상태 파일입니다:</p><pre style='text-align:left;font-size:1rem;'><code>~/.hermes/blackboard/
+  results/
+    job-12345.json
+  status/
+    backup-status.json
+    sync-status.json
+
+# results/job-12345.json
+{
+  "jobId": "job-12345",
+  "agent": "hermes",
+  "status": "complete",
+  "output": "docs/output/report.md",
+  "timestamp": "2025-01-15T09:00:00Z",
+  "locked": false
+}</code></pre><p><code>locked: true</code>이면 다른 에이전트가 읽기 전용으로 접근합니다.</p>" },
+            { title: "에이전트 격리 테스트", content: "<p>격리가 실제로 작동하는지 검증하는 방법:</p><pre style='text-align:left;font-size:1rem;'><code># 1. Hermes가 Blackboard에 쓰기
+echo '{"status":"pending","output":"result.md"}' \
+  > ~/.hermes/blackboard/results/test.json
+
+# 2. OpenClaw가 변경 감지 (inotifywait)
+inotifywait -e modify ~/.hermes/blackboard/results/
+
+# 3. 원자성 검증 (flock)
+flock ~/.hermes/blackboard/lock -c \
+  "cat ~/.hermes/blackboard/results/test.json"</code></pre><button class='toggle-btn' onclick='toggle(this)'>상세 보기</button><div class='details'>inotifywait는 Linux 커널 레벨의 파일 시스템 이벤트 감지 도구입니다. OpenClaw가 별도 폴링 없이 실시간으로 변경을 캐치합니다.</div>" },
+            { title: "Reference & Links", content: "<p>자세한 내용은 아래 링크에서 확인하세요.</p><ul><li>Guide Wiki: <a href='../wiki/index.md'>wiki/</a></li><li>Dev Blog: <a href='../blog/index.md'>blog/</a></li><li>Architecture: <a href='../ARCHITECTURE.md'>architecture/</a></li></ul>" }
         ];
         let current = 0;
         function showSlide(n) {

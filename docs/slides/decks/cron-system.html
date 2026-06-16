@@ -34,7 +34,37 @@
             { title: "Registry (작업 정의)", content: "<pre style='text-align:left; font-size:1rem;'>- id: job-weekly-news\n  name: &quot;주간 뉴스 리포트&quot;\n  schedule: &quot;0 9 * * 1&quot;\n  deliver: &quot;discord:1503941910459580450&quot;\n  enabled: true</pre><p>파일의 무결성을 위해 <b>flock 기반의 원자적(Atomic) 수정</b>만 허용합니다.</p>" },
             { title: "Deliver (결과 전송) 설정", content: "<ul><li><b>origin</b>: 크론을 생성한 채팅방으로 자동 회신</li><li><b>discord:CHANNEL_ID</b>: 지정된 디스코드 채널 전송</li><li><b>telegram:GROUP_ID</b>: 지정된 텔레그램 그룹 전송</li><li><b>local</b>: 로컬 파일(`cron/output/`)로만 저장</li></ul><button class='toggle-btn' onclick='toggle(this)'>상세 보기</button><div class='details'>no_agent=True (순수 스크립트 실행) 모드와 deliver 설정을 분리함으로써, LLM 토큰을 낭비하지 않는 경량 크론도 운영할 수 있습니다.</div>" },
             { title: "재시도 및 실패 처리", content: "<p>에이전트는 실패 시 즉시 포기하지 않습니다.</p><ul><li><b>지수 백오프 (Exponential Backoff)</b>: 1초 → 2초 → 4초 간격으로 최대 3회 재시도</li><li><b>파일 폴백 (File Fallback)</b>: 재시도 3회 실패 시 Blackboard 파일에 에러 기록</li></ul>" },
-            { title: "Reference & Links", content: "<p>자세한 내용은 아래 링크에서 확인하세요.</p><ul><li>Guide Wiki: <a href='../wiki/index.html'>wiki/</a></li><li>Dev Blog: <a href='../blog/index.html'>blog/</a></li><li>Architecture: <a href='../ARCHITECTURE.html'>architecture/</a></li></ul>" }
+            { title: "실제 registry.yaml 파일 구조", content: "<p>실제 크론 등록 파일은 여기 있습니다:</p><pre style='text-align:left;font-size:1rem;'><code>~/.hermes/cron/registry.yaml
+
+# 시스템 헬스체크 (5분마다)
+- id: system-health
+  name: "시스템 상태 점검"
+  schedule: "*/5 * * * *"
+  command: "bash src/cron/run-health.sh"
+  deliver: "local"
+  no_agent: true
+  enabled: true
+
+# 주간 리포트 (월요일 오전 9시)
+- id: job-weekly-report
+  name: "주간 요약 리포트"
+  schedule: "0 9 * * 1"
+  prompt: "本周의 JOB 이력을 요약해"
+  deliver: "discord:1503941910459580450"
+  enabled: true</code></pre>" },
+            { title: "Wrapper Script anatomy", content: "<p>각 크론 작업은 Wrapper가 실행합니다:</p><pre style='text-align:left;font-size:1rem;'><code>src/cron/wrapper.sh
+  export HERMES_CONFIG=~/.hermes/config.yaml
+  export SESSION_ID="cron-$JOB_ID"
+  
+  # 환경 변수 로드
+  source ~/.hermes/env
+  
+  # 세션 컨텍스트 설정
+  mkdir -p ~/.hermes/sessions/$SESSION_ID
+  
+  # 실제 실행
+  exec $COMMAND</code></pre><p>Wrapper는 실패 격리, 로깅, 세션 관리를 담당합니다. Runner의 실패가 다른 크론에 영향을 주지 않도록 합니다.</p>" },
+            { title: "Reference & Links", content: "<p>자세한 내용은 아래 링크에서 확인하세요.</p><ul><li>Guide Wiki: <a href='../wiki/index.md'>wiki/</a></li><li>Dev Blog: <a href='../blog/index.md'>blog/</a></li><li>Architecture: <a href='../ARCHITECTURE.md'>architecture/</a></li></ul>" }
         ];
         let current = 0;
         function showSlide(n) {

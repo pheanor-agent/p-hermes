@@ -38,8 +38,18 @@
             { title: "조사 및 설계 단계", content: "<ul><li><b>Investigation (조사)</b>: 현재 시스템 상태, 파일 구조, 관련 컨텍스트를 파악합니다.</li><li><b>Design (설계)</b>: `design.md`를 작성하여 변경 범위, 스펙, 테스트 계획을 정의합니다.</li><li><b>Review (검토)</b>: 설계서의 무결성을 자체 검증합니다 (Self-Correction).</li></ul><button class='toggle-btn' onclick='toggle(this)'>상세 보기</button><div class='details'>에이전트는 코드를 작성하기 전에 반드시 '무엇을, 왜, 어떻게' 변경할지 문서화해야 합니다. 이 단계에서 실패하면 실제 수정 전에 방향을 수정할 수 있습니다.</div>" },
             { title: "실행 및 검증 단계", content: "<ul><li><b>Execution (실행)</b>: 설계서에 따라 실제 파일 수정 및 코드 작성을 진행합니다.</li><li><b>Test (테스트)</b>: 검증 스크립트(`validate-links.sh` 등)를 실행하여 결과물을 테스트합니다.</li><li><b>Execution Review (후검토)</b>: 테스트 통과 후에도 최종 산출물의 품질을 확인합니다.</li></ul><button class='toggle-btn' onclick='toggle(this)'>상세 보기</button><div class='details'>Test 단계에서 실패하면 Execution 단계로 돌아가 재시도하거나, Design을 수정합니다. 반복 실패 시 근본 원인 분석(Root Cause Analysis)이 발생합니다.</div>" },
             { title: "상태 파일 (.workflow-state)", content: "<p>각 단계가 완료되면 `.workflow-state` JSON 파일이 원자적으로(Atomic) 갱신됩니다.</p><pre style='text-align:left; font-size:1rem;'>{&quot;currentStep&quot;: &quot;execution&quot;, &quot;status&quot;: &quot;running&quot;, &quot;artifacts&quot;: [&quot;result.md&quot;]}</pre><p>이 파일은 워크플로우 게이트 스크립트가 다음 단계 진입 여부를 판단하는 기준이 됩니다.</p>" },
-            { title: "Why 9 Steps?", content: "<p>9단계는 최소한의 안전 장치를 모두 갖춘 가장 작은 숫자입니다.</p><ul><li>Investigation $\rightarrow$ Design $\rightarrow$ Execution의 <b>명확한 분리</b></li><li>두 번의 Review(설계 후, 실행 후)를 통한 <b>상호 견제</b></li><li>사용자의 <b>통제권 확보</b>(Approval 단계)</li></ul>" }
-        ];
+            { title: "Why 9 Steps?", content: "<p>9단계는 최소한의 안전 장치를 모두 갖춘 가장 작은 숫자입니다.</p><ul><li>Investigation $\\rightarrow$ Design $\\rightarrow$ Execution의 <b>명확한 분리</b></li><li>두 번의 Review(설계 후, 실행 후)를 통한 <b>상호 견제</b></li><li>사용자의 <b>통제권 확보</b>(Approval 단계)</li></ul>" },
+                        { title: "실제 워크플로우 예제: 링크 수정", content: "<ul><li><b>Investigation</b>: <code>search_files --pattern 'broken' --path docs/</code>로 문제 파일 확인</li><li><b>Design</b>: <code>design.md</code> 작성 — 변경 대상 5개 파일, 검증 기준 정의</li><li><b>Execution</b>: <code>patch --mode replace</code>로 일괄 수정</li><li><b>Test</b>: <code>bash tests/validate-links.sh</code> 실행, 결과 검증</li></ul><pre style='text-align:left;font-size:1rem;'><code>.workflow-state
+            {
+              "currentStep": "test",
+              "status": "passing",
+              "artifacts": ["docs/slides/decks/architecture-5tier.html"]
+            }</code></pre>" },
+                        { title: "Workflow Gate Scripts", content: "<p>각 단계 진입은 스크립트가 승인합니다:</p><pre style='text-align:left;font-size:1rem;'><code>src/gates/check-design.sh    # design.md 존재 확인
+            src/gates/check-approval.sh   # 사용자 승인 대기
+            src/gates/check-tests.sh      # 테스트 통과 확인</code></pre><p>스크립트가 실패하면 파이프라인은 즉시 중단되고 에러를 리포트합니다.</p><button class='toggle-btn' onclick='toggle(this)'>상세 보기</button><div class='details'>예: check-approval.sh는 .workflow-state의 status가 'approved'가 될 때까지 폴링합니다. 사용자가 채팅에서 '진행해'라고 입력하면 Hermes가 status를 갱신합니다.</div>" },
+                        { title: "Reference & Links", content: "<p>자세한 내용은 아래 링크에서 확인하세요.</p><ul><li>Guide Wiki: <a href='../wiki/index.md'>wiki/</a></li><li>Dev Blog: <a href='../blog/index.md'>blog/</a></li><li>Architecture: <a href='../ARCHITECTURE.md'>architecture/</a></li></ul>" }
+                    ];
         let current = 0;
         function showSlide(n) {
             const container = document.querySelector('.slide-container');
