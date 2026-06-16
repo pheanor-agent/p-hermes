@@ -27,9 +27,9 @@ p-hermes는 **'프롬프트 엔지니어링 스킬'**과 **'역할 기반 모델
 
 ### 2. 역할 기반 모델 라우팅 (Model Routing)
 작업의 목적과 필요한 품질에 따라 최적의 모델을 자동으로 선택합니다.
-- **실사 및 예술적 표현 (Photorealistic/Artistic)**: Midjourney 또는 SDXL 계열 모델 $\rightarrow$ 질감, 빛의 굴절, 예술적 화풍 표현에 최적화되어 있습니다.
-- **텍스트 포함 이미지 (Text-in-Image)**: DALL-E 3 또는 Flux 모델 $\rightarrow$ 이미지 내의 철자 정확도가 매우 높으며, 복잡한 구도 지시를 잘 따릅니다.
-- **빠른 시안 및 구도 확인 (Fast Draft)**: 경량화된 모델 $\rightarrow$ 최종본 생성 전, 구도와 배치를 빠르게 확인하기 위한 용도로 사용합니다.
+- **실사 및 예술적 표현 (Photorealistic/Artistic)**: Midjourney 또는 SDXL 계열 모델 → 질감, 빛의 굴절, 예술적 화풍 표현에 최적화되어 있습니다.
+- **텍스트 포함 이미지 (Text-in-Image)**: DALL-E 3 또는 Flux 모델 → 이미지 내의 철자 정확도가 매우 높으며, 복잡한 구도 지시를 잘 따릅니다.
+- **빠른 시안 및 구도 확인 (Fast Draft)**: 경량화된 모델 → 최종본 생성 전, 구도와 배치를 빠르게 확인하기 위한 용도로 사용합니다.
 
 ### 3. 결과물 최적화 및 후처리 (Optimization & Post-processing)
 생성된 이미지를 사용자의 피드백을 통해 완벽하게 다듬습니다.

@@ -39,7 +39,7 @@ JOB-1004-backup-v2     ← 규칙 위반
 job_temp_final         ← 규칙 위반
 ```
 
-**근본 원인**: `mkdir` 명령어를 에이전트가 직접 사용하게 허용함 $\\rightarrow$ 네이밍 컨벤션 강제 수단 부재.
+**근본 원인**: `mkdir` 명령어를 에이전트가 직접 사용하게 허용함 → 네이밍 컨벤션 강제 수단 부재.
 
 **사고 파급**: 47개 JOB 폴더 중 12개가 비표준 네이밍 → 자동화된 처리 스크립트(`for job in JOB-*`)가 74%만 인식 → 나머지 26%의 JOB이 시스템에 '고아' 상태.
 
@@ -345,7 +345,7 @@ $ bash core/scripts/weekly-defense-report.sh
 
 ## 🔗 관련 주제
 
-- [\"텍스트 규칙 $\\rightarrow$ 스크립트 강제\" 철학](https://pheanor-agent.github.io/p-hermes/docs/blog/posts/structural-enforcement.md)
+- [\"텍스트 규칙 → 스크립트 강제\" 철학](https://pheanor-agent.github.io/p-hermes/docs/blog/posts/structural-enforcement.md)
 - [왜 9단계 상태머신인가?](https://pheanor-agent.github.io/p-hermes/docs/blog/posts/why-9-step-workflow.md)
 - [5-Tier 물리 계층화 설계](https://pheanor-agent.github.io/p-hermes/docs/blog/posts/why-5-tier-architecture.md)
 

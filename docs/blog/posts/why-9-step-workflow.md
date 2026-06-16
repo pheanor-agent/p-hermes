@@ -8,8 +8,8 @@
 
 소프트웨어 공학에서 상태머신이란, 시스템이 가질 수 있는 **'상태'**를 정의하고, 특정 조건이 충족될 때만 다음 상태로 **'전이(Transition)'**하는 모델을 말합니다.
 
-- **일상생활의 비유**: 은행 ATM기 사용 과정과 같습니다. `카드 삽입` $\\rightarrow$ `비밀번호 입력` $\\rightarrow$ `금액 선택` $\\rightarrow$ `현금 인출`. 비밀번호를 입력하지 않고 바로 '금액 선택' 단계로 점프할 수 없는 것과 같습니다.
-- **AI 에이전트에게는?**: `조사` $\\\\rightarrow$ `설계` $\\\\rightarrow$ `검토` $\\\\rightarrow$ `승인` $\\\\rightarrow$ `실행`이라는 정해진 관문을 하나씩 통과하게 만드는 것입니다.
+- **일상생활의 비유**: 은행 ATM기 사용 과정과 같습니다. `카드 삽입` → `비밀번호 입력` → `금액 선택` → `현금 인출`. 비밀번호를 입력하지 않고 바로 '금액 선택' 단계로 점프할 수 없는 것과 같습니다.
+- **AI 에이전트에게는?**: `조사` → `설계` → `검토` → `승인` → `실행`이라는 정해진 관문을 하나씩 통과하게 만드는 것입니다.
 
 상태머신의 핵심은 **'무효 전이(Invalid Transition)의 금지'**입니다. `Investigation`을 건너뛰고 `Design`으로 바로 가는 것을 허용하면, 에이전트는 현재 시스템을 파악하지도 않은 채 '자신이 알고 있는 지식'만으로 설계를 시작합니다. 이는 공학적으로 '측정하지 않고 설계하는 것'과 동일합니다.
 
@@ -148,7 +148,7 @@ graph TD
 | **8** | **Exec Review** | 실행 결과가 설계와 일치하는지 확인 | `execution-review.md` | 최종 마감 검사 |
 | **9** | **Done** | 작업 결과 보고 및 문서화 | `result.md` | 열쇠 인도 및 완료 보고 |
 
-### 핵심 분리: Investigation $\\rightarrow$ Design $\\rightarrow$ Execution
+### 핵심 분리: Investigation → Design → Execution
 이 세 단계의 분리가 가장 중요합니다.
 - **조사(Investigation)**: \"어떻게 고칠까\"를 생각하기 전에 \"지금 어떻게 되어 있는가\"를 먼저 봅니다.
 - **설계(Design)**: 코드를 한 줄도 쓰기 전에 `design.md`에 모든 변경 사항을 텍스트로 적습니다. 이것이 **SSOT**가 됩니다.
@@ -274,7 +274,7 @@ $ bash core/scripts/workflow-gate.sh --next review --job JOB-1626
 ## 🔗 관련 주제
 
 - [이벤트 기반 도메인 통신](https://pheanor-agent.github.io/p-hermes/docs/blog/posts/event-driven-communication.md): 단계 완료 후 다음 도메인을 깨우는 방식.
-- [\"텍스트 규칙 $\\rightarrow$ 스크립트 강제\" 철학](https://pheanor-agent.github.io/p-hermes/docs/blog/posts/structural-enforcement.md): 9단계를 건너뛰지 못하게 만드는 `workflow-gate.sh`.
+- [\"텍스트 규칙 → 스크립트 강제\" 철학](https://pheanor-agent.github.io/p-hermes/docs/blog/posts/structural-enforcement.md): 9단계를 건너뛰지 못하게 만드는 `workflow-gate.sh`.
 
 ---
 

@@ -62,11 +62,11 @@ graph TD
 
 **2. 작업 연결하기:**
 > \"JOB-2001로 `kernel-chat` 프로젝트의 기본 네트워크 통신 모듈을 구현해줘. 이 작업은 `kernel-chat` 프로젝트에 귀속시켜줘.\"
-$\rightarrow$ 에이전트는 `project.yaml`의 `job_ids` 리스트에 `JOB-2001`을 추가하여 관계를 형성합니다.
+→ 에이전트는 `project.yaml`의 `job_ids` 리스트에 `JOB-2001`을 추가하여 관계를 형성합니다.
 
 **3. 상태 관리 및 아카이빙:**
 > \"이제 `kernel-chat` 프로젝트가 완료되었어. 모든 산출물을 정리하고 상태를 `archived`로 변경해서 아카이브해줘.\"
-$\rightarrow$ 에이전트는 `archive-project.sh`를 통해 프로젝트를 공식 종료 처리하고, 최종 결과물을 스냅샷으로 보관합니다.
+→ 에이전트는 `archive-project.sh`를 통해 프로젝트를 공식 종료 처리하고, 최종 결과물을 스냅샷으로 보관합니다.
 
 ## 🔗 관련 주제
 - **[첫 번째 작업 요청하기](https://pheanor-agent.github.io/p-hermes/docs/wiki/getting-started/first-job.md)**: 프로젝트를 구성하는 기본 단위인 JOB의 생성 방법을 확인하세요.

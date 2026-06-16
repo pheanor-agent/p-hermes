@@ -132,7 +132,7 @@ Wrapper가 실행 중인 상태에서 동일한 작업이 트리거되면 `flock
 
 ---
 
-## 🏗️ 기술 설계: Registry $\\rightarrow$ Wrapper $\\rightarrow$ Runner
+## 🏗️ 기술 설계: Registry → Wrapper → Runner
 
 Hermes는 이 문제를 해결하기 위해 역할을 셋으로 쪼개어 **'책임과 권한'**을 엄격히 분리했습니다. 이는 소프트웨어 공학의 '단일 책임 원칙(Single Responsibility Principle)'을 물리적 구조로 구현한 것입니다.
 
@@ -250,7 +250,7 @@ $ cat ~/.hermes/infra/knowledge/cron-retry-stats.json
 - **프롬프트**: \"이번 주 AI 트렌드 Top 3를 분석하여 요약해줘.\"
 
 **2. 실행 프로세스**
-- **T+0s**: 레지스트리에 의해 트리거 발생 $\\rightarrow$ **Wrapper**가 실행됩니다.
+- **T+0s**: 레지스트리에 의해 트리거 발생 → **Wrapper**가 실행됩니다.
 - **T+1s**: Wrapper가 `cron-20260616-0900` 세션을 생성하고, `state` 파일에 `\"status\": \"running\"`이라고 기록합니다.
 - **T+2s**: Wrapper가 **Runner**를 호출합니다. Runner는 클로드 모델을 통해 뉴스를 요약합니다.
 - **T+30s**: Runner가 요약본을 텔레그램으로 전송하고, Wrapper에게 `exit 0` (성공)을 반환합니다.
@@ -259,7 +259,7 @@ $ cat ~/.hermes/infra/knowledge/cron-retry-stats.json
 **3. 예외 상황 (Edge Case): 네트워크 단절**
 만약 Runner가 모델 호출 중 네트워크 오류로 `exit 1`을 반환했다면?
 - **Wrapper**가 이를 즉시 감지합니다.
-- **재시도 전략**: 1초 후 재시도 $\\rightarrow$ 실패 $\\rightarrow$ 2초 후 재시도 $\\rightarrow$ 성공.
+- **재시도 전략**: 1초 후 재시도 → 실패 → 2초 후 재시도 → 성공.
 - 결과적으로 사용자는 약간의 지연만 느낄 뿐, 작업이 완전히 누락되는 일은 없습니다. 만약 모든 재시도가 실패하면 Wrapper는 최후의 수단으로 사용자에게 \"뉴스 요약 작업이 최종 실패했습니다\"라고 알림을 보냅니다.
 
 ### 실제 registry.yaml 설정 예시
