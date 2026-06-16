@@ -29,6 +29,31 @@ Hermes는 자체적으로 `Test` 단계를 통해 결과물을 검증합니다. 
 
 다만, 에이전트가 해결하지 못하는 '논리적 설계 오류'가 발생한 경우에는 사용자의 개입이 필요합니다. 이때는 `[FEEDBACK] X 부분의 로직이 잘못되었어. Y 방식으로 접근해서 다시 설계해줘`라고 구체적인 방향을 제시해 주세요. 그러면 Hermes가 `Design` 단계로 돌아가 설계를 수정하고 다시 실행합니다.
 
+**📊 Hermes 작업 처리 흐름**:
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant H as Hermes
+    participant W as Workflow
+    participant T as Test
+    U->>H: [JOB-XXXX] 작업 요청
+    H->>W: Investigation → Design
+    W->>U: 승인 요청 (Review)
+    U->>W: 승인
+    W->>H: Execution
+    H->>T: Test 실행
+    alt Test PASS
+        T-->>H: 검증 통과
+        H->>W: Execution Review → Done
+    else Test FAIL
+        T-->>H: 검증 실패
+        H->>W: Design 단계로 Rollback
+        W->>U: 재승인 요청
+    end
+    W->>U: 결과 전달 (Done)
+```
+
 ---
 
 ## 🧠 지식 및 설정

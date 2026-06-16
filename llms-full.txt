@@ -1,7 +1,7 @@
 # p-hermes Full Documentation Index
 
 ## Files
-- **docs/blog/index.md** (25 lines): ✍️ p-hermes Dev Blog
+- **docs/blog/index.md** (21 lines): ✍️ p-hermes Dev Blog
 - **docs/blog/posts/cron-3layer-separation.md** (113 lines): ⏰ 잊지 않고 일하는 AI의 비결: 크론(Cron) 3계층 아키텍처
 - **docs/blog/posts/event-driven-communication.md** (96 lines): 이벤트 기반 도메인 통신: 결합도를 낮추고 유연성을 높이는 법
 - **docs/blog/posts/knowledge-system-design.md** (116 lines): 지식 분류 시스템 설계: AI의 기억을 구조화하는 법
@@ -11,7 +11,7 @@
 - **docs/blog/posts/why-5-tier-architecture.md** (106 lines): 5-Tier 물리 계층화 설계: 데이터 오염을 막는 공간의 미학
 - **docs/blog/posts/why-9-step-workflow.md** (102 lines): 왜 9단계 상태머신인가? AI의 파괴적 실행을 막는 안전장치
 - **docs/slides/index.md** (25 lines): 🖼️ p-hermes Slides
-- **docs/wiki/faq.md** (75 lines): 자주 묻는 질문 (FAQ)
+- **docs/wiki/faq.md** (100 lines): 자주 묻는 질문 (FAQ)
 - **docs/wiki/getting-started/configuration.md** (73 lines): 기본 설정 가이드
 - **docs/wiki/getting-started/first-job.md** (71 lines): 첫 번째 작업 요청하기
 - **docs/wiki/getting-started/install.md** (74 lines): 설치 및 환경 설정
@@ -24,6 +24,6 @@
 - **docs/wiki/guides/project-management.md** (73 lines): 개인 프로젝트 생성 및 관리 가이드
 - **docs/wiki/guides/request-task.md** (69 lines): 작업 요청 및 워크플로우 상세 가이드
 - **docs/wiki/guides/use-skills.md** (69 lines): 스킬 시스템 활용하기
-- **docs/wiki/index.md** (52 lines): 📖 p-hermes Guide Wiki
+- **docs/wiki/index.md** (48 lines): 📖 p-hermes Guide Wiki
 - **docs/wiki/tutorials/tutorial-1.md** (59 lines): 튜토리얼: 첫 프로젝트 만들기
 - **docs/wiki/tutorials/tutorial-2.md** (66 lines): 튜토리얼: 나만의 스킬 추가하기

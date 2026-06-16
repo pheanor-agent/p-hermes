@@ -19,7 +19,3 @@ Hermes의 기술적 결정과 설계 철학을 기록하는 공간입니다. 단
 | **실패 패턴에서 배운 교훈** | #lessons-learned | 반복되는 오류를 시스템적으로 막는 법 | [읽기](./posts/lessons-from-failures.md) |
 
 ---
-
-## 🔗 관련 링크
-- [어떻게 쓰는가? (Guide Wiki)](../wiki/index.md)
-- [시스템 구조 한눈에 보기 (Slides)](../index.html)

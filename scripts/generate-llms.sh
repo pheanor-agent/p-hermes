@@ -10,17 +10,16 @@ DOCS_DIR="$PROJECT_DIR/docs"
 cat > "$PROJECT_DIR/llms.txt" << 'EOF'
 # p-hermes Documentation
 
-This repository contains Hermes Agent system documentation, published via GitHub Pages.
+Hermes Agent system documentation, published via GitHub Pages.
 
-## Quick Start
-- Main index: docs/index.md
-- Systems overview: docs/systems/overview.md
-- Full docs: llms-full.txt
+## Entry Point
+- README.md — Single entry point for 3-track docs
+- Full file index: llms-full.txt
 
-## Structure
-- docs/systems/ — System documentation (6 systems)
-- docs/workflow-pipeline.md — 9-step workflow
-- docs/skill-system.md — 146+ skills
+## 3-Track Structure
+- docs/wiki/ — Guide Wiki (How-to) — 14 files
+- docs/blog/ — Dev Blog (Why) — 8 posts
+- docs/slides/ — Concept Slides (What) — 6 HTML decks
 
 ## Deploy
 bash src/deploy.sh
