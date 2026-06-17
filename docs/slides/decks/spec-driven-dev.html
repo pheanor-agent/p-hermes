@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
   <!-- Mermaid.js -->
   <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <!-- svg-pan-zoom -->
+  <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
   <!-- Highlight.js -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11/styles/github.min.css">
   <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/highlight.min.js"></script>
@@ -35,8 +37,9 @@
     .two-col > div { flex: 1; }
     .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
     .stat-label { font-size: 0.5em; color: #666; }
-    .mermaid-wrap { text-align: center; font-size: var(--diagram-font); }
+    .mermaid-wrap { text-align: center; font-size: var(--diagram-font); max-height: 60vh; overflow: auto; -webkit-overflow-scrolling: touch; position: relative; border: 1px solid #e0e0e0; border-radius: 8px; padding: 0.5em; background: #fafafa; }
     .mermaid-wrap .mermaid { max-width: 100%; margin: 0 auto; }
+    .mermaid-wrap svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
     pre code { font-size: var(--code-font); }
     .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
     .tree li { margin: 0.2em 0; }
@@ -328,6 +331,8 @@ grep -rn "old_value" specs/active/SPEC-*.md</code></pre>
       startOnLoad: true,
       theme: 'base',
       fontFamily: 'Helvetica Neue, Arial, sans-serif',
+      flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
+      sequence: { useMaxWidth: true },
       themeVariables: {
         primaryColor: '#f0faf0',
         primaryTextColor: '#333',
@@ -345,7 +350,9 @@ grep -rn "old_value" specs/active/SPEC-*.md</code></pre>
       progress: true,
       center: true,
       transition: 'slide',
-      fragments: true
+      fragments: true,
+      minScale: 0.15,
+      maxScale: 2.0
     });
 
     // Highlight.js 초기화
@@ -353,6 +360,20 @@ grep -rn "old_value" specs/active/SPEC-*.md</code></pre>
       document.querySelectorAll('pre code').forEach((block) => {
         hljs.highlightElement(block);
       });
+    });
+
+    // svg-pan-zoom 초기화
+    Reveal.addEventListener('ready', () => {
+      setTimeout(() => {
+        document.querySelectorAll('.mermaid-wrap svg').forEach((svg) => {
+          try {
+            svgPanZoom(svg, {
+              zoomEnabled: true, panEnabled: true, controlIconsEnabled: false,
+              fit: true, contain: true, minZoom: 0.5, maxZoom: 5
+            });
+          } catch (e) { console.warn('svg-pan-zoom init failed:', e); }
+        });
+      }, 1000);
     });
   </script>
 </body>
