@@ -25,4 +25,8 @@ p-hermes는 레이어드 아키텍처를 기반으로 하는 AI 에이전트 운
 - **자동화**: [Cron 자동화 설정](./guides/automation.md)
 - **모델 라우팅**: [모델 라우팅](./guides/model-routing.md)
 
+### 📚 리퍼런스 (References)
+> **"시스템 설계 방법론과 기술 참고 자료"**
+- **슬라이드 콘텐츠 프레임워크**: [CALMER + Google I/O 하이브리드](./references/calmer-google-io-framework.md)
+
 ---
