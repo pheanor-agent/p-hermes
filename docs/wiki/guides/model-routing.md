@@ -324,4 +324,4 @@ hermes run "code-model: 코드 작성" → review-model: 코드 리뷰
 
 ## 📚 관련 문서
 - [Model Routing 설계](../../blog/posts/model-routing-design.md)
-- [Catalog.json 스키마](../core/model-catalog/catalog.json)
+- [Model Catalog (GitHub)](https://github.com/pheanor-agent/p-hermes/tree/main/skills/custom/model-catalog/) — 소스 코드

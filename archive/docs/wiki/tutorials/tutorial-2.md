@@ -63,4 +63,4 @@ Hermes가 생성한 `SKILL.md`를 읽고, 특히 **Verification** 단계에서 U
 
 ## 🔗 관련 주제
 - **[첫 번째 작업 요청하기](https://pheanor-agent.github.io/p-hermes/docs/wiki/getting-started/first-job.md)**: 스킬을 활용하여 실제 JOB을 수행하는 방법.
-- **[지식 시스템 가이드](../guides/knowledge-system.md)**: 커스텀 스킬 작성 중 얻은 노하우를 위키 지식으로 변환하여 저장하는 방법.
+- **[지식 시스템 가이드](https://pheanor-agent.github.io/p-hermes/wiki/guides/knowledge-system.md)**: 커스텀 스킬 작성 중 얻은 노하우를 위키 지식으로 변환하여 저장하는 방법.

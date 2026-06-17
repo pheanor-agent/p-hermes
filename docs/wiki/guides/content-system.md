@@ -368,4 +368,4 @@ print(f"검증 결과: {result}")
 
 ## 📚 관련 문서
 - [Content System 설계](../../blog/posts/content-system-design.md)
-- [Validator 스키마](../engine/validator.py)
+- [Expression System (GitHub)](https://github.com/pheanor-agent/p-hermes/tree/main/skills/custom/content-system/) — 소스 코드

@@ -286,4 +286,4 @@ Wiki는 도메인과 태그 기반으로 조직됩니다. T1/T2/T3 계층 구조
 - [README.md](README.md) — 시스템 개요, Quick Start
 - [PORTING.md](PORTING.md) — 포팅 가이드
 - [docs/wiki/index.md](docs/wiki/index.md) — 시스템 종합
-- [docs/systems/](docs/systems/) — 시스템별 심화 문서
+- [시스템 아키텍처 Wiki](docs/wiki/system-architecture.md) — 시스템별 심화 문서
