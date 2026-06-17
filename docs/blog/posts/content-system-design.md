@@ -2,7 +2,7 @@
 id: DOC-A3-BLOG
 domain: A3 (Content System)
 type: blog
-title: "Anti-Slop 파이프라인: AI 텍스트의 품질을 보증하는 5계층 검증"
+title: "콘텐츠 품질 시스템: AI 생성 텍스트를 체계적으로 검증하는 설계"
 date: 2026-06-17
 version: "1.0.0"
 compatibility: v0.16.0

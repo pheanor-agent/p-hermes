@@ -2,7 +2,7 @@
 id: DOC-B2-BLOG
 domain: architecture
 type: blog
-title: "레이어드 아키텍처: 왜 모듈화가 에이전트 시스템의 생존 조건인가"
+title: "레이어드 아키텍처: 모듈화가 에이전트 시스템의 생존 조건인 이유"
 date: 2026-06-17
 version: "1.0.0"
 compatibility: v0.16.0
@@ -210,48 +210,24 @@ sequenceDiagram
 
 ---
 
-## 📊 레이어드 분리: 수직 분리가 수평 확장을 가능하게 하는 메커니즘
+## 📊 레이어드 구조: 계층 간 관계망으로 수평 확장 가능
 
-### 계층 간 의존성 방향
+### 계층 간 의존성 관계
 
-레이어드 아키텍처의 핵심 규칙은 **하위 계층에서 상위 계층으로만 의존**할 수 있다는 점입니다. Core(T1)는 어떤 계층도 의존하지 않습니다. Release(T5)는 모든 하위 계층을 사용할 수 있습니다.
+레이어드 아키텍처의 핵심은 **계층 간 명확한 경계**와 **필요한 의존성만 허용**하는 것입니다. Core는 독립적으로 동작하며, 상위 계층은 하위 계층을 필요할 때만 참조합니다.
 
 ```mermaid
-graph TD
-    subgraph T5_Release
-        R1[deploy.sh]
-        R2[llms.txt 생성]
-        R3[GitHub Pages]
-    end
-
-    subgraph T4_Script
-        S1[cron-wrapper.sh]
-        S2[skill-loader.sh]
-        S3[tool-executor.sh]
-    end
-
-    subgraph T3_Workflow
-        W1[workflow-gate.sh]
-        W2[상태 전이 엔진]
-        W3[content-gate.sh]
-    end
-
-    subgraph T2_Config
-        C1[config.yaml 파서]
-        C2[catalog.json 로더]
-        C3[model-router.sh]
-    end
-
-    subgraph T1_Core
-        K1[state.json 관리]
-        K2[event.sh]
-        K3[기본 도구 호출]
-    end
-
-    T2_Config --> T1_Core
-    T3_Workflow --> T2_Config
-    T4_Script --> T3_Workflow
-    T5_Release --> T4_Script
+graph LR
+    T1_Core[<b>T1 Core</><br/>state.json<br/>event.sh<br/>기본 도구] --> T2_Config[<b>T2 Config</><br/>config.yaml<br/>catalog.json<br/>model-router]
+    T2_Config --> T3_Workflow[<b>T3 Workflow</><br/>workflow-gate<br/>content-gate<br/>상태 전이]
+    T3_Workflow --> T4_Script[<b>T4 Script</><br/>cron-wrapper<br/>skill-loader<br/>tool-executor]
+    T4_Script --> T5_Release[<b>T5 Release</><br/>deploy.sh<br/>llms.txt<br/>GitHub Pages]
+    
+    T1_Core -.->|이벤트 발행| T3_Workflow
+    T1_Core -.->|이벤트 발행| T4_Script
+    T2_Config -.->|설정 조회| T3_Workflow
+    T2_Config -.->|설정 조회| T4_Script
+    T3_Workflow -.->|상태 전이| T5_Release
 
     style T1_Core fill:#e8f5e9,stroke:#2e7d32
     style T2_Config fill:#e3f2fd,stroke:#1565c0
@@ -259,6 +235,18 @@ graph TD
     style T4_Script fill:#fce4ec,stroke:#c62828
     style T5_Release fill:#f3e5f5,stroke:#6a1b9a
 ```
+
+**실제 의존성 관계**
+
+| 계층 | 직접 의존 | 간접 의존 (이벤트/설정) |
+|------|-----------|------------------------|
+| T1 Core | 없음 | 없음 |
+| T2 Config | T1 | 없음 |
+| T3 Workflow | T1, T2 | 없음 |
+| T4 Script | T1, T2, T3 | 없음 |
+| T5 Release | T1, T2, T3, T4 | 없음 |
+
+실제 시스템에서 각 계층은 필요한 기능만 하위 계층에서 가져옵니다. Core의 `event.sh`는 모든 계층에서 사용할 수 있으며, Config의 설정은 Workflow와 Script에서 필요할 때 조회합니다.
 
 ### 계층별 상세 설계
 
