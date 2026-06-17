@@ -1,142 +1,227 @@
-# p-hermes 시스템 아키텍처
-
-## 1. 전체 개요
-
-p-hermes는 AI 기반 자율 에이전트 시스템으로, 설계-검증-실행-회고의 완전한 워크플로우를 제공합니다.
-
-### 핵심 원칙
-- **Spec-Driven Development**: 모든 작업은 사양서가 SSOT입니다
-- **5-Tier 아키텍처**: Core → Runtime → Interfaces → Infra → Release
-- **이벤트 기반 통신**: 직접 스크립트 호출 금지, 상태 파일 비동기
-- **심링크 금지**: 물리적 파일만 사용
-
+---
+id: DOC-B2-WIKI
+domain: architecture
+type: wiki
+title: "시스템 아키텍처 레퍼런스"
+date: 2026-06-17
+version: "1.0.0"
+compatibility: v0.16.0
+author: p-hermes
+status: published
+tags: ["architecture", "5-tier", "event-driven", "system-map"]
+related_specs: ["SPEC-D01", "SPEC-D04"]
 ---
 
-## 2. 5-Tier 아키텍처
+# 시스템 아키텍처 레퍼런스
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Tier 1: Core                            │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
-│  │ workflow.sh │  │ spec-driven │  │ expression  │         │
-│  │   (9-step)  │  │  dev (14)   │  │   system    │         │
-│  └─────────────┘  └─────────────┘  └─────────────┘         │
-├─────────────────────────────────────────────────────────────┤
-│                    Tier 2: Runtime                         │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
-│  │ knowledge   │  │ cron        │  │   skills    │         │
-│  │   system    │  │  (144)      │  │   (84)      │         │
-│  └─────────────┘  └─────────────┘  └─────────────┘         │
-├─────────────────────────────────────────────────────────────┤
-│                 Tier 3: Interfaces                        │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
-│  │   Discord   │  │  Telegram   │  │     CLI     │         │
-│  └─────────────┘  └─────────────┘  └─────────────┘         │
-├─────────────────────────────────────────────────────────────┤
-│                   Tier 4: Infra                           │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
-│  │   GitHub    │  │   Docker    │  │   WSL/Host  │         │
-│  └─────────────┘  └─────────────┘  └─────────────┘         │
-├─────────────────────────────────────────────────────────────┤
-│                 Tier 5: Release                           │
-│  ┌─────────────┐  ┌─────────────┐                         │
-│  │  GitHub     │  │   Local     │                         │
-│  │  Pages      │  │  Snapshot   │                         │
-│  └─────────────┘  └─────────────┘                         │
-└─────────────────────────────────────────────────────────────┘
-```
+## 1. 서론
 
----
+p-hermes는 5-Tier 아키텍처에 기반한 AI 에이전트 운영 시스템이다. 계층화된 설계는 각 계층이 명확한 책임 범위를 보유하도록 구성하며, 모듈 간 결합도를 낮추는 것이 핵심 목표이다. 시스템 설계는 세 가지 원칙에 기반한다. 첫째, 모든 물리적 경로는 `$HERMES_ROOT` 환경 변수를 통해 추상화한다. 둘째, 모듈 간 통신은 `event.sh`를 단일 진입점으로 사용하는 이벤트 기반 패턴을 따른다. 셋째, 심링크는 사용하지 않으며 모든 파일 참조는 물리적 경로를 기반으로 수행한다. 이 문서에서는 5-Tier 구조의 계층별 책임, 디렉토리 맵, 설계 원칙, 이벤트 버스 및 system-common 개념, 안티패턴, 확장성, FAQ를 기술한다.
 
-## 3. 핵심 시스템 상세
+## 2. 5-Tier 구조
 
-### 3.1 워크플로우 (Workflow)
-- **9-Step State Machine**: request → investigation → design → review → approval → execution → test → execution_review → done
-- **상태 파일**: `~/.hermes/workspace/jobs/JOB-XXXX/.workflow-state`
-- **검증**: `workflow-gate.sh`, `validate-workflow.sh`
+p-hermes 시스템은 하단에서 상단으로 Tier 1 Core → Tier 2 Runtime → Tier 3 Interfaces → Tier 4 Infra → Tier 5 Release의 5단계 계층으로 구성된다. 각 계층은 독립적인 생명주기를 가지는 동시에 상위 계층이 하위 계층에 의존하는 방향으로 설계된다.
 
-### 3.2 Spec-Driven Development
-- **명령**: `spec-create.sh`, `spec-status.sh`, `spec-conformance.sh`
-- **검증**: `spec-drift.sh`, `spec-rollback.sh`
-- **Matrix**: `specs/_matrix.json`
+**Tier 1 Core**는 시스템의 핵심 워크플로우 엔진을 담당한다. `workflow.sh` 기반 9-Step 상태 머신, spec-driven 개발 파이프라인, expression 시스템, 그리고 `skills/` 디렉토리에 배치된 스킬 정의 파일이 포함된다. `config.yaml`과 `AGENTS.md`는 시스템 전역 설정을 정의하며 모든 계층이 참조하는 단일 진실 공급원(SSOT) 역할을 수행한다.
 
-### 3.3 Content System
-- **엔진**: `tier-generator.py`, `tone-adapter.py`, `validator.py`
-- **템플릿**: 교육, 내러티브, 시각, 프레젠테이션, 이미지
-- **검증**: `anti-slop-library.json`
+**Tier 2 Runtime**은 실행 시간 데이터와 상태 관리를 담당한다. `knowledge/`는 학습된 지식을 저장하며, `cron/`은 자동화 작업 레지스트리와 실행 이력을 관리한다. `sessions/`는 대화 세션 상태를 유지하고, `.workflow-state`는 현재 실행 중인 워크플로우의 상태 트랜지션을 기록한다.
 
-### 3.4 지식 시스템
-- **입력**: 원본 직접 참조만
-- **출력**: 가공된 데이터만
-- **Scoring**: `build-scores.sh`
+**Tier 3 Interfaces**는 외부와의 통신 채널을 제공한다. Discord 봇, Telegram 봇, 그리고 로컬 CLI 인터페이스가 포함되어 있다. 각 인터페이스는 동일한 이벤트 버스를 통해 Core 계층과 상호작용하며, 프로토콜 차이는 인터페이스 계층 내부에서 처리된다.
 
-### 3.5 Cron/자동화
-- **Registry**: `cron/registry.yaml`
-- **실행**: `cron-wrapper.sh`, `cron-runner-*`
-- **이벤트**: `event.sh`
+**Tier 4 Infra**는 실행 환경과 지속화 계층을 담당한다. GitHub는 코드 저장소 및 CI/CD 파이프라인으로 동작하고, Docker는 격리된 실행 환경을 제공한다. WSL/Host 환경은 Windows 기반 개발 시스템에서의 실행을 지원한다.
 
----
+**Tier 5 Release**는 배포 가능한 산출물을 관리한다. `docs/`는 기술 문서와 Wiki 페이지를 포함하고, `wiki/`는 참조용 구조화된 문서를 배치한다. `slides/`는 프레젠테이션 자료를 관리하며, `llms.txt`는 LLM 접근용 메타데이터 인덱스를 자동 생성한다.
 
-## 4. 파일 구조
+```mermaid
+graph TB
+    subgraph T5["Tier 5: Release"]
+        R1["docs/"]
+        R2["wiki/"]
+        R3["slides/"]
+        R4["llms.txt"]
+    end
 
-```
-p-hermes/
-├── core/                    # 코어 라이브러리
-│   ├── lib/                 # workflow.sh, atomic.sh 등
-│   ├── scripts/             # 운영 스크립트 (144개)
-│   └── skills/              # 스킬 (84개)
-├── docs/                    # 문서 (Wiki/Blog/Slides)
-├── specs/                   # Spec-Driven Dev
-├── infra/                   # 인프라 설정
-└── tests/                   # 검증 스크립트
+    subgraph T4["Tier 4: Infra"]
+        I1["GitHub / CI-CD"]
+        I2["Docker"]
+        I3["WSL / Host"]
+    end
+
+    subgraph T3["Tier 3: Interfaces"]
+        IF1["Discord Bot"]
+        IF2["Telegram Bot"]
+        IF3["CLI"]
+    end
+
+    subgraph T2["Tier 2: Runtime"]
+        RT1["knowledge/"]
+        RT2["cron/"]
+        RT3["sessions/"]
+        RT4[".workflow-state"]
+    end
+
+    subgraph T1["Tier 1: Core"]
+        C1["config.yaml"]
+        C2["AGENTS.md"]
+        C3["skills/"]
+        C4["workflow.sh"]
+        C5["spec-driven dev"]
+    end
+
+    T5 --> T4
+    T4 --> T3
+    T3 --> T2
+    T2 --> T1
 ```
 
+## 3. 디렉토리 맵
+
+각 계층은 `$HERMES_ROOT` 아래에 배치된 디렉토리 구조를 따라 조직된다. 다음 구조는 계층별 파일 배치 관계를 나타낸다.
+
+```
+$HERMES_ROOT/
+├── config.yaml              # Tier 1 Core — 전역 설정
+├── AGENTS.md                # Tier 1 Core — 에이전트 정의
+├── skills/                  # Tier 1 Core — 스킬 라이브러리
+│   ├── skill-a/
+│   └── skill-b/
+├── workflow.sh              # Tier 1 Core — 워크플로우 엔진
+├── knowledge/               # Tier 2 Runtime — 지식 저장소
+│   ├── input/
+│   └── output/
+├── cron/                    # Tier 2 Runtime — 자동화 작업
+│   ├── registry.yaml
+│   └── jobs/
+├── sessions/                # Tier 2 Runtime — 세션 상태
+│   └── active/
+├── .workflow-state          # Tier 2 Runtime — 상태 파일
+├── interfaces/              # Tier 3 Interfaces — 통신 채널 설정
+│   ├── discord/
+│   └── telegram/
+├── infra/                   # Tier 4 Infra — 인프라 설정
+│   ├── docker/
+│   └── github-actions/
+├── docs/                    # Tier 5 Release — 문서
+│   ├── wiki/
+│   └── slides/
+├── llms.txt                 # Tier 5 Release — LLM 메타데이터
+├── event.sh                 # 전역 — 이벤트 진입점
+└── system-common/           # 전역 — 공통 유틸리티
+    └── lib/
+```
+
+환경 변수를 사용한 경로 참조 예시:
+
+```bash
+export HERMES_ROOT="$HOME/.hermes"
+CORE_CONFIG="$HERMES_ROOT/config.yaml"
+WORKFLOW_STATE="$HERMES_ROOT/.workflow-state"
+CRON_REGISTRY="$HERMES_ROOT/cron/registry.yaml"
+```
+
+## 4. 설계 원칙
+
+시스템 설계는 다음 세 가지 원칙을 따르며, 모든 모듈과 스크립트는 이 원칙에 부합하도록 작성된다.
+
+**심링크 금지**. 파일 시스템 참조는 물리적 경로만 사용한다. 심링크는 환경 간 경계에서 파괴되기 쉽며, 경로 분해 시 의도하지 않은 오류를 발생시킨다. 모든 스크립트는 `readlink -f` 또는 절대 경로를 통해 물리적 파일을 직접 참조한다.
+
+**`$HERMES_ROOT` 추상화**. 절대 경로를 하드코딩하지 않으며, 모든 경로 구성은 `$HERMES_ROOT` 환경 변수를 기반으로 수행한다. WSL 환경과 macOS 환경 간 호환성을 유지하기 위해, 상대 경로와 환경 변수 조합을 사용하는 것이 표준 관례이다.
+
+```bash
+# 올바른 경로 구성 방식
+EVENT_LOG="$HERMES_ROOT/sessions/events.log"
+SKILL_DIR="$HERMES_ROOT/skills/${SKILL_NAME}"
+```
+
+**이벤트 기반 통신**. 모듈 간 상태 전달은 이벤트 버스를 통해 비동기로 수행된다. 직접 스크립트 호출을 통해 동기적 종속성을 생성하지 않으며, 모든 상태 변경은 이벤트 발행-구독 패턴을 따른다. 이 원칙은 계층 간 결합도를 낮추고 독립적 배포를 가능하게 한다.
+
+**단일 진실 공급원(SSOT)**. `config.yaml`과 `AGENTS.md`는 시스템 전역 설정의 단일 진실 공급원이다. 중복 설정 파일을 생성하지 않으며, 모든 계층은 이 두 파일을 참조하여 동작 매개변수를 확인한다.
+
+**원자성 보장**. 상태 파일 작성은 원자적 원리로 수행된다. 임시 파일에 작성 후 `mv` 명령어로 이동하는 방식을 통해 중간 상태를 노출하지 않으며, `system-common` 라이브러리가 제공하는 원자적 작성 유틸리티를 사용한다.
+
+## 5. 이벤트 버스 개념
+
+이벤트 버스는 `event.sh`를 단일 진입점으로 사용하는 퍼블리시-서브스크라이브(Pub/Sub) 패턴을 구현한다. 모든 모듈은 `event.sh`를 통해 이벤트를 발행하거나 구독하며, 직접적인 모듈 간 호출을 수행하지 않는다.
+
+`event.sh`는 시스템 아키텍처에서 다음과 같은 역할을 수행한다. 첫째, 모든 상태 변경 이벤트를 중앙 집중식으로 라우팅하여 모듈 간 결합도를 낮춘다. 둘째, 이벤트 내용을 JSONL 형식으로 기록하여 전체 시스템의 실행 이력을 추적 가능하게 한다. 셋째, 이벤트 구독자를 동적으로 등록하거나 해제할 수 있어 시스템 동작을 실행 시간에 변경할 수 있다.
+
+```bash
+# 이벤트 발행
+$HERMES_ROOT/event.sh publish workflow.started \
+  --payload '{"job_id": "JOB-0042", "step": "request"}'
+
+# 이벤트 구독
+$HERMES_ROOT/event.sh subscribe workflow.completed \
+  --handler "$HERMES_ROOT/cron/notifier.sh"
+
+# JSONL 히스토리 조회
+tail -20 "$HERMES_ROOT/sessions/events.jsonl"
+```
+
+JSONL 히스토리 파일은 각 이벤트의 타임스탬프, 이벤트 유형, 페이로드를 포함하여 기록한다. 시스템 장애 시 히스토리를 통해 문제 발생 시점을 추적하며, 이벤트 재생을 통한 상태 복구를 지원한다.
+
+```mermaid
+sequenceDiagram
+    participant P as Publisher<br/>(모듈 A)
+    participant E as event.sh<br/>(이벤트 버스)
+    participant S1 as Subscriber 1<br/>(모듈 B)
+    participant S2 as Subscriber 2<br/>(모듈 C)
+    participant L as JSONL<br/>(히스토리)
+
+    P->>E: publish event.type --payload
+    E->>L: 기록 (JSONL)
+    E->>S1: 전달 event.type
+    E->>S2: 전달 event.type
+    S1-->>E: 처리 완료
+    S2-->>E: 처리 완료
+```
+
+## 6. system-common 개념
+
+`system-common`은 모든 계층이 공유하는 공통 유틸리티 라이브러리이다. `$HERMES_ROOT/system-common/lib/` 경로에 배치되며, 스크립트에서 `source` 명령어로 직접 포함하여 사용한다.
+
+**mkdir atomic mutex**. 디렉토리 생성과 잠금 관리를 결합한 유틸리티로, 경쟁 조건(race condition)이 발생하는 동시 실행 환경에서 안전하게 디렉토리를 생성하고 상호 배제를 보장한다. `mkdir -p`와 파일 기반 뮤텍스를 결합하여 원자적으로 디렉토리 초기화를 수행하며, 이미 존재하는 디렉토리의 경우 무조건 성공 처리한다.
+
+```bash
+# system-common 포함 예시
+source "$HERMES_ROOT/system-common/lib/utils.sh"
+source "$HERMES_ROOT/system-common/lib/atomic.sh"
+
+# 원자적 디렉토리 생성 + 뮤텍스
+atomic_mkdir "$HERMES_ROOT/sessions/new-session"
+```
+
+**공통 유틸리티**. 로그 기록, 원자적 파일 작성(`atomic_write`), 환경 변수 검증, 경로 정규화 기능을 제공한다. 모든 유틸리티 함수는 `$HERMES_ROOT` 의존성을 내부적으로 처리하며, 호출 측에서 경로를 직접 구성할 필요가 없다.
+
+## 7. 안티패턴
+
+다음 패턴은 시스템 설계 원칙과 충돌하며 사용이 금지된다.
+
+**절대 경로 하드코딩**. `/home/user/.hermes/config.yaml`와 같이 사용자 환경에 고정된 경로를 스크립트에 포함하지 않는다. `$HERMES_ROOT` 환경 변수를 사용하며, 경로를 구성하는 함수를 `system-common`에서 제공한다.
+
+**심링크 생성**. `ln -s` 명령어로 심링크를 생성하지 않는다. 심링크는 환경이 변경될 때 무효화되며, 경로 분해 시 의도하지 않은 동작을 유발한다. 물리적 파일 복사 또는 환경 변수 기반 경로 구성을 사용한다.
+
+**직접 스크립트 호출**. 모듈 A가 모듈 B의 스크립트를 직접 실행하는 구조를 생성하지 않는다. 모듈 간 상호작용은 `event.sh`를 통한 이벤트 발행-구독 패턴을 통해 수행하며, 동기적 종속성을 방지한다.
+
+## 8. 확장성
+
+5-Tier 아키텍처는 수평적 확장을 지원한다. 각 계층은 독립적으로 버전 관리 및 배포가 가능하며, 이벤트 기반 통신이 모듈 간 느슨한 결합을 보장한다. 새로운 인터페이스 추가 시 Tier 3 계층만 수정하면 되며, Core 계층의 변경이 불필요하다. 스킬 확장 시 `skills/` 디렉토리에 새 모듈을 배치하면 자동 인식되며, Cron 자동화 추가 시 `cron/registry.yaml`에 등록하면 실행 큐에 포함된다.
+
+## 9. FAQ
+
+**Q: 새로운 계층을 추가하려면 어떻게 해야 하나요?**
+A: 5-Tier 구조는 명확한 책임 경계를 가지므로, 기존 계층의 책임을 분리하거나 통합하는 형태로 접근한다. 이벤트 버스를 통해 기존 계층과 통신하도록 설계하며, `config.yaml`에 새 계층의 설정을 등록한다.
+
+**Q: `$HERMES_ROOT` 환경 변수가 설정되지 않은 경우 어떻게 동작하나요?**
+A: `system-common/lib/utils.sh`는 `$HERMES_ROOT`가 미설정 시 `~/.hermes`를 기본값으로 사용하며, 로그에 경고 메시지를 기록한다. 모든 유틸리티 함수는 이 기본값 처리를 내부적으로 수행한다.
+
+**Q: 이벤트 버스 장애 시 시스템이 어떻게 복구하나요?**
+A: `event.sh`는 비동기 이벤트 처리를 사용하므로 단일 이벤트 실패가 전체 시스템을 차단하지 않는다. 실패한 이벤트는 JSONL 히스토리에 상태와 함께 기록되며, 재실행 스크립트가 히스토리를 스캔하여 미처리 이벤트를 재처리한다.
+
 ---
 
-## 5. 배포 전략
+## 관련 문서
 
-### Tier 1 (Core) - 핵심 워크플로우
-- ✅ `workflow.sh`
-- ✅ `workflow-gate.sh`
-- ✅ `create-job.sh`
-- ✅ `spec-*.sh` (14개)
-- ❌ `cron-wrapper.sh` (추가 필요)
-
-### Tier 2 (Runtime) - 핵심 시스템
-- ✅ `knowledge-sync.sh`
-- ✅ `notify.sh`
-- ✅ `atomic_write.sh`
-- ❌ `expression-system` (추가 필요)
-
-### Tier 3-5 (Interfaces/Infra/Release)
-- ✅ GitHub Pages (HTTP 200)
-- ✅ Discord/Telegram 연동
-- ✅ WSL/Host 환경
-
----
-
-## 6. 누락된 핵심 코드
-
-| 항목 | 상태 | 설명 |
-|------|------|------|
-| Content System | ❌ | engine/, templates/, tests/ 전체 |
-| Custom Skills | ❌ | workflow, knowledge, cron 등 26개 |
-| 운영 스크립트 | ❌ | health-check, knowledge-process 등 125개 |
-
----
-
-## 7. 추가 계획
-
-### Phase 1: 핵심 시스템
-1. Content System engine 전체 추가
-2. Custom skills 중 핵심 10개 추가
-3. 운영 스크립트 중 핵심 20개 추가
-
-### Phase 2: 완전 통합
-1. 누락된 운영 스크립트 모두 추가
-2. Custom skills 전체 동기화
-3. 검증 스크립트 확장
-
----
-
-마지막 업데이트: 2026-06-16
+- [5계층 아키텍처 설계 철학](../blog/posts/architecture-5tier.md) — 아키텍처 설계 배경과 교착 상태 문제 분석
+- [워크플로우 가이드](guides/request-task.md) — 9-Step 상태 머신 동작 흐름과 승인 게이트
+- [아키텍처 슬라이드](../slides/decks/architecture-5tier.html) — 5-Tier 시각화 및 핵심 개념
