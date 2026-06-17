@@ -16,6 +16,98 @@ related_specs: ["SPEC-D04"]
 
 💡 **에이전트가 정해진 시간에 자동으로 작업을 수행하고, 결과를 여러 채널에 전달하는 자동화 인프라를 설정하고 운영하는 방법입니다.**
 
+## 한 줄 요약
+
+`registry.yaml`에서 작업을 정의하면 스케줄러가 자동으로 실행하고, 결과를 Discord·Telegram·로컬 파일로 전달하는 자동화 인프라입니다.
+
+## 기본 개념
+
+자동화 시스템은 정해진 주기나 조건에서 에이전트가 스스로 작업을 시작하고 결과를 전달하는 '디지털 루틴'입니다. Registry에서 작업 정의, Wrapper에서 실행 환경 복원, Runner에서 실제 에이전트 추론이 이루어지는 3층 구조로 동작합니다. 이벤트 버스(`event.sh`)를 통해 실행 이력이 기록되고, `system-common` 유틸리티가 원자적 실행을 보장합니다.
+
+## 문제 상황
+
+사용자가 매일 아침 뉴스 요약을 받거나, 주간 시스템 점검을 자동으로 수행하려면 수동으로 에이전트에 요청해야 합니다. 반복적인 작업을 사람이 기억하고 실행하면 누락이 발생하고, 여러 작업을 동시에 관리하면 스케줄이 겹치거나 중복 실행되는 문제가 생깁니다. 또한 작업 실패 시 재시도나 알림이 없어 문제를 놓치기 쉽습니다.
+
+## 기술 설계
+
+자동화 시스템은 Registry → Wrapper → Runner의 3층 아키텍처로 구현됩니다. `cron/registry.yaml`이 모든 작업의 SSOT로 동작하며, 각 작업은 고유 ID, 스케줄 표현식, 프롬프트, 모델 지정, 도구 집합 제한, 결과 전달 채널을 YAML로 정의합니다. Wrapper는 `.env` 로드, 독립 세션 생성, 환경 복원을 담당하고, Runner가 실제 에이전트 추론과 결과 전달을 수행합니다. `mutex_acquire` 유틸리티가 중복 실행을 차단하며, `silent-on-success` 원칙이 정상 실행 시 알림을 생략합니다.
+
+## 구조/흐름도
+
+```mermaid
+flowchart TD
+    subgraph Registry["Layer 1: Scheduler"]
+        R[registry.yaml<br/>작업 정의 SSOT]
+    end
+
+    subgraph Wrapper["Layer 2: Environment"]
+        W1[".env 로드"]
+        W2["세션 생성"]
+        W3["매개변수 전달"]
+    end
+
+    subgraph Runner["Layer 3: Agent"]
+        R1["프롬프트 실행"]
+        R2["스킬 동적 로드"]
+        R3["도구 집합 제한"]
+    end
+
+    subgraph Delivery["결과 전달"]
+        D1["Discord"]
+        D2["Telegram"]
+        D3["Local File"]
+        D4["origin 채널"]
+    end
+
+    subgraph Events["이벤트 버스"]
+        E1["started"]
+        E2["running"]
+        E3["completed"]
+        E4["delivered"]
+    end
+
+    R --> W1
+    W1 --> W2
+    W2 --> W3
+    W3 --> R1
+    R1 --> R2
+    R2 --> R3
+    R3 --> D1 & D2 & D3 & D4
+    W1 -.- E1
+    R1 -.- E2
+    R3 -.- E3
+    D1 & D2 -.- E4
+```
+
+## 활용 예시
+
+### 매일 아침 뉴스 요약 크론 작업
+```yaml
+- id: morning-news
+  name: "매일 아침 뉴스 요약"
+  schedule: "0 8 * * *"
+  prompt: |
+    오늘 AI/기술 분야 주요 뉴스 5개를 검색하고
+    각 항목별로 2문장 이내로 요약해 주세요.
+  deliver: "discord:123456789"
+  model:
+    provider: openrouter
+    model: "anthropic/claude-sonnet-4"
+  enabled_toolsets: ["web", "terminal"]
+```
+
+### 이벤트 기반 자동화 (GitHub PR 리뷰)
+```bash
+hermes cron create \
+  --name "pr-review" \
+  --prompt "PR 코드 리뷰 수행" \
+  --trigger "github.pr.created" \
+  --deliver discord
+```
+
+### silent-on-success 모니터링
+정상 실행 시 알림을 전송하지 않고 실패 시만 알리는 점검 작업은 `no_agent: true`와 `script`를 함께 사용합니다.
+
 ## 서론
 
 p-hermes의 자동화 시스템은 정해진 주기나 조건에서 에이전트가 스스로 작업을 시작하고 결과를 전달하는 '디지털 루틴' 인프라입니다. 매일 아침 뉴스 요약, 주간 시스템 점검, 실시간 모니터링 등 반복적인 작업을 사용자 개입 없이 자동화할 수 있습니다.

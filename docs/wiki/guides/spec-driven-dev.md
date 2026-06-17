@@ -2,6 +2,72 @@
 
 💡 **명세서가 있는 곳에 협업이 있습니다. 코드 작성 전에 명세서를 정의하고, 모든 변경사항이 명세서를 경유하는 워크플로우입니다.**
 
+## 한 줄 요약
+
+명세서(Spec)를 단일 진실 공급원으로 설정하고, 모든 변경사항이 Spec을 경유하여 추적·검증되는 개발 프로세스입니다.
+
+## 기본 개념
+
+Spec-Driven Development는 AI 에이전트가 자율적으로 작업을 수행할 때 "무엇을 해야 하는가"에 대한 명확한 기준이 필요합니다. 명세서가 없는 상태에서 작업하면 방향이 달라지고 결과물의 일관성이 무너집니다. Spec은 시스템이 요구사항을 정의하는 권위 있는 문서이며, 모든 코드·테스트·문서는 Spec에서 파생됩니다. 변경은 Spec 작성 → 충돌 검증 → 등록의 흐름으로 진행됩니다.
+
+## 문제 상황
+
+여러 AI 에이전트가 동시에 문서를 수정할 때, 서로 다른 기준을 따라 작업하면 명세서 간 충돌이 발생합니다. 예를 들어 부모 Spec이 분량 기준을 1,500자로 정의한 후, 자식 Spec이 이를 3,500자로 상승시키면 수치 불일치가 생깁니다. 또한 폴더 구조나 파일 경로를 재정의하면 다른 Spec이 참조하는 경로가 무효화됩니다. 이러한 충돌을 사전에 발견하지 않으면 승인된 Spec이 시스템과 불일치하는 결과를 초래합니다.
+
+## 기술 설계
+
+Spec 시스템은 다음 구성 요소로 구현됩니다. `specs/active/SPEC-*.md`에 활성 명세서를 저장하고, `specs/_index.yaml`은 인간 판독형 카탈로그를, `specs/_matrix.json`은 기계 판독형 의존성 그래프를 관리합니다. 의존성 타입(`extends`, `raises`, `conflicts`)으로 Spec 간 관계를 정의하며, 신규 Spec 등록 시 3단계 Conflict Detection(수치 비교 → 구조 재정의 → 도메인 중복)을 반드시 실행합니다. `spec-manager.py`가 Spec CRUD와 상태 전환을, `spec-conformance.sh`가 준수도 점수를 자동 계산합니다.
+
+## 구조/흐름도
+
+Spec 생성부터 충돌 검증, 등록까지의 전 과정을 시각화합니다.
+
+```mermaid
+flowchart TD
+    A[Spec 작성] --> B[Conflict Detection]
+    B --> C{"1. 수치 비교"}
+    C -->|수치 상승| D["raises 문서화"]
+    C -->|모순| E["conflicts 등록"]
+    C -->|일치| F{"2. 구조 재정의"}
+    F -->|재정의 존재| E
+    F -->|재정의 없음| G{"3. 도메인 중복"}
+    G -->|중복 존재| E
+    G -->|중복 없음| H[_matrix.json 업데이트]
+    H --> I[_index.yaml 업데이트]
+    I --> J[json.tool 검증]
+    J -->|PASS| K[등록 완료]
+    J -->|FAIL| A
+    E --> L[proposed 상태로 유지]
+
+    style D fill:#fff3e0,stroke:#e65100
+    style E fill:#fce4ec,stroke:#c62828
+    style K fill:#e8f5e9,stroke:#2e7d32
+    style L fill:#f3e5f5,stroke:#6a1b9a
+```
+
+## 활용 예시
+
+### 신규 Spec 등록
+```bash
+# 1. Spec 작성
+# specs/active/SPEC-NEW.md 에 명세서 작성
+
+# 2. Conflict Detection 실행
+grep -n "분량\|자\|chars" specs/active/SPEC-NEW.md
+
+# 3. 의존성 그래프 업데이트
+# specs/_matrix.json 에 의존성 배열 추가
+
+# 4. 카탈로그 업데이트
+# specs/_index.yaml 에 항목 추가
+
+# 5. 검증 실행
+cat specs/_matrix.json | python3 -m json.tool
+```
+
+### Batch Modification (리뷰 기반 병렬 수정)
+여러 Spec에 대한 수정 사항이 발견 시, 서브에이전트를 병렬로 위임하여 `patch` 도구로 타겟팅된 수정을 적용합니다. 수정 후 `grep -rn`으로 잔여 참조를 확인합니다.
+
 ---
 
 ## 🎯 핵심 개념 3가지

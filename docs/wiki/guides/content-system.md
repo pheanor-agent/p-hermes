@@ -2,6 +2,65 @@
 
 💡 **콘텐츠의 품질을 검증하고 자동으로 생성하는 파이프라인입니다. 텍스트를 입력하면 검증을 통과한 고품질 콘텐츠를 출력합니다.**
 
+## 한 줄 요약
+
+L1~L5 5계층 검증 게이트를 통과한 고품질 AI 콘텐츠를 도메인별 엔진이 자동 생성하고 검증하는 파이프라인입니다.
+
+## 기본 개념
+
+Content System은 AI 생성 텍스트의 품질을 보장하기 위해 5계층 검증 게이트(L1 구조 → L2 에러 → L3 어조 → L4 도메인 → L5 Judge)를 통과하는 자동 파이프라인입니다. Anti-Slop 라이브러리가 AI-isms(금지 어휘, 전환어구 중복, 부정-대조 패턴)를 차단하고, 도메인별 검증이 기술·교육·비즈니스·창작 각각의 전문성을 확인합니다. 6개의 생성 엔진(tier_generator, persona_generator, emotion_merger, analogy_builder, template_filler, tone-adapter)이 도메인별 콘텐츠를 생성합니다.
+
+## 문제 상황
+
+AI 모델이 생성하는 텍스트에는 문법적으로 정확하지만 구조적 결함이 숨어 있는 경우가 많습니다. 과도한 수식어, 불필요한 전이 표현, 기계적 병렬 구조 등 AI-isms는 독자에게 인공적인 느낌을 전달합니다. 또한 동일한 AI 모델로 생성된 기술 문서와 교육 콘텐츠가 동일한 톤과 깊이로 작성되면, 독자가 원하는 정보 수준과 실제 제공 내용이 맞지 않습니다. 개별 모델을 수동으로 교정하는 접근은 확장성이 없고 일관성을 보장하지 못합니다.
+
+## 기술 설계
+
+콘텐츠 시스템은 3-Layer 아키텍처로 구성됩니다. Layer 1(메타 스킬)이 요청 진입점에서 도메인(D1~D5) 분류를 수행하고, Layer 2(공유 엔진)가 7가지 엔진(tier_generator, tone_adapter, analogy_builder 등)으로 콘텐츠의 구조와 톤을 결정하며, Layer 3(도메인 오버레이)가 스타일 매트릭스를 적용하여 최종 결과물을 렌더링합니다. 검증 파이프라인은 L1(Struct) → L2(Error) → L3(Voice) → L4(Domain) → L5(Judge) 순으로 동작하며, 각 계층은 독립적으로 통과해야 다음 계층으로 전달됩니다.
+
+## 구조/흐름도
+
+```mermaid
+flowchart TD
+    A[입력 요청] --> B["Layer 1: 메타 스킬<br/>도메인 분류 D1~D5"]
+    B --> C["Layer 2: 공유 엔진<br/>7-Engine 처리"]
+    C --> D["Layer 3: 도메인 오버레이<br/>스타일 적용"]
+
+    D --> E["L1: 구조 검증"]
+    E --> F["L2: 에러 체크"]
+    F --> G["L3: 어조 검증"]
+    G --> H["L4: 도메인 검증"]
+    H --> I{Blog?}
+    I -->|Yes| J["L5: Judge Model"]
+    I -->|No| K[최종 출력]
+    J --> K
+
+    G -->|FAIL| B
+    H -->|FAIL| B
+    J -->|FAIL| B
+
+    style E fill:#ff6b6b,stroke:#c0392b,color:#fff
+    style G fill:#ff9f43,stroke:#e67e22,color:#fff
+    style J fill:#ee5a24,stroke:#d63031,color:#fff
+```
+
+## 활용 예시
+
+### 기술 문서 검증 (D1)
+```bash
+python3 validator.py l4 "Python 3.11 사용" D1
+# 결과: PASS (코드 블록 존재, 버전 명시)
+```
+
+### 교육 문서 검증 (D2)
+```bash
+python3 validator.py l4 "1단계: 설치 → 2단계: 설정 → 3단계: 실행" D2
+# 결과: PASS (예시 3개, 단계별 안내)
+```
+
+### Blog 포스트 생성 파이프라인
+`content: true` 플래그를 포함한 JOB은 `workflow-gate.sh`가 `content-gate.sh`를 자동 호출하고, 도메인별 엔진 조합을 적용한 후 L1~L5 검증을 통과합니다.
+
 ## 🎯 핵심 개념
 
 Content System은 5계층 검증 게이트를 통해 콘텐츠 품질을 보장합니다. Anti-Slop 라이브러리가 금지 어휘를 차단하고, 도메인별 검증이 전문성을 확인합니다.

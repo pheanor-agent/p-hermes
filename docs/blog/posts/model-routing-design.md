@@ -1,5 +1,9 @@
 title: "모델 라우팅 설계: 작업 성격에 최적의 모델을 배치하는 전략"
 
+## 한 줄 요약
+
+"모든 경주를 한 명의 드라이버가 이길 수 없다." 작업의 성격(설계, 실행, 조사 등)에 따라 가장 적합한 LLM을 자동으로 배정하여 비용은 낮추고 성능은 극대화하는 라우팅 전략입니다.
+
 > **💡 한 줄 요약**: \"모든 경주를 한 명의 드라이버가 이길 수 없다.\" 작업의 성격(설계, 실행, 조사 등)에 따라 가장 적합한 LLM을 자동으로 배정하여 비용은 낮추고 성능은 극대화하는 라우팅 전략입니다.
 
 ---
@@ -192,6 +196,35 @@ get_model_for_step() {
 # 사용
 MODEL=$(get_model_for_step "design")
 echo "Design 단계 모델: $MODEL"  # → gemma-4
+```
+
+### 📊 구조/흐름도: 라우팅 엔진 동작 흐름
+
+```mermaid
+graph TD
+    Start[작업 시작] --> Step1[Investigation]
+    Step1 -->|Route: 범용형| Action1[현황 분석 및 파일 검색]
+
+    Action1 --> Step2[Design]
+    Step2 -->|Route: 추론형| Action2[상세 설계서 작성]
+
+    Action2 --> Step3[Review]
+    Step3 -->|Route: 검증형| Action3[설계 결함 검증 및 수정 요청]
+
+    Action3 -->|결함 발견| Action2
+    Action3 -->|승인| Step4[Execution]
+    Step4 -->|Route: 수행형| Action4[코드 구현 및 파일 수정]
+
+    Action4 --> Step5[Test]
+    Step5 -->|Route: 범용형| Action5[테스트 실행 및 검증]
+
+    Action5 --> End[작업 완료]
+
+    style Step1 fill:#e3f2fd,stroke:#1565c0
+    style Step2 fill:#fff3e0,stroke:#e65100
+    style Step3 fill:#fce4ec,stroke:#c62828
+    style Step4 fill:#e8f5e9,stroke:#2e7d32
+    style Step5 fill:#f3e5f5,stroke:#6a1b9a
 ```
 
 ### 📊 라우팅 흐름도 (Mermaid)

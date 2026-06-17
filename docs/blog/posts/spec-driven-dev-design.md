@@ -3,6 +3,41 @@
 > **주제**: #spec-driven-dev #dependencies #conflict-detection
 > **작성일**: 2026-06-17
 
+## 한 줄 요약
+
+명세서(Spec)를 단일 진실 공급원으로 설정하고, 3단계 Conflict Detection으로 Spec 간 충돌을 사전에 차단하는 개발 프로세스입니다.
+
+## 기본 개념
+
+AI 에이전트 시대에는 여러 에이전트가 자율적으로 작업을 수행하므로 "무엇을 해야 하는가"에 대한 명확한 기준이 필수적입니다. Spec-Driven Development는 명세서를 시스템의 권위 있는 정의(SSOT)로 설정하고, 모든 변경사항이 Spec을 경유하여 추적·검증되도록 합니다. 의존성 추적(extends, raises, conflicts), 3단계 Conflict Detection, Batch Modification이 세 가지 핵심 메커니즘입니다.
+
+## 기술 설계
+
+Spec 시스템은 `specs/active/SPEC-*.md`(활성 명세서), `specs/_index.yaml`(인간 판독형 카탈로그), `specs/_matrix.json`(기계 판독형 의존성 그래프) 세 가지 파일로 구현됩니다. 의존성 타입은 `extends`(부모 확장), `raises`(수치 상승 — 승인 시 부모 업데이트), `conflicts`(충돌 — 승인 차단)로 구분됩니다. 신규 Spec 등록 시 3단계 검증(수치 비교 → 구조 재정의 → 도메인 중복)을 실행하며, Batch Modification 워크플로우로 여러 Spec을 병렬로 수정할 수 있습니다.
+
+## 구조/흐름도
+
+```mermaid
+flowchart TD
+    A[Spec 작성] --> B[Conflict Detection]
+    B --> C{"1. 수치 비교"}
+    C -->|수치 상승| D["raises 문서화"]
+    C -->|모순| E["conflicts 등록"]
+    C -->|일치| F{"2. 구조 재정의"}
+    F -->|재정의 존재| E
+    F -->|재정의 없음| G{"3. 도메인 중복"}
+    G -->|중복 존재| E
+    G -->|중복 없음| H[_matrix.json + _index.yaml 업데이트]
+    H --> I[json.tool 검증]
+    I -->|PASS| J[등록 완료]
+    I -->|FAIL| A
+    E --> K[proposed 상태로 유지]
+
+    style D fill:#fff3e0,stroke:#e65100
+    style E fill:#fce4ec,stroke:#c62828
+    style J fill:#e8f5e9,stroke:#2e7d32
+```
+
 ---
 
 ## 서론: AI 에이전트 시대의 명세서

@@ -2,6 +2,10 @@
 
 💡 **p-hermes의 심장부인 '9단계 상태머신(9-Step Workflow)'의 동작 원리와 사용자의 개입 시점을 상세히 설명합니다.**
 
+## 한 줄 요약
+
+AI 에이전트의 무분별한 실행을 차단하고 단계별 검증을 통해 품질을 보장하는 9단계 상태머신 워크플로우입니다.
+
 ## 🌱 기본 개념
 에이전트가 요청을 받자마자 코드를 수정하는 것은 매우 위험합니다. 이는 마치 건축가가 설계도 없이 바로 벽돌을 쌓는 것과 같습니다. 갑작스러운 변경은 예상치 못한 시스템 붕괴를 초래할 수 있으며, 복구 비용 또한 막대합니다.
 
@@ -34,6 +38,53 @@ p-hermes는 이를 방지하기 위해 모든 작업을 **'상태 전이 모델(
 - **Step 7. Test**: 설계 단계에서 정의한 테스트 시나리오를 실행합니다. `terminal`을 통해 실제 스크립트를 구동하거나 결과물을 직접 검증합니다.
 - **Step 8. Execution Review**: 테스트 결과가 초기 목표(DoD)와 일치하는지 비교합니다. 실패 시 Step 6 또는 Step 3으로 되돌아갑니다.
 - **Step 9. Done**: 작업을 최종 종료합니다. 이번 작업에서 얻은 핵심 지식(Lesson Learned)이나 새롭게 정의된 규칙을 위키에 기록하여 시스템의 장기 기억으로 동기화합니다.
+
+## 📊 워크플로우 구조/흐름도
+
+### 상태 전이 흐름
+
+```mermaid
+stateDiagram-v2
+    [*] --> Request
+    Request --> Investigation
+    Investigation --> Design
+    Design --> Review
+    Review --> Approval
+    Approval --> Design : 수정 요청 (Feedback Loop)
+    Approval --> Execution : 승인 ("진행해")
+    Execution --> Test
+    Test --> Execution : 테스트 실패 (Bug Fix)
+    Test --> ExecutionReview
+    ExecutionReview --> Done
+    Done --> [*]
+```
+
+### 시스템 통합 흐름
+
+워크플로우는 시스템 아키텍처의 Core 계층(`workflow.sh`)에서 동작하며, 상태 파일(`.workflow-state`)과 이벤트 버스(`event.sh`)를 통해 Runtime·Interface 계층과 연동합니다.
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant IF as Interface<br/>(Discord/CLI)
+    participant WF as workflow.sh<br/>(Core)
+    participant WS as .workflow-state
+    participant EV as event.sh
+    participant K as knowledge/<br/>(Runtime)
+
+    U->>IF: 작업 요청
+    IF->>WF: JOB 생성
+    WF->>WS: 상태 기록 (Request)
+    WF->>EV: publish workflow.started
+    WF->>WF: Investigation → Design → Review
+    WS->>WF: 상태 확인 (Approval 대기)
+    U->>IF: 승인
+    IF->>WF: Approval 통과
+    WF->>WF: Execution → Test → Exec Review
+    WF->>WS: 상태 기록 (Done)
+    WF->>EV: publish workflow.completed
+    WF->>K: 지식 동기화
+```
 
 ## 📊 워크플로우 상태 전이도
 ```mermaid

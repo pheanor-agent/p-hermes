@@ -16,6 +16,75 @@ related_specs: ["SPEC-D04"]
 
 > **💡 한 줄 요약**: Hermes Agent는 단순한 AI 어시스턴트를 넘어, 영속적 생명력을 지닌 자율 에이전트 플랫폼으로, 스스로 학습하고 진화하며 300여 개 모델과 15개 이상 메시징 플랫폼을 통합합니다.
 
+## 한 줄 요약
+
+Hermes Agent는 영속적 메모리, GEPA 학습 루프, 300여 개 모델 지원, 15개 메시징 플랫폼 통합을 갖춘 오픈소스 자율 AI 에이전트 플랫폼입니다.
+
+## 기본 개념
+
+Hermes Agent는 사용자가 CLI 앞에 앉아 있지 않아도 메시징 플랫폼을 통해 언제든 상호작용할 수 있는 자율 에이전트입니다. 세 가지 핵심 특성이 챗봇과 구분됩니다. 첫째, 영속적 생명력 — 세션 종료 후에도 환경 설정, 작업 이력, 프로젝트 구조를 유지합니다. 둘째, 폐쇄형 학습 루프 — GEPA(Gather, Evaluate, Produce, Apply) 사이클로 경험을 구조화하여 재사용 가능한 스킬로 변환합니다. 셋째, 벤더 중립성 — 20개 이상의 모델 제공자를 지원하며, 모델 변경은 한 줄 명령어로 완료됩니다.
+
+## 기술 설계
+
+Hermes Agent는 다음 기술로 구현됩니다. Hermes Gateway는 백그라운드 서비스로 15개 이상 메시징 플랫폼에 동시에 연결되며, 동일한 에이전트 인스턴스가 모든 플랫폼 메시지를 처리합니다. GEPA 메커니즘이 Gather(세션 이력 기록) → Evaluate(복잡도 평가) → Produce(SKILL.md 생성) → Apply(자동 로드) 사이클을 수행하며, Curator 백그라운드 프로세스가 스킬 수명 주기를 관리합니다. 프로파일 시스템(`~/.hermes/profiles/<name>/`)이 독립적인 설정·세션·스킬·메모리를 격리 저장합니다.
+
+## 구조/흐름도
+
+### 자율 에이전트 아키텍처
+
+```mermaid
+graph TD
+    subgraph Core["에이전트 핵심"]
+        C[Conversation Loop]
+    end
+
+    subgraph Procedures["프로시저 계층"]
+        S1[Skills<br/>절차적 기억]
+        S2[Curator<br/>수명 주기 관리]
+    end
+
+    subgraph Memory["메모리 계층"]
+        M1[Memory<br/>영속적 컨텍스트]
+        M2[Session DB<br/>FTS5 검색]
+    end
+
+    subgraph Tools["실행 계층"]
+        T1[Terminal]
+        T2[File System]
+        T3[Browser]
+        T4[Web/API]
+    end
+
+    subgraph Platforms["메시징 플랫폼"]
+        P1[Discord]
+        P2[Telegram]
+        P3[Slack]
+        P4[+11 more]
+    end
+
+    C <--> S1
+    S1 <--> S2
+    C <--> M1
+    C <--> M2
+    C --> T1 & T2 & T3 & T4
+    Platforms --> C
+
+    style C fill:#e8f5e9,stroke:#1a7f37
+    style S1 fill:#fff3e0,stroke:#bc4c00
+    style M1 fill:#f3e5f5,stroke:#8250df
+    style T1 fill:#e3f2fd,stroke:#0969da
+```
+
+### GEPA 학습 루프
+
+```mermaid
+graph LR
+    G[Gather<br/>경험 수집] --> E[Evaluate<br/>결과 평가]
+    E --> P[Produce<br/>스킬 생성]
+    P --> A[Apply<br/>재적용]
+    A --> G
+```
+
 ---
 
 ## 챗봇 래퍼 시대의 종식과 자율적 에이전트 패러다임

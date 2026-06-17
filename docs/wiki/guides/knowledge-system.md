@@ -16,6 +16,84 @@ related_specs: ["SPEC-D04"]
 
 💡 **세션 이력, JOB 기록, 뉴스 피드 등 여러 원본을 수집·정제·점수화하여 에이전트가 효율적으로 탐색하는 '살아있는 지식 베이스'를 구축하고 운영하는 가이드입니다.**
 
+## 한 줄 요약
+
+Raw 원본을 LLM 파이프라인으로 정제하여 계층적 Wiki DB에 저장하고, 점수 체계로 중요도를 자동 평가하는 지식 관리 시스템입니다.
+
+## 기본 개념
+
+지식 시스템은 Karpathy의 3계층 구조(Raw Sources → Wiki → Schema)를 기반으로 합니다. 원본 데이터는 수정 없이 그대로 보관하고, 가공 파이프라인이 의미 있는 지식으로 변환하며, 점수 체계(T1 Core / T2 Working / T3 Reference)가 중요도를 자동 평가합니다. 에이전트는 `index.md` 카탈로그를 통해 T1 지식을 우선 참조하고, SQLite FTS5 기반 검색으로 정밀 탐색이 가능합니다.
+
+## 문제 상황
+
+방대한 대화 이력과 JOB 산출물, 뉴스 등을 가공 없이 에이전트에게 제공하면 두 가지 문제가 발생합니다. 컨텍스트 오버플로우로 핵심 지시사항이 뒤로 밀려나고, 추론 오염으로 과거의 잘못된 판단이나 노후화된 정보를 '사실'로 착각하여 현재 결정에 반영합니다. Raw Data에서 키워드 검색 시 관련 없는 노이즈가 너무 많아 정확한 결과를 찾지 못하는 문제도 있습니다.
+
+## 기술 설계
+
+지식 시스템은 다음 구성 요소로 구현됩니다. `daily-knowledge-process.sh`가 변경된 원본 파일을 스캔하여 wiki 페이지로 가공하고, `build-metadata.sh`와 `build-graph.sh`가 페이지 간 관계 그래프를 생성하며, `build-scores.sh`가 `score = pw × 0.5 + rs × 0.3 + us × 0.2` 공식으로 점수를 자동 계산합니다. `knowledge-health-report.sh`가 일일 건강도 리포트를 생성하고, `wiki-cleanup.sh`가 T3 지식을 아카이빙합니다. `sources-index.json`이 원본 소스 카탈로그를 관리합니다.
+
+## 구조/흐름도
+
+```mermaid
+flowchart TD
+    subgraph Sources["Raw Sources"]
+        S1["sessions/*.jsonl"]
+        S2["jobs/*/result.md"]
+        S3["knowledge/news/"]
+        S4["knowledge/references/"]
+    end
+
+    subgraph Pipeline["가공 파이프라인"]
+        P1["daily-knowledge-process.sh<br/>스캔 + 가공"]
+        P2["clean-wiki-pages.sh<br/>원본 복사본 정리"]
+        P3["build-metadata.sh<br/>metadata.json"]
+        P4["build-graph.sh<br/>graph_edges.json"]
+    end
+
+    subgraph Priority["점수 계산"]
+        SC["build-scores.sh<br/>T1/T2/T3 분류"]
+    end
+
+    subgraph Storage["Wiki DB"]
+        W1["pages/"]
+        W2["_data/scores.json"]
+        W3["index.md"]
+    end
+
+    subgraph Health["건강도"]
+        HR["knowledge-health-report.sh"]
+        CL["wiki-cleanup.sh"]
+    end
+
+    S1 & S2 & S3 & S4 --> P1
+    P1 --> P2
+    P2 --> P3
+    P3 --> P4
+    P4 --> SC
+    SC --> W1 & W2 & W3
+    SC --> HR
+    HR --> CL
+```
+
+## 활용 예시
+
+### 전체 파이프라인 수동 실행
+```bash
+bash ~/.hermes/knowledge/pipeline/daily-knowledge-process.sh
+bash ~/.hermes/knowledge/pipeline/build-metadata.sh
+bash ~/.hermes/knowledge/pipeline/build-graph.sh
+bash ~/.hermes/knowledge/pipeline/build-scores.sh
+```
+
+### 점수 결과 확인
+```bash
+python3 -c "
+import json
+with open('~/.hermes/knowledge/processed/wiki/_data/scores.json') as f:
+    data = json.load(f)
+print(f'Total: {data[\"summary\"][\"total\"]}, T1 Core: {data[\"summary\"][\"core\"]}')"
+```
+
 ## 서론
 
 p-hermes의 지식 시스템은 Karpathy의 3계층 구조(Raw Sources → Wiki → Schema)를 기반으로 합니다. 원본 데이터는 수정 없이 그대로 보관하고, 가공 파이프라인이 의미 있는 지식으로 변환하며, 점수 체계가 중요도를 자동 평가합니다. 이 구조로 에이전트는 필요한 정보를 빠르게 탐색하고, 사용자는 지식의 질을 지속적으로 유지할 수 있습니다.

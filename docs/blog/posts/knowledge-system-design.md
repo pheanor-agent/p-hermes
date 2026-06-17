@@ -1,5 +1,9 @@
 # 지식 분류 시스템 설계: AI의 기억을 구조화하는 법
 
+## 한 줄 요약
+
+원본 → 가공 → 계층적 Wiki로 이어지는 파이프라인을 통해 AI의 환각을 줄이고 정확한 사실만을 제공하는 시스템 설계입니다.
+
 > **💡 한 줄 요약**: 원본 → 가공 → 계층적 Wiki로 이어지는 파이프라인을 통해 AI의 환각을 줄이고 정확한 사실만을 제공하는 시스템 설계입니다.
 
 ---
@@ -165,6 +169,45 @@ Hermes는 지식을 무조건 저장하지 않습니다. 데이터가 '사실(Fa
 - `dev/`: 코딩 규칙, Spec-Driven 개발 프로세스, 스킬 정의.
 - `custom/`: 사용자별 특화 워크플로우 (예: 특정 소설 집필 설정).
 - `knowledge/`: 지식 시스템 자체의 메타데이터 및 파이프라인 정의.
+
+### 📊 구조/흐름도: 지식 가공 파이프라인
+
+```mermaid
+flowchart TD
+    subgraph Sources["Raw Sources"]
+        S1["sessions/*.jsonl"]
+        S2["jobs/*/result.md"]
+        S3["knowledge/news/"]
+        S4["knowledge/references/"]
+    end
+
+    subgraph Pipeline["가공 파이프라인"]
+        P1["daily-knowledge-process.sh<br/>스캔 + LLM 가공"]
+        P2["build-metadata.sh"]
+        P3["build-graph.sh"]
+    end
+
+    subgraph Scoring["점수 계산"]
+        SC["build-scores.sh<br/>T1/T2/T3 분류"]
+    end
+
+    subgraph Storage["Wiki DB"]
+        W1["pages/"]
+        W2["_data/scores.json"]
+        W3["index.md"]
+    end
+
+    subgraph Maintenance["유지보수"]
+        HR["knowledge-health-report.sh"]
+        CL["wiki-cleanup.sh<br/>T3 아카이빙"]
+    end
+
+    S1 & S2 & S3 & S4 --> P1
+    P1 --> P2 --> P3
+    P3 --> SC
+    SC --> W1 & W2 & W3
+    SC --> HR --> CL
+```
 
 ### 📊 지식 흐름도 (Mermaid)
 

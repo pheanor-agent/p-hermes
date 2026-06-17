@@ -18,6 +18,48 @@ related_specs: ["SPEC-D03", "SPEC-D04"]
 
 콘텐츠 시스템은 도메인 분류부터 5계층 검증 게이트까지 AI 생성 텍스트를 체계적으로 정제하는 파이프라인입니다.
 
+## 기본 개념
+
+콘텐츠 시스템은 3-Layer 아키텍처(Layer 1: 메타 스킬 진입점 → Layer 2: 공유 엔진 처리 → Layer 3: 도메인 오버레이 렌더링)와 5계층 검증 게이트(L1 구조 → L2 에러 → L3 어조 → L4 도메인 → L5 Judge)로 구성됩니다. Anti-Slop 라이브러리가 AI-isms를 차단하고, 도메인별 템플릿이 전문성을 보장합니다. 7가지 공유 엔진(tier_generator, tone_adapter, analogy_builder, validator 등)이 도메인별 콘텐츠를 구조화하고 검증합니다.
+
+## 기술 설계
+
+콘텐츠 시스템은 Python 기반 모듈로 구현됩니다. 메타 스킬(`skills/custom/content-system/SKILL.md`)이 진입점으로, 도메인 분류(D1~D5) 후 적절한 공유 엔진을 로드합니다. 7가지 엔진(tier_generator, tone_adapter, analogy_builder, template_filler, persona_generator, emotion_merger, validator)이 파이프라인의 각 단계에서 실행됩니다. 검증 게이트는 5계층(L1~L5)으로 구성되며, 도메인별 Anti-Slop 라이브러리가 AI-isms 패턴을 차단합니다. L5는 Blog 도메인에서만 활성화되는 Judge 모델 레이어로, LLM을 사용해 콘텐츠 품질을 최종 평가합니다.
+
+## 구조/흐름도
+
+### 파이프라인 전체 흐름
+
+```mermaid
+flowchart TD
+    Start[JOB 생성<br/>content: true] --> Detect[workflow-gate.sh<br/>자동 감지]
+    Detect --> Init[content-gate.sh init<br/>.content-state 생성]
+    Init --> Domain["Layer 1: 메타 스킬<br/>도메인 분류 D1~D5"]
+
+    Domain --> Engines["Layer 2: 공유 엔진"]
+    Engines --> Tier[Tier Generator]
+    Tier --> Tone[Tone Adapter]
+    Tone --> Analogy[Analogy Builder]
+    Analogy --> Template[Template Filler]
+
+    Template --> Render["Layer 3: 도메인 오버레이"]
+    Render --> Gate[검증 게이트]
+    Gate --> L1[L1: Schema]
+    L1 --> L2[L2: Error]
+    L2 --> L3[L3: Voice]
+    L3 --> L4[L4: Domain]
+    L4 --> L5{Blog?}
+    L5 -->|Yes| Judge[L5: Judge Model]
+    L5 -->|No| Merge[결과 병합]
+    Judge --> Merge
+
+    Merge --> Output[content/output/<br/>최종 산출물]
+
+    style Gate fill:#ff6b6b,stroke:#c0392b,color:#fff
+    style L3 fill:#ff9f43,stroke:#e67e22,color:#fff
+    style Judge fill:#ee5a24,stroke:#d63031,color:#fff
+```
+
 ---
 
 ## 🌱 서론: AI 생성 텍스트의 'Slop' 현상과 그 비용

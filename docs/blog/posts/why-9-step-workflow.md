@@ -14,7 +14,11 @@ related_specs: ["SPEC-D04"]
 
 # 왜 9단계 상태머신인가? AI의 파괴적 실행을 막는 안전장치
 
-> **💡 한 줄 요약**: AI에게 \"빨리 해줘\"라고 하는 것은 \"빠르게 망가뜨려 줘\"라고 하는 것과 같습니다. 9단계 상태머신은 에이전트의 무분별한 실행을 차단하고, 인간의 통제권을 확보하며, 단계별 검증을 통해 품질을 보장하는 프로세스입니다.
+## 한 줄 요약
+
+AI에게 \"빨리 해줘\"라고 하는 것은 \"빠르게 망가뜨려 줘\"라고 하는 것과 같습니다. 9단계 상태머신은 에이전트의 무분별한 실행을 차단하고, 인간의 통제권을 확보하며, 단계별 검증을 통해 품질을 보장하는 프로세스입니다.
+
+> **💡 한 줄 요약**: AI에게 \\\"빨리 해줘\\\"라고 하는 것은 \\\"빠르게 망가뜨려 줘\\\"라고 하는 것과 같습니다. 9단계 상태머신은 에이전트의 무분별한 실행을 차단하고, 인간의 통제권을 확보하며, 단계별 검증을 통해 품질을 보장하는 프로세스입니다.
 
 ---
 
@@ -178,6 +182,51 @@ graph TD
 - **실행(Execution)**: 오직 `design.md`에 적힌 대로만 움직입니다. 임의의 판단을 금지합니다.
 
 ---
+
+## 구조/흐름도
+
+### 워크플로우 시스템 통합 구조
+
+9단계 상태머신은 시스템 아키텍처의 여러 계층과 연동하여 동작합니다. 워크플로우 엔진(`workflow.sh`)이 Core 계층에서 상태 전이를 제어하고, `.workflow-state` 파일이 현재 상태를 기록하며, `event.sh`가 상태 변경 이벤트를 발행합니다. 승인 단계에서는 Interface 계층(Discord, CLI)을 통해 사용자 피드백이 전달되고, 완료 후 Runtime 계층의 지식 시스템으로 결과물이 동기화됩니다.
+
+```mermaid
+graph TD
+    subgraph Interface["Interface 계층"]
+        IF1["Discord / Telegram / CLI"]
+    end
+
+    subgraph Core["Core 계층"]
+        WF["workflow.sh<br/>9-Step 상태머신"]
+        WG["workflow-gate.sh<br/>상태 전이 검증"]
+        CG["content-gate.sh<br/>콘텐츠 검증"]
+        WS[".workflow-state<br/>상태 파일 + flock"]
+    end
+
+    subgraph Runtime["Runtime 계층"]
+        KB["knowledge/<br/>지식 동기화"]
+        EVT["event.sh<br/>이벤트 버스"]
+    end
+
+    subgraph User["사용자"]
+        U["승인/거부<br/>Approval Gate"]
+    end
+
+    IF1 --> WF
+    WF --> WG
+    WG -->|상태 전이| WS
+    WF -->|content:true| CG
+    CG -->|L1-L5 검증| WF
+    WF -->|승인 요청| U
+    U -->|승인| WF
+    U -->|거부| WF
+    WF -->|이벤트| EVT
+    WF -->|완료| KB
+
+    style WF fill:#e8f5e9,stroke:#1a7f37
+    style WG fill:#fff3e0,stroke:#bc4c00
+    style U fill:#f3e5f5,stroke:#8250df
+    style WS fill:#fce4ec,stroke:#c62828
+```
 
 ## 🔒 원자적 상태 관리: flock 기반 파일 락
 

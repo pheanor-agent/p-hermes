@@ -1,9 +1,46 @@
 # AI 에이전트의 자동화: 크론을 통해 24시간 작동하는 디지털 동료
 
-> **프로젝트**: p-hermes 핵심 시스템  
-> **도메인**: A5 (Cron/Automation)  
-> **작성일**: 2026-06-17  
+> **프로젝트**: p-hermes 핵심 시스템
+> **도메인**: A5 (Cron/Automation)
+> **작성일**: 2026-06-17
 > **분량**: 10,000+자
+
+## 한 줄 요약
+
+이벤트 기반 아키텍처로 반복 작업을 자동화하고, Decoupled Execution과 Automated Recovery로 신뢰성을 보장하는 24시간 자동화 시스템입니다.
+
+## 기본 개념
+
+Cron System은 반복 작업을 정의하고 자동으로 실행하는 자동화 인프라입니다. 시간 기반 스케줄링, 이벤트 기반 트리거, 주기적 리포트 생성 등 다양한 패턴을 지원합니다. 핵심 설계 원칙은 이벤트 기반 아키텍처(모든 통신의 단일 진입점), Decoupled Execution(Job 정의와 실행 분리), Automated Recovery(실패 Job 자동 재시도)입니다. LLM-Driven Job, Script-Driven Job, Event-Driven Job 세 가지 타입을 지원합니다.
+
+## 기술 설계
+
+자동화 시스템은 이벤트 버스를 단일 진입점으로 사용하는 아키텍처로 구현됩니다. `registry.yaml`이 Job 정의의 SSOT이며, 각 Job은 고유 ID, 스케줄, 프롬프트/스크립트,_delivery_ 채널을 YAML로 정의합니다. Scheduler가 실행 대기 Job을 감지하고 Wrapper를 호출하며, Wrapper는 환경 복원 후 Runner에 작업을 전달합니다. 실패 시 지수 백오프(1s → 2s → 4s) 재시도 정책이 적용되고, 최대 3회 재시도 후 실패 알림을 전송합니다.
+
+## 구조/흐름도
+
+```mermaid
+flowchart TD
+    S[Scheduler<br/>스케줄 감지] --> E[Event Bus<br/>이벤트 라우팅]
+    E --> W[Worker<br/>Job 실행]
+    W --> D[Delivery<br/>결과 배송]
+    D --> U[User<br/>알림 수신]
+
+    W --> B{성공?}
+    B -->|아니오| C{재시도 가능?}
+    C -->|예| R[지수 백오프]
+    R --> W
+    C -->|아니오| F[실패 처리]
+
+    subgraph Events["이벤트"]
+        E1[system.job.started]
+        E2[system.job.completed]
+        E3[system.job.failed]
+        E4[system.job.retry]
+    end
+
+    E -.-> Events
+```
 
 ---
 

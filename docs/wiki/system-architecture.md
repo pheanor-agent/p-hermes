@@ -14,6 +14,96 @@ related_specs: ["SPEC-D01", "SPEC-D04"]
 
 # 시스템 아키텍처 레퍼런스
 
+## 한 줄 요약
+
+5계층 레이어드 아키텍처에 기반한 AI 에이전트 운영 시스템의 설계도 — 계층별 책임, 디렉토리 맵, 이벤트 버스, 설계 원칙을 한 자리에서 확인합니다.
+
+## 기본 개념
+
+p-hermes는 Tier 1 Core → Tier 2 Runtime → Tier 3 Interfaces → Tier 4 Infra → Tier 5 Release의 5계층 구조로 나뉩니다. 각 계층은 독립적인 생명주기를 가지며, 상위 계층이 하위 계층에 의존하는 방향으로 설계됩니다. 물리적 경로 추상화(`$HERMES_ROOT`), 이벤트 기반 통신(`event.sh`), 심링크 금지가 세 가지 설계 원칙입니다.
+
+## 문제 상황
+
+레이어드 구조 도입 전에는 모든 스크립트와 설정 파일이 단일 디렉토리에 혼재되어 있었습니다. 파일 간 의존성이 명시되지 않아 한 파일 수정이 예상치 못한 곳에서 오류를 발생시켰고, 새로운 기능 추가 시 기존 코드와의 충돌을 사전에 발견하기 어려웠습니다. 또한 절대 경로 하드코딩으로 인해 환경 간 이동(WSL ↔ macOS) 시 전체 경로를 수정해야 했습니다.
+
+## 기술 설계
+
+레이어드 구조는 다음 핵심 요소로 구현됩니다. `workflow.sh` 기반 9-Step 상태 머신이 Core 계층에서 워크플로우를 제어하고, `event.sh`가 모듈 간 단일 진입점으로 동작하는 Pub/Sub 이벤트 버스를 제공합니다. `system-common/lib/`는 모든 계층이 공유하는 원자적 파일 작성, 뮤텍스, 로그 유틸리티를 포함합니다. `config.yaml`과 `AGENTS.md`는 시스템 전역 설정의 단일 진실 공급원(SSOT)으로 모든 계층이 참조합니다.
+
+## 구조/흐름도
+
+레이어드 구조의 계층별 구성과 의존 관계를 시각화합니다.
+
+```mermaid
+graph TD
+    subgraph Tier5["Tier 5 Release"]
+        R1["docs/wiki/"]
+        R2["slides/"]
+        R3["llms.txt"]
+    end
+
+    subgraph Tier4["Tier 4 Infra"]
+        I1["GitHub"]
+        I2["Docker"]
+        I3["WSL / Host"]
+    end
+
+    subgraph Tier3["Tier 3 Interfaces"]
+        IF1["Discord Bot"]
+        IF2["Telegram Bot"]
+        IF3["Local CLI"]
+    end
+
+    subgraph Tier2["Tier 2 Runtime"]
+        RT1["knowledge/"]
+        RT2["cron/"]
+        RT3["sessions/"]
+        RT4[".workflow-state"]
+    end
+
+    subgraph Tier1["Tier 1 Core"]
+        C1["config.yaml"]
+        C2["AGENTS.md"]
+        C3["skills/"]
+        C4["workflow.sh"]
+    end
+
+    subgraph Global["전역"]
+        EVT["event.sh"]
+        SC["system-common/"]
+    end
+
+    Tier1 <--> Tier2
+    Tier2 <--> Tier3
+    Tier3 --> Tier4
+    Tier5 -.-> Tier1
+    EVT --> Tier1
+    EVT --> Tier2
+    EVT --> Tier3
+    SC --> Tier1
+    SC --> Tier2
+    SC --> Tier3
+
+    style Tier1 fill:#e8f5e9,stroke:#2e7d32
+    style Tier2 fill:#e3f2fd,stroke:#1565c0
+    style Tier3 fill:#fff3e0,stroke:#e65100
+    style Tier4 fill:#fce4ec,stroke:#c62828
+    style Tier5 fill:#f3e5f5,stroke:#6a1b9a
+    style EVT fill:#fffde7,stroke:#f57f17
+    style SC fill:#fffde7,stroke:#f57f17
+```
+
+## 활용 예시
+
+### 새로운 스킬 추가
+Core 계층의 `skills/` 디렉토리에 새 모듈을 배치하면 자동으로 인식됩니다. 별도 설정 파일 수정 없이 이벤트 버스를 통해 기존 모듈과 통신합니다.
+
+### Cron 자동화 작업 추가
+Runtime 계층의 `cron/registry.yaml`에 새 작업을 등록하면 실행 큐에 포함됩니다. 스케줄 문법과 모델 지정, 결과 전달 채널을 YAML로 정의합니다.
+
+### Discord 인터페이스 추가
+Interfaces 계층에 새 채널 설정을 추가하면 Core 계층 변경 없이 외부 통신이 확장됩니다. 모든 인터페이스는 동일한 `event.sh`를 통해 Core와 통신합니다.
+
 ## 1. 서론
 
 p-hermes는 레이어드 구조 아키텍처에 기반한 AI 에이전트 운영 시스템이다. 계층화된 설계는 각 계층이 명확한 책임 범위를 보유하도록 구성하며, 모듈 간 결합도를 낮추는 것이 핵심 목표이다. 시스템 설계는 세 가지 원칙에 기반한다. 첫째, 모든 물리적 경로는 `$HERMES_ROOT` 환경 변수를 통해 추상화한다. 둘째, 모듈 간 통신은 `event.sh`를 단일 진입점으로 사용하는 이벤트 기반 패턴을 따른다. 셋째, 심링크는 사용하지 않으며 모든 파일 참조는 물리적 경로를 기반으로 수행한다. 이 문서에서는 레이어드 구조 구조의 계층별 책임, 디렉토리 맵, 설계 원칙, 이벤트 버스 및 system-common 개념, 안티패턴, 확장성, FAQ를 기술한다.
