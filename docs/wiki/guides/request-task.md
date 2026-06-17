@@ -63,7 +63,15 @@ stateDiagram-v2
 
 이렇게 하면 에이전트는 다시 `Design` 단계로 돌아가 설계를 정교화하며, 사용자는 리스크가 완전히 제거된 상태에서 안전하게 실행을 승인할 수 있습니다.
 
-## 🔗 관련 주제
-- **[첫 번째 작업 요청하기](https://pheanor-agent.github.io/p-hermes/docs/wiki/getting-started/first-job.md)**: JOB 시스템의 기본 사용법과 첫 요청 생성 방법.
-- **[기본 설정 가이드](https://pheanor-agent.github.io/p-hermes/docs/wiki/getting-started/configuration.md)**: 단계별 모델 라우팅 및 시스템 설정 방법.
-- **[스킬 시스템 활용하기](https://pheanor-agent.github.io/p-hermes/docs/wiki/guides/use-skills.md)**: 특정 단계에서 전문 스킬을 어떻게 로드하여 사용하는지에 대한 상세 내용.
+## ❓ 자주 묻는 질문 (FAQ)
+
+**Q: 승인을 거부하면 어떻게 되나요?**
+A: 에이전트는 `Review` 단계로 돌아가 피드백을 반영하여 `design.md`를 재작성합니다. 승인 전까지 실제 파일 수정은 절대 이루어지지 않습니다.
+
+**Q: 9단계가 항상 필요한가요?**
+A: 단순 작업(예: 파일 1개 복사)은 최소 단계로 진행합니다. 에이전트가 위험도를 판단하여 단계를 조절하지만, 코드 변경이나 시스템 설정 수정은 9단계 완수를 원칙으로 합니다.
+
+**Q: 테스트 실패 시 어떤 단계로 돌아가나요?**
+A: `Execution Review`에서 목표 미달 시 `Test` 또는 `Execution` 단계로 복귀합니다. 설계 오류가 발견될 경우 `Design` 단계로 되돌아가 재설계합니다.
+
+---
