@@ -1,63 +1,266 @@
-# 자동화(Cron) 설정 가이드
+---
+id: DOC-A5-wiki
+domain: A5-Cron-Automation
+type: wiki
+title: Cron/자동화 시스템 가이드
+date: 2026-06-17
+version: "1.0.0"
+compatibility: v0.16.0
+author: p-hermes
+status: draft
+tags: ["cron", "automation", "registry", "event-bus", "delivery"]
+related_specs: ["SPEC-D04"]
+---
 
-💡 **사용자의 개입 없이도 에이전트가 정해진 시간에 스스로 깨어나 작업을 수행하는 '자율 동작' 시스템을 설정하는 방법입니다.**
+# Cron/자동화 시스템 가이드
 
-## 🌱 기본 개념
-우리는 매일 아침 날씨를 확인하거나, 매주 월요일에 보고서를 쓰는 등 반복적인 루틴을 가지고 있습니다. AI 에이전트 역시 이런 **'디지털 루틴'**을 가질 수 있습니다.
+💡 **에이전트가 정해진 시간에 자동으로 작업을 수행하고, 결과를 여러 채널에 전달하는 자동화 인프라를 설정하고 운영하는 방법입니다.**
 
-비유하자면, p-hermes의 크론(Cron) 시스템은 에이전트에게 **'정밀한 알람 시계'와 '상세한 할 일 목록'**을 주는 것과 같습니다. 사용자가 일일이 \"지금 뉴스 가져와\"라고 말하지 않아도, 에이전트는 설정된 알람이 울리면 목록에서 할 일을 확인하고, 독립적인 세션을 생성하여 작업을 완수한 뒤, 결과만 사용자에게 보고합니다.
+## 서론
 
-## 🔍 문제 상황: 왜 단순한 스크립트 실행보다 크론 시스템이 필요한가?
-리눅스의 기본 `crontab`에 쉘 스크립트를 직접 등록하는 방식은 에이전트 환경에서 다음과 같은 치명적인 한계가 있습니다:
+p-hermes의 자동화 시스템은 정해진 주기나 조건에서 에이전트가 스스로 작업을 시작하고 결과를 전달하는 '디지털 루틴' 인프라입니다. 매일 아침 뉴스 요약, 주간 시스템 점검, 실시간 모니터링 등 반복적인 작업을 사용자 개입 없이 자동화할 수 있습니다.
 
-- **환경 변수 유실 (Environment Loss)**: 크론탭 실행 환경은 매우 제한적입니다. `.bashrc`나 `.env` 등의 설정이 로드되지 않아 API 키, 라이브러리 경로 설정 오류가 빈번하게 발생합니다.
-- **세션 및 컨텍스트 관리 불가 (Context Blindness)**: 단순 스크립트는 실행 후 종료됩니다. 이 작업이 어떤 JOB ID로 기록되었는지, 어떤 대화 맥락에서 수행되었는지 추적하기 어려워 사후 분석이 불가능합니다.
-- **유연성 및 관리 효율 저하 (Rigidity)**: 실행 시간이나 프롬프트를 바꾸려면 매번 서버에 SSH로 접속해 크론탭 파일을 직접 수정해야 하며, 이는 실수로 인한 시스템 설정 오류를 유발합니다.
+시스템은 **Registry → Wrapper → Runner**의 3층 구조를 기반으로 합니다. Registry에서는 '무엇을 언제 실행할지'를 정의하고, Wrapper는 실행 환경과 세션을 복원하며, Runner가 실제 에이전트 추론과 결과 전달을 담당합니다.
 
-p-hermes는 **'Registry → Wrapper → Runner'**라는 3계층 구조를 통해 이러한 문제를 해결하고, 사용자가 채팅만으로 자동화 설정을 자유롭게 변경할 수 있게 합니다.
+## registry.yaml — 자동화 작업 등록 파일
 
-## 🏗️ 기술 설계: 크론 시스템의 3계층 아키텍처
-신뢰성 있는 자동화를 위해 Hermes는 실행 과정을 세 단계로 엄격히 분리하여 관리합니다.
+`~/.hermes/cron/registry.yaml`은 모든 자동화 작업의 단일 진실 출처(SSOT)입니다. YAML 형식으로 작성하며, 각 작업은 고유한 `id`를 가지며 독립적으로 실행됩니다.
 
-### 1. Registry (`registry.yaml`) - "무엇을, 언제, 어디로?"
-모든 자동화 작업의 SSOT(Single Source of Truth)입니다. 어떤 프롬프트를 사용하여 에이전트를 깨울지, 실행 주기(Cron expression)는 어떻게 되는지, 결과물은 어떤 플랫폼으로 전송할지가 정의됩니다.
-- **예**: `schedule: "0 9 * * 1"` → 매주 월요일 오전 9시 정각 실행.
-- **장점**: YAML 파일 하나만 수정하면 시스템 재부팅 없이도 자동화 스케줄을 변경할 수 있습니다.
+### 기본 구조
 
-### 2. Wrapper - "환경 및 세션 복원"
-크론 스케줄러에 의해 호출되는 진입점(Entry-point) 스크립트입니다.
-- **환경 복원**: `.env` 파일을 로드하고, 에이전트 구동에 필요한 모든 쉘 환경 변수를 완벽하게 구성합니다.
-- **독립 세션 생성**: 해당 작업만을 위한 임시 세션(`session_id`)을 생성합니다. 이를 통해 자동화 작업의 로그가 일반 대화 로그와 섞이지 않도록 격리하며, 개별 작업의 성공/실패 여부를 정확히 추적할 수 있습니다.
-
-### 3. Runner - "실제 지능형 수행"
-실제 에이전트의 추론 로직이 작동하는 단계입니다.
-- **프롬프트 실행**: Registry에 정의된 전용 프롬프트를 바탕으로 에이전트가 작업을 수행합니다. 이때 필요하다면 앞서 설명한 '스킬'이나 '지식 시스템'을 동적으로 로드합니다.
-- **전달(Delivery)**: 작업이 완료되면 설정된 타겟(Discord, Telegram, Local file 등)의 API를 통해 결과물을 전송합니다.
-
-## 📊 크론 작업 처리 흐름도
-```mermaid
-graph TD
-    A[시스템 크론 스케줄러] --> B[Wrapper 스크립트 호출]
-    B --> C[환경 변수 및 세션 초기화]
-    C --> D[Runner: 에이전트 작업 수행]
-    D --> E{Delivery 타겟 확인}
-    E -- Discord --> F[Discord Webhook/Bot 전송]
-    E -- Telegram --> G[Telegram Bot API 전송]
-    E -- Local --> H[~/.hermes/cron/output/ 저장]
+```yaml
+- id: morning-news
+  name: "매일 아침 뉴스 요약"
+  schedule: "0 8 * * *"
+  prompt: |
+    오늘 AI/기술 분야 주요 뉴스 5개를 검색하고
+    각 항목별로 2문장 이내로 요약해 주세요.
+  deliver: "discord:123456789"
+  model:
+    provider: openrouter
+    model: "anthropic/claude-sonnet-4"
+  enabled_toolsets: ["web", "terminal"]
 ```
 
-## 💡 활용 예시: 실전 자동화 시나리오
-채팅창에 다음과 같이 요청하여 즉시 자동화 체계를 구축해 보세요.
+### 파라미터 설명
 
-**시나리오 A: 매일 아침 기술 트렌드 요약**
-> \"[TASK] 매일 오전 8시에 AI 관련 최신 뉴스 5개를 수집해서 요약한 뒤, 내 디스코드 채널(`discord:123456789`)로 보내주는 크론을 만들어줘.\"
+| 필드 | 필수 | 설명 |
+|------|------|------|
+| `id` | O | 작업 고유 식별자 (영문 소문자, 하이픈 사용 가능) |
+| `name` | O | 인간이 읽기 쉬운 작업명 |
+| `schedule` | O | 실행 주기 (cron 표현식 또는 확장 문법) |
+| `prompt` | O | 에이전트가 수행할 작업 지시문 |
+| `deliver` | 선택 | 결과 전달 대상 (채널명 또는 플랫폼) |
+| `model` | 선택 | 작업 전용 모델 지정 (생략 시 기본 모델 사용) |
+| `enabled_toolsets` | 선택 | 작업에서 사용할 수 있는 도구 집합 |
+| `script` | 선택 | 실행 전 사전 스크립트 경로 |
+| `no_agent` | 선택 | `true` 시 LLM 없이 스크립트만 실행 |
 
-**시나리오 B: 시스템 상태 정기 점검**
-> \"매주 일요일 밤 11시에 현재 `~/.hermes/` 내의 디스크 사용량과 API 잔액을 체크해서 보고해줘. 결과는 텔레그램으로 보내줘.\"
+## 스케줄 문법
 
-**시나리오 C: 지식 시스템 자동 정제**
-> \"5분마다 `wiki-process-filings.sh`를 실행해서 `inbox`에 쌓인 지식들을 자동으로 분류하고 위키를 업데이트해줘.\"
+스케줄은 cron 표현식과 확장 문법을 모두 지원합니다.
 
-## 🔗 관련 주제
-- **[지식 시스템 검색 및 활용](https://pheanor-agent.github.io/p-hermes/docs/wiki/guides/knowledge-search.md)**: 지식 정제 프로세스는 크론에 의해 자동화되어 시스템의 기억을 항상 최신으로 유지합니다.
-- **[백업 및 복구 가이드](https://pheanor-agent.github.io/p-hermes/docs/wiki/guides/backup-restore.md)**: 주기적인 시스템 전체 스냅샷 백업 또한 크론 시스템의 가장 중요한 활용 사례입니다.
+### Cron 표현식
+
+표준 5자리 cron 표현식을 사용합니다.
+
+| 표현식 | 의미 |
+|--------|------|
+| `0 9 * * 1` | 매주 월요일 오전 9시 정각 |
+| `0 0 */2 * *` | 2일마다 자정 |
+| `*/15 * * * *` | 15분마다 |
+| `0 23 * * 0` | 매주 일요일 밤 11시 |
+
+### 확장 문법
+
+cron 표현식 대신 직관적인 형식을 사용할 수 있습니다.
+
+| 확장 문법 | 의미 |
+|-----------|------|
+| `30m` | 30분마다 |
+| `every 2h` | 2시간마다 |
+| `0 9 * * *` | 매일 오전 9시 (표준 cron과 동일) |
+| `2026-07-01T09:00:00` | 특정 시간 단회 실행 (one-shot) |
+
+### One-shot 작업
+
+단 한 번만 실행하는 작업은 ISO 8601 형식의 일시로 `schedule`을 설정합니다.
+
+```yaml
+- id: deploy-check
+  name: " 배포 후 상태 점검"
+  schedule: "2026-07-01T14:30:00"
+  prompt: "서버 상태를 확인하고 응답 시간을 기록하세요."
+  deliver: "discord:123456789"
+```
+
+## Job 속성
+
+### 모델 지정 (`model`)
+
+각 작업은 독립적인 모델을 사용할 수 있습니다. 설계 단계는 창의적 모델, 점검 단계는 경량 모델 등 작업 특성에 맞게 모델을 선택합니다.
+
+```yaml
+model:
+  provider: openrouter    # 공급자 (openrouter, anthropic, custom:airouter 등)
+  model: "qwen/qwen3.6"   # 모델명
+```
+
+### 도구 집합 제한 (`enabled_toolsets`)
+
+불필요한 도구를 차단하여 실행 비용을 줄이고 안정성을 높입니다.
+
+```yaml
+enabled_toolsets: ["web"]        # 웹 검색만 허용
+enabled_toolsets: ["web", "terminal"]  # 웹 검색과 터미널 사용
+enabled_toolsets: ["file", "delegation"]  # 파일 작업과 위임만 허용
+```
+
+### 결과 전달 (`deliver`)
+
+작업 결과의 전달 대상을 지정합니다.
+
+| 전달 방식 | 형식 | 설명 |
+|-----------|------|------|
+| 현재 채팅 | 생략 또는 `origin` | 작업이 시작된 대화로 자동 전달 |
+| Discord 채널 | `discord:123456789` | Discord 채널로 전송 |
+| Discord 스레드 | `discord:123456789:987654321` | 특정 스레드로 전송 |
+| Telegram | `telegram:-1001234567890` | Telegram 그룹 또는 채널 |
+| Telegram 스레드 | `telegram:-1001234567890:17585` | Telegram 포럼 토픽 |
+| 로컬 파일 | `local` | `~/.hermes/cron/output/`에 저장 |
+| 다채널 | `origin,all` | 현재 채팅 + 모든 연결 채널 |
+
+## 3층 아키텍처와 실행 흐름
+
+```mermaid
+graph TD
+    A[Cron Scheduler] -->|"1. 스케줄 도달"| B[Wrapper 스크립트]
+    B -->|"2a. .env 로드"| C[환경 복원]
+    B -->|"2b. 세션 생성"| D[독립 Session ID 할당]
+    C --> E[Runner]
+    D --> E
+    E -->|"3a. 프롬프트 실행"| F[에이전트 추론]
+    E -->|"3b. 스킬 동적 로드"| G[지식/스킬 참조]
+    G --> F
+    F --> H{결과 전달}
+    H -->|"Discord"| I[Discord Webhook/Bot]
+    H -->|"Telegram"| J[Telegram Bot API]
+    H -->|"Local"| K[~/.hermes/cron/output/]
+    H -->|"origin"| L[원본 채팅창]
+```
+
+### Layer 1 — Scheduler (스케줄러)
+
+`registry.yaml`을 읽어 실행 대기 중인 작업을 감지하고, 스케줄이 도래하면 Wrapper 진입점을 호출합니다. 시스템 수준 크론 스케줄러가 이 역할을 수행합니다.
+
+### Layer 2 — Wrapper (환경 복원)
+
+Wrapper는 에이전트 실행 전 필수 준비 작업을 담당합니다.
+
+- `.env` 파일 로드와 환경 변수 복원
+- 독립 `session_id` 생성으로 자동화 로그를 일반 대화 로그와 격리
+- Registry에 정의된 파라미터를 Runner에 전달
+
+### Layer 3 — Runner (지능형 수행)
+
+Runner는 실제 에이전트 추론 엔진입니다.
+
+- Registry의 `prompt`를 실행 컨텍스트로 사용
+- `enabled_toolsets`에 정의된 도구만 접근 가능
+- 작업 완료 후 `deliver` 설정에 따라 결과를 전송
+
+## 이벤트 버스 (event.sh)
+
+이벤트 버스는 자동화 작업의 실행 이력을 중앙에서 기록하고 조회하는 시스템입니다. JSONL 형식으로 로그를 저장하며, 모든 작업의 시작, 완료, 실패 이벤트가 기록됩니다.
+
+### 명령어
+
+```bash
+# 이벤트 기록
+event.sh publish "JOB-1234" "completed" '{"result": "success"}'
+
+# 전체 히스토리 조회
+event.sh history
+
+# 특정 작업의 이벤트만 조회
+event.sh history --job "JOB-1234"
+
+# 최근 10개 이벤트만 조회
+event.sh history --limit 10
+```
+
+### 이벤트 버스 데이터 흐름
+
+```mermaid
+sequenceDiagram
+    participant S as Scheduler
+    participant W as Wrapper
+    participant R as Runner
+    participant E as Event Bus
+    participant D as Delivery
+
+    S->>W: Job 호출
+    W->>E: publish "started"
+    W->>R: 환경 전달 + 실행
+    R->>E: publish "running"
+    R->>D: 결과 전달
+    R->>E: publish "completed"
+    D-->>R: 전송 확인
+    R->>E: publish "delivered"
+```
+
+### JSONL 로그 형식
+
+```jsonl
+{"ts":"2026-06-17T08:00:01Z","job":"morning-news","event":"started","session":"sess-abc123"}
+{"ts":"2026-06-17T08:02:15Z","job":"morning-news","event":"completed","result":"success"}
+{"ts":"2026-06-17T08:02:16Z","job":"morning-news","event":"delivered","channel":"discord:123456789"}
+```
+
+## system-common 유틸리티
+
+시스템 공통 유틸리티 함수 모음은 자동화 스크립트에서 빈번하게 사용하는 작업을 단순화합니다.
+
+### 주요 유틸리티
+
+| 함수 | 설명 |
+|------|------|
+| `mkdir_atomic` | 원자적 디렉토리 생성 (경쟁 상태 방지) |
+| `mutex_acquire` | 파일 기반 뮤텍스로 중복 실행 차단 |
+| `mutex_release` | 뮤텍스 해제 |
+| `log_event` | 이벤트 버스에 표준 형식으로 로그 기록 |
+
+### 중복 실행 방지 예시
+
+```bash
+# 스크립트 시작 시 뮤텍스 획득
+mutex_acquire "morning-news" || exit 0
+# ... 작업 실행 ...
+mutex_release "morning-news"
+```
+
+## silent-on-success 원칙
+
+모니터링 및 점검용 자동화 작업은 정상 실행 시 사용자에게 알림을 전송하지 않습니다. 시스템이 예상대로 작동할 때는 조용히 유지되며, 오직 실패 또는 경고 상태일 때만 결과를 전달합니다. 이 원칙은 알림 피로도를 낮추고 중요한 이벤트를 눈에 띄게 합니다.
+
+`no_agent: true`와 `script`를 함께 사용하면 스크립트 출력에 따라 전송 여부를 결정할 수 있습니다. 표준 출력이 비어 있으면 전송을 생략하고, 출력이 존재할 때만 알림을 생성합니다.
+
+## FAQ
+
+**Q: 크론 작업 실행 시간을 어떻게 확인하나요?**
+`event.sh history` 명령어로 작업 이력을 조회합니다. JSONL 형식의 로그에 시작 시각과 완료 시각이 포함되어 있습니다.
+
+**Q: 여러 채널에 동시에 결과를 전달할 수 있나요?**
+`deliver` 필드에 `origin,all`을 설정하면 원본 채팅과 모든 연결 채널에 동시 전달이 가능합니다. 또는 특정 채널을 쉼표로 연결하여 명시할 수 있습니다.
+
+**Q: 크론 작업이 실패했을 때 재시도机制는 있나요?**
+작업 단위 재시도는 현재 직접 지원되지 않습니다. 실패 시 스크립트 내에서 재시도 로직을 작성하거나, 실패 이벤트를 감지하는 별도 모니터링 작업을 설정합니다.
+
+## 관련 문서
+
+- [지식 시스템 가이드](./knowledge-system.md) (Wiki) — 지식 정제 프로세스가 크론에 의해 자동화됩니다.
+- [작업 요청 및 워크플로우 가이드](./request-task.md) (Wiki) — 9단계 워크플로우 상태 머신과 크론의 연계 구조를 확인합니다.
+
+---
+
+_마지막 업데이트: 2026-06-17_

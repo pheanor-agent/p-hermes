@@ -1,0 +1,272 @@
+# Content System (콘텐츠 시스템)
+
+💡 **콘텐츠의 품질을 검증하고 자동으로 생성하는 파이프라인입니다. 텍스트를 입력하면 검증을 통과한 고품질 콘텐츠를 출력합니다.**
+
+## 🎯 핵심 개념
+
+Content System은 5계층 검증 게이트를 통해 콘텐츠 품질을 보장합니다. Anti-Slop 라이브러리가 금지 어휘를 차단하고, 도메인별 검증이 전문성을 확인합니다.
+
+### 핵심 원칙 3가지
+1. **검증 게이트**: L1(구조) → L2(에러) → L3(어조) → L4(도메인) → L5(Judge)
+2. **Anti-Slop**: AI 생성 콘텐츠의 흔적을 제거
+3. **도메인별 검증**: 기술, 교육, 비즈니스에 맞춰 검증
+
+## 🚀 빠른 시작
+
+### 1. 단일 텍스트 검증
+
+```bash
+# L2-L5 검증 (L1은 JSON 전용)
+python3 validator.py l2 "검증할 텍스트"
+python3 validator.py l3 "검증할 텍스트"
+python3 validator.py l4 "검증할 텍스트" D1
+python3 validator.py l5 "검증할 텍스트"
+```
+
+### 2. 디렉토리 전체 검증
+
+```bash
+python3 validator.py run_all docs/
+```
+
+## ⚙️ 검증 게이트 5단계
+
+각 레이어가 특정 품질 기준을 검증합니다.
+
+### L1: Structured Output (구조 검증)
+JSON 형식 텍스트의 유효성을 확인합니다. API 응답, 설정 파일 등에 적용됩니다.
+
+```python
+# JSON Schema 검증
+validate_l1_schema(text, schema)
+```
+
+**검증 항목**
+- JSON 유효성
+- Schema 준수
+- 필드 타입 확인
+
+### L2: Error Strings (에러 토큰 차단)
+렌더링 실패 토큰, 보일러플레이트 문장을 차단합니다.
+
+```python
+# Denylist 기반 검증
+validate_l2_error_strings(text)
+```
+
+**차단 토큰**
+- `[RENDER_FAILED]`
+- `[PLACEHOLDER]`
+- `[UNDEFINED]`
+
+### L3: Voice & Constraint (어조 검증)
+금지 어휘, 전환어구 중복을 차단합니다.
+
+```python
+# 어조 검증
+validate_l3_voice_constraint(text)
+```
+
+**검증 기준**
+- 금지 어휘 존재
+- 전환어구 중복 (또한, 그러나, 따라서)
+- 문체 일관성
+
+### L4: Domain Gates (도메인 검증)
+도메인별 기계적 검증을 수행합니다.
+
+```python
+# 도메인별 검증
+validate_l4_domain_gates(text, domain)
+```
+
+**도메인별 검증 항목**
+- **D1 (기술)**: 코드 블록, 버전 명시
+- **D2 (교육)**: 예시 3개 이상, 단계별 안내
+- **D3 (비즈니스)**: ROI, 투자 회수 기간
+- **D4 (창작)**: 감정어, 문체 일관성
+
+### L5: Judge Model (LLM 평가)
+경량 LLM을 통해 어조와 뉘앙스를 평가합니다.
+
+```python
+# Judge 모델 평가
+validate_l5_judge_model(text)
+```
+
+**평가 항목**
+- 어조 일관성
+- 전문성
+- 가독성
+- 자연스러움
+
+## 🔍 Anti-Slop Library
+
+AI 생성 콘텐츠의 흔적을 제거합니다.
+
+```json
+{
+  "forbidden_phrases": [
+    "마치 ~하는 것처럼",
+    "이는 ~임을 의미합니다",
+    "중요한 점은"
+  ],
+  "transition_words_limit": {
+    "또한": 3,
+    "그러나": 2,
+    "따라서": 2
+  }
+}
+```
+
+**사용 예시**
+
+```bash
+# 금지 어휘 확인
+python3 validator.py l3 "마치 ~하는 것처럼"
+# 결과: FAIL (forbidden phrase)
+```
+
+## 📐 파이프라인 아키텍처
+
+```mermaid
+flowchart TD
+    A[입력 텍스트] --> B{L1 구조 검증}
+    B -->|JSON| C[L2 에러 체크]
+    B -->|Markdown| C
+    C --> D[L3 어조 체크]
+    D --> E[L4 도메인 체크]
+    E --> F[L5 Judge 모델]
+    F --> G{PASS?}
+    G -->|예| H[출력]
+    G -->|아니오| I[반환]
+```
+
+## 📐 도메인별 검증 기준
+
+| 도메인 | 검증 항목 | 예시 |
+|--------|----------|------|
+| D1 기술 | 코드 블록 존재, 버전 명시 | Python 3.11 |
+| D2 교육 | 예시 3개 이상, 단계별 안내 | 1단계, 2단계 |
+| D3 비즈니스 | ROI, 투자 회수 기간 | 6개월 |
+| D4 창작 | 감정어 포함, 문체 일관성 | 시적 표현 |
+
+**도메인별 상세 기준**
+
+**D1: 기술 문서**
+- 코드 블록 존재 (≥1)
+- 버전 명시 (Python 3.11)
+- 명령어 예시 포함
+
+**D2: 교육 문서**
+- 예시 3개 이상
+- 단계별 안내 (1, 2, 3)
+- 연습문제 포함
+
+**D3: 비즈니스 문서**
+- ROI 계산
+- 투자 회수 기간
+- 비교표 포함
+
+**D4: 창작 문서**
+- 감정어 포함
+- 문체 일관성
+- 독창성 평가
+
+## 📐 실제 검증 예시
+
+```bash
+# 기술 문서 검증
+python3 validator.py l4 "Python 3.11 사용" D1
+# 결과: PASS (코드 블록 존재, 버전 명시)
+
+# 교육 문서 검증
+python3 validator.py l4 "1단계: 설치 → 2단계: 설정 → 3단계: 실행" D2
+# 결과: PASS (예시 3개, 단계별 안내)
+
+# 비즈니스 문서 검증
+python3 validator.py l4 "ROI 200%, 6개월 투자 회수" D3
+# 결과: PASS (ROI 명시, 투자 회수 기간)
+
+# 창작 문서 검증
+python3 validator.py l4 "감정어 포함된 시적 표현" D4
+# 결과: PASS (감정어 포함, 문체 일관)
+```
+
+## 📐 Troubleshooting
+
+| 증상 | 원인 | 해결 |
+|------|------|------|
+| L2 FAIL | 에러 토큰 존재 | anti-slop-library.json 확인 |
+| L3 FAIL | 전환어구 중복 | 또한, 그러나 사용 횟수 확인 |
+| L4 FAIL | 도메인 검증 실패 | 도메인별 기준 확인 |
+| L5 FAIL | Judge 모델 실패 | 모델 응답 확인 |
+
+**상세 해결 가이드**
+
+**L2 FAIL 해결**
+1. `anti-slop-library.json` 확인
+2. 금지 토큰 검색
+3. 토큰 제거 또는 대체
+
+**L3 FAIL 해결**
+1. 전환어구 사용 횟수 확인
+2. "또한" 3회 → 2회로 줄임
+3. 문체 일관성 확인
+
+**L4 FAIL 해결**
+1. 도메인별 검증 기준 확인
+2. 누락 항목 추가
+3. 도메인 재설정 (D1, D2, D3, D4)
+
+**L5 FAIL 해결**
+1. Judge 모델 응답 확인
+2. 어조 일관성 점검
+3. 전문성 보완
+
+## 📐 Best Practices
+
+| 패턴 | 용도 | 예시 |
+|------|------|------|
+| 사전 검증 | 작성 전 에러 방지 | L2-L5 미리 확인 |
+| 순차 검증 | 레이어별 분리 검증 | L2 → L3 → L4 → L5 |
+| 전체 검증 | 최종 확인 | run_all 사용 |
+
+**검증 워크플로우**
+
+```mermaid
+flowchart LR
+    A[작성] --> B{L2-L3 검증}
+    B -->|PASS| C{L4 검증}
+    B -->|FAIL| A
+    C -->|PASS| D{L5 검증}
+    C -->|FAIL| A
+    D -->|PASS| E[완료]
+    D -->|FAIL| A
+```
+
+## 📐 Validator 구조
+
+```python
+def run_all_validators(text, domain):
+    """L1-L5 전체 검증"""
+    results = []
+    results.append(validate_l1_schema(text))
+    results.append(validate_l2_error_strings(text))
+    results.append(validate_l3_voice_constraint(text))
+    results.append(validate_l4_domain_gates(text, domain))
+    results.append(validate_l5_judge_model(text))
+    return all(r['passed'] for r in results)
+```
+
+**사용 예시**
+
+```python
+# 전체 검증
+result = run_all_validators("텍스트", "D1")
+print(f"검증 결과: {result}")
+```
+
+## 📚 관련 문서
+- [Content System 설계](../../blog/posts/content-system-design.md)
+- [Validator 스키마](../engine/validator.py)

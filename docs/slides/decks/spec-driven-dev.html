@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spec-Driven Development</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --primary: #2563eb;
+      --secondary: #64748b;
+      --border: #e2e8f0;
+      --code-bg: #f8fafc;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans KR', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .slide {
+      width: 100vw; height: 56.25vw; /* 16:9 */
+      display: flex; flex-direction: column;
+      padding: 4rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+    h2 { font-size: 2rem; margin-bottom: 0.75rem; color: var(--primary); }
+    p, li { font-size: 1.25rem; line-height: 1.6; margin-bottom: 0.5rem; }
+    ul { padding-left: 2rem; }
+    code { background: var(--code-bg); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 1rem; }
+    pre { background: var(--code-bg); padding: 1rem; border-radius: 8px; overflow-x: auto; }
+    pre code { background: none; padding: 0; }
+    .diagram { background: var(--code-bg); padding: 2rem; border-radius: 8px; margin: 1rem 0; }
+    footer { position: absolute; bottom: 2rem; left: 4rem; right: 4rem; display: flex; justify-content: space-between; font-size: 0.875rem; color: var(--secondary); }
+    .title-slide { justify-content: center; align-items: center; text-align: center; }
+    .title-slide h1 { font-size: 3.5rem; }
+    .title-slide p { font-size: 1.5rem; color: var(--secondary); }
+  </style>
+</head>
+<body>
+
+<section class="slide title-slide">
+  <p style="color: var(--primary); margin-bottom: 1rem;">p-hermes</p>
+  <h1>Spec-Driven Development</h1>
+  <p>명세 우선 개발 워크플로우</p>
+  <footer><span>DOC-A2-slides</span><span>1 / 8</span></footer>
+</section>
+
+<section class="slide">
+  <h2>핵심 개념</h2>
+  <ul>
+    <li>코드 작성 전에 명세서 정의</li>
+    <li>모든 변경사항은 Spec 경유</li>
+    <li>자동화된 검증으로 일관성 보장</li>
+  </ul>
+  <div class="diagram">
+    <pre><code>Spec → 코드 → 테스트 → 문서
+         ↑____________↓
+         Conformance 검증</code></pre>
+  </div>
+  <footer><span>DOC-A2-slides</span><span>2 / 8</span></footer>
+</section>
+
+<section class="slide">
+  <h2>Spec 라이프사이클</h2>
+  <div class="diagram">
+    <pre><code>proposed → draft → review → approved → deprecated
+                ↑         ↓
+                ←── 수정 ──┘</code></pre>
+  </div>
+  <ul>
+    <li>proposed: 초기 생성</li>
+    <li>draft: 작성 중</li>
+    <li>review: 리뷰 요청</li>
+    <li>approved: 승인 완료</li>
+  </ul>
+  <footer><span>DOC-A2-slides</span><span>3 / 8</span></footer>
+</section>
+
+<section class="slide">
+  <h2>Contract 정의</h2>
+  <div class="diagram">
+    <pre><code>contract:
+  precondition: [시스템 상태 A]
+  postcondition: [시스템 상태 B]
+  invariant: [항상 참인 조건]</code></pre>
+  </div>
+  <ul>
+    <li>Precondition: 실행 전 조건</li>
+    <li>Postcondition: 실행 후 조건</li>
+    <li>Invariant: 항상 유지되는 조건</li>
+  </ul>
+  <footer><span>DOC-A2-slides</span><span>4 / 8</span></footer>
+</section>
+
+<section class="slide">
+  <h2>Examples 정의</h2>
+  <div class="diagram">
+    <pre><code>examples:
+  - name: 사용 예시
+    command: 실행 명령어
+    expected: 기대 결과</code></pre>
+  </div>
+  <ul>
+    <li>실제 사용 예시 정의</li>
+    <li>명령어와 기대 결과 명시</li>
+    <li>Conformance Score 30% 가중</li>
+  </ul>
+  <footer><span>DOC-A2-slides</span><span>5 / 8</span></footer>
+</section>
+
+<section class="slide">
+  <h2>Traceability 패턴</h2>
+  <div class="diagram">
+    <pre><code># Spec: SPEC-A01
+# Code: SPEC-A01 기능 구현
+# Test: SPEC-A01 기능 검증</code></pre>
+  </div>
+  <ul>
+    <li>Spec → 코드 → 테스트 추적</li>
+    <li>코드/테스트에 Spec ID 참조</li>
+    <li>자동화된 Traceability 검증</li>
+  </ul>
+  <footer><span>DOC-A2-slides</span><span>6 / 8</span></footer>
+</section>
+
+<section class="slide">
+  <h2>Conformance Score</h2>
+  <table style="width:100%; border-collapse: collapse;">
+    <tr><td style="padding: 0.5rem; border: 1px solid var(--border);">Examples</td><td style="padding: 0.5rem; border: 1px solid var(--border);">30%</td></tr>
+    <tr><td style="padding: 0.5rem; border: 1px solid var(--border);">Contract</td><td style="padding: 0.5rem; border: 1px solid var(--border);">25%</td></tr>
+    <tr><td style="padding: 0.5rem; border: 1px solid var(--border);">Traceability</td><td style="padding: 0.5rem; border: 1px solid var(--border);">25%</td></tr>
+    <tr><td style="padding: 0.5rem; border: 1px solid var(--border);">Tests</td><td style="padding: 0.5rem; border: 1px solid var(--border);">20%</td></tr>
+  </table>
+  <footer><span>DOC-A2-slides</span><span>7 / 8</span></footer>
+</section>
+
+<section class="slide">
+  <h2>핵심 요약</h2>
+  <ul>
+    <li>Spec이 단일 진실 공급원 (SSOT)</li>
+    <li>변경은 Spec에서 시작</li>
+    <li>자동화된 검증으로 일관성 보장</li>
+  </ul>
+  <footer><span>DOC-A2-slides</span><span>8 / 8</span></footer>
+</section>
+
+</body>
+</html>
