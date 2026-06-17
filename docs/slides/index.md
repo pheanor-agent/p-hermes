@@ -4,16 +4,16 @@
 
 ## 📚 슬라이드 덱 목록
 
-| 덱 제목 | 핵심 내용 | 링크 |
-|---------|----------|------|
-| **Workflow Pipeline** | 9단계 상태머신 및 작업 흐름 | [열기](./decks/workflow-pipeline.html) |
-| **Knowledge System** | 지식 계층 구조 및 파이프라인 | [열기](./decks/knowledge-system.html) |
-| **Cron System** | 주기 작업 실행 흐름 및 3계층 구조 | [열기](./decks/cron-system.html) |
-| **Architecture 레이어드 구조** | 물리적 디렉토리 구조 및 계층 간 관계 | [열기](./decks/architecture-layered.html) |
-| **Spec-Driven Dev** | Spec 기반 개발 프로세스 | [열기](./decks/spec-driven-dev.html) |
-| **Content System** | 콘텐츠 검증 및 관리 파이프라인 | [열기](./decks/content-system.html) |
-| **Model Routing** | 모델 라우팅 및 교체 전략 | [열기](./decks/model-routing.html) |
-| **Hermes Overview** | 시스템 전체 조감도 | [열기](./decks/hermes-overview.html) |
+| 덱 제목 | 핵심 내용 | 슬라이드 | 링크 |
+|---------|----------|---------|------|
+| **Hermes Overview** | 챗봇에서 자율 에이전트로 — 영속적 생명력을 가진 AI 플랫폼 | 20 | [열기](./decks/hermes-overview.html) |
+| **Workflow Pipeline** | 9단계 상태머신 — 신뢰성 있는 작업 흐름의 설계 | 19 | [열기](./decks/workflow-pipeline.html) |
+| **Architecture 레이어드 구조** | 관계망 아키텍처 — 실제 디렉토리 구조 기반 계층 | 18 | [열기](./decks/architecture-layered.html) |
+| **Content System** | AI 텍스트 품질 관리 — 5계층 검증 게이트 | 20 | [열기](./decks/content-system.html) |
+| **Knowledge System** | 지식 계층 구조 — Wiki/References/Index 통합 | 18 | [열기](./decks/knowledge-system.html) |
+| **Model Routing** | 작업별 최적 모델 — 4가지 도메인 역할 기반 라우팅 | 18 | [열기](./decks/model-routing.html) |
+| **Spec-Driven Dev** | 명세서가 코드보다 먼저 — SSOT 원칙 | 16 | [열기](./decks/spec-driven-dev.html) |
+| **Cron System** | 24시간 자동화 — 이벤트 기반 자율 작업 | 18 | [열기](./decks/cron-system.html) |
 
 ---
 

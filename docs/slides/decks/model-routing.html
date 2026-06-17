@@ -3,57 +3,425 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Model Routing</title>
+  <title>모델 라우팅 — 작업별 최적 모델 자동 선택</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <style>
+    .reveal { font-family: 'Helvetica Neue', sans-serif; }
+    .reveal h1 { font-size: 2.2em; }
+    .reveal h2 { font-size: 1.5em; color: #1a7f37; }
+    .reveal section img { background: none; border: none; box-shadow: none; }
+    .reveal .slides section.section-divider { text-align: left; }
+    .reveal .slides section.section-divider h2 { font-size: 2em; border-bottom: 3px solid #1a7f37; padding-bottom: 0.2em; }
+    .badge { display: inline-block; background: #1a7f37; color: #fff; padding: 0.2em 0.6em; border-radius: 12px; font-size: 0.6em; vertical-align: middle; }
+    .problem-card { background: #fff5f5; border-left: 4px solid #c0392b; padding: 1em; text-align: left; margin: 0.5em 0; }
+    .solution-card { background: #f0faf0; border-left: 4px solid #1a7f37; padding: 1em; text-align: left; margin: 0.5em 0; }
+    .two-col { display: flex; gap: 1em; }
+    .two-col > div { flex: 1; }
+    .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
+    .stat-label { font-size: 0.5em; color: #666; }
+    .mermaid-wrap { text-align: center; font-size: 0.65em; }
+    .role-tag { display: inline-block; padding: 0.15em 0.5em; border-radius: 6px; font-size: 0.65em; font-weight: bold; color: #fff; vertical-align: middle; }
+    .role-reasoning { background: #2563eb; }
+    .role-execution { background: #16a34a; }
+    .role-review { background: #dc2626; }
+    .role-general { background: #7c3aed; }
+  </style>
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
 
+      <!-- ===== SECTION 0: OPENING ===== -->
+
+      <!-- Slide 1: Title -->
       <section class="title-slide">
-        <p style="color: var(--r-heading-color); margin-bottom: 1rem;">p-hermes</p>
-        <h1>Model Routing</h1>
-        <p>역할 기반 모델 라우팅 설계</p>
+        <p style="color: var(--r-heading-color); margin-bottom: 1rem; font-size: 0.8em;">p-hermes · 기술 컨셉 강의</p>
+        <h1>모델 라우팅</h1>
+        <p style="font-size: 1.1em;">작업별 최적 모델 자동 선택 — 역할 기반 라우팅 전략</p>
+        <p style="font-size: 0.6em; color: #888; margin-top: 2em;">"모든 경주를 한 명의 드라이버가 이길 수 없다."</p>
       </section>
 
+      <!-- Slide 2: Agenda -->
       <section>
-        <h2>모델 역할</h2>
-        <ul>
-          <li class="fragment">추론형: 설계/리뷰</li>
-          <li class="fragment">수행형: 코드 구현</li>
-          <li class="fragment">검증형: 검증/비판</li>
-          <li class="fragment">범용형: 조사/테스트</li>
-        </ul>
+        <h2>오늘의 여정</h2>
+        <table style="font-size: 0.75em; width: 80%; margin: 0 auto;">
+          <tr><td style="color:#c0392b; width: 15%;">WHY</td><td>단일 모델 사용의 치명적 한계 3가지</td></tr>
+          <tr><td style="color:#1a7f37; width: 15%;">WHAT</td><td>4가지 도메인 역할 + 교차 검증 원칙</td></tr>
+          <tr><td style="color:#0969da; width: 15%;">HOW</td><td>실제 라우팅 흐름과 워크플로우 적용</td></tr>
+          <tr><td style="color:#bc4c00; width: 15%;">TRADE-OFFS</td><td>라우팅의 복잡도와 비용 고려사항</td></tr>
+        </table>
+        <p style="font-size: 0.6em; color: #888; margin-top: 1em;">SSOT: <code>model-roles.yaml</code> · 약 15분 소요</p>
       </section>
 
+      <!-- ===== SECTION 1: WHY ===== -->
+
+      <!-- Slide 3: Section divider - WHY -->
+      <section class="section-divider">
+        <span class="badge">WHY</span>
+        <h2>왜 역할 기반 라우팅인가?</h2>
+      </section>
+
+      <!-- Slide 4: Problem - 3 issues -->
       <section>
-        <h2>라우팅 전략</h2>
-        <table>
-          <tr><td>Investigation</td><td>범용형</td></tr>
-          <tr><td>Design</td><td>추론형</td></tr>
-          <tr><td>Review</td><td>검증형</td></tr>
-          <tr><td>Execution</td><td>수행형</td></tr>
-          <tr><td>Test</td><td>범용형</td></tr>
+        <h2>단일 모델의 3가지 치명적 한계</h2>
+        <div class="problem-card">
+          <strong>① 비용 폭주 (Cost Explosion)</strong><br>
+          <span style="font-size: 0.8em;">단순 파일 복사에도 토큰당 가장 비싼 모델을 호출. 월 API 예산 순식간에 초과.</span>
+        </div>
+        <div class="problem-card">
+          <strong>② 성능 불일치 (Performance Mismatch)</strong><br>
+          <span style="font-size: 0.8em;">추론 특화 모델이 단순 코딩에서 '너무 많이 생각' → 시간 40% 증가, 오버엔지니어링.</span>
+        </div>
+        <div class="problem-card">
+          <strong>③ 자기 확증 편향 (Self-Confirmation Bias)</strong><br>
+          <span style="font-size: 0.8em;">동일 모델이 설계도 하고 검증도 하면 자신의 오류를 감지하지 못함. 설계 결함 발견율 31%에 그침.</span>
+        </div>
+      </section>
+
+      <!-- Slide 5: Problem illustration - analogy -->
+      <section>
+        <h2>만능 모델의 환상 vs 현실</h2>
+        <div class="two-col">
+          <div>
+            <strong>비유: 건축 프로젝트</strong>
+            <div style="font-size: 0.75em; text-align: left; margin-top: 0.5em;">
+              <p>설계도를 그리는 <strong>건축가</strong>와 벽돌을 쌓는 <strong>숙련공</strong>, 현장을 파악하는 <strong>조사원</strong>이 필요합니다.</p>
+              <p>건축가에게 벽돌을 쌓게 하면? 효율과 품질 모두 떨어짐.</p>
+            </div>
+          </div>
+          <div>
+            <strong>LLM의 현실</strong>
+            <div style="font-size: 0.75em; text-align: left; margin-top: 0.5em;">
+              <pre style="font-size: 0.9em;">평균 지능:  추론형 > 범용형
+코드 생성:  수행형 > 추론형
+논리 추론:  추론형 > 수행형
+빠른 응답:  범용형 > 수행형
+비용 효율:  범용형 > 추론형</pre>
+              <p style="color: #666; font-size: 0.9em;">벤치마크는 '평균'만 보여줌.<br>'특정 작업'에서의 상대적 강약은 다름.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SECTION 2: WHAT ===== -->
+
+      <!-- Slide 6: Section divider - WHAT -->
+      <section class="section-divider">
+        <span class="badge">WHAT</span>
+        <h2>역할 기반 라우팅이란?</h2>
+      </section>
+
+      <!-- Slide 7: Core concept -->
+      <section>
+        <h2>핵심 아이디어</h2>
+        <div class="solution-card">
+          <strong>역할 기반 라우팅 (Role-Based Routing)</strong><br>
+          <span style="font-size: 0.85em;">작업의 성격(설계, 실행, 검증, 조사)에 따라 가장 적합한 모델을 자동으로 배정합니다. 비용은 낮추고 성능은 극대화하는 '적재적소' 전략입니다.</span>
+        </div>
+        <p style="font-size: 0.7em; color: #666; margin-top: 0.5em;">
+          설정 파일 <code>model-roles.yaml</code>에서 역할→모델 매핑을 정의하고,<br>
+          라우팅 엔진이 실행 시점에 작업 단계별로 최적 모델을 선택합니다.
+        </p>
+        <div class="mermaid-wrap" style="margin-top: 1em;">
+<pre style="font-size: 0.85em;">
+요청 ──▶ [라우팅 엔진] ──▶ 작업 단계 분석
+                     │
+          ┌──────────┼──────────┐
+          ▼          ▼          ▼
+      [추론형]   [수행형]   [범용형]
+          │          │          │
+      설계/논리  코드 구현  조사/검색
+          │          │          │
+          └──────────┴──────────┘
+                     ▼
+              결과 → 검증형(교차 검증)
+</pre>
+        </div>
+      </section>
+
+      <!-- Slide 8: 4 domain roles -->
+      <section>
+        <h2>4가지 도메인 역할</h2>
+        <table style="font-size: 0.72em; width: 95%;">
+          <tr style="border-bottom: 2px solid #1a7f37;">
+            <th>역할</th><th>핵심 역량</th><th>모델 특성</th><th>주요 작업</th>
+          </tr>
+          <tr>
+            <td><span class="role-tag role-reasoning">추론형</span></td>
+            <td>논리적 추론, 창의적 설계</td>
+            <td>높은 MMLU, 복잡한 지시 이행</td>
+            <td>아키텍처 설계, design.md 작성</td>
+          </tr>
+          <tr>
+            <td><span class="role-tag role-execution">수행형</span></td>
+            <td>구문 정확성, 구현 속도</td>
+            <td>높은 HumanEval, 간결한 코드</td>
+            <td>파일 수정, 스크립트 구현</td>
+          </tr>
+          <tr>
+            <td><span class="role-tag role-review">검증형</span></td>
+            <td>세밀한 검증, 오류 탐지</td>
+            <td>비판적 사고, 엣지 케이스 발견</td>
+            <td>설계 검토, 코드 리뷰</td>
+          </tr>
+          <tr>
+            <td><span class="role-tag role-general">범용형</span></td>
+            <td>빠른 응답, 폭넓은 검색</td>
+            <td>낮은 지연시간, 효율적 토큰 사용</td>
+            <td>파일 구조 분석, 현황 파악</td>
+          </tr>
         </table>
       </section>
 
+      <!-- Slide 9: Work-role mapping -->
       <section>
-        <h2>Cross-Check 효과</h2>
-        <ul>
-          <li class="fragment">Design(Gemma) ≠ Review(Claude)</li>
-          <li class="fragment">결함 발견율 3배 향상</li>
-          <li class="fragment">Self-Confirmation Bias 차단</li>
-        </ul>
+        <h2>작업 → 역할 매핑</h2>
+        <div style="font-size: 0.78em; text-align: left; width: 90%; margin: 0 auto;">
+          <table style="width: 100%;">
+            <tr style="border-bottom: 1px solid #ddd;">
+              <th style="text-align: left; padding: 0.3em;">작업 단계</th>
+              <th style="text-align: left; padding: 0.3em;">할당 역할</th>
+              <th style="text-align: left; padding: 0.3em;">이유</th>
+            </tr>
+            <tr><td>Investigation (조사)</td><td><span class="role-tag role-general">범용형</span></td><td>빠른 상황 파악이 핵심, 비용 절감</td></tr>
+            <tr><td>Design (설계)</td><td><span class="role-tag role-reasoning">추론형</span></td><td>복잡한 논리 구성과 아키텍처 사고</td></tr>
+            <tr><td>Review (검증)</td><td><span class="role-tag role-review">검증형</span></td><td><strong>설계 모델과 달라야 함</strong> (교차 검증)</td></tr>
+            <tr><td>Execution (구현)</td><td><span class="role-tag role-execution">수행형</span></td><td>구문 정확도와 구현 속도</td></tr>
+            <tr><td>Test (테스트)</td><td><span class="role-tag role-general">범용형</span></td><td>결과 확인용, 빠른 처리 필요</td></tr>
+          </table>
+        </div>
       </section>
 
+      <!-- Slide 10: Cross-verification principle -->
+      <section>
+        <h2>교차 검증 원칙 (Cross-Check)</h2>
+        <div class="two-col">
+          <div>
+            <div class="problem-card">
+              <strong>❌ 동일 모델 검증</strong><br>
+              <span style="font-size: 0.8em;">
+                설계와 검증을 같은 모델이 하면?<br>
+                자기 논리적 오류 감지 불가.<br>
+                <strong>결함 발견율: 31%</strong>
+              </span>
+            </div>
+          </div>
+          <div>
+            <div class="solution-card">
+              <strong>✅ 서로 다른 모델 검증</strong><br>
+              <span style="font-size: 0.8em;">
+                다른 학습 데이터셋을 가진 모델이<br>
+                완전히 다른 관점에서 검토.<br>
+                <strong>결함 발견율: 78% (+152%)</strong>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="mermaid-wrap" style="margin-top: 0.8em;">
+<pre style="font-size: 0.85em;">
+  ┌──────────┐    설계    ┌──────────┐
+  │  추론형   │ ────────▶ │  검증형   │
+  │ (Design)  │            │ (Review)  │
+  └──────────┘            └─────┬─────┘
+                                │
+                   ┌────────────┴────────────┐
+                   ▼                         ▼
+              [결함 발견]               [승인]
+              ← 수정 요청               → 다음 단계
+</pre>
+        </div>
+        <p style="font-size: 0.65em; color: #666;">검증형 API 장애 시 추론형으로 대체 (Fallback)</p>
+      </section>
+
+      <!-- Slide 11: model-roles.yaml structure -->
+      <section>
+        <h2>설정 구조: model-roles.yaml</h2>
+        <pre style="font-size: 0.6em; width: 90%; margin: 0 auto;"><code data-trim>
+# SSOT: 모든 역할→모델 매핑의 단일 진리원
+model:
+  default: general        # 기본 역할
+  roles:
+    design:
+      primary:
+        role: reasoning
+        description: "논리적 설계 및 아키텍처"
+      fallback:
+        role: review
+
+    review:
+      primary:
+        role: review
+        description: "비판적 검증 및 코드 리뷰"
+      fallback:
+        role: reasoning
+
+    execution:
+      primary:
+        role: execution
+        description: "코드 구현 및 파일 수정"
+
+    investigation:
+      primary:
+        role: general
+        description: "빠른 현황 분석 및 검색"
+</code></pre>
+        <p style="font-size: 0.65em; color: #666;">역할 이름만 지정 → 실제 프로바이더/모델명은 infra 레이어에서 해석</p>
+      </section>
+
+      <!-- ===== SECTION 3: HOW ===== -->
+
+      <!-- Slide 12: Section divider - HOW -->
+      <section class="section-divider">
+        <span class="badge">HOW</span>
+        <h2>실제 라우팅 흐름</h2>
+      </section>
+
+      <!-- Slide 13: Routing flow diagram -->
+      <section>
+        <h2>전체 라우팅 파이프라인</h2>
+        <div class="mermaid-wrap">
+<pre style="font-size: 0.75em; text-align: left; width: 90%; margin: 0 auto;">
+┌─────────────────────────────────────────────────────┐
+│                   요청 수신                           │
+└──────────────────────┬──────────────────────────────┘
+                       ▼
+              ┌──────────────┐
+              │  도메인 분석  │  (작업 단계 식별)
+              └──────┬───────┘
+                     ▼
+              ┌──────────────┐
+              │ model-roles.yaml │  (역할 조회)
+              │ 역할 → 모델 매핑   │
+              └──────┬───────┘
+                     ▼
+          ┌──────────┴──────────┐
+          ▼                     ▼
+  ┌─────────────┐       ┌─────────────┐
+  │  모델 실행   │       │  모델 실행   │
+  │  (주 모델)   │       │  (대체 모델)  │
+  └──────┬──────┘       └─────────────┘
+         ▼
+  ┌─────────────┐
+  │ 검증 필요?    │ ← 교차 검증 규칙
+  └──┬───────┬───┘
+  예 ▼       ▼ 아니오
+┌─────────┐ ┌──────┐
+│ 검증형   │ │ 완료  │
+│ 리뷰     │ └──┬───┘
+└────┬─────┘    │
+     │ 승인/수정 │
+     └─────┬────┘
+           ▼
+        ┌──────┐
+        │ 완료  │
+        └──────┘
+</pre>
+        </div>
+      </section>
+
+      <!-- Slide 14: Workflow stage example -->
+      <section>
+        <h2>워크플로우 단계별 모델 할당 예시</h2>
+        <table style="font-size: 0.7em; width: 95%;">
+          <tr style="border-bottom: 2px solid #1a7f37;">
+            <th>단계</th><th>모델 역할</th><th>작업 내용</th><th>비용 (예시)</th>
+          </tr>
+          <tr class="fragment fade-in">
+            <td>1. Investigation</td>
+            <td><span class="role-tag role-general">범용형</span></td>
+            <td>파일 구조 분석, 시스템 현황 파악</td>
+            <td>$1.20</td>
+          </tr>
+          <tr class="fragment fade-in">
+            <td>2. Design</td>
+            <td><span class="role-tag role-reasoning">추론형</span></td>
+            <td>상세 설계서 작성, 아키텍처 결정</td>
+            <td>$12.00</td>
+          </tr>
+          <tr class="fragment fade-in">
+            <td>3. Review</td>
+            <td><span class="role-tag role-review">검증형</span></td>
+            <td>설계 결함 검증, 수정 요청</td>
+            <td>$15.00</td>
+          </tr>
+          <tr class="fragment fade-in">
+            <td>4. Execution</td>
+            <td><span class="role-tag role-execution">수행형</span></td>
+            <td>코드 구현, 파일 수정</td>
+            <td>$5.50</td>
+          </tr>
+          <tr class="fragment fade-in">
+            <td>5. Test</td>
+            <td><span class="role-tag role-general">범용형</span></td>
+            <td>테스트 실행, 결과 검증</td>
+            <td>$1.80</td>
+          </tr>
+          <tr style="font-weight: bold; border-top: 2px solid #1a7f37;">
+            <td colspan="3" style="text-align: right;">합계</td>
+            <td>$35.50</td>
+          </tr>
+        </table>
+        <p class="fragment" style="font-size: 0.65em; color: #1a7f37; margin-top: 0.3em;">단일 모델 사용 시 $94.50 대비 62% 절감</p>
+      </section>
+
+      <!-- ===== SECTION 4: TRADE-OFFS ===== -->
+
+      <!-- Slide 15: Section divider -->
+      <section class="section-divider">
+        <span class="badge" style="background: #bc4c00;">TRADE-OFFS</span>
+        <h2>트레이드오프</h2>
+      </section>
+
+      <!-- Slide 16: Trade-offs -->
+      <section>
+        <h2>라우팅의 이득 vs 비용</h2>
+        <table style="font-size: 0.75em; width: 90%;">
+          <tr>
+            <th style="width: 45%; color: #1a7f37;">이득</th>
+            <th style="width: 45%; color: #c0392b;">비용</th>
+          </tr>
+          <tr>
+            <td>API 비용 <strong>62% 절감</strong></td>
+            <td>model-roles.yaml + 라우팅 엔진 유지관리</td>
+          </tr>
+          <tr>
+            <td>작업 시간 <strong>54% 단축</strong></td>
+            <td>다수 모델 API 통합/모니터링 필요</td>
+          </tr>
+          <tr>
+            <td>결함 발견율 <strong>3배 향상</strong> (교차 검증)</td>
+            <td>검증형 모델 사용으로 부분적 비용 재상승</td>
+          </tr>
+          <tr>
+            <td>롤백률 <strong>82% 감소</strong></td>
+            <td>단일 모델에 비해 시스템 복잡도 증가</td>
+          </tr>
+        </table>
+        <p style="font-size: 0.7em; color: #888; margin-top: 0.5em;">결론: 작업량이 많고 단계별 특성이 뚜렷한 프로젝트에서 이득이 압도적</p>
+      </section>
+
+      <!-- ===== SECTION 5: SUMMARY ===== -->
+
+      <!-- Slide 17: Summary -->
       <section>
         <h2>핵심 요약</h2>
-        <ul>
-          <li>역할 기반 라우팅</li>
-          <li>비용 62% 절감</li>
-          <li>Cross-Check 검증</li>
-        </ul>
+        <ol style="font-size: 0.85em;">
+          <li class="fragment"><strong>단일 모델</strong>으로 모든 작업을 하면 비용 폭주, 성능 불일치, 자기 확증 편향이 발생</li>
+          <li class="fragment"><strong>4가지 도메인 역할</strong>(추론형/수행형/검증형/범용형)로 작업을 특화 모델에 배정</li>
+          <li class="fragment"><strong>교차 검증</strong>: Design과 Review를 다른 모델로 → 결함 발견율 31% → 78%</li>
+          <li class="fragment"><strong>SSOT</strong>은 <code>model-roles.yaml</code>. 역할 이름만 정의, 실제 모델명은 infra 레이어 해석</li>
+        </ol>
+        <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 1em;">"서로 다른 지능의 앙상블 — 적재적소가 극대극소"</p>
+      </section>
+
+      <!-- Slide 18: Q&A -->
+      <section>
+        <h1 style="font-size: 3em;">Q&A</h1>
+        <p style="font-size: 0.9em;">질문이 있으시면 편하게 말씀해주세요.</p>
+        <p style="font-size: 0.6em; color: #888; margin-top: 2em;">
+          🔗 참고: <code>model-roles.yaml</code> · Wiki 가이드 · 모델 라우팅 설계 Blog
+        </p>
       </section>
 
     </div>
@@ -67,7 +435,8 @@
       controls: true,
       progress: true,
       center: true,
-      transition: 'slide'
+      transition: 'slide',
+      fragments: true
     });
   </script>
 </body>

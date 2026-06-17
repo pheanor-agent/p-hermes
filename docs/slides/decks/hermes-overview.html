@@ -3,59 +3,366 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hermes Overview</title>
+  <title>Hermes Agent: 자율 AI 에이전트 플랫폼</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <style>
+    .reveal { font-family: 'Helvetica Neue', sans-serif; }
+    .reveal h1 { font-size: 2.2em; }
+    .reveal h2 { font-size: 1.5em; color: #1a7f37; }
+    .reveal section img { background: none; border: none; box-shadow: none; }
+    .reveal .slides section.section-divider { text-align: left; }
+    .reveal .slides section.section-divider h2 { font-size: 2em; border-bottom: 3px solid #1a7f37; padding-bottom: 0.2em; }
+    .badge { display: inline-block; background: #1a7f37; color: #fff; padding: 0.2em 0.6em; border-radius: 12px; font-size: 0.6em; vertical-align: middle; }
+    .problem-card { background: #fff5f5; border-left: 4px solid #c0392b; padding: 1em; text-align: left; margin: 0.5em 0; }
+    .solution-card { background: #f0faf0; border-left: 4px solid #1a7f37; padding: 1em; text-align: left; margin: 0.5em 0; }
+    .two-col { display: flex; gap: 1em; }
+    .two-col > div { flex: 1; }
+    .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
+    .stat-label { font-size: 0.5em; color: #666; }
+    .mermaid-wrap { text-align: center; font-size: 0.65em; }
+  </style>
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
 
+      <!-- ===== SECTION 0: OPENING ===== -->
+
+      <!-- Slide 1: Title -->
       <section class="title-slide">
-        <p style="color: var(--r-heading-color); margin-bottom: 1rem;">p-hermes</p>
-        <h1>Hermes Overview</h1>
-        <p>시스템 전체 조감도</p>
+        <p style="color: var(--r-heading-color); margin-bottom: 1rem; font-size: 0.8em;">p-hermes · 기술 컨셉 강의</p>
+        <h1>Hermes Agent</h1>
+        <p style="font-size: 1.1em;">챗봇에서 자율 에이전트로 — 영속적 생명력을 가진 AI 플랫폼</p>
+        <p style="font-size: 0.6em; color: #888; margin-top: 2em;">Slides overview deck · GitHub Pages</p>
       </section>
 
+      <!-- Slide 2: Agenda -->
       <section>
-        <h2>핵심 시스템</h2>
-        <ul>
-          <li class="fragment">Workflow: 9단계 상태 머신</li>
-          <li class="fragment">Spec-Driven Dev: 명세서 기반 개발</li>
-          <li class="fragment">Content System: 콘텐츠 품질 관리</li>
-          <li class="fragment">Knowledge System: 지식 관리</li>
-          <li class="fragment">Cron: 자동화</li>
-          <li class="fragment">Model Routing: 모델 라우팅</li>
-        </ul>
+        <h2>오늘의 여정</h2>
+        <table style="font-size: 0.75em; width: 80%; margin: 0 auto;">
+          <tr><td style="color:#c0392b; width: 15%;">WHY</td><td>챗봇의 한계와 자율 에이전트의 필요성</td></tr>
+          <tr><td style="color:#1a7f37; width: 15%;">WHAT</td><td>Hermes Agent의 3가지 핵심 특성 + 6개 시스템</td></tr>
+          <tr><td style="color:#0969da; width: 15%;">HOW</td><td>실제 작동 방식: GEPA 학습 루프</td></tr>
+          <tr><td style="color:#bc4c00; width: 15%;">TRADE-OFFS</td><td>에이전트 플랫폼의 한계와 주의점</td></tr>
+        </table>
+        <p style="font-size: 0.6em; color: #888; margin-top: 1em;">약 20분 소요</p>
       </section>
 
+      <!-- ===== SECTION 1: WHY ===== -->
+
+      <!-- Slide 3: Section divider - WHY -->
+      <section class="section-divider">
+        <span class="badge">WHY</span>
+        <h2>왜 자율 에이전트인가?</h2>
+      </section>
+
+      <!-- Slide 4: Problem -->
       <section>
-        <h2>레이어드 아키텍처</h2>
-        <table>
-          <tr><td>T1 Core</td><td>상태 관리, 이벤트</td></tr>
-          <tr><td>T2 Config</td><td>설정 파일</td></tr>
-          <tr><td>T3 Workflow</td><td>상태 머신</td></tr>
-          <tr><td>T4 Script</td><td>도메인 스크립트</td></tr>
-          <tr><td>T5 Release</td><td>배포</td></tr>
+        <h2>챗봇의 3가지 한계</h2>
+        <div class="problem-card">
+          <strong>① 세션 종료 = 모든 것 소멸</strong><br>
+          <span style="font-size: 0.8em;">어제 한 대화, 오늘 기억 못함. 매번 다시 설명해야 함.</span>
+        </div>
+        <div class="problem-card">
+          <strong>② 텍스트 응답만 가능</strong><br>
+          <span style="font-size: 0.8em;">파일 수정, 명령어 실행, 외부 API 호출 불가. "말만" 할 수 있음.</span>
+        </div>
+        <div class="problem-card">
+          <strong>③ 단일 제공자 종속</strong><br>
+          <span style="font-size: 0.8em;">한 회사의 API 가격/정책 변경에 전면 영향. 선택권 없음.</span>
+        </div>
+      </section>
+
+      <!-- Slide 5: Paradigm shift -->
+      <section>
+        <h2>패러다임 전환</h2>
+        <div class="two-col">
+          <div>
+            <strong>챗봇 시대</strong>
+            <div class="mermaid-wrap">
+<pre style="font-size: 0.8em; text-align: left;">
+사용자
+  │ 프롬프트
+  ▼
+┌─────────┐
+│ LLM API │
+└─────────┘
+  │ 텍스트 응답
+  ▼
+사용자
+</pre>
+            </div>
+          </div>
+          <div>
+            <strong>자율 에이전트 시대</strong>
+            <div class="mermaid-wrap">
+<pre style="font-size: 0.8em; text-align: left;">
+사용자
+  │ 작업 요청
+  ▼
+┌─────────────┐
+│ Hermes Agent │
+└─────┬───────┘
+      ├──▶ 터미널
+      ├──▶ 파일 시스템
+      ├──▶ 브라우저
+      ├──▶ 메시징 API
+      └──▶ 스킬/메모리
+</pre>
+            </div>
+          </div>
+        </div>
+        <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">단순한 도구 → 작업을 실행하는 파트너</p>
+      </section>
+
+      <!-- ===== SECTION 2: WHAT ===== -->
+
+      <!-- Slide 6: Section divider - WHAT -->
+      <section class="section-divider">
+        <span class="badge">WHAT</span>
+        <h2>Hermes Agent의 핵심</h2>
+      </section>
+
+      <!-- Slide 7: 3 core traits -->
+      <section>
+        <h2>챗봇과 구분되는 3가지 특성</h2>
+        <table style="font-size: 0.8em; width: 90%;">
+          <tr style="border-bottom: 2px solid #1a7f37;">
+            <th>특성</th><th>설명</th><th>비유</th>
+          </tr>
+          <tr>
+            <td><strong>① 영속적 생명력</strong></td>
+            <td>세션 종료 후에도 환경, 이력, 프로젝트 유지</td>
+            <td>매일 새로운 인턴 vs 기억하는 동료</td>
+          </tr>
+          <tr>
+            <td><strong>② 폐쇄형 학습 루프</strong></td>
+            <td>경험을 스킬로 변환, 재사용</td>
+            <td>실수를 노트로 정리하는 학생</td>
+          </tr>
+          <tr>
+            <td><strong>③ 벤더 중립성</strong></td>
+            <td>20개 이상 모델 제공자, 한 줄 교체</td>
+            <td>한 브랜드에 묶이지 않는 폰</td>
+          </tr>
         </table>
       </section>
 
+      <!-- Slide 8: Architecture overview -->
       <section>
-        <h2>문서 구조</h2>
-        <ul>
-          <li class="fragment">Wiki: 가이드 문서</li>
-          <li class="fragment">Blog: 심층 분석</li>
-          <li class="fragment">Slides: 시각적 설명</li>
-        </ul>
+        <h2>시스템 전체 구조</h2>
+        <div class="mermaid-wrap">
+<pre style="font-size: 0.7em; text-align: left;">
+┌─────────────────────────────────────────────┐
+│            사용자 (Telegram/Discord/Slack)     │
+└──────────────────┬──────────────────────────┘
+                   ▼
+┌─────────────────────────────────────────────┐
+│         Hermes Gateway (상주 서비스)           │
+│    15개 이상 메시징 플랫폼 동시 연결           │
+└──────────────────┬──────────────────────────┘
+                   ▼
+┌─────────────────────────────────────────────┐
+│         Conversation Loop (에이전트 코어)      │
+├────────────┬────────────┬───────────────────┤
+│  Skills    │  Memory    │   Session DB      │
+│ (절차적 기억)│(영속 컨텍스트)│ (FTS5 검색)     │
+├────────────┴────────────┴───────────────────┤
+│  Terminal │ File │ Browser │ Web/API │ Vision│
+└─────────────────────────────────────────────┘
+</pre>
+        </div>
       </section>
 
+      <!-- Slide 9: 6 core systems -->
+      <section>
+        <h2>6개 핵심 시스템</h2>
+        <div class="two-col">
+          <div style="font-size: 0.8em; text-align: left;">
+            <p><strong>🔧 Workflow</strong><br>9단계 상태 머신으로 신뢰성 있는 작업 수행</p>
+            <p><strong>📋 Spec-Driven Dev</strong><br>명세서가 코드보다 먼저 — SSOT 원칙</p>
+            <p><strong>🎨 Content System</strong><br>AI 텍스트 품질 관리 (5계층 검증)</p>
+          </div>
+          <div style="font-size: 0.8em; text-align: left;">
+            <p><strong>📚 Knowledge System</strong><br>위키/지식 기반 통합 관리</p>
+            <p><strong>⏰ Cron</strong><br>자율적 24시간 자동화</p>
+            <p><strong>🧭 Model Routing</strong><br>작업별 최적 모델 자동 선택</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 10: Key numbers -->
+      <section>
+        <h2>Hermes Agent by the numbers</h2>
+        <table style="width: 90%; margin: 0 auto;">
+          <tr>
+            <td style="text-align:center;"><span class="stat">300+</span><br><span class="stat-label">지원 모델</span></td>
+            <td style="text-align:center;"><span class="stat">15+</span><br><span class="stat-label">메시징 플랫폼</span></td>
+            <td style="text-align:center;"><span class="stat">25+</span><br><span class="stat-label">툴셋</span></td>
+          </tr>
+          <tr>
+            <td style="text-align:center;"><span class="stat">20+</span><br><span class="stat-label">모델 제공자</span></td>
+            <td style="text-align:center;"><span class="stat">9</span><br><span class="stat-label">워크플로우 단계</span></td>
+            <td style="text-align:center;"><span class="stat">5</span><br><span class="stat-label">검증 게이트</span></td>
+          </tr>
+        </table>
+      </section>
+
+      <!-- ===== SECTION 3: HOW ===== -->
+
+      <!-- Slide 11: Section divider - HOW -->
+      <section class="section-divider">
+        <span class="badge">HOW</span>
+        <h2>어떻게 학습하는가?</h2>
+      </section>
+
+      <!-- Slide 12: GEPA loop -->
+      <section>
+        <h2>GEPA 학습 루프</h2>
+        <p style="font-size: 0.8em;">에이전트가 경험을 재사용 가능한 지식으로 변환하는 사이클</p>
+        <div class="mermaid-wrap">
+<pre style="font-size: 0.9em;">
+    ┌──────────┐
+    │  Gather  │◀────────────────┐
+    │ 경험 수집  │                 │
+    └────┬─────┘                 │
+         ▼                       │
+    ┌──────────┐            ┌──────────┐
+    │ Evaluate │            │  Apply   │
+    │ 결과 평가  │            │ 재적용    │
+    └────┬─────┘            └────▲─────┘
+         ▼                       │
+    ┌──────────┐                 │
+    │ Produce  │─────────────────┘
+    │ 스킬 생성  │
+    └──────────┘
+</pre>
+        </div>
+        <p style="font-size: 0.65em; color: #666;">복잡한 작업을 해결한 후 자동으로 SKILL.md 생성 → 다음 세션에서 자동 로드</p>
+      </section>
+
+      <!-- Slide 13: GEPA detail with fragments -->
+      <section>
+        <h2>GEPA 단계별 상세</h2>
+        <table style="font-size: 0.75em; width: 90%; text-align: left;">
+          <tr class="fragment fade-in"><td><strong>Gather</strong></td><td>실행한 명령어, 에러, 성공 워크플로우 기록</td></tr>
+          <tr class="fragment fade-in"><td><strong>Evaluate</strong></td><td>5회 이상 도구 호출 / 에러 해결 / 반복 가능성 평가</td></tr>
+          <tr class="fragment fade-in"><td><strong>Produce</strong></td><td>YAML 프런트매터 + 마크다운 본문으로 스킬 문서화</td></tr>
+          <tr class="fragment fade-in"><td><strong>Apply</strong></td><td>다음 세션에서 일치하는 스킬 자동 로드</td></tr>
+        </table>
+        <p class="fragment fade-in" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">→ 매번 같은 실수를 반복하지 않는 "성숙하는" 에이전트</p>
+      </section>
+
+      <!-- Slide 14: Code example -->
+      <section>
+        <h2>실제 사용 예시</h2>
+        <pre style="font-size: 0.6em;"><code data-trim data-line="3,7-9">
+# 사용자가 Telegram에서 작업 요청
+$ hermes chat
+
+# 에이전트가 자율적으로 작업 수행
+> "로그 파일에서 에러 패턴 분석해서 리포트 만들어줘"
+
+# 1. 터미널로 로그 수집
+# 2. 패턴 분석 (Python 스크립트)
+# 3. 리포트 파일 생성
+# 4. 결과를 Telegram으로 전송
+
+# 완료 후 자동으로 스킬 생성 (GEPA)
+# → 다음번 로그 분석 요청은 더 빠르게 수행
+        </code></pre>
+        <p style="font-size: 0.6em; color: #666;">CLI, 메시징 플랫폼 어디서든 동일한 에이전트 인스턴스</p>
+      </section>
+
+      <!-- ===== SECTION 4: TRADE-OFFS ===== -->
+
+      <!-- Slide 15: Section divider -->
+      <section class="section-divider">
+        <span class="badge" style="background: #bc4c00;">TRADE-OFFS</span>
+        <h2>한계와 주의점</h2>
+      </section>
+
+      <!-- Slide 16: Trade-offs -->
+      <section>
+        <h2>에이전트 플랫폼의 트레이드오프</h2>
+        <table style="font-size: 0.75em; width: 90%;">
+          <tr>
+            <th style="width: 40%;">장점</th>
+            <th style="width: 40%;">비용</th>
+          </tr>
+          <tr>
+            <td>영속적 메모리</td>
+            <td>저장 공간/프라이버시 관리 부담</td>
+          </tr>
+          <tr>
+            <td>25개+ 툴셋</td>
+            <td>권한/보안 설정 복잡도</td>
+          </tr>
+          <tr>
+            <td>자율적 작업 수행</td>
+            <td>검증 없는 실행의 리스크</td>
+          </tr>
+          <tr>
+            <td>스킬 자가 생성</td>
+            <td>부패한 스킬 관리 필요 (Curator)</td>
+          </tr>
+        </table>
+        <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">→ 그래서 9단계 워크플로우와 5계층 검증이 존재</p>
+      </section>
+
+      <!-- Slide 17: When NOT to use -->
+      <section>
+        <h2>이런 경우에는 부적합</h2>
+        <div class="problem-card">
+          <strong>단순 Q&A만 필요한 경우</strong><br>
+          <span style="font-size: 0.8em;">챗봇이면 충분. 에이전트는 오버스펙.</span>
+        </div>
+        <div class="problem-card">
+          <strong>완전한 무인 자동화를 기대하는 경우</strong><br>
+          <span style="font-size: 0.8em;">검증 단계(approval)가 있는 이유 — 인간 감독 필수</span>
+        </div>
+        <div class="problem-card">
+          <strong>단일 모델에 이미 최적화된 경우</strong><br>
+          <span style="font-size: 0.8em;">벤더 중립성의 이점이 없으면 복잡도만 증가</span>
+        </div>
+      </section>
+
+      <!-- ===== SECTION 5: SUMMARY ===== -->
+
+      <!-- Slide 18: Summary -->
       <section>
         <h2>핵심 요약</h2>
-        <ul>
-          <li>6개 핵심 시스템</li>
-          <li>5계층 레이어드 아키텍처</li>
-          <li>3종 문서 구조</li>
-        </ul>
+        <ol style="font-size: 0.9em;">
+          <li class="fragment">Hermes Agent는 <strong>영속적 생명력</strong>을 가진 자율 에이전트</li>
+          <li class="fragment"><strong>GEPA 학습 루프</strong>로 경험을 스킬로 축적</li>
+          <li class="fragment"><strong>20개 이상 제공자</strong> 지원, 벤더 중립</li>
+          <li class="fragment">6개 핵심 시스템으로 신뢰성/품질 보장</li>
+        </ol>
+        <p class="fragment" style="font-size: 0.7em; color: #888; margin-top: 1em;">"챗봇은 대화하는 도구, 에이전트는 함께 성장하는 파트너"</p>
+      </section>
+
+      <!-- Slide 19: Next steps -->
+      <section>
+        <h2>더 알아보기</h2>
+        <div style="font-size: 0.8em; text-align: left; width: 80%; margin: 0 auto;">
+          <p>📌 <strong>다음 강의</strong></p>
+          <ul>
+            <li>Workflow Pipeline — 9단계 상태 머신 상세</li>
+            <li>Spec-Driven Dev — 명세서 기반 개발</li>
+          </ul>
+          <p style="margin-top: 1em;">🔗 <strong>참고 자료</strong></p>
+          <ul>
+            <li><a href="../blog/posts/hermes-agent-intro.md">상세 분석 (Blog)</a></li>
+            <li><a href="https://hermes-agent.nousresearch.com/docs">공식 문서</a></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Slide 20: Q&A -->
+      <section>
+        <h1 style="font-size: 3em;">Q&A</h1>
+        <p style="font-size: 1em;">질문이 있으시면 편하게 말씀해주세요.</p>
       </section>
 
     </div>
@@ -69,7 +376,8 @@
       controls: true,
       progress: true,
       center: true,
-      transition: 'slide'
+      transition: 'slide',
+      fragments: true
     });
   </script>
 </body>

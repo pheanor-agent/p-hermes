@@ -3,55 +3,416 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Architecture</title>
+  <title>Hermes Agent: 레이어드 아키텍처</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <style>
+    .reveal { font-family: 'Helvetica Neue', sans-serif; }
+    .reveal h1 { font-size: 2.2em; }
+    .reveal h2 { font-size: 1.5em; color: #1a7f37; }
+    .reveal section img { background: none; border: none; box-shadow: none; }
+    .reveal .slides section.section-divider { text-align: left; }
+    .reveal .slides section.section-divider h2 { font-size: 2em; border-bottom: 3px solid #1a7f37; padding-bottom: 0.2em; }
+    .badge { display: inline-block; background: #1a7f37; color: #fff; padding: 0.2em 0.6em; border-radius: 12px; font-size: 0.6em; vertical-align: middle; }
+    .problem-card { background: #fff5f5; border-left: 4px solid #c0392b; padding: 1em; text-align: left; margin: 0.5em 0; }
+    .solution-card { background: #f0faf0; border-left: 4px solid #1a7f37; padding: 1em; text-align: left; margin: 0.5em 0; }
+    .two-col { display: flex; gap: 1em; }
+    .two-col > div { flex: 1; }
+    .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
+    .stat-label { font-size: 0.5em; color: #666; }
+    .mermaid-wrap { text-align: center; font-size: 0.65em; }
+  </style>
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
 
+      <!-- ===== SECTION 0: OPENING ===== -->
+
+      <!-- Slide 1: Title -->
       <section class="title-slide">
-        <p style="color: var(--r-heading-color); margin-bottom: 1rem;">p-hermes</p>
+        <p style="color: var(--r-heading-color); margin-bottom: 1rem; font-size: 0.8em;">p-hermes · 기술 컨셉 강의</p>
         <h1>레이어드 아키텍처</h1>
-        <p>모듈화가 에이전트 시스템의 생존 조건인 이유</p>
+        <p style="font-size: 1.1em;">모듈화가 에이전트 시스템의 생존 조건인 이유</p>
+        <p style="font-size: 0.6em; color: #888; margin-top: 2em;">System architecture · CALMER deck</p>
       </section>
 
+      <!-- Slide 2: Agenda -->
       <section>
-        <h2>레이어드 구조</h2>
-        <ul>
-          <li class="fragment">T1 Core: 상태 관리, 이벤트</li>
-          <li class="fragment">T2 Config: 설정 파일</li>
-          <li class="fragment">T3 Workflow: 상태 머신</li>
-          <li class="fragment">T4 Script: 도메인 스크립트</li>
-          <li class="fragment">T5 Release: 배포</li>
-        </ul>
+        <h2>오늘의 여정</h2>
+        <table style="font-size: 0.75em; width: 80%; margin: 0 auto;">
+          <tr><td style="color:#c0392b; width: 15%;">WHY</td><td>모놀리식의 한계 — 왜 레이어드 구조인가?</td></tr>
+          <tr><td style="color:#1a7f37; width: 15%;">WHAT</td><td>관계망 아키텍처, 레이어별 역할, 이벤트 버스</td></tr>
+          <tr><td style="color:#0969da; width: 15%;">HOW</td><td>실제 디렉토리 구조, 데이터 흐름 예시</td></tr>
+          <tr><td style="color:#bc4c00; width: 15%;">TRADE-OFFS</td><td>레이어드 구조의 한계와 주의점</td></tr>
+        </table>
+        <p style="font-size: 0.6em; color: #888; margin-top: 1em;">약 20분 소요</p>
       </section>
 
+      <!-- ===== SECTION 1: WHY ===== -->
+
+      <!-- Slide 3: Section divider - WHY -->
+      <section class="section-divider">
+        <span class="badge">WHY</span>
+        <h2>왜 레이어드 구조인가?</h2>
+      </section>
+
+      <!-- Slide 4: Problem — flat directory chaos -->
       <section>
-        <h2>event.sh 단일 진입점</h2>
-        <pre><code data-trim>
-emit_event "workflow-gate.sh" "job.transition"
-    '{"job_id": "JOB-1234"}'
-        </code></pre>
+        <h2>모놀리식의 3가지 한계</h2>
+        <div class="problem-card">
+          <strong>① 파일 간 의존성 불명확</strong><br>
+          <span style="font-size: 0.8em;">모든 스크립트가 한 디렉토리에 혼재. 한 파일 수정이 예상치 못한 곳에서 오류 발생.</span>
+        </div>
+        <div class="problem-card">
+          <strong>② 절대 경로 하드코딩</strong><br>
+          <span style="font-size: 0.8em;">WSL ↔ macOS 간 이동 시 전체 경로 재수정 필요. 환경마다 다른 설정 파일.</span>
+        </div>
+        <div class="problem-card">
+          <strong>③ 직접 호출 = 결합도 폭발</strong><br>
+          <span style="font-size: 0.8em;">모듈 A가 모듈 B를 직접 호출하면 교착 상태(deadlock)와 종속성 지옥.</span>
+        </div>
       </section>
 
+      <!-- Slide 5: Paradigm shift -->
       <section>
-        <h2>비동기 통신</h2>
-        <ul>
-          <li class="fragment">교착 상태 소멸</li>
-          <li class="fragment">실패 격리</li>
-          <li class="fragment">확장성</li>
-        </ul>
+        <h2>패러다임 전환</h2>
+        <div class="two-col">
+          <div>
+            <strong>Flat (모놀리식)</strong>
+            <div class="mermaid-wrap">
+<pre style="font-size: 0.8em; text-align: left;">
+$HERMES_ROOT/
+├── script_a.sh  ──────┐
+├── script_b.sh  ──────┼── 직접 호출
+├── script_c.sh  ──────┤   (결합도 ↑)
+├── config.txt     ─────┘
+└── data.txt
+</pre>
+            </div>
+          </div>
+          <div>
+            <strong>Layered (레이어드)</strong>
+            <div class="mermaid-wrap">
+<pre style="font-size: 0.8em; text-align: left;">
+$HERMES_ROOT/
+├── skills/       (Core)
+│     └── *.md
+├── knowledge/    (Runtime)
+├── cron/         (Runtime)
+├── sessions/     (Runtime)
+├── interfaces/   (Interfaces)
+├── event.sh      (Global)
+└── system-common (Global)
+</pre>
+            </div>
+          </div>
+        </div>
+        <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">직접 호출 → 이벤트 기반 비동기 통신으로 결합도 해방</p>
       </section>
 
+      <!-- ===== SECTION 2: WHAT ===== -->
+
+      <!-- Slide 6: Section divider - WHAT -->
+      <section class="section-divider">
+        <span class="badge">WHAT</span>
+        <h2>관계망 아키텍처</h2>
+      </section>
+
+      <!-- Slide 7: Network architecture ASCII diagram -->
+      <section>
+        <h2>5계층 + 2글로벌 = 관계망</h2>
+        <p style="font-size: 0.75em;">단방향 직선이 아닌, 실제 의존 관계 기반 망 구조</p>
+        <div class="mermaid-wrap">
+<pre style="font-size: 0.6em; text-align: left;">
+          ┌──────────────────────┐
+          │   Tier 5 Release     │
+          │  docs/  slides/  llms.txt │
+          └──────────▲───────────┘
+                     │ (출력 산출)
+┌─────────┐ ┌───────┴────────────┐
+│event.sh │ │  Tier 1 Core       │
+│(Pub/Sub)│ │ config.yaml  skills/  │
+└────┬────┘ │ workflow.sh  AGENTS.md │
+     │       └──────────▲───────────┘
+     │                  │ (↔ 양방향)
+┌────┴────┐ ┌──────────┴───────────┐
+│system-  │ │  Tier 2 Runtime      │
+│common/  │ │ knowledge/  cron/    │
+│(utils)  │ │ sessions/  .workflow-state│
+└────┬────┘ └──────────▲───────────┘
+     │                  │ (↔ 양방향)
+     │         ┌────────┴──────────┐
+     │         │  Tier 3 Interfaces │
+     │         │ Discord  Telegram  CLI │
+     │         └────────▲──────────┘
+     │                  │ (의존)
+     │         ┌────────┴──────────┐
+     │         │  Tier 4 Infra     │
+     │         │ GitHub  Docker  WSL│
+     │         └──────────────────┘
+     │
+     └── 전역: 모든 계층 지원
+</pre>
+        </div>
+      </section>
+
+      <!-- Slide 8: Layer roles table -->
+      <section>
+        <h2>레이어별 역할</h2>
+        <table style="font-size: 0.7em; width: 95%; text-align: left;">
+          <tr style="border-bottom: 2px solid #1a7f37;">
+            <th style="width:12%;">계층</th><th style="width:25%;">주요 구성</th><th>책임</th>
+          </tr>
+          <tr>
+            <td><strong>T1 Core</strong></td>
+            <td>config.yaml, AGENTS.md, skills/, workflow.sh</td>
+            <td>워크플로우 엔진, 스킬 정의, 전역 설정(SSOT)</td>
+          </tr>
+          <tr>
+            <td><strong>T2 Runtime</strong></td>
+            <td>knowledge/, cron/, sessions/, .workflow-state</td>
+            <td>실행 시간 데이터, 지식, 자동화, 세션 상태</td>
+          </tr>
+          <tr>
+            <td><strong>T3 Interfaces</strong></td>
+            <td>discord/, telegram/, CLI</td>
+            <td>외부 통신 채널 (프로토콜 차이는 계층 내부 처리)</td>
+          </tr>
+          <tr>
+            <td><strong>T4 Infra</strong></td>
+            <td>GitHub, Docker, WSL/Host</td>
+            <td>실행 환경, 지속화, CI/CD</td>
+          </tr>
+          <tr>
+            <td><strong>T5 Release</strong></td>
+            <td>docs/, slides/, llms.txt</td>
+            <td>배포 산출물, 문서, LLM 메타데이터</td>
+          </tr>
+        </table>
+      </section>
+
+      <!-- Slide 9: Design principles -->
+      <section>
+        <h2>3대 설계 원칙</h2>
+        <div class="solution-card">
+          <strong>① 심링크 금지</strong><br>
+          <span style="font-size: 0.8em;">물리적 경로만 사용. 심링크는 환경 간 경계에서 파괴됨. <code style="font-size:0.9em;">readlink -f</code>로 절대 경로 확보.</span>
+        </div>
+        <div class="solution-card">
+          <strong>② $HERMES_ROOT 추상화</strong><br>
+          <span style="font-size: 0.8em;">절대 경로 하드코딩 금지. 모든 경로 = 환경 변수 기반. WSL ↔ macOS 호환.</span>
+        </div>
+        <div class="solution-card">
+          <strong>③ 이벤트 기반 통신</strong><br>
+          <span style="font-size: 0.8em;">모듈 간 직접 호출 금지. <code style="font-size:0.9em;">event.sh</code> Pub/Sub 패턴으로 비동기 상태 전달.</span>
+        </div>
+      </section>
+
+      <!-- Slide 10: Event bus -->
+      <section>
+        <h2>event.sh — 시스템의 신경망</h2>
+        <p style="font-size: 0.75em;">모든 모듈은 event.sh를 통해 통신. 직접 호출 X, 이벤트 발행/구독 O</p>
+        <div class="mermaid-wrap">
+<pre style="font-size: 0.7em; text-align: left;">
+  ┌──────────┐     publish      ┌──────────┐
+  │ 모듈 A   │ ────────────────▶│ event.sh │
+  │(발행자)   │                  │(이벤트 버스)│
+  └──────────┘                  └─────┬────┘
+                                     │
+                      ┌──────────────┼──────────────┐
+                      ▼              ▼              ▼
+                 ┌──────────┐ ┌──────────┐ ┌──────────┐
+                 │ 모듈 B   │ │ 모듈 C   │ │ JSONL    │
+                 │(구독자)   │ │(구독자)   │ │(히스토리) │
+                 └──────────┘ └──────────┘ └──────────┘
+</pre>
+        </div>
+        <div class="two-col" style="margin-top: 0.5em;">
+          <div style="font-size: 0.7em; text-align: left;">
+            <strong>이벤트 발행</strong><br>
+            <code style="font-size:0.8em;">event.sh publish workflow.started</code>
+          </div>
+          <div style="font-size: 0.7em; text-align: left;">
+            <strong>이벤트 구독</strong><br>
+            <code style="font-size:0.8em;">event.sh subscribe workflow.completed</code>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 11: Layer comparison (traditional vs Hermes) -->
+      <section>
+        <h2>전통적 계층 vs Hermes 관계망</h2>
+        <table style="font-size: 0.75em; width: 90%; text-align: left;">
+          <tr style="border-bottom: 2px solid #1a7f37;">
+            <th></th><th style="color:#c0392b;">전통적 5계층</th><th style="color:#1a7f37;">Hermes 관계망</th>
+          </tr>
+          <tr>
+            <td>통신 방식</td>
+            <td>인접 계층만 ↔ 호출</td>
+            <td>event.sh로 전 계층 비동기</td>
+          </tr>
+          <tr>
+            <td>유틸리티</td>
+            <td>각 계층별 별도</td>
+            <td>system-common/ 전역 공유</td>
+          </tr>
+          <tr>
+            <td>경로 관리</td>
+            <td>상대 경로 혼합</td>
+            <td>$HERMES_ROOT 단일 기준</td>
+          </tr>
+          <tr>
+            <td>설정</td>
+            <td>계층별 중복</td>
+            <td>config.yaml / AGENTS.md SSOT</td>
+          </tr>
+          <tr>
+            <td>확장</td>
+            <td>전 계층 수정 필요</td>
+            <td>새 계층 event.sh 연결만</td>
+          </tr>
+        </table>
+      </section>
+
+      <!-- ===== SECTION 3: HOW ===== -->
+
+      <!-- Slide 12: Section divider - HOW -->
+      <section class="section-divider">
+        <span class="badge" style="background: #0969da;">HOW</span>
+        <h2>실제 디렉토리 구조</h2>
+      </section>
+
+      <!-- Slide 13: Directory tree -->
+      <section>
+        <h2>$HERMES_ROOT 디렉토리 맵</h2>
+        <div class="mermaid-wrap">
+<pre style="font-size: 0.55em; text-align: left;">
+$HERMES_ROOT/
+├── config.yaml              # T1 Core — 전역 설정
+├── AGENTS.md                # T1 Core — 에이전트 정의
+├── skills/                  # T1 Core — 스킬 라이브러리
+│   ├── skill-a/
+│   └── skill-b/
+├── workflow.sh              # T1 Core — 9-Step 상태 머신
+├── knowledge/               # T2 Runtime — 지식 저장소
+│   ├── input/
+│   └── output/
+├── cron/                    # T2 Runtime — 자동화 작업
+│   ├── registry.yaml
+│   └── jobs/
+├── sessions/                # T2 Runtime — 세션 상태
+│   └── active/
+├── .workflow-state          # T2 Runtime — 상태 파일
+├── interfaces/              # T3 Interfaces — 통신 채널
+│   ├── discord/
+│   └── telegram/
+├── infra/                   # T4 Infra — 인프라
+│   ├── docker/
+│   └── github-actions/
+├── docs/                    # T5 Release — 문서
+│   ├── wiki/
+│   └── slides/
+├── llms.txt                 # T5 Release — LLM 메타데이터
+├── event.sh                 # 전역 — 이벤트 진입점
+└── system-common/           # 전역 — 공통 유틸리티
+    └── lib/
+</pre>
+        </div>
+      </section>
+
+      <!-- Slide 14: Data flow example -->
+      <section>
+        <h2>실제 데이터 흐름: Cron 작업 예시</h2>
+        <div style="font-size: 0.75em; text-align: left; width: 90%; margin: 0 auto;">
+          <table style="width:100%; font-size:0.95em;">
+            <tr class="fragment fade-in">
+              <td style="width:5%;"><span class="stat" style="font-size:1.2em; color:#1a7f37;">1</span></td>
+              <td><strong>Cron</strong>이 registry.yaml에서 스케줄 확인</td>
+            </tr>
+            <tr class="fragment fade-in">
+              <td><span class="stat" style="font-size:1.2em; color:#1a7f37;">2</span></td>
+              <td><strong>event.sh</strong>에 <code>cron.job.started</code> 이벤트 발행</td>
+            </tr>
+            <tr class="fragment fade-in">
+              <td><span class="stat" style="font-size:1.2em; color:#1a7f37;">3</span></td>
+              <td><strong>Core</strong>가 이벤트를 구독 → workflow.sh에서 9-Step 실행</td>
+            </tr>
+            <tr class="fragment fade-in">
+              <td><span class="stat" style="font-size:1.2em; color:#1a7f37;">4</span></td>
+              <td><strong>system-common/lib/atomic.sh</strong>로 원자적 상태 파일 작성</td>
+            </tr>
+            <tr class="fragment fade-in">
+              <td><span class="stat" style="font-size:1.2em; color:#1a7f37;">5</span></td>
+              <td>결과를 <strong>session/</strong>에 기록, <strong>Discord/Telegram</strong>으로 전송</td>
+            </tr>
+            <tr class="fragment fade-in">
+              <td><span class="stat" style="font-size:1.2em; color:#1a7f37;">6</span></td>
+              <td><strong>event.sh</strong>에 <code>cron.job.completed</code> 발행 → JSONL 히스토리에 기록</td>
+            </tr>
+          </table>
+        </div>
+        <p class="fragment" style="font-size: 0.65em; color: #1a7f37; margin-top: 0.5em;">→ 모든 단계가 event.sh를 경유. 직접 호출은 0회.</p>
+      </section>
+
+      <!-- ===== SECTION 4: TRADE-OFFS ===== -->
+
+      <!-- Slide 15: Section divider - TRADE-OFFS -->
+      <section class="section-divider">
+        <span class="badge" style="background: #bc4c00;">TRADE-OFFS</span>
+        <h2>한계와 주의점</h2>
+      </section>
+
+      <!-- Slide 16: Trade-offs -->
+      <section>
+        <h2>레이어드 구조의 트레이드오프</h2>
+        <table style="font-size: 0.75em; width: 90%;">
+          <tr>
+            <th style="width: 40%;">장점</th>
+            <th style="width: 40%;">비용</th>
+          </tr>
+          <tr>
+            <td>계층 간 결합도 ↓, 독립 배포</td>
+            <td>이벤트 버스 복잡성 ↑, 디버깅 간접적</td>
+          </tr>
+          <tr>
+            <td>환경 독립성 (WSL ↔ macOS)</td>
+            <td>$HERMES_ROOT 설정 전제, 초기화 오버헤드</td>
+          </tr>
+          <tr>
+            <td>수평 확장 용이 (새 인터페이스 추가 시 T3만 수정)</td>
+            <td>이벤트 스키마 관리 필요, 버전 마이그레이션</td>
+          </tr>
+          <tr>
+            <td>안티패턴 금지로 안정성 ↑</td>
+            <td>학습 곡선 — 직접 호출이 습관인 팀엔 부적합</td>
+          </tr>
+        </table>
+        <p class="fragment" style="font-size: 0.7em; color: #666; margin-top: 0.5em;">"구조의 자유는 구조의 책임을 전제로 한다"</p>
+      </section>
+
+      <!-- ===== SECTION 5: SUMMARY ===== -->
+
+      <!-- Slide 17: Summary -->
       <section>
         <h2>핵심 요약</h2>
-        <ul>
-          <li>5계층 레이어드 구조</li>
-          <li>event.sh 기반 비동기 통신</li>
-          <li>수직 분리 → 수평 확장</li>
-        </ul>
+        <ol style="font-size: 0.9em;">
+          <li class="fragment">5계층(T1~T5) + 2글로벌(event.sh, system-common) <strong>관계망 구조</strong></li>
+          <li class="fragment"><strong>3대 설계 원칙</strong>: 심링크 금지, $HERMES_ROOT 추상화, 이벤트 기반 통신</li>
+          <li class="fragment">모듈 간 직접 호출 <strong>0회</strong> — event.sh가 유일한 통신 채널</li>
+          <li class="fragment">config.yaml + AGENTS.md = <strong>SSOT</strong> (중복 설정 금지)</li>
+        </ol>
+        <p class="fragment" style="font-size: 0.7em; color: #888; margin-top: 1em;">"단방향 직선이 아닌, 실제 의존 관계를 반영한 관계망"</p>
+      </section>
+
+      <!-- Slide 18: Q&A -->
+      <section>
+        <h1 style="font-size: 3em;">Q&A</h1>
+        <p style="font-size: 1em;">질문이 있으시면 편하게 말씀해주세요.</p>
+        <p style="font-size: 0.65em; color: #888; margin-top: 1.5em;">
+          관련: <a href="https://hermes-agent.nousresearch.com/docs">공식 문서</a> ·
+          <a href="wiki/system-architecture.md">시스템 아키텍처 레퍼런스</a>
+        </p>
       </section>
 
     </div>
@@ -65,7 +426,8 @@ emit_event "workflow-gate.sh" "job.transition"
       controls: true,
       progress: true,
       center: true,
-      transition: 'slide'
+      transition: 'slide',
+      fragments: true
     });
   </script>
 </body>

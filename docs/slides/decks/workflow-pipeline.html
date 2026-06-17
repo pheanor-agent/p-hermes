@@ -3,62 +3,352 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Workflow Pipeline</title>
+  <title>Workflow Pipeline: 9단계 상태머신 — 에이전트의 안전장치</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <style>
+    .reveal { font-family: 'Helvetica Neue', sans-serif; }
+    .reveal h1 { font-size: 2.2em; }
+    .reveal h2 { font-size: 1.5em; color: #1a7f37; }
+    .reveal section img { background: none; border: none; box-shadow: none; }
+    .reveal .slides section.section-divider { text-align: left; }
+    .reveal .slides section.section-divider h2 { font-size: 2em; border-bottom: 3px solid #1a7f37; padding-bottom: 0.2em; }
+    .badge { display: inline-block; background: #1a7f37; color: #fff; padding: 0.2em 0.6em; border-radius: 12px; font-size: 0.6em; vertical-align: middle; }
+    .problem-card { background: #fff5f5; border-left: 4px solid #c0392b; padding: 1em; text-align: left; margin: 0.5em 0; }
+    .solution-card { background: #f0faf0; border-left: 4px solid #1a7f37; padding: 1em; text-align: left; margin: 0.5em 0; }
+    .two-col { display: flex; gap: 1em; }
+    .two-col > div { flex: 1; }
+    .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
+    .stat-label { font-size: 0.5em; color: #666; }
+    .mermaid-wrap { text-align: center; font-size: 0.65em; }
+  </style>
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
 
+      <!-- ===== SECTION 0: OPENING ===== -->
+
+      <!-- Slide 1: Title -->
       <section class="title-slide">
-        <p style="color: var(--r-heading-color); margin-bottom: 1rem;">p-hermes</p>
+        <p style="color: var(--r-heading-color); margin-bottom: 1rem; font-size: 0.8em;">p-hermes · 기술 컨셉 강의</p>
         <h1>Workflow Pipeline</h1>
-        <p>9단계 상태머신 및 작업 흐름</p>
+        <p style="font-size: 1.1em;">9단계 상태머신 — AI 에이전트의 파괴적 실행을 막는 안전장치</p>
+        <p style="font-size: 0.6em; color: #888; margin-top: 2em;">Slides deck · GitHub Pages</p>
       </section>
 
+      <!-- Slide 2: Agenda -->
       <section>
-        <h2>9단계 워크플로우</h2>
-        <ol>
-          <li class="fragment">request</li>
-          <li class="fragment">investigation</li>
-          <li class="fragment">design</li>
-          <li class="fragment">review</li>
-          <li class="fragment">approval</li>
-          <li class="fragment">execution</li>
-          <li class="fragment">test</li>
-          <li class="fragment">execution_review</li>
-          <li class="fragment">done</li>
-        </ol>
+        <h2>오늘의 여정</h2>
+        <table style="font-size: 0.75em; width: 80%; margin: 0 auto;">
+          <tr><td style="color:#c0392b; width: 15%;">WHY</td><td>"빨리 해줘"가 "빨리 망가뜨려"가 되는 이유</td></tr>
+          <tr><td style="color:#1a7f37; width: 15%;">WHAT</td><td>9단계 상태머신: 설계 · 검증 · 승인 · 실행</td></tr>
+          <tr><td style="color:#0969da; width: 15%;">HOW</td><td>workflow-gate.sh · .workflow-state · 실제 JOB 사례</td></tr>
+          <tr><td style="color:#bc4c00; width: 15%;">TRADE-OFFS</td><td>9단계가 과도한 경우 — TASK vs JOB</td></tr>
+        </table>
+        <p style="font-size: 0.6em; color: #888; margin-top: 1em;">약 20분 소요</p>
       </section>
 
+      <!-- ===== SECTION 1: WHY ===== -->
+
+      <!-- Slide 3: Section divider - WHY -->
+      <section class="section-divider">
+        <span class="badge" style="background: #c0392b;">WHY</span>
+        <h2>왜 상태머신인가?</h2>
+      </section>
+
+      <!-- Slide 4: Problem - 3 fatal incidents -->
       <section>
-        <h2>상태 전이 규칙</h2>
-        <ul>
-          <li class="fragment">각 단계는 순차적으로 진행</li>
-          <li class="fragment">review → approval: 사용자 승인 필요</li>
-          <li class="fragment">execution 실패: error 상태로 전환</li>
-          <li class="fragment">done: 결과 알림 전송</li>
-        </ul>
+        <h2>실행의 함정 — 3가지 치명적 사고</h2>
+        <div class="problem-card">
+          <strong>① 컨텍스트 미스 (Context Miss)</strong><br>
+          <span style="font-size: 0.8em;">config.yaml의 들여쓰기를 파악하기 전에 값 하나만 바꾸다가 → 시스템 전체 부팅 실패</span>
+        </div>
+        <div class="problem-card">
+          <strong>② 롤백 불가 (Irreversible Change)</strong><br>
+          <span style="font-size: 0.8em;">수백 줄 스크립트를 한 번에 재작성 → 기존 예외 처리 로직 증발, 수 시간 복구</span>
+        </div>
+        <div class="problem-card">
+          <strong>③ 에이전트 폭주 (Agent Rampage)</strong><br>
+          <span style="font-size: 0.8em;">"아키텍처를 효율적으로 바꿔줘" → 15개 파일 동시 수정 → 경로 참조 붕괴, 복구 6시간</span>
+        </div>
       </section>
 
+      <!-- Slide 5: The root cause -->
       <section>
-        <h2>workflow-gate.sh</h2>
-        <pre><code data-trim>
-# 워크플로우 상태 관리
-bash workflow-gate.sh JOB-1234 start
-bash workflow-gate.sh JOB-1234 transition design
-bash workflow-gate.sh JOB-1234 complete
-        </code></pre>
+        <h2>근본 원인: 프로세스의 부재</h2>
+        <div class="two-col">
+          <div class="problem-card">
+            <strong>흔한 오해</strong><br>
+            <span style="font-size: 0.8em;">"더 똑똑한 모델을 쓰면 해결되지 않을까?"</span>
+          </div>
+          <div class="solution-card">
+            <strong>실제 해답</strong><br>
+            <span style="font-size: 0.8em;">문제는 지능이 아니라 '관문'의 부재. 측정 없는 설계 = 공학적 사고.</span>
+          </div>
+        </div>
+        <p class="fragment" style="font-size: 0.9em; color: #1a7f37; margin-top: 1em;">
+          → <strong>상태머신</strong>: 유효 전이만 허용하고, 각 단계에 산출물을 강제한다
+        </p>
+        <p style="font-size: 0.6em; color: #666; margin-top: 0.5em;">ATM 비유: 비밀번호 없이 금액 선택으로 점프할 수 없는 것처럼</p>
       </section>
 
+      <!-- ===== SECTION 2: WHAT ===== -->
+
+      <!-- Slide 6: Section divider - WHAT -->
+      <section class="section-divider">
+        <span class="badge">WHAT</span>
+        <h2>9단계 상태머신</h2>
+      </section>
+
+      <!-- Slide 7: State machine diagram -->
+      <section>
+        <h2>9단계 상태 전이도</h2>
+        <div class="mermaid-wrap">
+<pre style="font-size: 0.72em; text-align: left;">
+[1.Request] ─▶ [2.Investigation] ─▶ [3.Design] ─▶ [4.Review]
+                                                          │
+                     ┌────────────────────────────────────┘
+                     ▼
+              [5.Approval] ◀── 인간의 최종 승인권
+                     │
+        ┌────────────┴───────────┐
+        ▼ 승인                    ▼ 거부/수정요청
+  [6.Execution] ─▶ [7.Test]    (3.Design 으로 복귀)
+        │              │
+        │   ┌──────────┘
+        │   │ 테스트 실패 → 6.Execution 으로 복귀
+        ▼   ▼
+  [8.Exec Review] ─▶ [9.Done]
+</pre>
+        </div>
+        <p style="font-size: 0.65em; color: #666;">점선(피드백 루프): 설계 결함·테스트 실패 시 이전 단계로 되돌아감</p>
+      </section>
+
+      <!-- Slide 8: Step roles and artifacts with fragments -->
+      <section>
+        <h2>각 단계의 역할과 산출물</h2>
+        <table style="font-size: 0.62em; width: 95%; text-align: left;">
+          <tr style="border-bottom: 2px solid #1a7f37;">
+            <th>#</th><th>단계</th><th>핵심 목적</th><th>필수 산출물</th>
+          </tr>
+          <tr class="fragment fade-in"><td>1</td><td><strong>Request</strong></td><td>요구사항 명확화, 범위 설정</td><td><code>request.md</code></td></tr>
+          <tr class="fragment fade-in"><td>2</td><td><strong>Investigation</strong></td><td>현재 시스템 상태·의존성 파악</td><td><code>investigation.md</code></td></tr>
+          <tr class="fragment fade-in"><td>3</td><td><strong>Design</strong></td><td>수정할 코드와 구조의 상세 설계</td><td><code>design.md</code> (SSOT)</td></tr>
+          <tr class="fragment fade-in"><td>4</td><td><strong>Review</strong></td><td>설계서의 논리적 허점 검토</td><td><code>review.md</code></td></tr>
+          <tr class="fragment fade-in"><td>5</td><td><strong>Approval</strong></td><td>사용자 최종 승인</td><td>— (인간 게이트)</td></tr>
+          <tr class="fragment fade-in"><td>6</td><td><strong>Execution</strong></td><td>설계서에 기반한 실제 코드 수정</td><td><code>execution.log</code></td></tr>
+          <tr class="fragment fade-in"><td>7</td><td><strong>Test</strong></td><td>기능 작동·회귀 테스트</td><td><code>test-results.json</code></td></tr>
+          <tr class="fragment fade-in"><td>8</td><td><strong>Exec Review</strong></td><td>실행 결과 ↔ 설계 일치 확인</td><td><code>execution-review.md</code></td></tr>
+          <tr class="fragment fade-in"><td>9</td><td><strong>Done</strong></td><td>결과 보고·지식 동기화</td><td><code>result.md</code></td></tr>
+        </table>
+        <p class="fragment fade-in" style="font-size: 0.65em; color: #1a7f37; margin-top: 0.5em;">→ 단계별 산출물로 추적 가능성(Traceability) 확보</p>
+      </section>
+
+      <!-- Slide 9: Core separation -->
+      <section>
+        <h2>핵심 분리: Investigation → Design → Execution</h2>
+        <div class="two-col">
+          <div style="font-size: 0.78em; text-align: left;">
+            <div class="solution-card">
+              <strong>Investigation</strong><br>
+              "어떻게 고칠까" 이전에 "지금 어떻게 되어 있는가"를 먼저 본다
+            </div>
+            <div class="solution-card">
+              <strong>Design</strong><br>
+              코드 한 줄 쓰기 전에 <code>design.md</code>에 모든 변경을 텍스트로 — 이것이 SSOT
+            </div>
+            <div class="solution-card">
+              <strong>Execution</strong><br>
+              오직 <code>design.md</code>에 적힌 대로만. 임의 판단 금지
+            </div>
+          </div>
+          <div style="font-size: 0.7em; text-align: left; align-self: center;">
+            <p style="color:#1a7f37;"><strong>무효 전이 금지</strong></p>
+            <p>Investigation을 건너뛰고 Design으로 가면, 에이전트는 '기존 지식'만으로 설계를 시작한다.</p>
+            <p style="color:#c0392b; margin-top:0.5em;">= 측정 없는 설계와 동일한 위험</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 10: Approval gate -->
+      <section>
+        <h2>Approval 단계 — 인간의 최종 승인권</h2>
+        <p style="font-size: 0.8em;">시스템의 가장 핵심적인 안전장치</p>
+        <div class="problem-card" style="background:#fff8e1; border-left-color:#bc4c00;">
+          <strong>"진행해" / "승인"이라고 명시하기 전까지</strong><br>
+          <span style="font-size: 0.8em;">에이전트는 절대 <code>patch</code>·<code>write_file</code> 도구로 파일을 수정하지 않는다</span>
+        </div>
+        <div class="two-col" style="font-size: 0.72em; margin-top: 0.5em;">
+          <div>
+            <strong>❌ 좋지 않은 승인</strong>
+            <p style="font-size: 0.9em;">"응, 진행해."<br>(설계 오류를 방치 → 나중에 수정 비용 발생)</p>
+          </div>
+          <div>
+            <strong>✅ 권장되는 승인</strong>
+            <p style="font-size: 0.9em;">"src/utils.py는 새 래퍼 함수로 분리해줘. 그 점만 반영하면 승인할게."</p>
+          </div>
+        </div>
+        <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">→ 구체적 피드백일수록 Design 단계로 되돌아가 정교화 → 리스크 제거 후 실행</p>
+      </section>
+
+      <!-- Slide 11: Multi-layer defense -->
+      <section>
+        <h2>3계층 방어 체계</h2>
+        <table style="font-size: 0.72em; width: 95%; text-align: left;">
+          <tr style="border-bottom: 2px solid #1a7f37;">
+            <th style="width: 22%;">방어 계층</th><th>역할</th>
+          </tr>
+          <tr>
+            <td><strong>① 구조적 검증</strong><br><code>workflow-gate.sh</code></td>
+            <td>상태 전이 검증 — LLM 판단과 무관하게 스크립트 레벨에서 무효 전이 즉시 차단</td>
+          </tr>
+          <tr>
+            <td><strong>② 콘텐츠 검증</strong><br>Content System</td>
+            <td><code>content: true</code> 시 L1(구조)→L2(오류)→L3(표현)→L4(도메인), Blog 도메인은 L5 Judge 추가</td>
+          </tr>
+          <tr>
+            <td><strong>③ 인간 승인</strong><br>Approval Gate</td>
+            <td>AI 설계서를 사람이 직접 검토하는 '인지적 허들' — 12% JOB 거부, 평균 3시간 복구 절약</td>
+          </tr>
+        </table>
+        <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">단일 검증이 놓친 문제를 다음 계층이 캐치</p>
+      </section>
+
+      <!-- ===== SECTION 3: HOW ===== -->
+
+      <!-- Slide 12: Section divider - HOW -->
+      <section class="section-divider">
+        <span class="badge" style="background: #0969da;">HOW</span>
+        <h2>어떻게 작동하는가?</h2>
+      </section>
+
+      <!-- Slide 13: workflow-gate.sh + .workflow-state -->
+      <section>
+        <h2>workflow-gate.sh & .workflow-state</h2>
+        <div class="two-col">
+          <div>
+            <p style="font-size: 0.75em;"><strong>상태 확인</strong></p>
+            <pre style="font-size: 0.5em;"><code data-trim>
+$ bash core/scripts/workflow-gate.sh \
+      --status --job JOB-2047
+{
+  "job_id": "JOB-2047",
+  "current_step": "design",
+  "completed_artifacts": [
+    "request.md",
+    "investigation.md",
+    "design.md"
+  ],
+  "next_allowed_steps": ["review"]
+}
+            </code></pre>
+          </div>
+          <div>
+            <p style="font-size: 0.75em;"><strong>무효 전이 차단</strong></p>
+            <pre style="font-size: 0.5em;"><code data-trim data-line="2-4">
+$ workflow-gate.sh --next execution --job JOB-2047
+[ERROR] Cannot transition from Design to Execution.
+[ERROR] Missing required artifact: review.md
+[ERROR] Please complete Review step first.
+exit 1
+            </code></pre>
+            <p style="font-size: 0.6em; color: #666;">flock 기반 원자적 갱신 — 병렬 실행·인터럽트에도 상태 파일 무결성 보장</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 14: Real JOB example -->
+      <section>
+        <h2>실제 사례: JOB-2047 세션 DB 마이그레이션</h2>
+        <div style="font-size: 0.68em; text-align: left; width: 95%; margin: 0 auto;">
+          <p><strong>Investigation</strong> — 1,247개 세션, 48MB, 의존 스크립트 3개(sessions.db 직접 조회) 발견</p>
+          <p><strong>Design</strong> — 이중 쓰기 레이어 → 배치 변환 → 스크립트 수정 → 검증 → 아카이브 (5 Phase)</p>
+          <p class="fragment"><strong style="color:#c0392b;">사건 1 (Design)</strong> — healthcheck.sh의 <code>PRAGMA integrity_check</code> 의존성 사전 발견. 단순 실행했다면 누락.</p>
+          <p class="fragment"><strong style="color:#c0392b;">사건 2 (Review)</strong> — Design→Execution 점프 시도를 workflow-gate.sh가 차단</p>
+          <p class="fragment"><strong>Execution</strong> — 1247/1247 변환(23초), 의존 스크립트 3개 수정</p>
+          <p class="fragment"><strong>Test</strong> — 4/4 PASS · <strong>Exec Review</strong> — 설계 ↔ 결과 일치 확인</p>
+        </div>
+        <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">→ 재작업 0회, 롤백 0회로 통제된 마이그레이션 완료</p>
+      </section>
+
+      <!-- Slide 15: By the numbers -->
+      <section>
+        <h2>도입 전후 비교 (89개 JOB, 2026년 1-6월)</h2>
+        <table style="width: 95%; margin: 0 auto;">
+          <tr>
+            <td style="text-align:center;"><span class="stat">2.7 → 0.4</span><br><span class="stat-label">재작업 회수/JOB</span></td>
+            <td style="text-align:center;"><span class="stat">47% → 7%</span><br><span class="stat-label">롤백 발생률</span></td>
+            <td style="text-align:center;"><span class="stat">5 → 0</span><br><span class="stat-label">폭주 사고 건수</span></td>
+          </tr>
+        </table>
+        <p style="font-size: 0.7em; color: #666; margin-top: 0.8em;">초기 2주는 학습 기간(72분) → 이후 JOB당 52분, 총 완료 시간은 단축</p>
+        <p style="font-size: 0.65em; color: #1a7f37;">작업당 비용 32% 절감 · 승인 거부 12%는 평균 3시간 복구 절약 효과</p>
+      </section>
+
+      <!-- ===== SECTION 4: TRADE-OFFS ===== -->
+
+      <!-- Slide 16: Section divider -->
+      <section class="section-divider">
+        <span class="badge" style="background: #bc4c00;">TRADE-OFFS</span>
+        <h2>9단계가 항상 정답은 아니다</h2>
+      </section>
+
+      <!-- Slide 17: TASK vs JOB -->
+      <section>
+        <h2>TASK vs JOB — 복잡도에 따른 프로세스</h2>
+        <table style="font-size: 0.72em; width: 95%; text-align: left;">
+          <tr style="border-bottom: 2px solid #1a7f37;">
+            <th style="width: 12%;">유형</th><th>예시</th><th>프로세스</th><th>소요</th>
+          </tr>
+          <tr>
+            <td><strong>TASK</strong></td>
+            <td>파일 한 줄 수정, 간단한 질문</td>
+            <td>Request → Execution → Done <strong>(3단계)</strong></td>
+            <td>2-5분</td>
+          </tr>
+          <tr>
+            <td><strong>JOB</strong></td>
+            <td>아키텍처 변경, 새 기능 도입</td>
+            <td>9단계 전체</td>
+            <td>30-90분</td>
+          </tr>
+        </table>
+        <div class="problem-card" style="margin-top: 0.8em;">
+          <strong>JOB 판단 기준</strong><br>
+          <span style="font-size: 0.8em;">파일 변경 4개 이상 · 다중 모듈 영향 · 롤백에 별도 계획 필요</span>
+        </div>
+        <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">향후: 복잡도 평가로 3~9단계 탄력 조정, 저위험 작업은 자동 Approval</p>
+      </section>
+
+      <!-- ===== SECTION 5: SUMMARY ===== -->
+
+      <!-- Slide 18: Summary -->
       <section>
         <h2>핵심 요약</h2>
-        <ul>
-          <li>9단계 상태 머신</li>
-          <li>승인 단계 강제</li>
-          <li>자동화된 상태 전이</li>
-        </ul>
+        <ol style="font-size: 0.9em;">
+          <li class="fragment">에이전트 사고의 원인은 <strong>지능이 아니라 관문의 부재</strong></li>
+          <li class="fragment">9단계 상태머신: <strong>조사 → 설계 → 검토 → 승인 → 실행 → 검증</strong></li>
+          <li class="fragment">Approval 단계가 <strong>인간의 통제권</strong>을 확보</li>
+          <li class="fragment"><code>workflow-gate.sh</code>가 LLM 판단과 무관하게 무효 전이 차단</li>
+          <li class="fragment">TASK/JOB 분리로 <strong>안전과 속도의 균형</strong></li>
+        </ol>
+        <p class="fragment" style="font-size: 0.7em; color: #888; margin-top: 1em;">"9단계는 가장 빠르게 목적지에 도달하게 하는 안전한 가이드라인"</p>
+      </section>
+
+      <!-- Slide 19: Next steps + Q&A -->
+      <section>
+        <h1 style="font-size: 3em;">Q&A</h1>
+        <div style="font-size: 0.75em; text-align: left; width: 80%; margin: 0.5em auto;">
+          <p>📌 <strong>더 알아보기</strong></p>
+          <ul>
+            <li><a href="../../blog/posts/why-9-step-workflow.md">왜 9단계 상태머신인가? (Blog)</a></li>
+            <li><a href="../../wiki/guides/request-task.md">작업 요청 및 워크플로우 상세 가이드</a></li>
+            <li><a href="spec-driven-dev.html">Spec-Driven Development 슬라이드</a></li>
+            <li><a href="hermes-overview.html">Hermes Agent 개요 슬라이드</a></li>
+          </ul>
+        </div>
+        <p style="font-size: 1em; margin-top: 0.5em;">질문이 있으시면 편하게 말씀해주세요.</p>
       </section>
 
     </div>
@@ -72,7 +362,8 @@ bash workflow-gate.sh JOB-1234 complete
       controls: true,
       progress: true,
       center: true,
-      transition: 'slide'
+      transition: 'slide',
+      fragments: true
     });
   </script>
 </body>
