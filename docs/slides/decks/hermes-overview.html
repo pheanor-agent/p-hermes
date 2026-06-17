@@ -166,18 +166,18 @@ flowchart TB
         <div class="mermaid-wrap">
 <div class="mermaid">
 flowchart TB
-    U["사용자\n(Telegram/Discord/Slack)"] --> G["Hermes Gateway\n(15개 이상 메시징 플랫폼 동시 연결)"]
-    G --> CL["Conversation Loop (에이전트 코어)"]
-    subgraph CLcomp[""]
+    U["사용자 (Telegram/Discord/Slack)"] --> G["Hermes Gateway (15개+ 메시징 플랫폼)"]
+    G --> CL["Conversation Loop"]
+    subgraph CLcomp["Components"]
         direction LR
-        SK["Skills\n(절차적 기억)"]
-        M["Memory\n(영속 컨텍스트)"]
-        SDB["Session DB\n(FTS5 검색)"]
+        SK["Skills (절차적 기억)"]
+        M["Memory (영속 컨텍스트)"]
+        SDB["Session DB (FTS5)"]
     end
     CL --> SK
     CL --> M
     CL --> SDB
-    subgraph Tools[""]
+    subgraph Tools["Tools (8개+)"]
         direction LR
         Tl["Terminal"]
         Fl["File"]
