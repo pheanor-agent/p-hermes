@@ -15,6 +15,22 @@ tags: [github-pages, deploy, automation]
 ## 정의
 docs/ 변경 시 링크 검증 → llms.txt 재생성 → git push 자동화.
 
+## 의존성 타입 정의
+
+| Type | Meaning | Action |
+|------|---------|--------|
+| `extends` | 부모 확장 (상세화) | 동작 불필요 |
+| `raises` | 수치적 기준 상승 | 부모 Spec 업데이트 필요 |
+| `conflicts` | 충돌 | 승인 차단 |
+
+## Conflict Detection 절차
+
+| 단계 | 검사 항목 | 명령어 |
+|------|-----------|--------|
+| 1. Quantitative | 수치 비교 | `grep -n "분량\|자\|chars" specs/active/SPEC-NEW.md` |
+| 2. Structural | 구조 재정의 감지 | `grep -n "트랙\|track\|구조" specs/active/SPEC-NEW.md` |
+| 3. Domain Overlap | 도메인 중복 | 동일 도메인 Spec 간 역할 분리 확인 |
+
 ## Contract
 
 contract:

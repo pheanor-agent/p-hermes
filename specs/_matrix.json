@@ -16,6 +16,9 @@
             "status": "approved"
         }
     ],
-    "dependencies": [],
+    "dependencies": [
+        {"child": "SPEC-D04", "parent": "SPEC-D01", "type": "extends"},
+        {"child": "SPEC-D05", "parent": "SPEC-D01", "type": "extends"}
+    ],
     "generated_at": "2026-06-16T00:00:00Z"
 }

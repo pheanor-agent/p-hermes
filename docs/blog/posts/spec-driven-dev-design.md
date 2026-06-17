@@ -1,598 +1,240 @@
-# Spec-Driven Development 설계 분석
+# Spec-Driven Development 설계 철학: 명세서가 있는 곳에 협업이 있다
 
-> **프로젝트**: p-hermes 핵심 시스템  
-> **도메인**: A2 (Spec-Driven Dev)  
-> **작성일**: 2026-06-17  
-> **분량**: 10,000+자
+> **주제**: #spec-driven-dev #dependencies #conflict-detection
+> **작성일**: 2026-06-17
 
 ---
 
-## 개요
+## 서론: AI 에이전트 시대의 명세서
 
-Spec-Driven Development는 코드 작성 전에 명세서를 정의하고, 모든 변경사항이 명세서를 경유하는 워크플로우입니다. AI 에이전트와 인간 개발자가 같은 언어로 소통하는 시스템을 구축합니다. 이 문서에서는 Spec-Driven Dev의 설계 철학, 아키텍처, 그리고 검증 메커니즘을 심층 분석합니다.
+챗봇 시대가 종식되고 자율 AI 에이전트 시대가 도래했습니다. 인간이 직접 명령을 내리는 것이 아니라, AI 에이전트가 자율적으로 작업을 수행하는 환경입니다.
 
-### 배경
+이러한 환경에서 가장 중요한 것은 **명세서 (Spec)** 입니다.
 
-AI 에이전트 환경에서 개발 워크플로우의 복잡성이 증가했습니다. 인간의 의도와 AI의 해석 간 괴리를 줄이기 위해 명세서를 도입했습니다. Spec은 개발자의 의도를 명확히 하고, AI 에이전트가 정확하게 해석할 수 있는 공통 언어입니다.
+명세서가 없는 협업은 혼란을 야기합니다. 여러 AI 에이전트가 동일한 프로젝트에서 작업을 수행할 때, "무엇을 해야 하는가"에 대한 기준이 명확하지 않으면 각기 다른 방향으로 작업이 진행됩니다.
 
-**문제 정의**
-- AI 에이전트의 해석 오차
-- 코드/테스트/문서 간 불일치
-- 변경 이력 추적 어려움
-- 수동 검증 비효율성
-- 프로젝트 내 일관성 부족
+명세서가 있는 곳에 협업이 있습니다. 이 문서에서는 Spec-Driven Development의 설계 철학, 의존성 추적 메커니즘, Conflict Detection 절차 및 Batch Modification 워크플로우에 대해 기술합니다.
 
-### 목표
+---
 
-1. **명확한 의도 전달**: 개발자의 의도를 Spec으로 표현
-2. **일관성 보장**: 코드, 테스트, 문서 간 일관성
-3. **자동화 검증**: 수동 검증을 자동화
-4. **Traceability**: 변경의 이력 추적
+## 의존성 추적: 왜 3종으로 구분했는가
 
-**목표 달성 지표**
-- Spec Conformance Score ≥80
-- Traceability 100%
-- Automated Compliance ≥95%
-- 수동 검증 → 자동화
-- 일관성 검증 ≥90%
+명세서 간 관계를 정의하는 의존성 타입은 3가지로 구분됩니다. `extends`, `raises`, `conflicts`입니다.
 
-## 핵심 설계 원칙
+### 1. extends: 부모 확장
 
-### 1. Spec이 단일 진실 공급원 (SSOT)
+`extends`는 부모 명세서를 상세화하여 확장하는 관계를 의미합니다. 부모가 정의한 구조를 기반으로 자식이 더 상세한 요구사항을 추가합니다.
 
-모든 코드, 테스트, 문서는 Spec에서 파생됩니다. Spec이 변경되면 코드와 테스트도 함께 변경됩니다. 이 원칙은 프로젝트의 일관성을 보장합니다.
+**예시**: SPEC-D01이 문서 구조를 정의하면, SPEC-D04가 각 트랙별 구체적인 파일명 매핑과 분량 기준을 정의합니다.
 
-**SSOT의 실제 적용**
+`extends` 타입은 별도 동작이 필요하지 않습니다. 부모가 권위 있는 정의 (SSOT) 역할을 유지하며, 자식은 상세한 요구사항을 보완합니다.
 
-| 단계 | Spec 참조 |
-|------|-----------|
-| 설계 | Spec 정의 |
-| 구현 | Spec ID 주석 |
-| 테스트 | Spec ID 참조 |
-| 문서 | Spec 기반 작성 |
+### 2. raises: 수치적 기준 상승
 
-**SSOT의 이점**
-- **일관성**: 모든 아티팩트가 Spec에서 파생
-- **추적성**: 변경의 이력을 추적 가능
-- **검증**: 자동화된 검증 가능
+`raises`는 부모 명세서의 수치적 기준을 상승시키는 관계를 의미합니다. 분량 기준, 성능 지표, 테스트 커버리지 등 수치로 표현되는 요구사항이 상승합니다.
 
-**SSOT 위반 사례**
-- 코드 직접 수정 → Spec 업데이트 (금지)
-- 테스트 추가 → Spec 미참조 (금지)
-- 문서 변경 → Spec 불일치 (금지)
+**예시**: SPEC-D03에서 Wiki 분량 기준을 1,500자로 정의했습니다. SPEC-D04에서 이를 3,500자로 상승시켰습니다.
 
-**SSOT 강제 메커니즘**
-- Spec Status → approved 필수
-- Conformance Score ≥70
-- Traceability 100%
+`raises` 타입은 **승인 시 부모 Spec 업데이트**가 필요합니다. 부모 명세서가 자식이 상승시킨 기준을 반영하지 않으면, 두 명세서 간 수치 불일치가 발생합니다.
+
+**핵심**: `raises`는 충돌이 아닙니다. 의도적인 요구사항 상승입니다. delta를 문서화하고, 승인이 되면 부모를 업데이트합니다.
+
+### 3. conflicts: 충돌
+
+`conflicts`는 부모 명세서와 자식 명세서 간 모순이 존재함을 의미합니다.
+
+**예시**: 부모가 "Wiki는 `wiki/guides/`에 위치"라고 정의하면, 자식이 "Wiki는 `docs/wiki/`에 위치"라고 재정의합니다.
+
+`conflicts` 타입은 **승인 차단**됩니다. 충돌이 해결되기 전까지 자식 명세서는 `proposed` 상태로 유지됩니다.
+
+### 의존성 타입 비교
+
+| 타입 | 의미 | 승인 | 부모 업데이트 |
+|------|------|------|---------------|
+| `extends` | 부모 확장 | ✅ 가능 | ❌ 불필요 |
+| `raises` | 수치 상승 | ✅ 가능 (delta 문서화) | ✅ 필수 |
+| `conflicts` | 충돌 | ❌ 차단 | ❌ 해결 필요 |
+
+---
+
+## Conflict Detection: 3단계 검증 철학
+
+새로운 명세서를 등록하기 전에 반드시 3단계 검증을 실행합니다. 이 절차는 명세서 간 충돌을 사전에 방지합니다.
+
+### 1. Quantitative Conflicts (수치 비교)
+
+명세서 내에 정의된 모든 수치적 기준을 비교합니다.
+
+```bash
+# 분량/라인 수 비교
+grep -n "분량\|자\|chars\|words\|lines" specs/active/SPEC-NEW.md
+grep -n "분량\|자\|chars\|words\|lines" specs/active/SPEC-EXISTING.md
+```
+
+**검증 로직**:
+- 신규 명세서 수치가 기존보다 높으면 → `raises` (delta 문서화)
+- 모순되는 수치가 있으면 → `conflicts` (승인 차단)
+
+**실제 사례**: SPEC-D04 등록 시 Wiki 분량 기준이 SPEC-D03의 1,500자에서 3,500자로 상승했습니다. 이는 `raises` 타입으로 문서화되었습니다.
+
+### 2. Structural Conflicts (구조 재정의)
+
+명세서가 폴더 구조, 트랙 아키텍처 또는 파일 경로를 재정의하는지 확인합니다.
+
+```bash
+# 폴더/트랙/경로 재정의 확인
+grep -n "트랙\|track\|구조\|hierarchy\|folder\|path" specs/active/SPEC-NEW.md
+```
+
+**검증 로직**:
+- 부모가 정의한 폴더 구조를 재정의 → `conflicts`
+- 트랙 아키텍처 변경 시도 → `conflicts`
+- 파일 경로 재정의 → `conflicts`
+
+구조적 충돌은 협업의 근간을 흔듭니다. 부모 명세서가 정의한 구조를 자식이 임의로 변경하면, 다른 명세서들이 참조하는 경로가 무효화됩니다.
+
+### 3. Domain Overlap (도메인 중복)
+
+동일 도메인의 두 명세서 간 역할 중복을 확인합니다.
+
+**원칙**:
+- **부모** = 구조/권위 있는 정의
+- **자식** = 부분집합에 대한 상세 요구사항/설계
+
+동일 도메인에서 두 명세서가 동일한 수준의 상세도를 가지면 역할 중복이 발생합니다. 부모는 구조를 정의하고, 자식은 부분을 상세화하는 계층 구조를 유지해야 합니다.
+
+---
+
+## Batch Modification: 병렬 수정의 필요성
+
+리뷰 과정에서 여러 명세서에 대한 수정 사항이 발견됩니다. 일일이 순차적으로 수정하면 비효율적입니다.
+
+### 병렬 수정 워크플로우
 
 ```mermaid
-flowchart TD
-    A[Spec] --> B[코드]
-    A --> C[테스트]
-    A --> D[문서]
-    B --> E{일관성 검증}
-    C --> E
-    D --> E
-    E -->|PASS| F[배포]
-    E -->|FAIL| G[수정]
+sequenceDiagram
+    participant R as Review Document
+    participant E as Extractor
+    participant S as Subagents
+    participant F as Files
+    participant V as Verification
+    
+    R->>E: 수정 사항 추출 (Checklist)
+    E->>S: 병렬 위임 (3+ 파일)
+    S->>F: patch 도구로 수정
+    F-->>S: _warning (동시 수정)
+    S->>V: 검증 (grep/read_file)
+    V-->>E: PASS/FAIL
+    E->>R: 완료 보고
 ```
 
-### 2. 변경은 Spec에서 시작
+### 핵심 규칙
 
-기능 추가, 버그 수정, 리팩토링 모두 Spec 변경으로 시작합니다. 직접 코드를 수정하는 것은 Spec 우회로 간주되어 금지됩니다.
+**1. 전체 컨텍스트 공유**
+각 서브에이전트는 전체 수정 컨텍스트를 수신합니다. 부분적인 정보만 제공하면 누락이 발생합니다.
 
-**워크플로우 강제**
+**2. `_warning`은 예상대로 발생**
+서브에이전트가 동시 수정 시 `_warning: was modified by sibling subagent`가 발생합니다. 이는 오류가 아닌 예상대로의 동작입니다.
+
+**3. patch 도구 사용**
+전체 파일 재작성이 아닌, 타겟팅된 수정을 위해 `patch` 도구를 사용합니다.
+
+### 검증 (반드시)
+
+수정 후 반드시 검증을 실행합니다.
 
 ```bash
-# 올바른 워크플로우
-1. Spec 변경 (proposed → draft → review → approved)
-2. 코드 변경 (Spec ID 참조)
-3. 테스트 추가 (Spec ID 참조)
-4. 검증 (spec-conformance.sh)
+# 잔여 참조 확인
+grep -rn "old_value" specs/active/SPEC-*.md
 
-# 금지된 워크플로우
-❌ 코드 직접 수정 → 테스트 추가 → Spec 업데이트
+# 변경 수 확인
+grep -c "new_value" specs/active/SPEC-*.md
 ```
 
-**워크플로우 규칙**
-- **변경 시작**: Spec에서 시작
-- **검증**: Conformance Score 확인
-- **완료**: 모든 아티팩트 일관성 검증
+검증을 생략하면 잔여 참조가 남거나, 누락된 수정이 발생합니다. 서브에이전트가 "모든 수정 적용 완료"라고 보고해도 반드시 검증합니다.
 
-**워크플로우 강제 메커니즘**
-- Spec Status → approved 필수
-- Conformance Score ≥70
-- Traceability 100%
-- Status 변경 전 검증
+---
 
-### 3. 자동화된 검증
+## Pitfalls 분석: 10+ 실제 사례에서 교훈
 
-Spec 준수 여부를 스크립트로 확인합니다. 수동 검증을 대체합니다.
-
-**자동화 스크립트**
+실제 운영 과정에서 발견된 10개 이상의 Pitfall을 분석합니다.
 
-```bash
-# Conformance Score 확인
-bash spec-conformance.sh project-name
+### 1. Markdown 테이블 파이프 개수 오차
 
-# Traceability 확인
-grep -r "SPEC-A01" src/ tests/
-
-# Matrix 동기화
-bash spec-matrix.sh sync
-```
+`read_file`이 `LINE_NUM|CONTENT` 형식으로 출력을 반환합니다. Markdown 테이블의 `|`와 혼동하여 파이프 개수를 잘못 계산하면, 테이블 포맷이 손상됩니다.
 
-**자동화 이점**
-- **신뢰성**: 수동 오차 제거
-- **효율성**: 빠른 검증
-- **지속성**: 주기적 검증 가능
-
-**자동화 검증 항목**
-- Conformance Score 계산
-- Traceability 검증
-- Status 동기화
-- Dependency 검증
-- Score 향상 전략
-
-## Spec 라이프사이클
-
-명세서의 상태 전이입니다. 각 상태는 명확한 진입/퇴출 조건을 가집니다.
-
-```mermaid
-stateDiagram-v2
-    [*] --> proposed: 생성
-    proposed --> draft: 작성 시작
-    draft --> review: 리뷰 요청
-    review --> approved: 승인
-    review --> draft: 수정
-    approved --> deprecated: retirement
-    deprecated --> [*]
-```
-
-### 상태별 의미
-
-| 상태 | 의미 | 작업 가능 |
-|------|------|-----------|
-| proposed | 아이디어 제안 | 작성 시작 |
-| draft | 작성 중 | 수정, 검토 |
-| review | 리뷰 요청 | 피드백, 승인 |
-| approved | 승인 완료 | 코드 작성 |
-| deprecated | 퇴역 준비 | 아카이브 |
-
-### 상태 전이 규칙
-
-- **proposed → draft**: 작성자가 시작
-- **draft → review**: 작성 완료 시 요청
-- **review → approved**: 리뷰어 1명 이상 승인
-- **approved → deprecated**: retirement 절차 완료 시
-
-### 상태 변경 예시
-
-```bash
-# proposed → draft
-bash spec-status.sh SPEC-A01 draft
-
-# draft → review
-bash spec-status.sh SPEC-A01 review
-
-# review → approved
-bash spec-status.sh SPEC-A01 approved
-```
-
-**상태 변경 검증**
-- Status 변경 전 Conformance Score ≥70
-- 리뷰어 승인 기록
-- Matrix 동기화 완료
-- Dependency 검증
-- Status 변경 로그
-
-## Contract 정의
-
-명세서의 제약 조건을 명시합니다. Contract는 시스템이 반드시 만족해야 하는 조건입니다.
-
-### Contract의 3가지 구성 요소
-
-**Precondition (선행 조건)**
-
-```yaml
-precondition:
-  - 시스템 상태 A
-  - 입력 데이터 존재
-  - 네트워크 연결
-```
-
-**Postcondition (후행 조건)**
-
-```yaml
-postcondition:
-  - 시스템 상태 B
-  - 출력 데이터 생성
-  - 로그 기록
-```
-
-**Invariant (불변 조건)**
-
-```yaml
-invariant:
-  - 항상 참인 조건
-  - 데이터 무결성
-  - 보안 정책 준수
-```
-
-### 실제 Contract 예시
-
-```yaml
-# SPEC-A01: Cron Job 실행
-contract:
-  precondition:
-    - Job ID 존재
-    - 실행 권한 보유
-    - 리소스 여유
-  postcondition:
-    - Job 완료 상태
-    - 결과 파일 생성
-    - 로그 기록
-  invariant:
-    - Job ID 유일성
-    - 상태 일관성
-```
-
-**Contract 검증**
-
-```bash
-# Contract 검증
-bash spec-contract.sh SPEC-A01
-
-# Precondition 확인
-bash spec-contract.sh SPEC-A01 precondition
-
-# Postcondition 확인
-bash spec-contract.sh SPEC-A01 postcondition
-```
-
-**Contract 작성 가이드**
-- 명확한 Precondition 정의
-- Postcondition은 검증 가능
-- Invariant는 항상 참인 조건
-- Contract는 필수
-- Contract 검증 자동화
-
-## Examples 정의
-
-명세서의 실제 사용 예시를 정의합니다. Examples는 Spec의 의도를 명확히 하고, 테스트 케이스로 사용됩니다.
-
-### Examples의 역할
-
-1. **사용자 안내**: 실제 사용법 제공
-2. **테스트 케이스**: 자동화 검증 기반
-3. **의도 명확화**: 개발자 간 공유 이해
-
-### 실제 Examples 예시
-
-```yaml
-examples:
-  - name: "Cron Job 생성"
-    command: hermes cron create --name "test" --schedule "0 9 * * *"
-    expected_output: "Job created: JOB-1234"
-  
-  - name: "Spec 상태 변경"
-    command: bash spec-status.sh SPEC-A01 draft
-    expected_output: "Status changed to draft"
-  
-  - name: "Conformance Score 확인"
-    command: bash spec-conformance.sh project-name
-    expected_output: "Score: 85/100"
-```
-
-**Examples 작성 가이드**
-- **명확한 명령어**: 실제 실행 가능한 명령어
-- **기대 결과**: 명확한 출력 정의
-- **여러 시나리오**: 다양한 사용 사례 포함
-
-**Examples 검증**
-- 명령어 실행 테스트
-- 기대 결과 검증
-- 예외 케이스 포함
-- 3개 이상 정의
-- Examples 자동화 검증
-
-## Traceability 패턴
-
-Spec, 코드, 테스트 간 추적성을 보장합니다. Traceability는 변경의 이력을 추적할 수 있게 합니다.
-
-### Spec ID 매핑
-
-```yaml
-# Spec 파일
-spec_id: SPEC-A01
-version: 1.0.0
-parent: null
-status: approved
-```
-
-```python
-# 코드 파일
-# SPEC-A01: 기능 구현
-def implement_feature():
-    """
-    Spec-Driven 기능 구현
-    Traceability: SPEC-A01
-    """
-    pass
-```
-
-```python
-# 테스트 파일
-# SPEC-A01: 기능 검증
-def test_feature():
-    """
-    Spec 기반 테스트
-    Traceability: SPEC-A01
-    """
-    assert True
-```
-
-### Traceability 검증
-
-```bash
-# Spec ID 코에서 검색
-grep -r "SPEC-A01" src/
-
-# Spec ID 테스트에서 검색
-grep -r "SPEC-A01" tests/
-
-# 미참조 Spec 식별
-bash spec-matrix.sh traceability
-```
-
-**Traceability 이점**
-- **변경 추적**: Spec → 코드 → 테스트
-- **문제 해결**: 영향 분석
-- **검증**: 자동화 검증
-
-**Traceability 기준**
-- 코드 파일: Spec ID 주석
-- 테스트 파일: Spec ID 참조
-- 미참조 Spec 식별
-- 100% Traceability
-- Traceability 자동화
-
-## Conformance Score 계산
-
-4개 항목의 가중 평균으로 계산됩니다. Score는 Spec의 완성도를 나타냅니다.
-
-### Score 구성
-
-| 항목 | 가중치 | 설명 |
-|------|--------|------|
-| Examples | 30% | 실제 사용 예시 정의 |
-| Contract | 25% | 제약 조건 정의 |
-| Traceability | 25% | 코드/테스트 참조 |
-| Tests | 20% | 테스트 자동화 |
-
-### 계산 공식
-
-```python
-conformance_score = (
-    examples_score * 0.30 +
-    contract_score * 0.25 +
-    traceability_score * 0.25 +
-    tests_score * 0.20
-)
-```
-
-### Score 해석
-
-| Score | 의미 | 상태 |
-|-------|------|------|
-| 90-100 | 매우 우수 | ✅ Production |
-| 70-89 | 우수 | ✅ Staging |
-| 50-69 | 보통 | ⚠️ Review |
-| 0-49 | 부족 | ❌ 수정 필요 |
-
-**Score 향상 전략**
-
-1. **Examples 3개 이상**: 다양한 사용 예시 추가
-2. **Contract 정의**: Pre/Post/Invariant 명확히
-3. **Traceability**: 코드/테스트 참조
-4. **Tests**: 자동화 테스트 작성
-
-**Score 계산 예시**
-
-```python
-# Examples: 3개 (30%)
-examples_score = 100
-
-# Contract: 정의 (25%)
-contract_score = 100
-
-# Traceability: 코드/테스트 참조 (25%)
-traceability_score = 100
-
-# Tests: 자동화 (20%)
-tests_score = 100
-
-# Total: 100
-conformance_score = 100 * 0.30 + 100 * 0.25 + 100 * 0.25 + 100 * 0.20
-```
-
-**Score 목표**
-- Production: ≥90
-- Staging: ≥70
-- Review: ≥50
-- 수정 필요: <50
-- Score 자동화 계산
-
-## Multi-Spec Dependencies
-
-여러 Spec 간 의존성을 관리합니다. Dependencies는 변경의 파장을 추적합니다.
-
-### 의존성 그래프
-
-```mermaid
-graph LR
-    A[SPEC-A01: Cron] --> B[SPEC-A02: Workflow]
-    B --> C[SPEC-A03: Validation]
-    A --> C
-```
-
-### 의존성 관리
-
-| 작업 | 의미 |
-|------|------|
-| 추가 | 부모 Spec에 자식 의존성 등록 |
-| 변경 | 자식 Spec에 영향 분석 |
-| 삭제 | 부모 Spec에서 의존성 제거 |
-
-### 실제 의존성 예시
-
-```yaml
-# SPEC-A02: Workflow
-dependencies:
-  - SPEC-A01: Cron Job
-  - SPEC-A03: Validation
-
-# 변경 시 영향 분석
-bash spec-matrix.sh analyze SPEC-A02
-```
-
-**의존성 분석**
-
-```bash
-# 의존성 그래프 확인
-bash spec-matrix.sh analyze SPEC-A02
-
-# 영향 분석
-bash spec-matrix.sh impact SPEC-A01
-```
-
-**의존성 이점**
-- **변경 영향**: 부모 변경 시 자식 영향 분석
-- **검증**: 의존성 순서 검증
-- **문서화**: Spec 간 관계 명시
-
-**의존성 규칙**
-- Circular Dependency 금지
-- Parent Status → approved
-- Impact Analysis 필수
-- Dependency 그래프 유지
-- Dependency 자동화 검증
-
-## Automated Compliance
-
-주기적으로 Spec 준수 여부를 검증합니다. Cron Job을 활용합니다.
-
-### Cron Job 설정
-
-```bash
-# 주기적 검증
-hermes cron create \
-  --name "spec-compliance" \
-  --schedule "0 0 * * *" \
-  --prompt "모든 Spec conformance score 확인"
-```
-
-### 검증 항목
-
-| 항목 | 방법 |
-|------|------|
-| Status | Matrix 동기화 확인 |
-| Score | Conformance 계산 |
-| Traceability | 코드/테스트 참조 확인 |
-| Dependencies | 의존성 그래프 검증 |
-
-### 검증 결과
-
-```yaml
-# 예시 결과
-JOB-1234:
-  status: approved
-  conformance: 85/100
-  traceability:
-    code_references: 5
-    test_references: 3
-  dependencies:
-    - SPEC-A01: Cron Job
-```
-
-**검증 결과 해석**
-
-| Score | 상태 | 권장 작업 |
-|-------|------|-----------|
-| 90-100 | Production | 배포 가능 |
-| 70-89 | Staging | 테스트 환경 |
-| 50-69 | Review | 추가 검증 |
-| 0-49 | 수정 필요 | Spec 보완 |
-
-**검증 주기**
-- 매일午夜 Cron Job 실행
-- Status 변경 시 즉시 검증
-- Matrix 동기화 후 검증
-- Dependency 검증
-- Score 자동화 계산
-
-## 문제 해결
-
-| 문제 | 원인 | 해결 |
-|------|------|------|
-| Conformance Score 부족 | Examples/Contract 누락 | YAML 형식 추가 |
-| Traceability 부족 | 코드/테스트 참조 없음 | 주석에 Spec ID 추가 |
-| Status 변경 실패 | 승인 누락 | approval.json 생성 |
-| Matrix 동기화 실패 | _matrix.json 누락 | Matrix 스크립트 실행 |
-
-**상세 해결 가이드**
-
-**Conformance Score 부족**
-1. Examples 3개 이상 추가
-2. Contract 정의 확인
-3. Traceability 검증
-4. Tests 자동화
-5. Score 재계산
-6. Score 자동화 검증
-
-**Traceability 부족**
-1. 코드 주석에 Spec ID 추가
-2. 테스트 파일에 Spec ID
-3. `grep -r "SPEC-A01"` 확인
-4. 미참조 Spec 식별
-5. Traceability 자동화
-
-**Status 변경 실패**
-1. approval.json 생성
-2. 리뷰어 승인 확인
-3. Matrix 동기화
-4. Dependency 검증
-5. Status 변경 로그
-
-**Matrix 동기화 실패**
-1. `_matrix.json` 확인
-2. Matrix 스크립트 실행
-3. Status 재검증
-4. Dependency 그래프 확인
-5. Matrix 자동화 동기화
-
-## 결론
-
-Spec-Driven Development는 코드 작성 전에 명세서를 정의하고, 모든 변경사항이 명세서를 경유하는 워크플로우입니다. 자동화된 검증을 통해 일관성을 보장합니다. 이 시스템은 AI 에이전트와 인간 개발자가 같은 언어로 소통할 수 있게 합니다.
-
-### 핵심 메시지
-
-1. **Spec이 SSOT**: 모든 변경사항이 Spec에서 시작
-2. **Contract + Examples**: 명확한 제약 조건과 사용 예시
-3. **Conformance Score**: 자동화된 검증 메커니즘
-4. **Traceability**: 변경의 이력 추적 가능
-5. **Multi-Spec Dependencies**: 의존성 관리
-
-### 핵심 원칙
-
-- **명확한 의도 전달**: Spec이 개발자의 의도를 명확히 함
-- **일관성 보장**: 코드, 테스트, 문서 간 일관성
-- **자동화 검증**: 수동 검증을 자동화
-- **변경 추적**: Traceability로 변경 이력 추적
-- **의존성 관리**: Multi-Spec Dependencies
-- **Score 자동화**: Conformance Score 계산
-
-## 📚 관련 문서
-- [Spec-Driven Dev Wiki](../wiki/guides/spec-driven-dev.md)
-- [Workflow Pipeline](../wiki/guides/request-task.md)
+**교훈**: `LINE_NUM|` 접두사를 제거한 후 파이프를 카운트합니다.
+
+### 2. 동시 서브에이전트 수정 시 stale `_warning`
+
+여러 서브에이전트가 동일한 파일을 수정 시 `read_file` 뷰가 stale 상태가 됩니다.
+
+**교훈**: 패치 전 반드시 `read_file`으로 재확인합니다.
+
+### 3. 다중 패치 후 테이블 포맷 손상
+
+5개 이상의 패치를 적용하면 테이블 포맷이 손상될 수 있습니다.
+
+**교훈**: 최종 `read_file`으로 테이블 검증을 실행합니다.
+
+### 4. Conflict Detection 생략 (JOB-1665)
+
+SPEC-D04 등록 시 Wiki 분량 기준 상승을 Conflict Detection 절차에서 발견하지 못했습니다.
+
+**교훈**: 항상 수치 한계값을 grep한 후 등록합니다.
+
+### 5. `_index.yaml` 또는 `_matrix.json` 누락
+
+두 파일 중 하나만 업데이트하면 도구 체인이 중단됩니다.
+
+**교훈**: 두 파일 모두 업데이트 필수입니다.
+
+### 6. `raises`를 `conflicts`로 오인
+
+`raises`는 의도적인 요구사항 상승입니다. 충돌로 오인하여 승인을 차단하면 잘못된 결과가 발생합니다.
+
+**교훈**: delta를 문서화하고 승인을 진행합니다.
+
+### 7. `conflicts` 타입 Spec 등록
+
+충돌이 해결되지 않은 상태로 `proposed` 상태로 등록하면 승인 시 문제가 발생합니다.
+
+**교훈**: 충돌 해결 전 `proposed` 상태로 유지합니다.
+
+### 8. 부모 Spec이 `proposed` 상태
+
+부모가 `proposed` 상태일 때 자식을 `approved`하면 구조적 무결성이 깨집니다.
+
+**교훈**: 부모가 `approved` 후 자식을 승인합니다.
+
+### 9. `spec-conformance.sh` grep multiline 버그 (JOB-1673)
+
+`grep -r | wc -l`이 다중 디렉토리에서 multiline output을 반환하여 `[[ 0\n0 -gt 0 ]]` 구문 오류를 발생시킵니다.
+
+**교훈**: `grep -rl` 사용 또는 `tr -d '\n'` 적용합니다.
+
+### 10. Spec 파일명 vs 실제 파일명 불일치 (JOB-1678)
+
+SPEC-D04에 정의된 파일명 (`cron-3layer-design.md`, `architecture.html`)과 실제 파일명 (`cron-automation-design.md`, `architecture-5tier.html`)이 다릅니다.
+
+**교훈**: `ls docs/*/` 실제 목록과 SPEC 파일명 테이블을 반드시 대조합니다.
+
+### 11. 슬라이드 인덱스 파일 형식 (JOB-1678)
+
+`docs/slides/index.md`가 아닌 `index.html`을 사용해야 합니다. Markdown 파일은 GitHub Pages에서 렌더링되지 않습니다.
+
+**교훈**: `index.html`을 사용하여 다크 테마를 통일합니다.
+
+---
+
+## 향후 전망: Spec 기반 협업의 진화
+
+Spec-Driven Development는 단순한 명세서 작성 프로세스가 아닙니다. AI 에이전트와 인간 개발자가 같은 언어로 소통하는 시스템입니다.
+
+미래에는 명세서 간 의존성 추적이 더 정교해지고, Conflict Detection이 더 자동화될 것입니다. 대규모 프로젝트에서 수십 개의 명세서가 상호 작용할 때, 이 시스템의 가치 더욱 커집니다.
+
+명세서가 있는 곳에 협업이 있습니다.
+
+---
+
+_이 문서는 Spec-Driven Development의 설계 철학, 의존성 추적 메커니즘, Conflict Detection 절차 및 Batch Modification 워크플로우를 기술합니다. 실제 운영 경험을 바탕으로 작성되었습니다._
