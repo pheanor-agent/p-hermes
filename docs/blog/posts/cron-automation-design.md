@@ -543,5 +543,5 @@ Cron System은 이벤트 기반 아키텍처로 Job을 정의하고 실행합니
 - **스케줄러 상태 추적**: ≥90%
 
 ## 📚 관련 문서
-- [Cron System Wiki](/p-hermes/wiki/guides/automation.md)
-- [Workflow Pipeline](/p-hermes/wiki/guides/request-task.md)
+- [Cron System Wiki](../../wiki/guides/automation.md)
+- [Workflow Pipeline](../../wiki/guides/request-task.md)

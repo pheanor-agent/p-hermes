@@ -221,8 +221,8 @@ grep -c "new_value" specs/active/SPEC-*.md
 
 ## 📚 관련 링크
 
-- [SPEC-D01: 문서 구조 (SSOT)](../specs/active/SPEC-D01.md)
-- [SPEC-D02: GitHub Pages 자동 배포](../specs/active/SPEC-D02.md)
+- [SPEC-D01: 문서 구조 (SSOT)](../../../specs/active/SPEC-D01.md)
+- [SPEC-D02: GitHub Pages 자동 배포](../../../specs/active/SPEC-D02.md)
 - [Design Blog: Spec-Driven Dev 설계 철학](../../blog/posts/spec-driven-dev-design.md)
 - [Slides: Spec-Driven Dev](../../slides/decks/spec-driven-dev.html)
 

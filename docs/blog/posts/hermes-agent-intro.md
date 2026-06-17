@@ -425,8 +425,8 @@ graph LR
 ## 🔗 관련 주제
 
 - [9단계 워크플로우: 에이전트 신뢰도를 설계하는 방법](./why-9-step-workflow.md) (Blog)
-- [시스템 아키텍처 레퍼런스](/p-hermes/wiki/system-architecture.md) (Wiki)
-- [에르메스 설치 및 설정](/p-hermes/wiki/getting-started/install.md) (Wiki)
+- [시스템 아키텍처 레퍼런스](../../wiki/system-architecture.md) (Wiki)
+- [에르메스 설치 및 설정](../../wiki/getting-started/install.md) (Wiki)
 
 ---
 
