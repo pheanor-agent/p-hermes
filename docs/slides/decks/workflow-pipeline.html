@@ -1,69 +1,79 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>p-hermes Workflow Pipeline</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background: #f4f6f7; color: #333; }
-        .slide-container { width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .slide { display: none; width: 80%; max-width: 1000px; text-align: center; }
-        .slide.active { display: block; animation: fadeIn 0.5s; }
-        h1 { font-size: 2.8rem; margin-bottom: 1rem; color: #2c3e50; }
-        h2 { font-size: 2rem; color: #2980b9; }
-        p, li { font-size: 1.4rem; line-height: 1.6; }
-        ul { text-align: left; margin: 20px auto; max-width: 800px; }
-        .flow { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 10px; margin: 30px 0; }
-        .step { background: #3498db; color: white; padding: 15px 20px; border-radius: 8px; width: 120px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .step.approval { background: #e74c3c; border: 3px solid #c0392b; }
-        .arrow { font-size: 2rem; color: #7f8c8d; }
-        .nav-btn { position: absolute; bottom: 20px; padding: 10px 20px; font-size: 1.2rem; cursor: pointer; background: #2980b9; color: white; border: none; border-radius: 5px; }
-        .nav-btn#next { right: 20px; }
-        .nav-btn#prev { left: 20px; }
-        .progress { position: fixed; bottom: 0; left: 0; height: 5px; background: #2980b9; transition: width 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .details { display: none; background: #e8f4fc; padding: 15px; border-radius: 8px; margin-top: 15px; font-size: 1.1rem; text-align: left; }
-        .toggle-btn { background: #27ae60; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-top: 10px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workflow Pipeline</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
 </head>
 <body>
-    <div class="slide-container">
-        <div class="progress" id="progress"></div>
-        <button class="nav-btn" id="prev">이전</button>
-        <button class="nav-btn" id="next">다음</button>
+  <div class="reveal">
+    <div class="slides">
+
+      <section class="title-slide">
+        <p style="color: var(--r-heading-color); margin-bottom: 1rem;">p-hermes</p>
+        <h1>Workflow Pipeline</h1>
+        <p>9단계 상태머신 및 작업 흐름</p>
+      </section>
+
+      <section>
+        <h2>9단계 워크플로우</h2>
+        <ol>
+          <li class="fragment">request</li>
+          <li class="fragment">investigation</li>
+          <li class="fragment">design</li>
+          <li class="fragment">review</li>
+          <li class="fragment">approval</li>
+          <li class="fragment">execution</li>
+          <li class="fragment">test</li>
+          <li class="fragment">execution_review</li>
+          <li class="fragment">done</li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>상태 전이 규칙</h2>
+        <ul>
+          <li class="fragment">각 단계는 순차적으로 진행</li>
+          <li class="fragment">review → approval: 사용자 승인 필요</li>
+          <li class="fragment">execution 실패: error 상태로 전환</li>
+          <li class="fragment">done: 결과 알림 전송</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>workflow-gate.sh</h2>
+        <pre><code data-trim>
+# 워크플로우 상태 관리
+bash workflow-gate.sh JOB-1234 start
+bash workflow-gate.sh JOB-1234 transition design
+bash workflow-gate.sh JOB-1234 complete
+        </code></pre>
+      </section>
+
+      <section>
+        <h2>핵심 요약</h2>
+        <ul>
+          <li>9단계 상태 머신</li>
+          <li>승인 단계 강제</li>
+          <li>자동화된 상태 전이</li>
+        </ul>
+      </section>
+
     </div>
-    <script>
-        const slides = [
-            { title: "9-Step Workflow Pipeline", content: "<p>에이전트의 무분별한 실행을 차단하고,<br>시스템적인 품질 관리를 위한 강제 파이프라인</p>" },
-            { title: "전체 파이프라인 흐름", content: "<div class='flow'><div class='step'>Request</div><div class='arrow'>→</div><div class='step'>Investigation</div><div class='arrow'>→</div><div class='step'>Design</div><div class='arrow'>→</div><div class='step'>Review</div><div class='arrow'>→</div><div class='step approval'>Approval</div><div class='arrow'>→</div><div class='step'>Execution</div><div class='arrow'>→</div><div class='step'>Test</div><div class='arrow'>→</div><div class='step'>Exec-Review</div><div class='arrow'>→</div><div class='step'>Done</div></div><p style='color:#e74c3c; font-weight:bold;'>Approval 단계는 사용자의 명시적 승인('진행해')을 받기 전까지 무한 대기합니다.</p>" },
-            { title: "조사 및 설계 단계", content: "<ul><li><b>Investigation (조사)</b>: 현재 시스템 상태, 파일 구조, 관련 컨텍스트를 파악합니다.</li><li><b>Design (설계)</b>: `design.md`를 작성하여 변경 범위, 스펙, 테스트 계획을 정의합니다.</li><li><b>Review (검토)</b>: 설계서의 무결성을 자체 검증합니다 (Self-Correction).</li></ul><button class='toggle-btn' onclick='toggle(this)'>상세 보기</button><div class='details'>에이전트는 코드를 작성하기 전에 반드시 '무엇을, 왜, 어떻게' 변경할지 문서화해야 합니다. 이 단계에서 실패하면 실제 수정 전에 방향을 수정할 수 있습니다.</div>" },
-            { title: "실행 및 검증 단계", content: "<ul><li><b>Execution (실행)</b>: 설계서에 따라 실제 파일 수정 및 코드 작성을 진행합니다.</li><li><b>Test (테스트)</b>: 검증 스크립트(`validate-links.sh` 등)를 실행하여 결과물을 테스트합니다.</li><li><b>Execution Review (후검토)</b>: 테스트 통과 후에도 최종 산출물의 품질을 확인합니다.</li></ul><button class='toggle-btn' onclick='toggle(this)'>상세 보기</button><div class='details'>Test 단계에서 실패하면 Execution 단계로 돌아가 재시도하거나, Design을 수정합니다. 반복 실패 시 근본 원인 분석(Root Cause Analysis)이 발생합니다.</div>" },
-            { title: "상태 파일 (.workflow-state)", content: "<p>각 단계가 완료되면 `.workflow-state` JSON 파일이 원자적으로(Atomic) 갱신됩니다.</p><pre style='text-align:left; font-size:1rem;'>{&quot;currentStep&quot;: &quot;execution&quot;, &quot;status&quot;: &quot;running&quot;, &quot;artifacts&quot;: [&quot;result.md&quot;]}</pre><p>이 파일은 워크플로우 게이트 스크립트가 다음 단계 진입 여부를 판단하는 기준이 됩니다.</p>" },
-            { title: "Why 9 Steps?", content: "<p>9단계는 최소한의 안전 장치를 모두 갖춘 가장 작은 숫자입니다.</p><ul><li>Investigation $\\rightarrow$ Design $\\rightarrow$ Execution의 <b>명확한 분리</b></li><li>두 번의 Review(설계 후, 실행 후)를 통한 <b>상호 견제</b></li><li>사용자의 <b>통제권 확보</b>(Approval 단계)</li></ul>" },
-                        { title: "실제 워크플로우 예제: 링크 수정", content: "<ul><li><b>Investigation</b>: <code>search_files --pattern 'broken' --path docs/</code>로 문제 파일 확인</li><li><b>Design</b>: <code>design.md</code> 작성 — 변경 대상 5개 파일, 검증 기준 정의</li><li><b>Execution</b>: <code>patch --mode replace</code>로 일괄 수정</li><li><b>Test</b>: <code>bash tests/validate-links.sh</code> 실행, 결과 검증</li></ul><pre style='text-align:left;font-size:1rem;'><code>.workflow-state
-            {
-              "currentStep": "test",
-              "status": "passing",
-              "artifacts": ["docs/slides/decks/architecture-layered.html"]
-            }</code></pre>" },
-                        { title: "Workflow Gate Scripts", content: "<p>각 단계 진입은 스크립트가 승인합니다:</p><pre style='text-align:left;font-size:1rem;'><code>src/gates/check-design.sh    # design.md 존재 확인
-            src/gates/check-approval.sh   # 사용자 승인 대기
-            src/gates/check-tests.sh      # 테스트 통과 확인</code></pre><p>스크립트가 실패하면 파이프라인은 즉시 중단되고 에러를 리포트합니다.</p><button class='toggle-btn' onclick='toggle(this)'>상세 보기</button><div class='details'>예: check-approval.sh는 .workflow-state의 status가 'approved'가 될 때까지 폴링합니다. 사용자가 채팅에서 '진행해'라고 입력하면 Hermes가 status를 갱신합니다.</div>" },
-                        { title: "Reference & Links", content: "<p>자세한 내용은 아래 링크에서 확인하세요.</p><ul><li>Guide Wiki: <a href='../wiki/index.md'>wiki/</a></li><li>Dev Blog: <a href='../blog/index.md'>blog/</a></li><li>Architecture: <a href='../ARCHITECTURE.md'>architecture/</a></li></ul>" }
-                    ];
-        let current = 0;
-        function showSlide(n) {
-            const container = document.querySelector('.slide-container');
-            container.querySelectorAll('.slide').forEach(s => s.remove());
-            const div = document.createElement('div');
-            div.className = 'slide active';
-            div.innerHTML = `<h1>${slides[n].title}</h1>${slides[n].content}`;
-            container.insertBefore(div, document.querySelector('.progress'));
-            document.getElementById('progress').style.width = ((n+1)/slides.length*100) + '%';
-        }
-        document.getElementById('next').onclick = () => { current = (current+1)%slides.length; showSlide(current); };
-        document.getElementById('prev').onclick = () => { current = (current-1+slides.length)%slides.length; showSlide(current); };
-        function toggle(btn) { const d = btn.nextElementSibling; d.style.display = d.style.display === 'block' ? 'none' : 'block'; }
-        showSlide(0);
-    </script>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: 'c/t',
+      controls: true,
+      progress: true,
+      center: true,
+      transition: 'slide'
+    });
+  </script>
 </body>
 </html>

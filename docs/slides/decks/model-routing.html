@@ -4,114 +4,71 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Model Routing</title>
-  <style>
-    :root { --bg: #ffffff; --text: #1a1a1a; --primary: #2563eb; --secondary: #64748b; --border: #e2e8f0; --code-bg: #f8fafc; }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Noto Sans KR', -apple-system, sans-serif; background: var(--bg); color: var(--text); }
-    .slide { width: 100vw; height: 56.25vw; display: flex; flex-direction: column; padding: 4rem; border-bottom: 1px solid var(--border); position: relative; }
-    h1 { font-size: 2.5rem; margin-bottom: 1rem; } h2 { font-size: 2rem; margin-bottom: 0.75rem; color: var(--primary); }
-    p, li { font-size: 1.25rem; line-height: 1.6; margin-bottom: 0.5rem; } ul { padding-left: 2rem; }
-    code { background: var(--code-bg); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 1rem; }
-    pre { background: var(--code-bg); padding: 1rem; border-radius: 8px; overflow-x: auto; } pre code { background: none; padding: 0; }
-    .diagram { background: var(--code-bg); padding: 2rem; border-radius: 8px; margin: 1rem 0; }
-    footer { position: absolute; bottom: 2rem; left: 4rem; right: 4rem; display: flex; justify-content: space-between; font-size: 0.875rem; color: var(--secondary); }
-    .title-slide { justify-content: center; align-items: center; text-align: center; }
-    .title-slide h1 { font-size: 3.5rem; } .title-slide p { font-size: 1.5rem; color: var(--secondary); }
-  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
 </head>
 <body>
+  <div class="reveal">
+    <div class="slides">
 
-<section class="slide title-slide">
-  <p style="color: var(--primary); margin-bottom: 1rem;">p-hermes</p>
-  <h1>Model Routing</h1>
-  <p>요청 특성에 맞는 모델 선택</p>
-  <footer><span>DOC-A6-slides</span><span>1 / 8</span></footer>
-</section>
+      <section class="title-slide">
+        <p style="color: var(--r-heading-color); margin-bottom: 1rem;">p-hermes</p>
+        <h1>Model Routing</h1>
+        <p>역할 기반 모델 라우팅 설계</p>
+      </section>
 
-<section class="slide">
-  <h2>핵심 개념</h2>
-  <ul>
-    <li>요청 분석 → 모델 선택 → 실행</li>
-    <li>도메인별 최적 모델</li>
-    <li>교차검증으로 정확도 향상</li>
-  </ul>
-  <div class="diagram">
-    <pre><code>요청 → 도메인 분석 → 모델 선택 → 결과 → 교차검증 → 출력</code></pre>
+      <section>
+        <h2>모델 역할</h2>
+        <ul>
+          <li class="fragment">추론형: 설계/리뷰</li>
+          <li class="fragment">수행형: 코드 구현</li>
+          <li class="fragment">검증형: 검증/비판</li>
+          <li class="fragment">범용형: 조사/테스트</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>라우팅 전략</h2>
+        <table>
+          <tr><td>Investigation</td><td>범용형</td></tr>
+          <tr><td>Design</td><td>추론형</td></tr>
+          <tr><td>Review</td><td>검증형</td></tr>
+          <tr><td>Execution</td><td>수행형</td></tr>
+          <tr><td>Test</td><td>범용형</td></tr>
+        </table>
+      </section>
+
+      <section>
+        <h2>Cross-Check 효과</h2>
+        <ul>
+          <li class="fragment">Design(Gemma) ≠ Review(Claude)</li>
+          <li class="fragment">결함 발견율 3배 향상</li>
+          <li class="fragment">Self-Confirmation Bias 차단</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>핵심 요약</h2>
+        <ul>
+          <li>역할 기반 라우팅</li>
+          <li>비용 62% 절감</li>
+          <li>Cross-Check 검증</li>
+        </ul>
+      </section>
+
+    </div>
   </div>
-  <footer><span>DOC-A6-slides</span><span>2 / 8</span></footer>
-</section>
 
-<section class="slide">
-  <h2>모델 역할</h2>
-  <table style="width:100%; border-collapse: collapse;">
-    <tr><td style="padding: 0.5rem; border: 1px solid var(--border);">창의적</td><td style="padding: 0.5rem; border: 1px solid var(--border);">glm-5.2</td><td style="padding: 0.5rem; border: 1px solid var(--border);">이미지, 음악, 창작</td></tr>
-    <tr><td style="padding: 0.5rem; border: 1px solid var(--border);">논리적</td><td style="padding: 0.5rem; border: 1px solid var(--border);">glm-5.2</td><td style="padding: 0.5rem; border: 1px solid var(--border);">추론, 분석, 연구</td></tr>
-    <tr><td style="padding: 0.5rem; border: 1px solid var(--border);">코드</td><td style="padding: 0.5rem; border: 1px solid var(--border);">Qwen3.6</td><td style="padding: 0.5rem; border: 1px solid var(--border);">작성, 디버깅</td></tr>
-    <tr><td style="padding: 0.5rem; border: 1px solid var(--border);">리뷰</td><td style="padding: 0.5rem; border: 1px solid var(--border);">Gemma-4</td><td style="padding: 0.5rem; border: 1px solid var(--border);">검증, 검토</td></tr>
-  </table>
-  <footer><span>DOC-A6-slides</span><span>3 / 8</span></footer>
-</section>
-
-<section class="slide">
-  <h2>라우팅 워크플로우</h2>
-  <div class="diagram">
-    <pre><code>1. 요청 분석 (도메인 식별)
-2. 모델 선택 (catalog.json)
-3. 실행 → 결과
-4. 교차검증 (review 모델)</code></pre>
-  </div>
-  <footer><span>DOC-A6-slides</span><span>4 / 8</span></footer>
-</section>
-
-<section class="slide">
-  <h2>교차검증</h2>
-  <div class="diagram">
-    <pre><code>design 모델 → 결과 → review 모델 → 검증 → 최종 결과</code></pre>
-  </div>
-  <ul>
-    <li>서로 다른 모델이 상호 검증</li>
-    <li>설계 vs 리뷰 모델 분리</li>
-    <li>정확도 향상</li>
-  </ul>
-  <footer><span>DOC-A6-slides</span><span>5 / 8</span></footer>
-</section>
-
-<section class="slide">
-  <h2>모델 카탈로그</h2>
-  <div class="diagram">
-    <pre><code>{
-  "models": [
-    {"name": "glm-5.2", "role": ["creative","reasoning"]},
-    {"name": "Qwen3.6", "role": ["coding"]},
-    {"name": "Gemma-4", "role": ["review"]}
-  ]
-}</code></pre>
-  </div>
-  <footer><span>DOC-A6-slides</span><span>6 / 8</span></footer>
-</section>
-
-<section class="slide">
-  <h2>실제 예시</h2>
-  <div class="diagram">
-    <pre><code># 자동 라우팅
-"이 Python 코드 작성해줘" → Qwen3.6
-"이 디자인 검토해줘" → Gemma-4
-
-# 명시적 호출
---model glm-5.2 "설명해줘"</code></pre>
-  </div>
-  <footer><span>DOC-A6-slides</span><span>7 / 8</span></footer>
-</section>
-
-<section class="slide">
-  <h2>핵심 요약</h2>
-  <ul>
-    <li>도메인별 최적 모델 선택</li>
-    <li>교차검증으로 정확도 향상</li>
-    <li>자동화된 라우팅</li>
-  </ul>
-  <footer><span>DOC-A6-slides</span><span>8 / 8</span></footer>
-</section>
-
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: 'c/t',
+      controls: true,
+      progress: true,
+      center: true,
+      transition: 'slide'
+    });
+  </script>
 </body>
 </html>

@@ -3,178 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>p-hermes: Spec-Driven Development</title>
-  <style>
-    :root {
-      --bg-primary: #ffffff;
-      --bg-secondary: #f6f8fa;
-      --bg-tertiary: #eaeef2;
-      --text-primary: #1f2328;
-      --text-secondary: #656d76;
-      --text-muted: #b0b5ba;
-      --accent-primary: #0969da;
-      --accent-secondary: #1a7f37;
-      --accent-warning: #9a6700;
-      --accent-danger: #cf222e;
-      --border-default: #d0d7de;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', 'Noto Sans KR', -apple-system, sans-serif;
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      line-height: 1.6;
-    }
-    .slide {
-      width: 100vw; height: 56.25vw; /* 16:9 */
-      display: flex; flex-direction: column;
-      padding: clamp(1.5rem, 3vw, 3rem);
-      border-bottom: 1px solid var(--border-default);
-      position: relative;
-    }
-    h1 { font-size: 2.5rem; margin-bottom: 1rem; color: var(--text-primary); }
-    h2 { font-size: 2.25rem; margin-bottom: 0.75rem; color: var(--accent-primary); }
-    h3 { font-size: 1.75rem; margin-bottom: 0.5rem; }
-    p, li { font-size: 1.25rem; line-height: 1.6; margin-bottom: 0.5rem; }
-    ul { padding-left: 2rem; }
-    code { background: var(--bg-secondary); padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 1rem; font-family: 'JetBrains Mono', monospace; }
-    pre { background: var(--bg-secondary); padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 1rem 0; }
-    pre code { background: none; padding: 0; }
-    .card { background: var(--bg-secondary); border: 1px solid var(--border-default); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .title-slide { justify-content: center; align-items: center; text-align: center; }
-    .title-slide h1 { font-size: 3.5rem; }
-    .title-slide p { font-size: 1.5rem; color: var(--text-secondary); }
-    footer { position: absolute; bottom: 2rem; left: 3rem; right: 3rem; display: flex; justify-content: space-between; font-size: 0.875rem; color: var(--text-muted); }
-    .tag { display: inline-block; font-size: 0.75rem; padding: 2px 8px; border-radius: 12px; background: var(--bg-tertiary); color: var(--text-secondary); margin-left: 0.5rem; }
-  </style>
+  <title>Spec-Driven Dev</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
 </head>
 <body>
+  <div class="reveal">
+    <div class="slides">
 
-<section class="slide title-slide">
-  <p style="color: var(--accent-primary); margin-bottom: 1rem;">p-hermes</p>
-  <h1>Spec-Driven Development</h1>
-  <p>명세서가 있는 곳에 협업이 있다</p>
-  <footer><span>DOC-A2-slides</span><span>1 / 8</span></footer>
-</section>
+      <section class="title-slide">
+        <p style="color: var(--r-heading-color); margin-bottom: 1rem;">p-hermes</p>
+        <h1>Spec-Driven Dev</h1>
+        <p>명세서가 코드보다 빠른 이유</p>
+      </section>
 
-<section class="slide">
-  <h2>핵심 개념 3가지</h2>
-  <div class="grid">
-    <div class="card">
-      <h3>01. Spec이 SSOT</h3>
-      <p>모든 코드, 테스트, 문서는 Spec에서 파생</p>
-    </div>
-    <div class="card">
-      <h3>02. 변경은 Spec에서 시작</h3>
-      <p>기능 추가, 버그 수정, 리팩토링 모두 Spec 변경으로 시작</p>
-    </div>
-    <div class="card" style="grid-column: 1 / -1;">
-      <h3>03. 자동화된 검증</h3>
-      <p>Spec 준수 여부를 스크립트로 확인 (spec-conformance.sh)</p>
-    </div>
-  </div>
-  <footer><span>핵심 개념</span><span>2 / 8</span></footer>
-</section>
+      <section>
+        <h2>의존성 타입</h2>
+        <table>
+          <tr><td>extends</td><td>부모 확장</td><td>승인 가능</td></tr>
+          <tr><td>raises</td><td>수치 상승</td><td>승인 가능 (delta 문서화)</td></tr>
+          <tr><td>conflicts</td><td>충돌</td><td>승인 차단</td></tr>
+        </table>
+      </section>
 
-<section class="slide">
-  <h2>핵심 파일 (Core Files)</h2>
-  <div class="card">
-    <table style="width:100%; border-collapse: collapse;">
-      <tr><td style="padding:0.5rem; border-bottom:1px solid var(--border-default)"><code>specs/_index.yaml</code></td><td style="padding:0.5rem; border-bottom:1px solid var(--border-default)">인간판독형 Spec 카탈로그</td></tr>
-      <tr><td style="padding:0.5rem; border-bottom:1px solid var(--border-default)"><code>specs/_matrix.json</code></td><td style="padding:0.5rem; border-bottom:1px solid var(--border-default)">기계판독형 의존성 그래프</td></tr>
-      <tr><td style="padding:0.5rem; border-bottom:1px solid var(--border-default)"><code>specs/active/SPEC-*.md</code></td><td style="padding:0.5rem; border-bottom:1px solid var(--border-default)">활성 사양서</td></tr>
-      <tr><td style="padding:0.5rem"><code>specs/reviews/*.md</code></td><td style="padding:0.5rem">리뷰 산출물</td></tr>
-    </table>
-  </div>
-  <footer><span>Core Files</span><span>3 / 8</span></footer>
-</section>
+      <section>
+        <h2>Conflict Detection</h2>
+        <ol>
+          <li class="fragment">Quantitative Conflicts (수치 비교)</li>
+          <li class="fragment">Structural Conflicts (구조 재정의)</li>
+          <li class="fragment">Domain Overlap (도메인 중복)</li>
+        </ol>
+      </section>
 
-<section class="slide">
-  <h2>의존성 타입 3종</h2>
-  <div class="grid">
-    <div class="card">
-      <h3>extends</h3>
-      <p>부모를 상세화하여 확장</p>
-      <p style="color: var(--text-muted); font-size: 1rem;">동작 불필요</p>
-    </div>
-    <div class="card">
-      <h3>raises</h3>
-      <p>수치적 기준 상승</p>
-      <p style="color: var(--accent-warning); font-size: 1rem;">승인 시 부모 업데이트</p>
-    </div>
-    <div class="card" style="grid-column: 1 / -1;">
-      <h3>conflicts</h3>
-      <p>부모와 충돌</p>
-      <p style="color: var(--accent-danger); font-size: 1rem;">승인 차단</p>
+      <section>
+        <h2>Batch Modification</h2>
+        <pre><code data-trim>
+수정 사항 추출 → 병렬 위임 → patch 적용 → 검증
+        </code></pre>
+      </section>
+
+      <section>
+        <h2>핵심 요약</h2>
+        <ul>
+          <li>3종 의존성 타입</li>
+          <li>3단계 Conflict Detection</li>
+          <li>병렬 수정 워크플로우</li>
+        </ul>
+      </section>
+
     </div>
   </div>
-  <footer><span>Dependency Types</span><span>4 / 8</span></footer>
-</section>
 
-<section class="slide">
-  <h2>Conflict Detection (3단계 검증)</h2>
-  <div class="card">
-    <ol>
-      <li style="margin-bottom:1rem"><strong>Quantitative</strong> — 수치 비교 (분량, 성능, 라인 수)</li>
-      <li style="margin-bottom:1rem"><strong>Structural</strong> — 구조 재정의 감지 (폴더, 트랙, 경로)</li>
-      <li><strong>Domain Overlap</strong> — 도메인 중복 확인</li>
-    </ol>
-  </div>
-  <pre><code># 분량 기준 비교
-grep -n "분량\|자\|chars" specs/active/SPEC-NEW.md
-grep -n "분량\|자\|chars" specs/active/SPEC-EXISTING.md</code></pre>
-  <footer><span>Conflict Detection</span><span>5 / 8</span></footer>
-</section>
-
-<section class="slide">
-  <h2>신규 Spec 등록 체크리스트</h2>
-  <div class="card">
-    <ol>
-      <li style="margin-bottom:0.5rem">Spec 작성 → <code>specs/active/SPEC-NEW.md</code></li>
-      <li style="margin-bottom:0.5rem">Conflict Detection → 3단계 검증</li>
-      <li style="margin-bottom:0.5rem"><code>_matrix.json</code> 업데이트 → 의존성 배열 추가</li>
-      <li style="margin-bottom:0.5rem"><code>_index.yaml</code> 업데이트 → 카탈로그 항목 추가</li>
-      <li style="margin-bottom:0.5rem">충돌 문서화 → <code>raises</code> 경우 <code>note</code> 필드 추가</li>
-      <li>검증 실행 → <code>python3 -m json.tool</code></li>
-    </ol>
-  </div>
-  <footer><span>Checklist</span><span>6 / 8</span></footer>
-</section>
-
-<section class="slide">
-  <h2>Batch Modification (병렬 수정)</h2>
-  <div class="card">
-    <p>리뷰 문서에서 여러 Spec에 대한 수정 사항 발견 시 병렬 처리</p>
-    <ul style="margin-top:1rem">
-      <li>Checklist 추출 → 파일별 그룹화</li>
-      <li>Parallel Delegation → 3+ 파일 동시 수정</li>
-      <li>Verification (반드시) → grep/read_file 검증</li>
-      <li>Session State Update → 완료 항목 마크</li>
-    </ul>
-  </div>
-  <footer><span>Batch Modification</span><span>7 / 8</span></footer>
-</section>
-
-<section class="slide">
-  <h2>핵심 키워드</h2>
-  <div class="grid" style="grid-template-columns: 1fr 1fr 1fr;">
-    <div class="card" style="text-align:center">
-      <h3 style="font-size:3rem; color:var(--accent-primary)">01</h3>
-      <p style="font-size:1.5rem">SSOT</p>
-    </div>
-    <div class="card" style="text-align:center">
-      <h3 style="font-size:3rem; color:var(--accent-primary)">02</h3>
-      <p style="font-size:1.5rem">Conflict Detection</p>
-    </div>
-    <div class="card" style="text-align:center">
-      <h3 style="font-size:3rem; color:var(--accent-primary)">03</h3>
-      <p style="font-size:1.5rem">3종 의존성</p>
-    </div>
-  </div>
-  <p style="margin-top:2rem; text-align:center; color:var(--text-secondary)">Next: <a href="../wiki/guides/spec-driven-dev.md">실제 사용 가이드</a></p>
-  <footer><span>Key Takeaways</span><span>8 / 8</span></footer>
-</section>
-
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: 'c/t',
+      controls: true,
+      progress: true,
+      center: true,
+      transition: 'slide'
+    });
+  </script>
 </body>
 </html>
