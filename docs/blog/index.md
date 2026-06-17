@@ -3,7 +3,7 @@
 Hermes의 기술적 결정과 설계 철학을 기록하는 공간입니다. 단순한 기능 설명을 넘어, **왜 이 방식을 선택했는지**에 집중합니다.
 
 ## 🏷️ 주제별 탐색
-#workflow #knowledge #cron #model-routing #content #spec-driven-dev
+#workflow #knowledge #cron #model-routing #content #spec-driven-dev #hermes-agent
 
 ## 📑 포스트 목록
 
@@ -15,5 +15,7 @@ Hermes의 기술적 결정과 설계 철학을 기록하는 공간입니다. 단
 | **모델 라우팅 설계** | #model-routing | [읽기](./posts/model-routing-design.md) |
 | **Spec-Driven Dev 설계** | #spec-driven-dev | [읽기](./posts/spec-driven-dev-design.md) |
 | **Cron 자동화 설계** | #cron | [읽기](./posts/cron-automation-design.md) |
+|| **에르메스 에이전트 소개** | #hermes-agent | [읽기](./posts/hermes-agent-intro.md) |
+|| **5계층 아키텍처** | #architecture | [읽기](./posts/architecture-5tier.md) |
 
 ---

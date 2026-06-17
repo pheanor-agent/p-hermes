@@ -624,10 +624,10 @@ related_specs: ["SPEC-XXX", "SPEC-YYY"]
 | A2. Spec-Driven Dev | `spec-driven-dev.md` | `spec-driven-dev.md` | `spec-driven-dev.html` |
 | A3. Content System | `content-system.md` | `content-system-design.md` | `content-system.html` |
 | A4. Knowledge System | `knowledge-system.md` | `knowledge-system-design.md` | `knowledge-system.html` |
-| A5. Cron/Automation | `automation.md` | `cron-3layer-design.md` | `cron-system.html` |
+|| A5. Cron/Automation | `automation.md` | `cron-automation-design.md` | `cron-system.html` |
 | A6. Model Routing | `model-routing.md` | `model-routing-design.md` | `model-routing.html` |
 | B1. Hermes 개요 | `install.md` | `hermes-agent-intro.md` | `hermes-overview.html` |
-| B2. 아키텍처 | `system-architecture.md` | `architecture-5tier.md` | `architecture.html` |
+|| B2. 아키텍처 | `system-architecture.md` | `architecture-5tier.md` | `architecture-5tier.html` |
 
 ---
 
