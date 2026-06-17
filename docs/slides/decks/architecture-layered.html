@@ -210,16 +210,16 @@ flowchart TB
         Ut["공통 유틸리티"]
     end
 
-    T5 ==>|출력 산출| T1
-    T1 <-->|↔ 양방향| T2
-    T2 <-->|↔ 양방향| T3
-    T3 ==>|의존| T4
-    EvBus -->|전역: 모든 계층 지원| T1
+    T5 ==>|"출력"| T1
+    T1 <-->|"↔"| T2
+    T2 <-->|"↔"| T3
+    T3 ==>|"의존"| T4
+    EvBus -->|"전역"| T1
     EvBus --> T2
     EvBus --> T3
     EvBus --> T4
     EvBus --> T5
-    SysCom -->|전역: 모든 계층 지원| T1
+    SysCom -->|"전역"| T1
     SysCom --> T2
     SysCom --> T3
     SysCom --> T4

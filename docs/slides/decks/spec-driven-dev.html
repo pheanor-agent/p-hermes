@@ -155,9 +155,9 @@
         <div class="mermaid-wrap">
 <div class="mermaid">
 flowchart TD
-    A[SPEC-D01\n문서 구조 SSOT] -->|extends| B[SPEC-D04\n문서 작성 요구사항]
-    A -->|extends| C[SPEC-D05\n슬라이드 디자인]
-    B -->|raises\n분량 1500자 → 3500자| D[(승인 시 부모 D01 업데이트)]
+    A[SPEC-D01 문서 구조 SSOT] -->|extends| B[SPEC-D04 문서 작성 요구사항]
+    A -->|extends| C[SPEC-D05 슬라이드 디자인]
+    B -->|raises 분량 1500자 → 3500자| D[(승인 시 부모 D01 업데이트)]
 </div>
         </div>
         <p style="font-size: 0.65em; color: #666;">부모는 구조/권위, 자식은 부분집합 상세화 — 계층 구조 유지</p>
@@ -197,7 +197,7 @@ flowchart TD
     E -->|없음| F{③ 도메인 중복}
     F -->|중복| D
     F -->|없음| G[등록 완료 ✅]
-    D --> H[(proposed 상태 유지\n승인 차단)]
+    D --> H[(proposed 상태 유지 승인 차단)]
 </div>
         </div>
       </section>
@@ -217,11 +217,11 @@ flowchart TD
         <div class="mermaid-wrap">
 <div class="mermaid">
 flowchart TD
-    A[Review 문서] -->|수정 사항 추출\nChecklist| B[Extractor]
-    B -->|병렬 위임| C[Sub 1\npatch → A]
-    B -->|병렬 위임| D[Sub 2\npatch → B]
-    B -->|병렬 위임| E[Sub 3\npatch → C]
-    C -->|warning\n예상된 동시 수정| F[Verification]
+    A[Review 문서] -->|수정 사항 추출 Checklist| B[Extractor]
+    B -->|병렬 위임| C[Sub 1 patch → A]
+    B -->|병렬 위임| D[Sub 2 patch → B]
+    B -->|병렬 위임| E[Sub 3 patch → C]
+    C -->|warning 예상된 동시 수정| F[Verification]
     D -->|grep / read_file| F
     E -->|grep / read_file| F
     F -->|PASS / FAIL| G[완료 보고]

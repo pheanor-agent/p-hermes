@@ -244,10 +244,10 @@ flowchart LR
         <div class="mermaid-wrap" style="margin-top: 0.8em;">
 <div class="mermaid">
 flowchart LR
-    A[추론형\nDesign] -->|설계| B[검증형\nReview]
+    A[추론형 Design] -->|설계| B[검증형 Review]
     B --> C{결함?}
-    C -->|발견| D[결함 발견\n수정 요청]
-    C -->|없음| E[승인\n다음 단계]
+    C -->|발견| D[결함 발견 수정 요청]
+    C -->|없음| E[승인 다음 단계]
 </div>
         </div>
         <p style="font-size: 0.65em; color: #666;">검증형 API 장애 시 추론형으로 대체 (Fallback)</p>
@@ -301,10 +301,10 @@ model:
         <div class="mermaid-wrap">
 <div class="mermaid">
 flowchart TD
-    A[요청 수신] --> B[도메인 분석\n작업 단계 식별]
-    B --> C[model-roles.yaml\n역할 → 모델 매핑]
-    C --> D[모델 실행\n주 모델]
-    C --> E[모델 실행\n대체 모델]
+    A[요청 수신] --> B[도메인 분석 작업 단계 식별]
+    B --> C[model-roles.yaml 역할 → 모델 매핑]
+    C --> D[모델 실행 주 모델]
+    C --> E[모델 실행 대체 모델]
     D --> F{검증 필요?}
     F -->|예| G[검증형 리뷰]
     F -->|아니오| H[완료]
