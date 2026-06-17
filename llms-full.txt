@@ -1,31 +1,22 @@
 # p-hermes Full Documentation Index
 
 ## Files
-- **docs/blog/index.md** (22 lines): ✍️ p-hermes Dev Blog
-- **docs/blog/posts/content-system-design.md** (108 lines): 콘텐츠 시스템 설계: AI의 표현력을 구조화하는 법
-- **docs/blog/posts/cron-3layer-separation.md** (343 lines): ⏰ 잊지 않고 일하는 AI의 비결: 크론(Cron) 3계층 아키텍처
-- **docs/blog/posts/event-driven-communication.md** (346 lines): 이벤트 기반 도메인 통신: 결합도를 낮추고 유연성을 높이는 법
-- **docs/blog/posts/knowledge-system-design.md** (333 lines): 지식 분류 시스템 설계: AI의 기억을 구조화하는 법
-- **docs/blog/posts/lessons-from-failures.md** (354 lines): 실패 패턴에서 배운 교훈: 더 견고한 AI 시스템을 만드는 법
-- **docs/blog/posts/model-routing-design.md** (357 lines): 역할 기반 모델 라우팅 설계: 적재적소에 최적의 지능을 배치하는 법
-- **docs/blog/posts/structural-enforcement.md** (338 lines): \"텍스트 규칙 → 스크립트 강제\" 철학: Spec-Driven Development
-- **docs/blog/posts/why-5-tier-architecture.md** (335 lines): 5-Tier 물리 계층화 설계: 데이터 오염을 막는 공간의 미학
-- **docs/blog/posts/why-9-step-workflow.md** (281 lines): 왜 9단계 상태머신인가? AI의 파괴적 실행을 막는 안전장치
-- **docs/slides/index.md** (25 lines): 🖼️ p-hermes Slides
-- **docs/wiki/faq.md** (100 lines): 자주 묻는 질문 (FAQ)
-- **docs/wiki/getting-started/configuration.md** (108 lines): 기본 설정 가이드
-- **docs/wiki/getting-started/first-job.md** (71 lines): 첫 번째 작업 요청하기
-- **docs/wiki/getting-started/install.md** (57 lines): 설치 및 환경 설정
-- **docs/wiki/guides/automation.md** (63 lines): 자동화(Cron) 설정 가이드
-- **docs/wiki/guides/backup-restore.md** (67 lines): 백업 및 복구 가이드
-- **docs/wiki/guides/generate-images.md** (69 lines): 이미지 생성 및 관리
-- **docs/wiki/guides/knowledge-search.md** (60 lines): 지식 시스템 검색 및 활용
-- **docs/wiki/guides/knowledge-system.md** (65 lines): 지식 시스템 가이드
-- **docs/wiki/guides/messaging.md** (53 lines): 메시징 플랫폼 연동
-- **docs/wiki/guides/project-management.md** (73 lines): 개인 프로젝트 생성 및 관리 가이드
-- **docs/wiki/guides/request-task.md** (69 lines): 작업 요청 및 워크플로우 상세 가이드
-- **docs/wiki/guides/use-skills.md** (69 lines): 스킬 시스템 활용하기
-- **docs/wiki/index.md** (48 lines): 📖 p-hermes Guide Wiki
-- **docs/wiki/system-architecture.md** (142 lines): p-hermes 시스템 아키텍처
-- **docs/wiki/tutorials/tutorial-1.md** (71 lines): 튜토리얼: 첫 프로젝트 만들기
-- **docs/wiki/tutorials/tutorial-2.md** (66 lines): 튜토리얼: 나만의 스킬 추가하기
+- **docs/blog/index.md** (29 lines): ✍️ p-hermes Dev Blog
+- **docs/blog/posts/architecture-layered.md** (412 lines): 레이어드 아키텍처: 왜 모듈화가 에이전트 시스템의 생존 조건인가
+- **docs/blog/posts/content-system-design.md** (448 lines): Anti-Slop 파이프라인: AI 텍스트의 품질을 보증하는 5계층 검증
+- **docs/blog/posts/cron-automation-design.md** (547 lines): AI 에이전트의 자동화: 크론을 통해 24시간 작동하는 디지털 동료
+- **docs/blog/posts/hermes-agent-intro.md** (441 lines): 에르메스 에이전트: 자율적 AI 플랫폼이 개척하는 패러다임
+- **docs/blog/posts/knowledge-system-design.md** (376 lines): 지식 분류 시스템 설계: AI의 기억을 구조화하는 법
+- **docs/blog/posts/model-routing-design.md** (384 lines): 한 줄 요약
+- **docs/blog/posts/spec-driven-dev-design.md** (275 lines): Spec-Driven Development: 명세서가 코드보다 빠른 이유
+- **docs/blog/posts/why-9-step-workflow.md** (455 lines): 왜 9단계 상태머신인가? AI의 파괴적 실행을 막는 안전장치
+- **docs/slides/index.md** (28 lines): 🖼️ p-hermes Slides
+- **docs/wiki/getting-started/install.md** (186 lines): 설치 및 환경 설정
+- **docs/wiki/guides/automation.md** (394 lines): Cron/자동화 시스템 가이드
+- **docs/wiki/guides/content-system.md** (371 lines): Content System (콘텐츠 시스템)
+- **docs/wiki/guides/knowledge-system.md** (310 lines): 지식 시스템 사용 가이드
+- **docs/wiki/guides/model-routing.md** (327 lines): 모델 라우팅 (Model Routing)
+- **docs/wiki/guides/request-task.md** (128 lines): 작업 요청 및 워크플로우 상세 가이드
+- **docs/wiki/guides/spec-driven-dev.md** (231 lines): Spec-Driven Development (명세서 기반 개발)
+- **docs/wiki/index.md** (28 lines): 📖 p-hermes Guide Wiki
+- **docs/wiki/system-architecture.md** (310 lines): 시스템 아키텍처 레퍼런스
