@@ -215,7 +215,7 @@ SPEC-D04 등록 시 Wiki 분량 기준 상승을 Conflict Detection 절차에서
 
 ### 10. Spec 파일명 vs 실제 파일명 불일치 (JOB-1678)
 
-SPEC-D04에 정의된 파일명 (`cron-3layer-design.md`, `architecture.html`)과 실제 파일명 (`cron-automation-design.md`, `architecture-5tier.html`)이 다릅니다.
+SPEC-D04에 정의된 파일명 (`cron-3layer-design.md`, `architecture.html`)과 실제 파일명 (`cron-automation-design.md`, `architecture-layered.html`)이 다릅니다.
 
 **교훈**: `ls docs/*/` 실제 목록과 SPEC 파일명 테이블을 반드시 대조합니다.
 

@@ -208,7 +208,7 @@ graph LR
 | **노이즈 필터링** | 의견/사실 분리 | 필터링 불가 | 불가 | 불가 |
 | **데이터 노후화** | 최신화 파이프라인 | 임베딩 고정 | 고정 | 고정 |
 | **추론 오염 방지** | 가공 단계에서 차단 | 임의의 유사 문서 포함 | 높은 오염 | 높은 오염 |
-| **运营成本** | 중간 (LLM 호출 필요) | 낮음 (임베딩 1회) | 무료 | 무료 |
+| **운영 비용** | 중간 (LLM 호출 필요) | 낮음 (임베딩 1회) | 무료 | 무료 |
 | **AI 환각률** | 8% (측정됨) | 22% (측정됨) | 41% (측정됨) | 35% (측정됨) |
 
 ---
@@ -325,7 +325,7 @@ $ sqlite3 ~/.hermes/infra/knowledge/wiki.db \
 
 ## 🔗 관련 주제
 
-- [5-Tier 물리 계층화 설계](https://pheanor-agent.github.io/p-hermes/docs/blog/posts/why-5-tier-architecture.md): 지식 시스템이 물리적으로 어떻게 격리되어 저장되는가.
+- [레이어드 구조 설계](https://pheanor-agent.github.io/p-hermes/docs/blog/posts/architecture-layered.md): 지식 시스템이 물리적으로 어떻게 격리되어 저장되는가.
 - [이벤트 기반 도메인 통신](https://pheanor-agent.github.io/p-hermes/docs/blog/posts/event-driven-communication.md): JOB 완료 이벤트가 어떻게 지식 파이프라인을 트리거하는가.
 
 ---

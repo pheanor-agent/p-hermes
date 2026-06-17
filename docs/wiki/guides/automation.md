@@ -253,13 +253,49 @@ mutex_release "morning-news"
 **Q: 여러 채널에 동시에 결과를 전달할 수 있나요?**
 `deliver` 필드에 `origin,all`을 설정하면 원본 채팅과 모든 연결 채널에 동시 전달이 가능합니다. 또는 특정 채널을 쉼표로 연결하여 명시할 수 있습니다.
 
-**Q: 크론 작업이 실패했을 때 재시도机制는 있나요?**
+**Q: 크론 작업이 실패했을 때 재시도 메커니즘은 있나요?**
 작업 단위 재시도는 현재 직접 지원되지 않습니다. 실패 시 스크립트 내에서 재시도 로직을 작성하거나, 실패 이벤트를 감지하는 별도 모니터링 작업을 설정합니다.
 
-## 관련 문서
+## CLI 사용법
 
-- [지식 시스템 가이드](./knowledge-system.md) (Wiki) — 지식 정제 프로세스가 크론에 의해 자동화됩니다.
-- [작업 요청 및 워크플로우 가이드](./request-task.md) (Wiki) — 9단계 워크플로우 상태 머신과 크론의 연계 구조를 확인합니다.
+### 첫 번째 Cron Job 생성
+
+```bash
+hermes cron create \
+  --name "daily-briefing" \
+  --prompt "오늘의 주요 작업 확인" \
+  --schedule "0 9 * * *" \
+  --deliver telegram
+```
+
+### 이벤트 기반 자동화
+
+```bash
+hermes cron create \
+  --name "pr-review" \
+  --prompt "PR 코드 리뷰 수행" \
+  --trigger "github.pr.created" \
+  --deliver discord
+```
+
+### 스크립트 기반 Job
+
+```bash
+hermes cron create \
+  --name "wiki-sync" \
+  --script "scripts/wiki-sync.sh" \
+  --schedule "every 5m"
+```
+
+## 하이브리드 패턴
+
+시간 기반과 이벤트 기반을 조합하여 자동화합니다.
+
+| 패턴 | 설명 | 예시 |
+|------|------|------|
+| 시간 기반 | 고정 시간 간격으로 실행 | 매일 9시 작업 현황 리포트 |
+| 이벤트 기반 | 특정 조건 충족 시 실행 | GitHub PR 생성 시 리뷰 요청 |
+| 하이브리드 | 시간 + 이벤트 조합 | 매주 월요일 + 이벤트 발생 시 |
 
 ---
 

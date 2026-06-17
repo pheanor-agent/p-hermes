@@ -129,6 +129,8 @@ python3 validator.py l3 "마치 ~하는 것처럼"
 
 ## 📐 파이프라인 아키텍처
 
+### 검증 파이프라인
+
 ```mermaid
 flowchart TD
     A[입력 텍스트] --> B{L1 구조 검증}
@@ -141,6 +143,44 @@ flowchart TD
     G -->|예| H[출력]
     G -->|아니오| I[반환]
 ```
+
+### 생성 엔진
+
+콘텐츠 시스템은 6개의 생성 엔진을 통해 도메인별 콘텐츠를 생성합니다.
+
+| 엔진 | 역할 | 적용 도메인 |
+|------|------|-------------|
+| `persona_generator` | 페르소나 기반 문체 생성 | D4 창작 |
+| `emotion_merger` | 감정어 합성 및 문장 흐름 조절 | D4 창작 |
+| `analogy_builder` | 비유 생성 및 유사성 매핑 | D2 교육, D4 창작 |
+| `tier_generator` | 계층적 구조 생성 (요약→상세→심화) | D1~D5 전체 |
+| `template_filler` | 템플릿 기반 콘텐츠 생성 | D3 프레젠테이션, D5 비즈니스 |
+| `tone-adapter` | 톤 적응 및 문체 일관성 유지 | D1~D5 전체 |
+
+### D4 창작 파이프라인
+
+창작물(소설, 시나리오, 에세이) 생성 시 다음 엔진이 순차적으로 동작합니다.
+
+```mermaid
+flowchart LR
+    A[입력: 주제/프레미스] --> B[tier_generator]
+    B --> C[persona_generator]
+    C --> D[emotion_merger]
+    D --> E[analogy_builder]
+    E --> F[tone-adapter]
+    F --> G{L3/L4 검증}
+    G -->|PASS| H[출력]
+    G -->|FAIL| B
+```
+
+**단계별 동작**
+
+1. **tier_generator**: 주제에서 계층적 구조 (서론→본론→결론) 생성
+2. **persona_generator**: 페르소나 기반 문체 적용 (캐릭터 성향, 시대 배경 반영)
+3. **emotion_merger**: 감정어 합성 및 문장 흐름 조절
+4. **analogy_builder**: 비유 생성으로 표현의 독창성 향상
+5. **tone-adapter**: 전체 문체 일관성 유지
+6. **검증 게이트**: L3(어조), L4(도메인) 검증 통과 시 최종 출력
 
 ## 📐 도메인별 검증 기준
 

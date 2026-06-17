@@ -1,7 +1,7 @@
 ---
 type: DOC-B2-SLIDES
 domain: architecture
-title: "p-hermes B2 Architecture — 5-Tier 시스템"
+title: "p-hermes B2 Architecture — 레이어드 구조 시스템"
 version: "1.0.0"
 date: "2026-06-17"
 author: "p-hermes team"
@@ -21,7 +21,7 @@ mermaid-diagrams: 2
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>p-hermes B2 Architecture — 5-Tier 시스템</title>
+<title>p-hermes B2 Architecture — 레이어드 구조 시스템</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 <style>
@@ -675,7 +675,7 @@ html, body {
        ========================================== -->
   <div class="slide layout-title active" data-slide="1">
     <div class="project-tag">p-hermes · B2 Architecture</div>
-    <h1>단단한 결합을 부수다<br><em>5-Tier 아키텍처</em></h1>
+    <h1>단단한 결합을 부수다<br><em>레이어드 구조 아키텍처</em></h1>
     <p class="subtitle">
       모듈화, 비동기 이벤트 버스, 계층별 관심사 분리를 통해<br>
       확장 가능한 AI 에이전트 플랫폼을 설계합니다.
@@ -719,18 +719,18 @@ html, body {
         <span class="problem-arrow">→</span>
         <div class="problem-block" style="background:var(--accent-warning)">교착</div>
         <span class="problem-arrow">→</span>
-        <div class="problem-block" style="background:var(--accent-primary)">5-Tier →</div>
+        <div class="problem-block" style="background:var(--accent-primary)">레이어드 구조 →</div>
         <div class="problem-block" style="background:var(--accent-secondary)">모듈화</div>
       </div>
     </div>
   </div>
 
   <!-- ==========================================
-       SLIDE 3: 5-Tier 아키텍처 (layout-diagram + Mermaid)
+       SLIDE 3: 레이어드 구조 아키텍처 (layout-diagram + Mermaid)
        ========================================== -->
   <div class="slide layout-diagram" data-slide="3">
     <div class="diagram-header">
-      <h2>해법: 5-Tier 아키텍처</h2>
+      <h2>해법: 레이어드 구조 아키텍처</h2>
       <span class="slide-number">03 / 10</span>
     </div>
     <div class="diagram-body">
@@ -824,7 +824,7 @@ graph TB
           <span class="tag tag-blue">설정</span>
         </li>
         <li>
-          <strong>AGENTS.md:</strong> 에이전트 역할 정의 — 행동規範, 책임 범위, 제약 조건 명시
+          <strong>AGENTS.md:</strong> 에이전트 역할 정의 — 행동 규범, 책임 범위, 제약 조건 명시
           <span class="tag tag-purple">규칙</span>
         </li>
         <li>
@@ -1018,7 +1018,7 @@ sequenceDiagram
   <div class="slide layout-summary" data-slide="10">
     <div class="sum-header">
       <h2>모듈화 아키텍처 가치 3가지</h2>
-      <p>5-Tier 설계로 얻는 핵심 가치</p>
+      <p>레이어드 구조 설계로 얻는 핵심 가치</p>
     </div>
     <div class="cards-row">
       <div class="card">

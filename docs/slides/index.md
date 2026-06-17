@@ -9,7 +9,7 @@
 | **Workflow Pipeline** | 9단계 상태머신 및 작업 흐름 | [열기](./decks/workflow-pipeline.html) |
 | **Knowledge System** | 지식 계층 구조 및 파이프라인 | [열기](./decks/knowledge-system.html) |
 | **Cron System** | 주기 작업 실행 흐름 및 3계층 구조 | [열기](./decks/cron-system.html) |
-| **Architecture 5-Tier** | 물리적 디렉토리 구조 및 계층 간 관계 | [열기](./decks/architecture-5tier.html) |
+| **Architecture 레이어드 구조** | 물리적 디렉토리 구조 및 계층 간 관계 | [열기](./decks/architecture-layered.html) |
 | **Spec-Driven Dev** | Spec 기반 개발 프로세스 | [열기](./decks/spec-driven-dev.html) |
 | **Content System** | 콘텐츠 검증 및 관리 파이프라인 | [열기](./decks/content-system.html) |
 | **Model Routing** | 모델 라우팅 및 교체 전략 | [열기](./decks/model-routing.html) |

@@ -28,7 +28,6 @@ p-hermes의 지식 시스템은 Karpathy의 3계층 구조(Raw Sources → Wiki 
 
 | 소스 | 위치 | 형식 |
 |------|------|------|
-| OpenClaw Memory | `~/.openclaw/workspace/memory/2026-*.md` | MD (루트 패턴만, 하위 폴더 제외) |
 | Hermes Sessions | `~/.hermes/sessions/` | JSONL |
 | JOB 기록 | `~/.hermes/workspace/jobs/` | MD |
 | 뉴스 | `~/.hermes/knowledge/news/` | MD |
@@ -47,12 +46,14 @@ p-hermes의 지식 시스템은 Karpathy의 3계층 구조(Raw Sources → Wiki 
 
 ### 소스 카운팅 규칙
 
-`daily-knowledge-process.sh`는 `glob("2026-*.md")` 패턴을 사용하여 루트 파일만 카운팅합니다. `rglob("*.md")`를 사용하면 하위 폴더의 백업·중복 데이터까지 포함되어 수치가 왜곡됩니다.
+`daily-knowledge-process.sh`는 변경된 원본 파일을 스캔하여 지식 페이지로 가공합니다. 각 소스별 스캔 패턴이 다르며, 원본 파일을 직접 참조하여 수치를 계산합니다.
 
 ```bash
-# OpenClaw Memory 실제 가공 대상 확인
-ls ~/.openclaw/workspace/memory/2026-*.md | wc -l
-# → 루트 2026-*.md 파일만 계산 (예: 225개)
+# Hermes 세션 가공 대상 확인
+ls ~/.hermes/sessions/*.jsonl | wc -l
+
+# JOB 기록 가공 대상 확인
+ls ~/.hermes/workspace/jobs/*/result.md | wc -l
 ```
 
 ## Wiki 트리 구조

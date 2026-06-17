@@ -19,6 +19,10 @@ python3 ~/.hermes/scripts/sdd/sdd-lint.py || { echo "❌ 구조 검사 실패"; 
 echo "  🔗 링크 무결성 검증 (Full-Graph Validator)..."
 python3 ~/.hermes/scripts/sdd/sdd-validate.py || { echo "❌ 링크 검증 실패"; exit 1; }
 
+# 3.1 중국어 문자 검증
+echo "  🔍 중국어 문자 검증..."
+bash tests/validate-chinese.sh docs/ || { echo "❌ 중국어 문자 발견"; exit 1; }
+
 # 4. llms.txt 재생성
 echo "  📄 llms.txt 재생성..."
 bash scripts/generate-llms.sh || { echo "❌ llms.txt 생성 실패"; exit 1; }

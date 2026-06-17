@@ -4,33 +4,23 @@
 
 ## 🌱 기본 개념
 
-p-hermes 설치는 에이전트가 생각하고 행동할 수 있는 **'물리적 뇌 구조'**를 만드는 과정입니다. 새 직원이 출근했을 때 "내 책상은 어디지?", "회사 규칙은 어디에 적혀 있지?"라고 당황하지 않도록 완벽한 인프라를 갖춰주는 과정입니다.
+p-hermes 설치는 Hermes Agent 시스템의 디렉토리 구조와 설정 파일을 구축하는 과정입니다. 설치 완료 후 다음 디렉토리 구조가 생성됩니다.
 
-에이전트는 설치 완료 후 다음을 자동으로 인식합니다:
-- **설정 파일 위치**: `~/.hermes/config.yaml` — 모델, 도구, 보안 등 전체 환경 설정
-- **작업 공간**: `~/.hermes/workspace/` — JOB 시스템이 생성하는 작업 파일과 상태 기록
-- **지식 베이스**: `~/.hermes/knowledge/` — 장기 기억과 학습된 패턴이 저장되는 공간
-- **세션 기록**: `~/.hermes/sessions/` — 대화 transcript와 상태 스냅샷
+```
+~/.hermes/
+├── config.yaml          # 전역 설정 (모델, 도구, 보안)
+├── AGENTS.md            # 에이전트 행동 규칙
+├── skills/              # 스킬 라이브러리
+├── workspace/           # 작업 파일 및 상태 기록
+├── knowledge/           # 지식 베이스
+├── cron/                # 자동화 작업 설정
+├── sessions/            # 대화 세션 상태
+├── events/              # 이벤트 버스
+├── scripts/             # 유틸리티 스크립트
+└── ...
+```
 
-## 🔍 문제 상황: 왜 5-Tier 구조인가?
-
-단일 폴더에 모든 파일을 쌓아두면 발생하는 세 가지 치명적 리스크가 존재합니다:
-
-- **컨텍스트 오염**: 설정 파일과 작업 결과물이 섞이며 에이전트가 시스템 설정을 실수로 수정하는 사고가 발생합니다.
-- **보안 약화**: 핵심 로직과 사용자 데이터가 같은 수준에 노출되어 권한 남용의 가능성이 증가합니다.
-- **백업 비효율**: 전체 디렉토리를 백업해야 하므로 저장 공간 과소비와 복구 지연이 동시에 발생합니다.
-
-5-Tier 구조는 이러한 리스크를 **물리적 경계선**으로 차단합니다:
-
-| Tier | 역할 | 접근 권한 | 백업 우선순위 |
-|------|------|-----------|--------------|
-| Tier 1: Core | 워크플로우, Spec, Expression | Read-Only | 높음 |
-| Tier 2: Runtime | 지식, Cron, 스킬 | Read-Write | 중간 |
-| Tier 3: Interfaces | Discord, Telegram, CLI | Read-Write | 낮음 |
-| Tier 4: Infra | GitHub, Docker, WSL | External | 낮음 |
-| Tier 5: Release | GitHub Pages, Snapshot | Read-Only | 중간 |
-
-자세한 5-Tier 구조는 [아키텍처 문서](https://pheanor-agent.github.io/p-hermes/slides/decks/architecture-5tier.html)에서 확인합니다.
+에이전트는 설치 후 위 디렉토리 구조를 자동으로 인식하며, 각 폴더가 담당하는 역할은 [시스템 아키텍처](https://pheanor-agent.github.io/p-hermes/wiki/system-architecture.md) 문서에서 확인합니다.
 
 ## 🚀 빠른 설치
 
@@ -48,7 +38,7 @@ bash setup.sh ~/.hermes
 ```
 
 이 명령어 하나로 다음이 자동 완료됩니다:
-- 5-Tier 폴더 구조 생성 (Core, Runtime, Interfaces, Infra, Release)
+- Hermes 디렉토리 구조 생성 (skills/, workspace/, knowledge/, cron/ 등)
 - `config.yaml` 템플릿 생성 — 모델 라우팅 기본값 포함
 - `AGENTS.md` 프로필 생성 — 에이전트 행동 규칙 정의
 - 실행 권한 부여 — `workflow.sh`, `workflow-gate.sh` 등 핵심 스크립트 대상
@@ -99,7 +89,7 @@ bash tests/validate-links.sh
 ```mermaid
 graph TD
     A[git clone] --> B[bash setup.sh ~/.hermes]
-    B --> C[5-Tier 구조 자동 생성]
+    B --> C[디렉토리 구조 생성]
     C --> D[config.yaml 템플릿 생성]
     D --> E[AGENTS.md 프로필 생성]
     E --> F[실행 권한 부여]
@@ -113,7 +103,7 @@ graph TD
 `setup.sh` 스크립트는 다음 순서로 인프라를 구축합니다:
 
 1. **경로 검증**: 대상 디렉토리의 쓰기 권한을 확인하고, 기존 파일과 충돌하는 경우 안전한 덮어쓰기 정책을 적용합니다.
-2. **5-Tier 디렉토리 생성**: `core/`, `runtime/`, `interfaces/`, `infra/`, `release/` 하위 구조를 물리적으로 생성합니다. 심링크는 사용하지 않으며, 모든 경로는 절대 경로로 기록됩니다.
+2. **디렉토리 구조 생성**: `skills/`, `workspace/`, `knowledge/`, `cron/` 등 Hermes 기본 디렉토리를 생성합니다. 심링크는 사용하지 않으며, 모든 경로는 절대 경로로 기록됩니다.
 3. **설정 템플릿 배포**: `config.yaml.example`을 기반으로 기본 설정 파일을 복사합니다. 모델 라우팅, 도구 활성화 상태, 보안 옵션 등의 초기값이 포함되어 있습니다.
 4. **실행 권한 설정**: `chmod +x`를 적용하여 워크플로우 관련 스크립트(`workflow.sh`, `workflow-gate.sh`, `create-job.sh`)에 실행 권한을 부여합니다.
 5. **검증 보고서 출력**: 생성된 폴더 수, 설정 파일 경로, 그리고 다음 단계를 안내하는 요약 정보를 터미널에 출력합니다.
@@ -164,15 +154,10 @@ model:
 - `GITHUB_TOKEN` 환경변수에 `repo`, `pages` 스코프가 포함되어 있는지 확인합니다.
 - `bash tests/validate-links.sh`를 먼저 실행하여 문서 링크 유효성을 검증합니다.
 
-### 5-Tier 구조가 생성되지 않음
-
-- `setup.sh`에 대상 경로 인자를 전달했는지 확인합니다 (예: `bash setup.sh ~/.hermes`).
-- 대상 디렉토리가 존재하지 않으면 자동으로 생성되며, 존재할 경우 기존 내용과 병합됩니다.
-
 ## ❓ FAQ
 
 **Q: 여러 기기에서 동일한 환경을 유지하려면 어떻게 해야 하나요?**
-A: `.env` 파일을 각 기기에 별도로 설정하고, `git clone` 후 `bash setup.sh ~/.hermes`를 실행하면 동일한 5-Tier 구조가 복원됩니다. `config.yaml`은 레포지토리에 포함되지 않으므로 각 기기에서 `config.yaml.example`을 기반으로 별도로 생성합니다.
+A: `.env` 파일을 각 기기에 별도로 설정하고, `git clone` 후 `bash setup.sh ~/.hermes`를 실행하면 동일한 Hermes 환경이 복원됩니다. `config.yaml`은 레포지토리에 포함되지 않으므로 각 기기에서 `config.yaml.example`을 기반으로 별도로 생성합니다.
 
 **Q: 설치 경로를 변경하려면 어떻게 하나요?**
 A: `bash setup.sh /새/경로`를 실행하면 새 경로에 완전한 구조가 복제됩니다. 이전 경로의 데이터는 유지됩니다.
@@ -190,4 +175,4 @@ A: `rm -rf ~/.hermes` 후 `bash setup.sh ~/.hermes`를 다시 실행합니다. `
 
 - **[첫 번째 작업 요청하기](https://pheanor-agent.github.io/p-hermes/wiki/getting-started/first-job.md)**: 설치 후 에이전트에게 첫 임무를 부여하는 방법.
 - **[기본 설정 가이드](https://pheanor-agent.github.io/p-hermes/wiki/getting-started/configuration.md)**: 모델 라우팅 및 세부 튜닝을 통한 성능 최적화.
-- **[시스템 아키텍처](https://pheanor-agent.github.io/p-hermes/wiki/system-architecture.md)**: 5-Tier 구조와 핵심 컴포넌트의 전체적인 설계도.
+- **[시스템 아키텍처](https://pheanor-agent.github.io/p-hermes/wiki/system-architecture.md)**: 시스템 구성과 핵심 컴포넌트의 전체적인 설계도.

@@ -7,8 +7,9 @@
 Model Routing은 사용자의 요청을 분석하고 가장 적합한 모델을 선택하여 실행하는 시스템입니다. 생성 작업에는 창의적인 모델을, 논리 작업에는 추론에 특화된 모델을 선택합니다.
 
 ### 라우팅 기준 3가지
+
 1. **도메인**: 창의적, 논리적, 코드, 리뷰
-2. **모델**: GLM-5.2, Qwen3.6, Gemma-4 등
+2. **역할**: 도메인별 최적화된 모델이 자동으로 선택됨
 3. **교차검증**: 서로 다른 모델이 상호 검증
 
 ## 🚀 빠른 시작
@@ -23,10 +24,10 @@ hermes model list
 
 | 도메인 | 기본 모델 | 용도 |
 |--------|-----------|------|
-| creative | glm-5.2 | 이미지, 음악, 창작 |
-| reasoning | glm-5.2 | 논리, 분석, 연구 |
-| coding | Qwen3.6 | 코드 작성, 디버깅 |
-| review | Gemma-4 | 코드 리뷰, 검증 |
+| creative | 창의적 모델 | 이미지, 음악, 창작 |
+| reasoning | 추론 모델 | 논리, 분석, 연구 |
+| coding | 코드 모델 | 코드 작성, 디버깅 |
+| review | 검증 모델 | 코드 리뷰, 검증 |
 
 ## ⚙️ 모델 카탈로그
 
@@ -36,20 +37,20 @@ hermes model list
 {
   "models": [
     {
-      "name": "glm-5.2",
-      "provider": "zai",
+      "name": "creative-model",
+      "provider": "provider-a",
       "role": ["creative", "reasoning"],
       "capabilities": ["text", "vision"]
     },
     {
-      "name": "Qwen3.6",
-      "provider": "airrouter",
+      "name": "code-model",
+      "provider": "provider-b",
       "role": ["coding"],
       "capabilities": ["text", "code"]
     },
     {
-      "name": "Gemma-4",
-      "provider": "airrouter",
+      "name": "review-model",
+      "provider": "provider-b",
       "role": ["review"],
       "capabilities": ["text"]
     }
@@ -73,12 +74,12 @@ hermes model list
 ```mermaid
 flowchart LR
     A[요청] --> B{도메인 분석}
-    B -->|창의적| C[glm-5.2]
-    B -->|코드| D[Qwen3.6]
+    B -->|창의적| C[창의적 모델]
+    B -->|코드| D[코드 모델]
     C --> E[결과]
     D --> E
     E --> F{검증 필요?}
-    F -->|예| G[Gemma-4 리뷰]
+    F -->|예| G[검증 모델 리뷰]
     F -->|아니오| H[완료]
 ```
 
@@ -91,24 +92,24 @@ flowchart LR
 
 | 시나리오 | 권장 모델 | 이유 |
 |---------|-----------|------|
-| 코드 생성 | Qwen3.6 | 코드 이해력 우수 |
-| 코드 리뷰 | Gemma-4 | 검증 정확도 높음 |
-| 이미지 설명 | glm-5.2 | 멀티모달 지원 |
-| 논리 추론 | glm-5.2 | 추론 능력 우수 |
+| 코드 생성 | 코드 모델 | 코드 이해력 우수 |
+| 코드 리뷰 | 검증 모델 | 검증 정확도 높음 |
+| 이미지 설명 | 창의적 모델 | 멀티모달 지원 |
+| 논리 추론 | 추론 모델 | 추론 능력 우수 |
 
-**모델별 특성**
+**도메인별 특성**
 
-**glm-5.2 (ZAI)**
+**창의적/추론 모델**
 - 도메인: creative, reasoning
 - 용도: 이미지, 음악, 논리, 분석
 - 특징: 멀티모달 지원
 
-**Qwen3.6 (Airrouter)**
+**코드 모델**
 - 도메인: coding
 - 용도: 코드 작성, 디버깅
 - 특징: 코드 이해력 우수
 
-**Gemma-4 (Airrouter)**
+**검증 모델**
 - 도메인: review
 - 용도: 코드 리뷰, 검증
 - 특징: 검증 정확도 높음
@@ -117,20 +118,20 @@ flowchart LR
 
 ```bash
 # 모델 명시적 호출
-hermes run --model glm-5.2 "이 코드 설명해줘"
+hermes run --model creative-model "이 코드 설명해줘"
 
 # 자동 라우팅
-hermes run "이 Python 코드 작성해줘"  # Qwen3.6 선택
-hermes run "이 디자인 검토해줘"  # Gemma-4 선택
+hermes run "이 Python 코드 작성해줘"  # 코드 모델 선택
+hermes run "이 디자인 검토해줘"  # 검증 모델 선택
 ```
 
 **라우팅 결과**
 
 | 요청 | 선택 모델 | 이유 |
 |------|-----------|------|
-| "이 Python 코드 작성해줘" | Qwen3.6 | 코드 도메인 |
-| "이 디자인 검토해줘" | Gemma-4 | 리뷰 도메인 |
-| "이 이미지 설명해줘" | glm-5.2 | 창의적 도메인 |
+| "이 Python 코드 작성해줘" | 코드 모델 | 코드 도메인 |
+| "이 디자인 검토해줘" | 검증 모델 | 리뷰 도메인 |
+| "이 이미지 설명해줘" | 창의적 모델 | 창의적 도메인 |
 
 ## 📐 Prefix 기반 라우팅
 
@@ -138,13 +139,13 @@ hermes run "이 디자인 검토해줘"  # Gemma-4 선택
 
 ```bash
 # prefix로 모델 라우팅
-hermes run "zai/glm-5.2: 이 이미지 설명해줘"
-hermes run "airrouter/Qwen3.6: 코드 작성해줘"
+hermes run "provider-a/creative-model: 이 이미지 설명해줘"
+hermes run "provider-b/code-model: 코드 작성해줘"
 ```
 
 **Prefix 규칙**
-- `zai/`: ZAI 제공 모델
-- `airrouter/`: Airrouter 제공 모델
+- `provider-a/`: Provider A 제공 모델
+- `provider-b/`: Provider B 제공 모델
 - `openrouter/`: OpenRouter 제공 모델
 
 ## 📐 Lifecycle 관리
@@ -175,11 +176,11 @@ flowchart TD
 
 ## 📐 Cost Optimization
 
-| 모델 | 용도 | 비용 |
+| 모델 유형 | 용도 | 비용 |
 |------|------|------|
-| glm-5.2 | 창의적/논리적 | 무료 |
-| Qwen3.6 | 코드 | 무료 |
-| Gemma-4 | 리뷰 | 무료 |
+| 창의적/추론 모델 | 창의적/논리적 | varies |
+| 코드 모델 | 코드 | varies |
+| 검증 모델 | 리뷰 | varies |
 
 **비용 최적화 전략**
 
@@ -222,7 +223,7 @@ flowchart TD
 
 | 패턴 | 용도 | 예시 |
 |------|------|------|
-| 명시적 호출 | 테스트, 디버깅 | `--model glm-5.2` |
+| 명시적 호출 | 테스트, 디버깅 | `--model creative-model` |
 | 자동 라우팅 | 생산 환경 | 도메인 기반 |
 | 교차검증 | 중요 작업 | design + review |
 
@@ -231,14 +232,14 @@ flowchart TD
 ```mermaid
 flowchart LR
     A[요청] --> B{도메인 분석}
-    B -->|creative| C[glm-5.2]
-    B -->|coding| D[Qwen3.6]
-    B -->|review| E[Gemma-4]
+    B -->|creative| C[창의적 모델]
+    B -->|coding| D[코드 모델]
+    B -->|review| E[검증 모델]
     C --> F[실행]
     D --> F
     E --> F
     F --> G{검증?}
-    G -->|yes| H[Gemma-4 리뷰]
+    G -->|yes| H[검증 모델 리뷰]
     G -->|no| I[완료]
 ```
 
@@ -246,20 +247,20 @@ flowchart LR
 
 ```bash
 # 모델 라우팅 테스트
-hermes run "zai/glm-5.2: 이 요청 창의적 모델로 처리"
-hermes run "airrouter/Qwen3.6: 코드 작성 요청"
+hermes run "provider-a/creative-model: 이 요청 창의적 모델로 처리"
+hermes run "provider-b/code-model: 코드 작성 요청"
 
 # 교차검증 예시
-hermes run "Qwen3.6: 코드 작성" → Gemma-4: 코드 리뷰
+hermes run "code-model: 코드 작성" → review-model: 코드 리뷰
 ```
 
 **검증 결과**
 
 | 테스트 | 모델 | 결과 |
 |--------|------|------|
-| 이미지 설명 | glm-5.2 | ✅ PASS |
-| 코드 작성 | Qwen3.6 | ✅ PASS |
-| 코드 리뷰 | Gemma-4 | ✅ PASS |
+| 이미지 설명 | 창의적 모델 | ✅ PASS |
+| 코드 작성 | 코드 모델 | ✅ PASS |
+| 코드 리뷰 | 검증 모델 | ✅ PASS |
 
 ## 📚 관련 문서
 - [Model Routing 설계](../../blog/posts/model-routing-design.md)
