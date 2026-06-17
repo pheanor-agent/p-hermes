@@ -6,10 +6,25 @@
   <title>Hermes Agent: 자율 AI 에이전트 플랫폼</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <!-- Mermaid.js -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <!-- Highlight.js -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11/styles/github.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/highlight.min.js"></script>
   <style>
     .reveal { font-family: 'Helvetica Neue', sans-serif; }
-    .reveal h1 { font-size: 2.2em; }
-    .reveal h2 { font-size: 1.5em; color: #1a7f37; }
+    :root {
+      --scale-h1: 2.2em;
+      --scale-h2: 1.5em;
+      --scale-body: 0.85em;
+      --scale-small: 0.75em;
+      --scale-caption: 0.65em;
+      --scale-tiny: 0.55em;
+      --code-font: 0.76em;
+      --diagram-font: 0.82em;
+    }
+    .reveal h1 { font-size: var(--scale-h1); }
+    .reveal h2 { font-size: var(--scale-h2); color: #1a7f37; }
     .reveal section img { background: none; border: none; box-shadow: none; }
     .reveal .slides section.section-divider { text-align: left; }
     .reveal .slides section.section-divider h2 { font-size: 2em; border-bottom: 3px solid #1a7f37; padding-bottom: 0.2em; }
@@ -20,7 +35,13 @@
     .two-col > div { flex: 1; }
     .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
     .stat-label { font-size: 0.5em; color: #666; }
-    .mermaid-wrap { text-align: center; font-size: 0.65em; }
+    .mermaid-wrap { text-align: center; font-size: var(--diagram-font); }
+    .mermaid-wrap .mermaid { max-width: 100%; margin: 0 auto; }
+    pre code { font-size: var(--code-font); }
+    .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
+    .tree li { margin: 0.2em 0; }
+    .tree .folder::before { content: "📁 "; }
+    .tree .file::before { content: "📄 "; }
   </style>
 </head>
 <body>
@@ -81,35 +102,25 @@
           <div>
             <strong>챗봇 시대</strong>
             <div class="mermaid-wrap">
-<pre style="font-size: 0.8em; text-align: left;">
-사용자
-  │ 프롬프트
-  ▼
-┌─────────┐
-│ LLM API │
-└─────────┘
-  │ 텍스트 응답
-  ▼
-사용자
-</pre>
+<div class="mermaid">
+flowchart TB
+    U1["사용자"] -->|프롬프트| L["LLM API"]
+    L -->|텍스트 응답| U2["사용자"]
+</div>
             </div>
           </div>
           <div>
             <strong>자율 에이전트 시대</strong>
             <div class="mermaid-wrap">
-<pre style="font-size: 0.8em; text-align: left;">
-사용자
-  │ 작업 요청
-  ▼
-┌─────────────┐
-│ Hermes Agent │
-└─────┬───────┘
-      ├──▶ 터미널
-      ├──▶ 파일 시스템
-      ├──▶ 브라우저
-      ├──▶ 메시징 API
-      └──▶ 스킬/메모리
-</pre>
+<div class="mermaid">
+flowchart TB
+    U["사용자"] -->|작업 요청| HA["Hermes Agent"]
+    HA -->|"|"| T["터미널"]
+    HA -->|"|"| FS["파일 시스템"]
+    HA -->|"|"| Br["브라우저"]
+    HA -->|"|"| M["메시징 API"]
+    HA -->|"|"| SK["스킬/메모리"]
+</div>
             </div>
           </div>
         </div>
@@ -153,25 +164,33 @@
       <section>
         <h2>시스템 전체 구조</h2>
         <div class="mermaid-wrap">
-<pre style="font-size: 0.7em; text-align: left;">
-┌─────────────────────────────────────────────┐
-│            사용자 (Telegram/Discord/Slack)     │
-└──────────────────┬──────────────────────────┘
-                   ▼
-┌─────────────────────────────────────────────┐
-│         Hermes Gateway (상주 서비스)           │
-│    15개 이상 메시징 플랫폼 동시 연결           │
-└──────────────────┬──────────────────────────┘
-                   ▼
-┌─────────────────────────────────────────────┐
-│         Conversation Loop (에이전트 코어)      │
-├────────────┬────────────┬───────────────────┤
-│  Skills    │  Memory    │   Session DB      │
-│ (절차적 기억)│(영속 컨텍스트)│ (FTS5 검색)     │
-├────────────┴────────────┴───────────────────┤
-│  Terminal │ File │ Browser │ Web/API │ Vision│
-└─────────────────────────────────────────────┘
-</pre>
+<div class="mermaid">
+flowchart TB
+    U["사용자\n(Telegram/Discord/Slack)"] --> G["Hermes Gateway\n(15개 이상 메시징 플랫폼 동시 연결)"]
+    G --> CL["Conversation Loop (에이전트 코어)"]
+    subgraph CLcomp[""]
+        direction LR
+        SK["Skills\n(절차적 기억)"]
+        M["Memory\n(영속 컨텍스트)"]
+        SDB["Session DB\n(FTS5 검색)"]
+    end
+    CL --> SK
+    CL --> M
+    CL --> SDB
+    subgraph Tools[""]
+        direction LR
+        Tl["Terminal"]
+        Fl["File"]
+        Br["Browser"]
+        W["Web/API"]
+        V["Vision"]
+    end
+    CL --> Tl
+    CL --> Fl
+    CL --> Br
+    CL --> W
+    CL --> V
+</div>
         </div>
       </section>
 
@@ -222,22 +241,13 @@
         <h2>GEPA 학습 루프</h2>
         <p style="font-size: 0.8em;">에이전트가 경험을 재사용 가능한 지식으로 변환하는 사이클</p>
         <div class="mermaid-wrap">
-<pre style="font-size: 0.9em;">
-    ┌──────────┐
-    │  Gather  │◀────────────────┐
-    │ 경험 수집  │                 │
-    └────┬─────┘                 │
-         ▼                       │
-    ┌──────────┐            ┌──────────┐
-    │ Evaluate │            │  Apply   │
-    │ 결과 평가  │            │ 재적용    │
-    └────┬─────┘            └────▲─────┘
-         ▼                       │
-    ┌──────────┐                 │
-    │ Produce  │─────────────────┘
-    │ 스킬 생성  │
-    └──────────┘
-</pre>
+<div class="mermaid">
+flowchart LR
+    G["Gather<br>경험 수집"] --> E["Evaluate<br>결과 평가"]
+    E --> P["Produce<br>스킬 생성"]
+    P --> A["Apply<br>재적용"]
+    A -.-> G
+</div>
         </div>
         <p style="font-size: 0.65em; color: #666;">복잡한 작업을 해결한 후 자동으로 SKILL.md 생성 → 다음 세션에서 자동 로드</p>
       </section>
@@ -257,7 +267,7 @@
       <!-- Slide 14: Code example -->
       <section>
         <h2>실제 사용 예시</h2>
-        <pre style="font-size: 0.6em;"><code data-trim data-line="3,7-9">
+        <pre style="font-size: 0.6em;"><code data-trim data-line="3,7-9" class="language-bash">
 # 사용자가 Telegram에서 작업 요청
 $ hermes chat
 
@@ -370,6 +380,21 @@ $ hermes chat
 
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
   <script>
+    // Mermaid 초기화
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      fontFamily: 'Helvetica Neue, Arial, sans-serif',
+      themeVariables: {
+        primaryColor: '#f0faf0',
+        primaryTextColor: '#333',
+        primaryBorderColor: '#1a7f37',
+        lineColor: '#666',
+        fontSize: '14px'
+      },
+      textHeightFixed: true
+    });
+
     Reveal.initialize({
       hash: true,
       slideNumber: 'c/t',
@@ -378,6 +403,13 @@ $ hermes chat
       center: true,
       transition: 'slide',
       fragments: true
+    });
+
+    // Highlight.js 초기화
+    Reveal.addEventListener('ready', () => {
+      document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightElement(block);
+      });
     });
   </script>
 </body>

@@ -6,10 +6,25 @@
   <title>Hermes Agent: 레이어드 아키텍처</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <!-- Mermaid.js -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <!-- Highlight.js -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11/styles/github.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/highlight.min.js"></script>
   <style>
     .reveal { font-family: 'Helvetica Neue', sans-serif; }
-    .reveal h1 { font-size: 2.2em; }
-    .reveal h2 { font-size: 1.5em; color: #1a7f37; }
+    :root {
+      --scale-h1: 2.2em;
+      --scale-h2: 1.5em;
+      --scale-body: 0.85em;
+      --scale-small: 0.75em;
+      --scale-caption: 0.65em;
+      --scale-tiny: 0.55em;
+      --code-font: 0.76em;
+      --diagram-font: 0.82em;
+    }
+    .reveal h1 { font-size: var(--scale-h1); }
+    .reveal h2 { font-size: var(--scale-h2); color: #1a7f37; }
     .reveal section img { background: none; border: none; box-shadow: none; }
     .reveal .slides section.section-divider { text-align: left; }
     .reveal .slides section.section-divider h2 { font-size: 2em; border-bottom: 3px solid #1a7f37; padding-bottom: 0.2em; }
@@ -20,7 +35,13 @@
     .two-col > div { flex: 1; }
     .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
     .stat-label { font-size: 0.5em; color: #666; }
-    .mermaid-wrap { text-align: center; font-size: 0.65em; }
+    .mermaid-wrap { text-align: center; font-size: var(--diagram-font); }
+    .mermaid-wrap .mermaid { max-width: 100%; margin: 0 auto; }
+    pre code { font-size: var(--code-font); }
+    .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
+    .tree li { margin: 0.2em 0; }
+    .tree .folder::before { content: "📁 "; }
+    .tree .file::before { content: "📄 "; }
   </style>
 </head>
 <body>
@@ -81,30 +102,48 @@
           <div>
             <strong>Flat (모놀리식)</strong>
             <div class="mermaid-wrap">
-<pre style="font-size: 0.8em; text-align: left;">
-$HERMES_ROOT/
-├── script_a.sh  ──────┐
-├── script_b.sh  ──────┼── 직접 호출
-├── script_c.sh  ──────┤   (결합도 ↑)
-├── config.txt     ─────┘
-└── data.txt
-</pre>
+<div class="mermaid">
+flowchart LR
+    subgraph flat["$HERMES_ROOT (Flat)"]
+        direction TB
+        A["script_a.sh"]
+        B["script_b.sh"]
+        C["script_c.sh"]
+        D["config.txt"]
+        E["data.txt"]
+        Cpl["직접 호출<br>(결합도 ↑)"]
+        A --> Cpl
+        B --> Cpl
+        C --> Cpl
+        D -.-> Cpl
+    end
+</div>
             </div>
           </div>
           <div>
             <strong>Layered (레이어드)</strong>
             <div class="mermaid-wrap">
-<pre style="font-size: 0.8em; text-align: left;">
-$HERMES_ROOT/
-├── skills/       (Core)
-│     └── *.md
-├── knowledge/    (Runtime)
-├── cron/         (Runtime)
-├── sessions/     (Runtime)
-├── interfaces/   (Interfaces)
-├── event.sh      (Global)
-└── system-common (Global)
-</pre>
+<div class="mermaid">
+flowchart TB
+    subgraph root["$HERMES_ROOT (Layered)"]
+        direction TB
+        subgraph Core["Core"]
+            S["skills/ *.md"]
+        end
+        subgraph Rnt["Runtime"]
+            K["knowledge/"]
+            Cr["cron/"]
+            Se["sessions/"]
+        end
+        subgraph Int["Interfaces"]
+            I["interfaces/"]
+        end
+        subgraph Glb["Global"]
+            Ev["event.sh"]
+            Sc["system-common/"]
+        end
+    end
+</div>
             </div>
           </div>
         </div>
@@ -124,36 +163,67 @@ $HERMES_ROOT/
         <h2>5계층 + 2글로벌 = 관계망</h2>
         <p style="font-size: 0.75em;">단방향 직선이 아닌, 실제 의존 관계 기반 망 구조</p>
         <div class="mermaid-wrap">
-<pre style="font-size: 0.6em; text-align: left;">
-          ┌──────────────────────┐
-          │   Tier 5 Release     │
-          │  docs/  slides/  llms.txt │
-          └──────────▲───────────┘
-                     │ (출력 산출)
-┌─────────┐ ┌───────┴────────────┐
-│event.sh │ │  Tier 1 Core       │
-│(Pub/Sub)│ │ config.yaml  skills/  │
-└────┬────┘ │ workflow.sh  AGENTS.md │
-     │       └──────────▲───────────┘
-     │                  │ (↔ 양방향)
-┌────┴────┐ ┌──────────┴───────────┐
-│system-  │ │  Tier 2 Runtime      │
-│common/  │ │ knowledge/  cron/    │
-│(utils)  │ │ sessions/  .workflow-state│
-└────┬────┘ └──────────▲───────────┘
-     │                  │ (↔ 양방향)
-     │         ┌────────┴──────────┐
-     │         │  Tier 3 Interfaces │
-     │         │ Discord  Telegram  CLI │
-     │         └────────▲──────────┘
-     │                  │ (의존)
-     │         ┌────────┴──────────┐
-     │         │  Tier 4 Infra     │
-     │         │ GitHub  Docker  WSL│
-     │         └──────────────────┘
-     │
-     └── 전역: 모든 계층 지원
-</pre>
+<div class="mermaid">
+flowchart TB
+    subgraph T5["Tier 5 Release"]
+        direction LR
+        T5A["docs/"]
+        T5B["slides/"]
+        T5C["llms.txt"]
+    end
+
+    subgraph T1["Tier 1 Core"]
+        direction LR
+        T1A["config.yaml"]
+        T1B["skills/"]
+        T1C["workflow.sh"]
+        T1D["AGENTS.md"]
+    end
+
+    subgraph T2["Tier 2 Runtime"]
+        direction LR
+        T2A["knowledge/"]
+        T2B["cron/"]
+        T2C["sessions/"]
+        T2D[".workflow-state"]
+    end
+
+    subgraph T3["Tier 3 Interfaces"]
+        direction LR
+        T3A["Discord"]
+        T3B["Telegram"]
+        T3C["CLI"]
+    end
+
+    subgraph T4["Tier 4 Infra"]
+        direction LR
+        T4A["GitHub"]
+        T4B["Docker"]
+        T4C["WSL"]
+    end
+
+    subgraph EvBus["event.sh (Pub/Sub)"]
+        Ev["이벤트 버스"]
+    end
+
+    subgraph SysCom["system-common/ (utils)"]
+        Ut["공통 유틸리티"]
+    end
+
+    T5 ==>|출력 산출| T1
+    T1 <-->|↔ 양방향| T2
+    T2 <-->|↔ 양방향| T3
+    T3 ==>|의존| T4
+    EvBus -->|전역: 모든 계층 지원| T1
+    EvBus --> T2
+    EvBus --> T3
+    EvBus --> T4
+    EvBus --> T5
+    SysCom -->|전역: 모든 계층 지원| T1
+    SysCom --> T2
+    SysCom --> T3
+    SysCom --> T4
+</div>
         </div>
       </section>
 
@@ -214,19 +284,13 @@ $HERMES_ROOT/
         <h2>event.sh — 시스템의 신경망</h2>
         <p style="font-size: 0.75em;">모든 모듈은 event.sh를 통해 통신. 직접 호출 X, 이벤트 발행/구독 O</p>
         <div class="mermaid-wrap">
-<pre style="font-size: 0.7em; text-align: left;">
-  ┌──────────┐     publish      ┌──────────┐
-  │ 모듈 A   │ ────────────────▶│ event.sh │
-  │(발행자)   │                  │(이벤트 버스)│
-  └──────────┘                  └─────┬────┘
-                                     │
-                      ┌──────────────┼──────────────┐
-                      ▼              ▼              ▼
-                 ┌──────────┐ ┌──────────┐ ┌──────────┐
-                 │ 모듈 B   │ │ 모듈 C   │ │ JSONL    │
-                 │(구독자)   │ │(구독자)   │ │(히스토리) │
-                 └──────────┘ └──────────┘ └──────────┘
-</pre>
+<div class="mermaid">
+flowchart LR
+    A["모듈 A<br>(발행자)"] -->|publish| Ev["event.sh<br>(이벤트 버스)"]
+    Ev -->|"|"| B["모듈 B<br>(구독자)"]
+    Ev -->|"|"| C["모듈 C<br>(구독자)"]
+    Ev -->|"|"| H["JSONL<br>(히스토리)"]
+</div>
         </div>
         <div class="two-col" style="margin-top: 0.5em;">
           <div style="font-size: 0.7em; text-align: left;">
@@ -287,37 +351,61 @@ $HERMES_ROOT/
       <section>
         <h2>$HERMES_ROOT 디렉토리 맵</h2>
         <div class="mermaid-wrap">
-<pre style="font-size: 0.55em; text-align: left;">
-$HERMES_ROOT/
-├── config.yaml              # T1 Core — 전역 설정
-├── AGENTS.md                # T1 Core — 에이전트 정의
-├── skills/                  # T1 Core — 스킬 라이브러리
-│   ├── skill-a/
-│   └── skill-b/
-├── workflow.sh              # T1 Core — 9-Step 상태 머신
-├── knowledge/               # T2 Runtime — 지식 저장소
-│   ├── input/
-│   └── output/
-├── cron/                    # T2 Runtime — 자동화 작업
-│   ├── registry.yaml
-│   └── jobs/
-├── sessions/                # T2 Runtime — 세션 상태
-│   └── active/
-├── .workflow-state          # T2 Runtime — 상태 파일
-├── interfaces/              # T3 Interfaces — 통신 채널
-│   ├── discord/
-│   └── telegram/
-├── infra/                   # T4 Infra — 인프라
-│   ├── docker/
-│   └── github-actions/
-├── docs/                    # T5 Release — 문서
-│   ├── wiki/
-│   └── slides/
-├── llms.txt                 # T5 Release — LLM 메타데이터
-├── event.sh                 # 전역 — 이벤트 진입점
-└── system-common/           # 전역 — 공통 유틸리티
-    └── lib/
-</pre>
+<div class="mermaid">
+flowchart TB
+    subgraph root["$HERMES_ROOT"]
+        direction TB
+
+        subgraph T1["Tier 1 Core"]
+            direction LR
+            T1C1["config.yaml"]
+            T1C2["AGENTS.md"]
+            subgraph T1Sk["skills/"]
+                T1A["skill-a/"]
+                T1B["skill-b/"]
+            end
+            T1W["workflow.sh"]
+        end
+
+        subgraph T2["Tier 2 Runtime"]
+            subgraph T2K["knowledge/"]
+                T2Ki["input/"]
+                T2Ko["output/"]
+            end
+            subgraph T2C["cron/"]
+                T2Cr["registry.yaml"]
+                T2Cj["jobs/"]
+            end
+            subgraph T2S["sessions/"]
+                T2Sa["active/"]
+            end
+            T2Ws[".workflow-state"]
+        end
+
+        subgraph T3["Tier 3 Interfaces"]
+            T3D["discord/"]
+            T3T["telegram/"]
+        end
+
+        subgraph T4["Tier 4 Infra"]
+            T4Do["docker/"]
+            T4Ga["github-actions/"]
+        end
+
+        subgraph T5["Tier 5 Release"]
+            subgraph T5Docs["docs/"]
+                T5W["wiki/"]
+                T5Sl["slides/"]
+            end
+            T5L["llms.txt"]
+        end
+    end
+
+    subgraph Gbl["전역"]
+        EvG["event.sh"]
+        SCG["system-common/"]
+    end
+</div>
         </div>
       </section>
 
@@ -420,6 +508,21 @@ $HERMES_ROOT/
 
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
   <script>
+    // Mermaid 초기화
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      fontFamily: 'Helvetica Neue, Arial, sans-serif',
+      themeVariables: {
+        primaryColor: '#f0faf0',
+        primaryTextColor: '#333',
+        primaryBorderColor: '#1a7f37',
+        lineColor: '#666',
+        fontSize: '14px'
+      },
+      textHeightFixed: true
+    });
+
     Reveal.initialize({
       hash: true,
       slideNumber: 'c/t',
@@ -428,6 +531,13 @@ $HERMES_ROOT/
       center: true,
       transition: 'slide',
       fragments: true
+    });
+
+    // Highlight.js 초기화
+    Reveal.addEventListener('ready', () => {
+      document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightElement(block);
+      });
     });
   </script>
 </body>

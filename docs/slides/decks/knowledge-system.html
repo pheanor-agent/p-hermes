@@ -6,10 +6,25 @@
   <title>Hermes Knowledge System: 구조화된 AI 지식 관리</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <!-- Mermaid.js -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <!-- Highlight.js -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11/styles/github.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/highlight.min.js"></script>
   <style>
     .reveal { font-family: 'Helvetica Neue', sans-serif; }
-    .reveal h1 { font-size: 2.2em; }
-    .reveal h2 { font-size: 1.5em; color: #1a7f37; }
+    :root {
+      --scale-h1: 2.2em;
+      --scale-h2: 1.5em;
+      --scale-body: 0.85em;
+      --scale-small: 0.75em;
+      --scale-caption: 0.65em;
+      --scale-tiny: 0.55em;
+      --code-font: 0.76em;
+      --diagram-font: 0.82em;
+    }
+    .reveal h1 { font-size: var(--scale-h1); }
+    .reveal h2 { font-size: var(--scale-h2); color: #1a7f37; }
     .reveal section img { background: none; border: none; box-shadow: none; }
     .reveal .slides section.section-divider { text-align: left; }
     .reveal .slides section.section-divider h2 { font-size: 2em; border-bottom: 3px solid #1a7f37; padding-bottom: 0.2em; }
@@ -20,7 +35,13 @@
     .two-col > div { flex: 1; }
     .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
     .stat-label { font-size: 0.5em; color: #666; }
-    .mermaid-wrap { text-align: center; font-size: 0.65em; }
+    .mermaid-wrap { text-align: center; font-size: var(--diagram-font); }
+    .mermaid-wrap .mermaid { max-width: 100%; margin: 0 auto; }
+    pre code { font-size: var(--code-font); }
+    .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
+    .tree li { margin: 0.2em 0; }
+    .tree .folder::before { content: "📁 "; }
+    .tree .file::before { content: "📄 "; }
   </style>
 </head>
 <body>
@@ -121,24 +142,41 @@
       <section>
         <h2>Karpathy 3계층 구조</h2>
         <div class="mermaid-wrap">
-<pre style="font-size: 0.72em; text-align: left;">
-┌─────────────────────── Raw Sources (원본) ───────────────────────┐
-│ sessions/*.jsonl │ jobs/*/result.md │ news/ │ references/       │
-│  ↑ 수정 금지 · append-only · 원본 경로 직접 참조                   │
-└─────────────────────────────┬────────────────────────────────────┘
-                              │ daily-knowledge-process.sh
-                              ▼
-┌─────────────────────── Wiki (가공된 지식) ───────────────────────┐
-│ pages/  (단일 폴더) │ index.md (카탈로그) │ domain-*.md │ tag-*.md │
-│  ↑ LLM이 "의견"을 버리고 "검증 가능한 사실"만 추출                 │
-└─────────────────────────────┬────────────────────────────────────┘
-                              │ build-scores.sh
-                              ▼
-┌─────────────────────── Schema (점수화 & 검색) ───────────────────┐
-│ scores.json (T1/T2/T3) │ FTS5 인덱스 │ graph_edges.json        │
-│  ↑ 에이전트가 index.md → T1 먼저 읽음                            │
-└──────────────────────────────────────────────────────────────────┘
-</pre>
+<div class="mermaid">
+flowchart TB
+    subgraph Raw["Raw Sources (원본)"]
+        direction LR
+        R1["sessions/*.jsonl"]
+        R2["jobs/*/result.md"]
+        R3["news/"]
+        R4["references/"]
+    end
+    RawNote["↑ 수정 금지 · append-only · 원본 경로 직접 참조"]
+    Raw --> RawNote
+
+    Raw -->|daily-knowledge-process.sh| Wiki
+
+    subgraph Wiki["Wiki (가공된 지식)"]
+        direction LR
+        W1["pages/ (단일 폴더)"]
+        W2["index.md (카탈로그)"]
+        W3["domain-*.md"]
+        W4["tag-*.md"]
+    end
+    WikiNote["↑ LLM이 '의견'을 버리고 '검증 가능한 사실'만 추출"]
+    Wiki --> WikiNote
+
+    Wiki -->|build-scores.sh| Schema
+
+    subgraph Schema["Schema (점수화 & 검색)"]
+        direction LR
+        S1["scores.json (T1/T2/T3)"]
+        S2["FTS5 인덱스"]
+        S3["graph_edges.json"]
+    end
+    SchemaNote["↑ 에이전트가 index.md → T1 먼저 읽음"]
+    Schema --> SchemaNote
+</div>
         </div>
         <p style="font-size: 0.6em; color: #666;">하나는 읽기, 하나는 쓰기 — 원본은 만지지 않고 Wiki만 가공</p>
       </section>
@@ -295,33 +333,50 @@
       <section>
         <h2>inbox.md → 필링 → T1 승격</h2>
         <div class="mermaid-wrap">
-<pre style="font-size: 0.68em; text-align: left;">
-① 원본 수집                              ② 파이프라인 가공
-┌─────────────────────┐                ┌─────────────────────────────┐
-│ knowledge/news/     │                │ daily-knowledge-process.sh  │
-│ knowledge/references/│              │  LLM이 "사실"만 추출        │
-│ sessions/*.jsonl    │ ──────────▶   │  도메인 + 태그 매핑         │
-│ jobs/*/result.md    │                │  중복 제거                  │
-└─────────────────────┘                └─────────────┬───────────────┘
-                                                     │
-                          ┌──────────────────────────▼──────────────────────────┐
-                          │ ③ 점수 계산                                          │
-                          │ build-scores.sh                                      │
-                          │  score = pw×0.5 + rs×0.3 + us×0.2                   │
-                          └──────────────────────────┬──────────────────────────┘
-                                                     │
-                          ┌──────────────────────────▼──────────────────────────┐
-                          │ ④ Wiki DB (에이전트가 직접 읽음)                      │
-                          │                                                     │
-                          │  index.md  ← 에이전트 진입점                         │
-                          │    ├── T1: system/models.md       (score 0.74)     │
-                          │    ├── T1: dev/spec-process.md    (score 0.82)     │
-                          │    ├── T2: custom/novel-settings.md (score 0.51)   │
-                          │    └── T3: news/gemma4-announce.md (score 0.28)    │
-                          │                                                     │
-                          │  FTS5 인덱스 ← 에이전트가 정밀 검색으로 탐색         │
-                          └─────────────────────────────────────────────────────┘
-</pre>
+<div class="mermaid">
+flowchart LR
+    subgraph Collect["① 원본 수집"]
+        direction TB
+        N["knowledge/news/"]
+        R["knowledge/references/"]
+        S["sessions/*.jsonl"]
+        J["jobs/*/result.md"]
+    end
+
+    subgraph Process["② 파이프라인 가공"]
+        direction TB
+        DP["daily-knowledge-process.sh"]
+        DPN["LLM이 '사실'만 추출<br>도메인 + 태그 매핑<br>중복 제거"]
+        DP --> DPN
+    end
+
+    subgraph Score["③ 점수 계산"]
+        direction TB
+        BS["build-scores.sh"]
+        BSF["score = pw×0.5 + rs×0.3 + us×0.2"]
+        BS --> BSF
+    end
+
+    subgraph WikiDB["④ Wiki DB (에이전트가 직접 읽음)"]
+        direction TB
+        IDX["index.md (에이전트 진입점)"]
+        subgraph Tiers[""]
+            T1["T1: system/models.md (score 0.74)"]
+            T2a["T1: dev/spec-process.md (score 0.82)"]
+            T3a["T2: custom/novel-settings.md (score 0.51)"]
+            T4a["T3: news/gemma4-announce.md (score 0.28)"]
+        end
+        IDX --> T1
+        IDX --> T2a
+        IDX --> T3a
+        IDX --> T4a
+        FTS["FTS5 인덱스 (에이전트가 정밀 검색으로 탐색)"]
+    end
+
+    Collect --> Process
+    Process --> Score
+    Score --> WikiDB
+</div>
         </div>
       </section>
 
@@ -419,6 +474,21 @@
 
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
   <script>
+    // Mermaid 초기화
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      fontFamily: 'Helvetica Neue, Arial, sans-serif',
+      themeVariables: {
+        primaryColor: '#f0faf0',
+        primaryTextColor: '#333',
+        primaryBorderColor: '#1a7f37',
+        lineColor: '#666',
+        fontSize: '14px'
+      },
+      textHeightFixed: true
+    });
+
     Reveal.initialize({
       hash: true,
       slideNumber: 'c/t',
@@ -427,6 +497,13 @@
       center: true,
       transition: 'slide',
       fragments: true
+    });
+
+    // Highlight.js 초기화
+    Reveal.addEventListener('ready', () => {
+      document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightElement(block);
+      });
     });
   </script>
 </body>

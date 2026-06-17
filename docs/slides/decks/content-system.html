@@ -6,10 +6,25 @@
   <title>Content System: AI 생성 텍스트의 품질을 보증하는 파이프라인</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <!-- Mermaid.js -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <!-- Highlight.js -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11/styles/github.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/highlight.min.js"></script>
   <style>
+    :root {
+      --scale-h1: 2.2em;
+      --scale-h2: 1.5em;
+      --scale-body: 0.85em;
+      --scale-small: 0.75em;
+      --scale-caption: 0.65em;
+      --scale-tiny: 0.55em;
+      --code-font: 0.76em;
+      --diagram-font: 0.82em;
+    }
     .reveal { font-family: 'Helvetica Neue', sans-serif; }
-    .reveal h1 { font-size: 2.2em; }
-    .reveal h2 { font-size: 1.5em; color: #1a7f37; }
+    .reveal h1 { font-size: var(--scale-h1); }
+    .reveal h2 { font-size: var(--scale-h2); color: #1a7f37; }
     .reveal section img { background: none; border: none; box-shadow: none; }
     .reveal .slides section.section-divider { text-align: left; }
     .reveal .slides section.section-divider h2 { font-size: 2em; border-bottom: 3px solid #1a7f37; padding-bottom: 0.2em; }
@@ -20,7 +35,13 @@
     .two-col > div { flex: 1; }
     .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
     .stat-label { font-size: 0.5em; color: #666; }
-    .mermaid-wrap { text-align: center; font-size: 0.65em; }
+    .mermaid-wrap { text-align: center; font-size: var(--diagram-font); }
+    .mermaid-wrap .mermaid { max-width: 100%; margin: 0 auto; }
+    pre code { font-size: var(--code-font); }
+    .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
+    .tree li { margin: 0.2em 0; }
+    .tree .folder::before { content: "📁 "; }
+    .tree .file::before { content: "📄 "; }
   </style>
 </head>
 <body>
@@ -116,26 +137,38 @@
       <section>
         <h2>3-Layer 아키텍처 전체 구조</h2>
         <div class="mermaid-wrap">
-<pre style="font-size: 0.7em; text-align: left;">
-┌─────────────────────────────────────────────┐
-│  Layer 1: 메타 스킬 (Entry Point)            │
-│  요청 수신 → 의도 분석 → 도메인 분류 (D1~D5)   │
-└──────────────────┬──────────────────────────┘
-                   ▼
-┌─────────────────────────────────────────────┐
-│  Layer 2: 공유 엔진 (Processing)             │
-│  7개 엔진이 구조·톤·비유·템플릿 결정          │
-└──────────────────┬──────────────────────────┘
-                   ▼
-┌─────────────────────────────────────────────┐
-│  Layer 3: 도메인 오버레이 (Rendering)        │
-│  스타일 매트릭스 + 도메인 템플릿 → 최종 렌더   │
-└──────────────────┬──────────────────────────┘
-                   ▼
-┌─────────────────────────────────────────────┐
-│  검증 게이트: L1 → L2 → L3 → L4 → (L5)      │
-└─────────────────────────────────────────────┘
-</pre>
+<div class="mermaid">
+flowchart TD
+    subgraph L1["Layer 1: 메타 스킬 (Entry Point)"]
+        direction TB
+        L1a["요청 수신 → 의도 분석 → 도메인 분류 (D1~D5)"]
+    end
+
+    subgraph L2["Layer 2: 공유 엔진 (Processing)"]
+        direction TB
+        L2a["7개 엔진이 구조·톤·비유·템플릿 결정"]
+    end
+
+    subgraph L3["Layer 3: 도메인 오버레이 (Rendering)"]
+        direction TB
+        L3a["스타일 매트릭스 + 도메인 템플릿 → 최종 렌더"]
+    end
+
+    subgraph VG["검증 게이트"]
+        direction TB
+        VGa["L1 → L2 → L3 → L4 → (L5)"]
+    end
+
+    L1 --> L2
+    L2 --> L3
+    L3 --> VG
+
+    classDef default fill:#f0faf0,stroke:#1a7f37,stroke-width:2px,color:#333
+    classDef layer fill:#f0faf0,stroke:#1a7f37,stroke-width:2px,color:#333
+    class L1,L2,L3,layer
+    classDef gate fill:#e8f5e8,stroke:#1a7f37,stroke-width:2px,color:#333
+    class VG,gate
+</div>
         </div>
         <p style="font-size: 0.6em; color: #666;">데이터는 단일 방향으로 흐름. 각 레이어는 명확한 책임 분리.</p>
       </section>
@@ -178,24 +211,32 @@
       <section>
         <h2>5계층 검증 게이트 (L1~L5)</h2>
         <div class="mermaid-wrap">
-<pre style="font-size: 0.78em; text-align: left;">
-입력 텍스트
-    │
-    ▼
-┌──────────────────────────────────┐
-│ L1 Schema     · JSON/YAML 구문    │  구조 검증
-│ L2 Error      · 에러 토큰 차단     │  표층 오류
-│ L3 Voice      · Anti-Slop 핵심 ★  │  어조 (핵심 계층)
-│ L4 Domain     · D1~D5 적합성      │  도메인 전문성
-└──────────────────────────────────┘
-    │
-    ▼
- Blog? ──Yes──▶ L5 Judge Model (LLM 거시 심사)
-    │
-   No
-    ▼
-최종 산출물
-</pre>
+<div class="mermaid">
+flowchart TD
+    IN["입력 텍스트"] --> GATES
+
+    subgraph GATES["검증 게이트 (L1~L4)"]
+        direction TB
+        L1["L1 Schema · JSON/YAML 구문 — 구조 검증"]
+        L2["L2 Error · 에러 토큰 차단 — 표층 오류"]
+        L3["L3 Voice · Anti-Slop 핵심 ★ — 어조"]
+        L4["L4 Domain · D1~D5 적합성 — 도메인 전문성"]
+        L1 --> L2 --> L3 --> L4
+    end
+
+    GATES --> COND{"Blog?"}
+    COND -->|"Yes"| L5["L5 Judge Model (LLM 거시 심사)"]
+    COND -->|"No"| OUT["최종 산출물"]
+    L5 --> OUT
+
+    classDef default fill:#f0faf0,stroke:#1a7f37,stroke-width:2px,color:#333
+    classDef gate fill:#e8f5e8,stroke:#1a7f37,stroke-width:2px,color:#333
+    class L1,L2,L3,L4,gate
+    classDef core fill:#fff3cd,stroke:#f0ad4e,stroke-width:2px,color:#333
+    class L3,core
+    classDef judge fill:#f8d7da,stroke:#c0392b,stroke-width:2px,color:#333
+    class L5,judge
+</div>
         </div>
         <p style="font-size: 0.6em; color: #666;">각 계층은 독립 동작. 이전 계층 통과 시에만 다음 계층으로 전달.</p>
       </section>
@@ -216,7 +257,7 @@
           </div>
           <div style="font-size: 0.7em; text-align: left;">
             <strong>실제 검증 예시</strong>
-<pre style="font-size: 0.85em;"><code data-trim>
+<pre><code class="language-bash" data-trim>
 $ python3 validator.py l3 \
   "이 시스템은 단순한 도구이며 \
    지능적인 플랫폼입니다"
@@ -273,7 +314,7 @@ $ python3 validator.py l3 \
       <!-- Slide 14: Pipeline code example -->
       <section>
         <h2>파이프라인 코드 예시</h2>
-        <pre style="font-size: 0.55em;"><code data-trim data-line="4-6,12-17">
+        <pre><code class="language-bash" data-trim data-line="4-6,12-17">
 # 1. JOB에 content: true 플래그 → workflow-gate.sh가 자동 감지
 #    content-gate.sh를 호출하여 .content-state 생성
 
@@ -420,6 +461,28 @@ def run_all_validators(text, domain):
       center: true,
       transition: 'slide',
       fragments: true
+    });
+
+    // Mermaid 초기화
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      fontFamily: 'Helvetica Neue, Arial, sans-serif',
+      themeVariables: {
+        primaryColor: '#f0faf0',
+        primaryTextColor: '#333',
+        primaryBorderColor: '#1a7f37',
+        lineColor: '#666',
+        fontSize: '14px'
+      },
+      textHeightFixed: true
+    });
+
+    // Highlight.js 초기화
+    Reveal.addEventListener('ready', () => {
+      document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightElement(block);
+      });
     });
   </script>
 </body>

@@ -6,10 +6,25 @@
   <title>Spec-Driven Dev: 명세서가 코드보다 먼저</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <!-- Mermaid.js -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <!-- Highlight.js -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11/styles/github.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/highlight.min.js"></script>
   <style>
+    :root {
+      --scale-h1: 2.2em;
+      --scale-h2: 1.5em;
+      --scale-body: 0.85em;
+      --scale-small: 0.75em;
+      --scale-caption: 0.65em;
+      --scale-tiny: 0.55em;
+      --code-font: 0.76em;
+      --diagram-font: 0.82em;
+    }
     .reveal { font-family: 'Helvetica Neue', sans-serif; }
-    .reveal h1 { font-size: 2.2em; }
-    .reveal h2 { font-size: 1.5em; color: #1a7f37; }
+    .reveal h1 { font-size: var(--scale-h1); }
+    .reveal h2 { font-size: var(--scale-h2); color: #1a7f37; }
     .reveal section img { background: none; border: none; box-shadow: none; }
     .reveal .slides section.section-divider { text-align: left; }
     .reveal .slides section.section-divider h2 { font-size: 2em; border-bottom: 3px solid #1a7f37; padding-bottom: 0.2em; }
@@ -20,7 +35,13 @@
     .two-col > div { flex: 1; }
     .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
     .stat-label { font-size: 0.5em; color: #666; }
-    .mermaid-wrap { text-align: center; font-size: 0.65em; }
+    .mermaid-wrap { text-align: center; font-size: var(--diagram-font); }
+    .mermaid-wrap .mermaid { max-width: 100%; margin: 0 auto; }
+    pre code { font-size: var(--code-font); }
+    .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
+    .tree li { margin: 0.2em 0; }
+    .tree .folder::before { content: "📁 "; }
+    .tree .file::before { content: "📄 "; }
   </style>
 </head>
 <body>
@@ -132,21 +153,12 @@
       <section>
         <h2>의존성 그래프 예시</h2>
         <div class="mermaid-wrap">
-<pre style="font-size: 0.8em; text-align: left;">
-   ┌──────────────────────────────┐
-   │  SPEC-D01 (문서 구조, SSOT)   │
-   └──────────────┬───────────────┘
-          extends │       extends │
-      ┌───────────┘              └───────────┐
-      ▼                                      ▼
-┌───────────────────┐               ┌───────────────────┐
-│ SPEC-D04          │               │ SPEC-D05          │
-│ 문서 작성 요구사항  │               │ 슬라이드 디자인     │
-└─────────┬─────────┘               └───────────────────┘
-          │ raises
-          │ 분량 1,500자 → 3,500자
-          └──────────────▶ (승인 시 부모 D01 업데이트)
-</pre>
+<div class="mermaid">
+flowchart TD
+    A[SPEC-D01\n문서 구조 SSOT] -->|extends| B[SPEC-D04\n문서 작성 요구사항]
+    A -->|extends| C[SPEC-D05\n슬라이드 디자인]
+    B -->|raises\n분량 1500자 → 3500자| D[(승인 시 부모 D01 업데이트)]
+</div>
         </div>
         <p style="font-size: 0.65em; color: #666;">부모는 구조/권위, 자식은 부분집합 상세화 — 계층 구조 유지</p>
       </section>
@@ -175,30 +187,18 @@
       <section>
         <h2>검증 흐름도</h2>
         <div class="mermaid-wrap">
-<pre style="font-size: 0.72em; text-align: left;">
-[Spec 작성]
-     │
-     ▼
-┌─────────────────────────┐
-│ ① 수치 비교              │
-│   상승? ─▶ raises (delta)│
-│   모순? ─▶ conflicts    │
-│   일치? ─┐              │
-└──────────┼──────────────┘
-           ▼
-┌─────────────────────────┐
-│ ② 구조 재정의            │
-│   재정의? ─▶ conflicts  │
-│   없음? ──┐             │
-└───────────┼─────────────┘
-            ▼
-┌─────────────────────────┐
-│ ③ 도메인 중복            │
-│   중복? ──▶ conflicts   │
-│   없음? ─▶ 등록 완료 ✅  │
-└─────────────────────────┘
-   conflicts ▶ proposed 상태로 유지 (승인 차단)
-</pre>
+<div class="mermaid">
+flowchart TD
+    A[Spec 작성] --> B{① 수치 비교}
+    B -->|상승| C[raises delta]
+    B -->|모순| D[conflicts]
+    B -->|일치| E{② 구조 재정의}
+    E -->|재정의| D
+    E -->|없음| F{③ 도메인 중복}
+    F -->|중복| D
+    F -->|없음| G[등록 완료 ✅]
+    D --> H[(proposed 상태 유지\n승인 차단)]
+</div>
         </div>
       </section>
 
@@ -215,23 +215,17 @@
         <h2>Batch Modification: 병렬 수정</h2>
         <p style="font-size: 0.8em;">리뷰에서 여러 Spec 수정 사항이 발견되면 서브에이전트에게 병렬로 위임</p>
         <div class="mermaid-wrap">
-<pre style="font-size: 0.8em; text-align: left;">
-[Review 문서]
-     │ 수정 사항 추출 (Checklist)
-     ▼
-[Extractor] ── 병렬 위임 (3+ 파일) ──┐
-     │                               ▼
-     │                    ┌────────────────────┐
-     │                    │ Sub 1 ─patch─▶ A   │
-     │                    │ Sub 2 ─patch─▶ B   │
-     │                    │ Sub 3 ─patch─▶ C   │
-     │                    └────────────────────┘
-     │                               │ _warning (예상된 동시 수정)
-     ▼                               ▼
-[Verification] ◀──────────── grep / read_file
-     │
-     └─▶ PASS / FAIL ──▶ 완료 보고
-</pre>
+<div class="mermaid">
+flowchart TD
+    A[Review 문서] -->|수정 사항 추출\nChecklist| B[Extractor]
+    B -->|병렬 위임| C[Sub 1\npatch → A]
+    B -->|병렬 위임| D[Sub 2\npatch → B]
+    B -->|병렬 위임| E[Sub 3\npatch → C]
+    C -->|warning\n예상된 동시 수정| F[Verification]
+    D -->|grep / read_file| F
+    E -->|grep / read_file| F
+    F -->|PASS / FAIL| G[완료 보고]
+</div>
         </div>
         <p style="font-size: 0.65em; color: #666;">핵심 규칙: 전체 컨텍스트 공유 · <code>patch</code> 도구 사용(전체 재작성 금지) · 수정 후 반드시 검증</p>
       </section>
@@ -250,7 +244,7 @@
             <tr><td>6</td><td>검증 실행</td><td><code>json.tool</code></td></tr>
           </table>
           <div>
-            <pre style="font-size: 0.5em; text-align: left;"><code data-trim># 1. 수치 한계값 grep (Conflict Detection)
+            <pre style="font-size: 0.5em; text-align: left;"><code class="language-bash" data-trim># 1. 수치 한계값 grep (Conflict Detection)
 grep -n "분량\|자\|chars" specs/active/SPEC-NEW.md
 
 # 2. 의존성 그래프 검증
@@ -329,6 +323,21 @@ grep -rn "old_value" specs/active/SPEC-*.md</code></pre>
 
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
   <script>
+    // Mermaid 초기화
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      fontFamily: 'Helvetica Neue, Arial, sans-serif',
+      themeVariables: {
+        primaryColor: '#f0faf0',
+        primaryTextColor: '#333',
+        primaryBorderColor: '#1a7f37',
+        lineColor: '#666',
+        fontSize: '14px'
+      },
+      textHeightFixed: true
+    });
+
     Reveal.initialize({
       hash: true,
       slideNumber: 'c/t',
@@ -337,6 +346,13 @@ grep -rn "old_value" specs/active/SPEC-*.md</code></pre>
       center: true,
       transition: 'slide',
       fragments: true
+    });
+
+    // Highlight.js 초기화
+    Reveal.addEventListener('ready', () => {
+      document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightElement(block);
+      });
     });
   </script>
 </body>
