@@ -37,75 +37,6 @@
     .two-col > div { flex: 1; }
     .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
     .stat-label { font-size: 0.5em; color: #666; }
-    /* Mermaid 컨테이너 - 컴팩트 기본 */
-    .mermaid-wrap {
-      text-align: center;
-      font-size: 0.65em;
-      max-width: 80%;
-      margin: 0.5em auto;
-      cursor: zoom-in;
-      position: relative;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      padding: 0.4em;
-      background: #fafafa;
-      transition: all 0.2s ease;
-    }
-    .mermaid-wrap .mermaid { max-width: 100%; margin: 0 auto; }
-    .mermaid-wrap svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
-    /* 확대 아이콘 */
-    .mermaid-wrap::after {
-      content: '\2636';
-      position: absolute;
-      top: 0.3em;
-      right: 0.3em;
-      font-size: 1.4em;
-      opacity: 0.4;
-      transition: opacity 0.2s;
-      pointer-events: none;
-    }
-    .mermaid-wrap:hover::after { opacity: 0.8; }
-    /* 스크롤바 최소화 */
-    .mermaid-wrap::-webkit-scrollbar { width: 4px; height: 4px; }
-    .mermaid-wrap::-webkit-scrollbar-track { background: transparent; }
-    .mermaid-wrap::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 2px; }
-    /* 전체화면 오버레이 */
-    .mermaid-wrap.fullscreen {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      z-index: 10000;
-      background: rgba(0,0,0,0.92);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      max-width: none;
-      font-size: 1em;
-      cursor: zoom-out;
-      border: none;
-      border-radius: 0;
-      padding: 2em;
-      margin: 0;
-      transform: none;
-    }
-    .mermaid-wrap.fullscreen .mermaid { max-width: 90vw; max-height: 85vh; }
-    .mermaid-wrap.fullscreen svg { max-width: 90vw; max-height: 85vh; }
-    .mermaid-wrap.fullscreen::after {
-      content: '\2715';
-      position: fixed;
-      top: 1.5em; right: 2em;
-      font-size: 2em;
-      color: #fff;
-      opacity: 0.8;
-      cursor: pointer;
-    }
-    .mermaid-wrap.fullscreen:hover::after { opacity: 1; }
-    .mermaid-wrap.fullscreen .diagram-caption {
-      color: #fff;
-      font-size: 0.9em;
-      margin-top: 1em;
-      text-align: center;
-    }
     pre code { font-size: var(--code-font); }
     .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
     .tree li { margin: 0.2em 0; }
@@ -206,38 +137,92 @@
       <section>
         <h2>3-Layer 아키텍처 전체 구조</h2>
         <div class="mermaid-wrap">
-<div class="mermaid">
-flowchart TD
-    subgraph L1["Layer 1: 메타 스킬 (Entry Point)"]
-        direction TB
-        L1a["요청 수신 → 의도 분석 → 도메인 분류 (D1~D5)"]
-    end
+<svg viewBox="0 0 1080 420" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+  </defs>
+    <g transform="translate(40, 20)">
+      <rect rx="8" width="1000" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Layer 1: 메타 스킬 (Entry Point)</text>
 
-    subgraph L2["Layer 2: 공유 엔진 (Processing)"]
-        direction TB
-        L2a["7개 엔진이 구조·톤·비유·템플릿 결정"]
-    end
+    <g transform="translate(100, 50)">
+      <rect rx="6" width="260" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="130" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">content-system SKILL.md</text>
+    </g>
+    <g transform="translate(420, 50)">
+      <rect rx="6" width="220" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="110" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">도메인 라우팅</text>
+    </g>
+    <g transform="translate(680, 50)">
+      <rect rx="6" width="260" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="130" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">검증 게이트 호출</text>
+    </g>
+    </g>
+    <line x1="500" y1="90" x2="500" y2="120" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(40, 120)">
+      <rect rx="8" width="1000" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Layer 2: 도메인 (D1~D5)</text>
 
-    subgraph L3["Layer 3: 도메인 오버레이 (Rendering)"]
-        direction TB
-        L3a["스타일 매트릭스 + 도메인 템플릿 → 최종 렌더"]
-    end
+    <g transform="translate(80, 150)">
+      <rect rx="6" width="160" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="80" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">D1 블로그</text>
+    </g>
+    <g transform="translate(270, 150)">
+      <rect rx="6" width="160" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="80" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">D2 위키</text>
+    </g>
+    <g transform="translate(460, 150)">
+      <rect rx="6" width="160" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="80" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">D3 설계서</text>
+    </g>
+    <g transform="translate(650, 150)">
+      <rect rx="6" width="160" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="80" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">D4 소설</text>
+    </g>
+    <g transform="translate(840, 150)">
+      <rect rx="6" width="160" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="80" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">D5 코드</text>
+    </g>
+    </g>
+    <line x1="500" y1="190" x2="500" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(40, 220)">
+      <rect rx="8" width="1000" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Layer 3: 엔진 (Anti-Slop)</text>
 
-    subgraph VG["검증 게이트"]
-        direction TB
-        VGa["L1 → L2 → L3 → L4 → (L5)"]
-    end
+    <g transform="translate(80, 250)">
+      <rect rx="6" width="180" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="90" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">tone-adapter</text>
+    </g>
+    <g transform="translate(300, 250)">
+      <rect rx="6" width="180" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="90" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">persona-generator</text>
+    </g>
+    <g transform="translate(520, 250)">
+      <rect rx="6" width="220" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="110" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">validator (5계층)</text>
+    </g>
+    <g transform="translate(780, 250)">
+      <rect rx="6" width="180" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="90" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">emotion-merger</text>
+    </g>
+    </g>
+    <line x1="500" y1="290" x2="500" y2="320" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(40, 320)">
+      <rect rx="8" width="1000" height="90" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Layer 4: 템플릿</text>
 
-    L1 --> L2
-    L2 --> L3
-    L3 --> VG
-
-    classDef default fill:#f0faf0,stroke:#1a7f37,stroke-width:2px,color:#333
-    classDef layer fill:#f0faf0,stroke:#1a7f37,stroke-width:2px,color:#333
-    class L1,L2,L3,layer
-    classDef gate fill:#e8f5e8,stroke:#1a7f37,stroke-width:2px,color:#333
-    class VG,gate
-</div>
+    <g transform="translate(200, 350)">
+      <rect rx="6" width="260" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="130" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">블로그 템플릿</text>
+    </g>
+    <g transform="translate(520, 350)">
+      <rect rx="6" width="260" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="130" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">위키 템플릿</text>
+    </g>
+    </g>
+</svg>
         </div>
         <p style="font-size: 0.6em; color: #666;">데이터는 단일 방향으로 흐름. 각 레이어는 명확한 책임 분리.</p>
       </section>
@@ -280,32 +265,70 @@ flowchart TD
       <section>
         <h2>5계층 검증 게이트 (L1~L5)</h2>
         <div class="mermaid-wrap">
-<div class="mermaid">
-flowchart TD
-    IN["입력 텍스트"] --> GATES
+<svg viewBox="0 0 1080 500" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+  </defs>
+    <g transform="translate(440, 20)">
+      <rect rx="6" width="200" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">입력 텍스트</text>
+    </g>
+    <line x1="540" y1="60" x2="540" y2="100" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(40, 100)">
+      <rect rx="8" width="1000" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">GATES: 검증 게이트</text>
 
-    subgraph GATES["검증 게이트 (L1~L4)"]
-        direction TB
-        L1["L1 Schema · JSON/YAML 구문 — 구조 검증"]
-        L2["L2 Error · 에러 토큰 차단 — 표층 오류"]
-        L3["L3 Voice · Anti-Slop 핵심 ★ — 어조"]
-        L4["L4 Domain · D1~D5 적합성 — 도메인 전문성"]
-        L1 --> L2 --> L3 --> L4
-    end
-
-    GATES --> COND{"Blog?"}
-    COND -->|"Yes"| L5["L5 Judge Model (LLM 거시 심사)"]
-    COND -->|"No"| OUT["최종 산출물"]
-    L5 --> OUT
-
-    classDef default fill:#f0faf0,stroke:#1a7f37,stroke-width:2px,color:#333
-    classDef gate fill:#e8f5e8,stroke:#1a7f37,stroke-width:2px,color:#333
-    class L1,L2,L3,L4,gate
-    classDef core fill:#fff3cd,stroke:#f0ad4e,stroke-width:2px,color:#333
-    class L3,core
-    classDef judge fill:#f8d7da,stroke:#c0392b,stroke-width:2px,color:#333
-    class L5,judge
-</div>
+    <g transform="translate(80, 130)">
+      <rect rx="6" width="160" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="80" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">① Slope 체크</text>
+    </g>
+    <g transform="translate(270, 130)">
+      <rect rx="6" width="160" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="80" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">② 페르소나</text>
+    </g>
+    <g transform="translate(460, 130)">
+      <rect rx="6" width="160" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="80" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">③ 템포/톤</text>
+    </g>
+    <g transform="translate(650, 130)">
+      <rect rx="6" width="160" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="80" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">④ 분량 확인</text>
+    </g>
+    <g transform="translate(840, 130)">
+      <rect rx="6" width="160" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="80" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">⑤ 문장 패턴</text>
+    </g>
+    </g>
+    <line x1="200" y1="170" x2="200" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="200" y="187" text-anchor="middle" font-size="11" fill="#666">FAIL</text>
+    <line x1="880" y1="170" x2="880" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <text x="880" y="187" text-anchor="middle" font-size="11" fill="#666">PASS</text>
+    <g transform="translate(20, 230)">
+      <rect rx="6" width="360" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="180" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">리젝트 → 재작성 → 재검증</text>
+    </g>
+    <g transform="translate(700, 230)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">다음 게이트 통과</text>
+    </g>
+    <line x1="800" y1="280" x2="800" y2="320" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(700, 320)">
+      <rect rx="6" width="200" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">tone-adapter 실행</text>
+    </g>
+    <line x1="800" y1="360" x2="800" y2="390" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(700, 390)">
+      <rect rx="6" width="200" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">persona-generator</text>
+    </g>
+    <line x1="800" y1="430" x2="800" y2="460" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(700, 460)">
+      <rect rx="6" width="200" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">최종 출력</text>
+    </g>
+</svg>
         </div>
         <p style="font-size: 0.6em; color: #666;">각 계층은 독립 동작. 이전 계층 통과 시에만 다음 계층으로 전달.</p>
       </section>

@@ -6,15 +6,14 @@
   <title>Hermes Knowledge System: 구조화된 AI 지식 관리</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
-  <!-- Mermaid.js -->
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
-  <!-- svg-pan-zoom -->
-  <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+  <!-- Google Fonts (한글) -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
   <!-- Highlight.js -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11/styles/github.min.css">
   <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/highlight.min.js"></script>
   <style>
     .reveal { font-family: 'Helvetica Neue', sans-serif; }
+    /* SVG 다이어그램 - 16:9 준수 */
     :root {
       --scale-h1: 2.2em;
       --scale-h2: 1.5em;
@@ -24,6 +23,77 @@
       --scale-tiny: 0.55em;
       --code-font: 0.76em;
       --diagram-font: 0.82em;
+      --slide-width: 1280px;
+      --slide-height: 720px;
+      --slide-padding: 60px;
+      --content-width: 1160px;
+      --content-height: 600px;
+      --diagram-margin: 40px;
+      --diagram-max-width: 1080px;
+      --diagram-max-height: 520px;
+    }
+    
+    /* SVG 다이어그램 */
+    .diagram-svg {
+      max-width: var(--diagram-max-width);
+      max-height: var(--diagram-max-height);
+      width: 100%;
+      height: auto;
+      display: block;
+      margin: var(--diagram-margin) auto;
+      background: #fafafa;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    
+    .diagram-svg text {
+      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+    }
+    
+    /* 테이블 마진 개선 */
+    .reveal .slides table {
+      max-width: var(--content-width) !important;
+      margin: 30px auto !important;
+      table-layout: fixed !important;
+      word-break: keep-all !important;
+    }
+    
+    /* 문단 마진 개선 */
+    .reveal .slides p,
+    .reveal .slides .problem-card,
+    .reveal .slides .solution-card {
+      max-width: var(--content-width) !important;
+      margin: 20px auto !important;
+      padding: 0 40px !important;
+    }
+    
+    /* 두 컬럼 레이아웃 */
+    .two-col {
+      display: flex;
+      gap: 40px !important;
+      max-width: var(--content-width) !important;
+      margin: 0 auto !important;
+      padding: 20px 40px !important;
+    }
+    .two-col > div { flex: 1; }
+    
+    /* 제목 마진 */
+    .reveal .slides h2 {
+      margin-bottom: 20px !important;
+    }
+    
+    /* 다이어그램 캡션 */
+    .diagram-caption {
+      font-size: var(--scale-caption, 0.65em);
+      color: #666;
+      text-align: center;
+      margin-top: 10px;
+      max-width: var(--content-width);
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 40px;
     }
     .reveal h1 { font-size: var(--scale-h1); }
     .reveal h2 { font-size: var(--scale-h2); color: #1a7f37; }
@@ -37,75 +107,6 @@
     .two-col > div { flex: 1; }
     .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
     .stat-label { font-size: 0.5em; color: #666; }
-    /* Mermaid 컨테이너 - 컴팩트 기본 */
-    .mermaid-wrap {
-      text-align: center;
-      font-size: 0.65em;
-      max-width: 80%;
-      margin: 0.5em auto;
-      cursor: zoom-in;
-      position: relative;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      padding: 0.4em;
-      background: #fafafa;
-      transition: all 0.2s ease;
-    }
-    .mermaid-wrap .mermaid { max-width: 100%; margin: 0 auto; }
-    .mermaid-wrap svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
-    /* 확대 아이콘 */
-    .mermaid-wrap::after {
-      content: '\2636';
-      position: absolute;
-      top: 0.3em;
-      right: 0.3em;
-      font-size: 1.4em;
-      opacity: 0.4;
-      transition: opacity 0.2s;
-      pointer-events: none;
-    }
-    .mermaid-wrap:hover::after { opacity: 0.8; }
-    /* 스크롤바 최소화 */
-    .mermaid-wrap::-webkit-scrollbar { width: 4px; height: 4px; }
-    .mermaid-wrap::-webkit-scrollbar-track { background: transparent; }
-    .mermaid-wrap::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 2px; }
-    /* 전체화면 오버레이 */
-    .mermaid-wrap.fullscreen {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      z-index: 10000;
-      background: rgba(0,0,0,0.92);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      max-width: none;
-      font-size: 1em;
-      cursor: zoom-out;
-      border: none;
-      border-radius: 0;
-      padding: 2em;
-      margin: 0;
-      transform: none;
-    }
-    .mermaid-wrap.fullscreen .mermaid { max-width: 90vw; max-height: 85vh; }
-    .mermaid-wrap.fullscreen svg { max-width: 90vw; max-height: 85vh; }
-    .mermaid-wrap.fullscreen::after {
-      content: '\2715';
-      position: fixed;
-      top: 1.5em; right: 2em;
-      font-size: 2em;
-      color: #fff;
-      opacity: 0.8;
-      cursor: pointer;
-    }
-    .mermaid-wrap.fullscreen:hover::after { opacity: 1; }
-    .mermaid-wrap.fullscreen .diagram-caption {
-      color: #fff;
-      font-size: 0.9em;
-      margin-top: 1em;
-      text-align: center;
-    }
     pre code { font-size: var(--code-font); }
     .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
     .tree li { margin: 0.2em 0; }
@@ -211,41 +212,81 @@
       <section>
         <h2>Karpathy 3계층 구조</h2>
         <div class="mermaid-wrap">
-<div class="mermaid">
-flowchart TB
-    subgraph Raw["Raw Sources (원본)"]
-        direction LR
-        R1["sessions/*.jsonl"]
-        R2["jobs/*/result.md"]
-        R3["news/"]
-        R4["references/"]
-    end
-    RawNote["↑ 수정 금지 · append-only · 원본 경로 직접 참조"]
-    Raw --> RawNote
+<svg viewBox="0 0 1080 400" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+  </defs>
+    <g transform="translate(40, 20)">
+      <rect rx="8" width="1000" height="100" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Raw Sources (원본)</text>
 
-    Raw -->|daily-knowledge-process.sh| Wiki
+    <g transform="translate(80, 50)">
+      <rect rx="6" width="180" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="90" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">OC Memory</text>
+      <text x="90" y="45" text-anchor="middle" font-size="10" fill="#666">에이전트 메모리</text>
+    </g>
+    <g transform="translate(300, 50)">
+      <rect rx="6" width="180" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="90" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Sessions</text>
+      <text x="90" y="45" text-anchor="middle" font-size="10" fill="#666">세션 기록</text>
+    </g>
+    <g transform="translate(520, 50)">
+      <rect rx="6" width="180" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="90" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">JOB</text>
+      <text x="90" y="45" text-anchor="middle" font-size="10" fill="#666">작업 산출물</text>
+    </g>
+    <g transform="translate(740, 50)">
+      <rect rx="6" width="180" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="90" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">뉴스/리퍼런스</text>
+      <text x="90" y="45" text-anchor="middle" font-size="10" fill="#666">외부 자료</text>
+    </g>
+    </g>
+    <line x1="500" y1="120" x2="500" y2="150" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(40, 150)">
+      <rect rx="8" width="1000" height="100" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Processing (가공)</text>
 
-    subgraph Wiki["Wiki (가공된 지식)"]
-        direction LR
-        W1["pages/ (단일 폴더)"]
-        W2["index.md (카탈로그)"]
-        W3["domain-*.md"]
-        W4["tag-*.md"]
-    end
-    WikiNote["↑ LLM이 '의견'을 버리고 '검증 가능한 사실'만 추출"]
-    Wiki --> WikiNote
+    <g transform="translate(80, 180)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">filter() 원본 검증</text>
+    </g>
+    <g transform="translate(320, 180)">
+      <rect rx="6" width="220" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="110" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">score() T1/T2/T3</text>
+    </g>
+    <g transform="translate(580, 180)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">link() 교차 링크</text>
+    </g>
+    <g transform="translate(800, 180)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">index() 검색</text>
+    </g>
+    </g>
+    <line x1="500" y1="250" x2="500" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(40, 280)">
+      <rect rx="8" width="1000" height="100" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Output (출력)</text>
 
-    Wiki -->|build-scores.sh| Schema
-
-    subgraph Schema["Schema (점수화 & 검색)"]
-        direction LR
-        S1["scores.json (T1/T2/T3)"]
-        S2["FTS5 인덱스"]
-        S3["graph_edges.json"]
-    end
-    SchemaNote["↑ 에이전트가 index.md → T1 먼저 읽음"]
-    Schema --> SchemaNote
-</div>
+    <g transform="translate(80, 310)">
+      <rect rx="6" width="220" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="110" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">wiki/index.md</text>
+      <text x="110" y="45" text-anchor="middle" font-size="10" fill="#666">진입점</text>
+    </g>
+    <g transform="translate(340, 310)">
+      <rect rx="6" width="220" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="110" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">wiki/articles/</text>
+      <text x="110" y="45" text-anchor="middle" font-size="10" fill="#666">T1/T2/T3</text>
+    </g>
+    <g transform="translate(600, 310)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">references/</text>
+      <text x="100" y="45" text-anchor="middle" font-size="10" fill="#666">외부 참조</text>
+    </g>
+    </g>
+</svg>
         </div>
         <p style="font-size: 0.6em; color: #666;">하나는 읽기, 하나는 쓰기 — 원본은 만지지 않고 Wiki만 가공</p>
       </section>
@@ -402,50 +443,62 @@ flowchart TB
       <section>
         <h2>inbox.md → 필링 → T1 승격</h2>
         <div class="mermaid-wrap">
-<div class="mermaid">
-flowchart LR
-    subgraph Collect["① 원본 수집"]
-        direction TB
-        N["knowledge/news/"]
-        R["knowledge/references/"]
-        S["sessions/*.jsonl"]
-        J["jobs/*/result.md"]
-    end
+<svg viewBox="0 0 1080 380" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+  </defs>
+    <g transform="translate(40, 20)">
+      <rect rx="8" width="480" height="340" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="240" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">① 원본 수집</text>
 
-    subgraph Process["② 파이프라인 가공"]
-        direction TB
-        DP["daily-knowledge-process.sh"]
-        DPN["LLM이 '사실'만 추출<br>도메인 + 태그 매핑<br>중복 제거"]
-        DP --> DPN
-    end
+    <g transform="translate(80, 60)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Memory 파일 읽기</text>
+    </g>
+    <g transform="translate(80, 140)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">세션 기록 파싱</text>
+    </g>
+    <g transform="translate(80, 220)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">JOB 산출물 수집</text>
+    </g>
+    <g transform="translate(80, 300)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">외부 뉴스/참조</text>
+    </g>
+    </g>
+    <line x1="280" y1="90" x2="460" y2="120" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="280" y1="170" x2="460" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="280" y1="250" x2="460" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="280" y1="330" x2="460" y2="340" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <g transform="translate(540, 20)">
+      <rect rx="8" width="500" height="340" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="250" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">② 가공 → ③ 출력</text>
 
-    subgraph Score["③ 점수 계산"]
-        direction TB
-        BS["build-scores.sh"]
-        BSF["score = pw×0.5 + rs×0.3 + us×0.2"]
-        BS --> BSF
-    end
-
-    subgraph WikiDB["④ Wiki DB (에이전트가 직접 읽음)"]
-        direction TB
-        IDX["index.md (에이전트 진입점)"]
-        subgraph Tiers["Knowledge Tiers"]
-            T1["T1: system/models.md (score 0.74)"]
-            T2a["T1: dev/spec-process.md (score 0.82)"]
-            T3a["T2: custom/novel-settings.md (score 0.51)"]
-            T4a["T3: news/gemma4-announce.md (score 0.28)"]
-        end
-        IDX --> T1
-        IDX --> T2a
-        IDX --> T3a
-        IDX --> T4a
-        FTS["FTS5 인덱스 (에이전트가 정밀 검색으로 탐색)"]
-    end
-
-    Collect --> Process
-    Process --> Score
-    Score --> WikiDB
-</div>
+    <g transform="translate(580, 60)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">원본 검증</text>
+    </g>
+    <g transform="translate(580, 140)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">T1/T2/T3 점수</text>
+    </g>
+    <g transform="translate(580, 220)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">교차 링크 생성</text>
+    </g>
+    <g transform="translate(580, 300)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">위키로 저장</text>
+    </g>
+    </g>
+    <line x1="580" y1="110" x2="680" y2="140" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="680" y1="170" x2="680" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="680" y1="250" x2="680" y2="300" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+</svg>
         </div>
       </section>
 

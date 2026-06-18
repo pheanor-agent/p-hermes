@@ -6,15 +6,14 @@
   <title>Hermes Agent: 레이어드 아키텍처</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
-  <!-- Mermaid.js -->
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
-  <!-- svg-pan-zoom -->
-  <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+  <!-- Google Fonts (한글) -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
   <!-- Highlight.js -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11/styles/github.min.css">
   <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/highlight.min.js"></script>
   <style>
     .reveal { font-family: 'Helvetica Neue', sans-serif; }
+    /* SVG 다이어그램 - 16:9 준수 */
     :root {
       --scale-h1: 2.2em;
       --scale-h2: 1.5em;
@@ -24,6 +23,77 @@
       --scale-tiny: 0.55em;
       --code-font: 0.76em;
       --diagram-font: 0.82em;
+      --slide-width: 1280px;
+      --slide-height: 720px;
+      --slide-padding: 60px;
+      --content-width: 1160px;
+      --content-height: 600px;
+      --diagram-margin: 40px;
+      --diagram-max-width: 1080px;
+      --diagram-max-height: 520px;
+    }
+    
+    /* SVG 다이어그램 */
+    .diagram-svg {
+      max-width: var(--diagram-max-width);
+      max-height: var(--diagram-max-height);
+      width: 100%;
+      height: auto;
+      display: block;
+      margin: var(--diagram-margin) auto;
+      background: #fafafa;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    
+    .diagram-svg text {
+      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+    }
+    
+    /* 테이블 마진 개선 */
+    .reveal .slides table {
+      max-width: var(--content-width) !important;
+      margin: 30px auto !important;
+      table-layout: fixed !important;
+      word-break: keep-all !important;
+    }
+    
+    /* 문단 마진 개선 */
+    .reveal .slides p,
+    .reveal .slides .problem-card,
+    .reveal .slides .solution-card {
+      max-width: var(--content-width) !important;
+      margin: 20px auto !important;
+      padding: 0 40px !important;
+    }
+    
+    /* 두 컬럼 레이아웃 */
+    .two-col {
+      display: flex;
+      gap: 40px !important;
+      max-width: var(--content-width) !important;
+      margin: 0 auto !important;
+      padding: 20px 40px !important;
+    }
+    .two-col > div { flex: 1; }
+    
+    /* 제목 마진 */
+    .reveal .slides h2 {
+      margin-bottom: 20px !important;
+    }
+    
+    /* 다이어그램 캡션 */
+    .diagram-caption {
+      font-size: var(--scale-caption, 0.65em);
+      color: #666;
+      text-align: center;
+      margin-top: 10px;
+      max-width: var(--content-width);
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 40px;
     }
     .reveal h1 { font-size: var(--scale-h1); }
     .reveal h2 { font-size: var(--scale-h2); color: #1a7f37; }
@@ -37,75 +107,6 @@
     .two-col > div { flex: 1; }
     .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
     .stat-label { font-size: 0.5em; color: #666; }
-    /* Mermaid 컨테이너 - 컴팩트 기본 */
-    .mermaid-wrap {
-      text-align: center;
-      font-size: 0.65em;
-      max-width: 80%;
-      margin: 0.5em auto;
-      cursor: zoom-in;
-      position: relative;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      padding: 0.4em;
-      background: #fafafa;
-      transition: all 0.2s ease;
-    }
-    .mermaid-wrap .mermaid { max-width: 100%; margin: 0 auto; }
-    .mermaid-wrap svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
-    /* 확대 아이콘 */
-    .mermaid-wrap::after {
-      content: '\2636';
-      position: absolute;
-      top: 0.3em;
-      right: 0.3em;
-      font-size: 1.4em;
-      opacity: 0.4;
-      transition: opacity 0.2s;
-      pointer-events: none;
-    }
-    .mermaid-wrap:hover::after { opacity: 0.8; }
-    /* 스크롤바 최소화 */
-    .mermaid-wrap::-webkit-scrollbar { width: 4px; height: 4px; }
-    .mermaid-wrap::-webkit-scrollbar-track { background: transparent; }
-    .mermaid-wrap::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 2px; }
-    /* 전체화면 오버레이 */
-    .mermaid-wrap.fullscreen {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      z-index: 10000;
-      background: rgba(0,0,0,0.92);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      max-width: none;
-      font-size: 1em;
-      cursor: zoom-out;
-      border: none;
-      border-radius: 0;
-      padding: 2em;
-      margin: 0;
-      transform: none;
-    }
-    .mermaid-wrap.fullscreen .mermaid { max-width: 90vw; max-height: 85vh; }
-    .mermaid-wrap.fullscreen svg { max-width: 90vw; max-height: 85vh; }
-    .mermaid-wrap.fullscreen::after {
-      content: '\2715';
-      position: fixed;
-      top: 1.5em; right: 2em;
-      font-size: 2em;
-      color: #fff;
-      opacity: 0.8;
-      cursor: pointer;
-    }
-    .mermaid-wrap.fullscreen:hover::after { opacity: 1; }
-    .mermaid-wrap.fullscreen .diagram-caption {
-      color: #fff;
-      font-size: 0.9em;
-      margin-top: 1em;
-      text-align: center;
-    }
     pre code { font-size: var(--code-font); }
     .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
     .tree li { margin: 0.2em 0; }
@@ -171,48 +172,217 @@
           <div>
             <strong>Flat (모놀리식)</strong>
             <div class="mermaid-wrap">
-<div class="mermaid">
-flowchart LR
-    subgraph flat["$HERMES_ROOT (Flat)"]
-        direction TB
-        A["script_a.sh"]
-        B["script_b.sh"]
-        C["script_c.sh"]
-        D["config.txt"]
-        E["data.txt"]
-        Cpl["직접 호출<br>(결합도 ↑)"]
-        A --> Cpl
-        B --> Cpl
-        C --> Cpl
-        D -.-> Cpl
-    end
-</div>
+<svg viewBox="0 0 1080 400" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+  </defs>
+    <g transform="translate(40, 20)">
+      <rect rx="8" width="480" height="360" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="240" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">$HERMES_ROOT (Flat)</text>
+
+    <g transform="translate(80, 60)">
+      <rect rx="6" width="140" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">script_a.sh</text>
+    </g>
+    <g transform="translate(80, 120)">
+      <rect rx="6" width="140" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">script_b.sh</text>
+    </g>
+    <g transform="translate(80, 180)">
+      <rect rx="6" width="140" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">script_c.sh</text>
+    </g>
+    <g transform="translate(80, 240)">
+      <rect rx="6" width="140" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">config.txt</text>
+    </g>
+    <g transform="translate(80, 300)">
+      <rect rx="6" width="140" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">data.txt</text>
+    </g>
+    <g transform="translate(280, 180)">
+      <rect rx="6" width="160" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="80" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">직접 호출</text>
+      <text x="80" y="45" text-anchor="middle" font-size="10" fill="#666">(결합도 ↑)</text>
+    </g>
+    <line x1="220" y1="80" x2="280" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="220" y1="140" x2="280" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="220" y1="200" x2="280" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    </g>
+    <g transform="translate(560, 20)">
+      <rect rx="8" width="480" height="100" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="240" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">$HERMES_ROOT (Layered)</text>
+
+    <g transform="translate(580, 50)">
+      <rect rx="8" width="120" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="60" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Core</text>
+
+    <g transform="translate(590, 70)">
+      <rect rx="6" width="100" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="50" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">skills/</text>
+    </g>
+    </g>
+    <g transform="translate(580, 140)">
+      <rect rx="8" width="160" height="120" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="80" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Runtime</text>
+
+    <g transform="translate(590, 160)">
+      <rect rx="6" width="140" height="30" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="20" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">knowledge/</text>
+    </g>
+    <g transform="translate(590, 200)">
+      <rect rx="6" width="140" height="30" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="20" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">cron/</text>
+    </g>
+    <g transform="translate(590, 240)">
+      <rect rx="6" width="140" height="30" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="20" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">sessions/</text>
+    </g>
+    </g>
+    <g transform="translate(580, 280)">
+      <rect rx="8" width="140" height="60" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="70" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Interfaces</text>
+
+    <g transform="translate(590, 295)">
+      <rect rx="6" width="120" height="30" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="60" y="20" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">interfaces/</text>
+    </g>
+    </g>
+    <g transform="translate(780, 20)">
+      <rect rx="8" width="240" height="360" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="120" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Global</text>
+
+    <g transform="translate(790, 60)">
+      <rect rx="6" width="100" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="50" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">event.sh</text>
+    </g>
+    <g transform="translate(790, 120)">
+      <rect rx="6" width="100" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="50" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">system-common/</text>
+    </g>
+    </g>
+</svg>
             </div>
           </div>
           <div>
             <strong>Layered (레이어드)</strong>
             <div class="mermaid-wrap">
-<div class="mermaid">
-flowchart TB
-    subgraph root["$HERMES_ROOT (Layered)"]
-        direction TB
-        subgraph Core["Core"]
-            S["skills/ *.md"]
-        end
-        subgraph Rnt["Runtime"]
-            K["knowledge/"]
-            Cr["cron/"]
-            Se["sessions/"]
-        end
-        subgraph Int["Interfaces"]
-            I["interfaces/"]
-        end
-        subgraph Glb["Global"]
-            Ev["event.sh"]
-            Sc["system-common/"]
-        end
-    end
-</div>
+<svg viewBox="0 0 1080 520" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+  </defs>
+    <g transform="translate(40, 20)">
+      <rect rx="8" width="1000" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Tier 5 Release</text>
+
+    <g transform="translate(80, 40)">
+      <rect rx="6" width="120" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="60" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">docs/</text>
+    </g>
+    <g transform="translate(240, 40)">
+      <rect rx="6" width="120" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="60" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">slides/</text>
+    </g>
+    <g transform="translate(400, 40)">
+      <rect rx="6" width="120" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="60" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">llms.txt</text>
+    </g>
+    </g>
+    <line x1="500" y1="90" x2="500" y2="120" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(40, 120)">
+      <rect rx="8" width="1000" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Tier 1 Core</text>
+
+    <g transform="translate(80, 140)">
+      <rect rx="6" width="140" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">config.yaml</text>
+    </g>
+    <g transform="translate(260, 140)">
+      <rect rx="6" width="120" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="60" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">skills/</text>
+    </g>
+    <g transform="translate(420, 140)">
+      <rect rx="6" width="140" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">workflow.sh</text>
+    </g>
+    <g transform="translate(600, 140)">
+      <rect rx="6" width="120" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="60" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">AGENTS.md</text>
+    </g>
+    </g>
+    <line x1="500" y1="190" x2="500" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(40, 220)">
+      <rect rx="8" width="1000" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Tier 2 Runtime</text>
+
+    <g transform="translate(80, 240)">
+      <rect rx="6" width="140" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">knowledge/</text>
+    </g>
+    <g transform="translate(260, 240)">
+      <rect rx="6" width="100" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="50" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">cron/</text>
+    </g>
+    <g transform="translate(400, 240)">
+      <rect rx="6" width="140" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">sessions/</text>
+    </g>
+    <g transform="translate(580, 240)">
+      <rect rx="6" width="160" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="80" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">.workflow-state</text>
+    </g>
+    </g>
+    <line x1="500" y1="290" x2="500" y2="320" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(40, 320)">
+      <rect rx="8" width="1000" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Tier 3 Interfaces</text>
+
+    <g transform="translate(200, 340)">
+      <rect rx="6" width="140" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Discord</text>
+    </g>
+    <g transform="translate(420, 340)">
+      <rect rx="6" width="140" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Telegram</text>
+    </g>
+    <g transform="translate(640, 340)">
+      <rect rx="6" width="120" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="60" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">CLI</text>
+    </g>
+    </g>
+    <line x1="500" y1="390" x2="500" y2="420" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(40, 420)">
+      <rect rx="8" width="1000" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Tier 4 Infra</text>
+
+    <g transform="translate(200, 440)">
+      <rect rx="6" width="120" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="60" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">GitHub</text>
+    </g>
+    <g transform="translate(420, 440)">
+      <rect rx="6" width="120" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="60" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Docker</text>
+    </g>
+    <g transform="translate(640, 440)">
+      <rect rx="6" width="100" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="50" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">WSL</text>
+    </g>
+    </g>
+    <g transform="translate(490, 240)">
+      <rect rx="6" width="100" height="40" fill="#e8f5e9" stroke="#1a7f37" stroke-width="2"/>
+      <text x="50" y="25" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">event.sh</text>
+      <text x="50" y="40" text-anchor="middle" font-size="10" fill="#666">이벤트 버스</text>
+    </g>
+    <g transform="translate(490, 300)">
+      <rect rx="6" width="100" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="50" y="25" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">system-common/</text>
+      <text x="50" y="40" text-anchor="middle" font-size="10" fill="#666">공통 유틸</text>
+    </g>
+</svg>
             </div>
           </div>
         </div>
@@ -232,67 +402,113 @@ flowchart TB
         <h2>5계층 + 2글로벌 = 관계망</h2>
         <p style="font-size: 0.75em;">단방향 직선이 아닌, 실제 의존 관계 기반 망 구조</p>
         <div class="mermaid-wrap">
-<div class="mermaid">
-flowchart TB
-    subgraph T5["Tier 5 Release"]
-        direction LR
-        T5A["docs/"]
-        T5B["slides/"]
-        T5C["llms.txt"]
-    end
+<svg viewBox="0 0 1080 520" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+  </defs>
+    <g transform="translate(20, 20)">
+      <rect rx="8" width="500" height="80" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="250" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Tier 5 Release</text>
 
-    subgraph T1["Tier 1 Core"]
-        direction LR
-        T1A["config.yaml"]
-        T1B["skills/"]
-        T1C["workflow.sh"]
-        T1D["AGENTS.md"]
-    end
+    <g transform="translate(40, 40)">
+      <rect rx="6" width="120" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="60" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">docs/</text>
+    </g>
+    <g transform="translate(200, 40)">
+      <rect rx="6" width="120" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="60" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">slides/</text>
+    </g>
+    <g transform="translate(360, 40)">
+      <rect rx="6" width="120" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="60" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">llms.txt</text>
+    </g>
+    </g>
+    <line x1="250" y1="100" x2="250" y2="130" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(20, 130)">
+      <rect rx="8" width="500" height="80" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="250" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Tier 1 Core</text>
 
-    subgraph T2["Tier 2 Runtime"]
-        direction LR
-        T2A["knowledge/"]
-        T2B["cron/"]
-        T2C["sessions/"]
-        T2D[".workflow-state"]
-    end
+    <g transform="translate(40, 150)">
+      <rect rx="6" width="140" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">config.yaml</text>
+    </g>
+    <g transform="translate(220, 150)">
+      <rect rx="6" width="120" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="60" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">skills/</text>
+    </g>
+    <g transform="translate(380, 150)">
+      <rect rx="6" width="100" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="50" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">AGENTS.md</text>
+    </g>
+    </g>
+    <line x1="250" y1="210" x2="250" y2="240" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(20, 240)">
+      <rect rx="8" width="500" height="80" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="250" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Tier 2 Runtime</text>
 
-    subgraph T3["Tier 3 Interfaces"]
-        direction LR
-        T3A["Discord"]
-        T3B["Telegram"]
-        T3C["CLI"]
-    end
+    <g transform="translate(40, 260)">
+      <rect rx="6" width="140" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">knowledge/</text>
+    </g>
+    <g transform="translate(220, 260)">
+      <rect rx="6" width="100" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="50" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">cron/</text>
+    </g>
+    <g transform="translate(380, 260)">
+      <rect rx="6" width="100" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="50" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">sessions/</text>
+    </g>
+    </g>
+    <g transform="translate(560, 20)">
+      <rect rx="8" width="500" height="80" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="250" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Tier 3 Interfaces</text>
 
-    subgraph T4["Tier 4 Infra"]
-        direction LR
-        T4A["GitHub"]
-        T4B["Docker"]
-        T4C["WSL"]
-    end
+    <g transform="translate(580, 40)">
+      <rect rx="6" width="140" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Discord</text>
+    </g>
+    <g transform="translate(760, 40)">
+      <rect rx="6" width="140" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Telegram</text>
+    </g>
+    <g transform="translate(920, 40)">
+      <rect rx="6" width="100" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="50" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">CLI</text>
+    </g>
+    </g>
+    <line x1="800" y1="100" x2="800" y2="130" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(560, 130)">
+      <rect rx="8" width="500" height="80" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="250" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Tier 4 Infra</text>
 
-    subgraph EvBus["event.sh (Pub/Sub)"]
-        Ev["이벤트 버스"]
-    end
-
-    subgraph SysCom["system-common/ (utils)"]
-        Ut["공통 유틸리티"]
-    end
-
-    T5 ==>|"출력"| T1
-    T1 <-->|"↔"| T2
-    T2 <-->|"↔"| T3
-    T3 ==>|"의존"| T4
-    EvBus -->|"전역"| T1
-    EvBus --> T2
-    EvBus --> T3
-    EvBus --> T4
-    EvBus --> T5
-    SysCom -->|"전역"| T1
-    SysCom --> T2
-    SysCom --> T3
-    SysCom --> T4
-</div>
+    <g transform="translate(580, 150)">
+      <rect rx="6" width="120" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="60" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">GitHub</text>
+    </g>
+    <g transform="translate(760, 150)">
+      <rect rx="6" width="120" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="60" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Docker</text>
+    </g>
+    <g transform="translate(920, 150)">
+      <rect rx="6" width="100" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="50" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">WSL</text>
+    </g>
+    </g>
+    <g transform="translate(200, 340)">
+      <rect rx="6" width="260" height="50" fill="#e8f5e9" stroke="#1a7f37" stroke-width="2"/>
+      <text x="130" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">event.sh</text>
+      <text x="130" y="45" text-anchor="middle" font-size="10" fill="#666">이벤트 버스 (Pub/Sub)</text>
+    </g>
+    <g transform="translate(560, 340)">
+      <rect rx="6" width="260" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="130" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">system-common/</text>
+      <text x="130" y="45" text-anchor="middle" font-size="10" fill="#666">공통 유틸리티</text>
+    </g>
+    <line x1="250" y1="320" x2="330" y2="340" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="800" y1="320" x2="660" y2="340" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+</svg>
         </div>
       </section>
 
@@ -353,13 +569,31 @@ flowchart TB
         <h2>event.sh — 시스템의 신경망</h2>
         <p style="font-size: 0.75em;">모든 모듈은 event.sh를 통해 통신. 직접 호출 X, 이벤트 발행/구독 O</p>
         <div class="mermaid-wrap">
-<div class="mermaid">
-flowchart LR
-    A["모듈 A<br>(발행자)"] -->|publish| Ev["event.sh<br>(이벤트 버스)"]
-    Ev -->|"|"| B["모듈 B<br>(구독자)"]
-    Ev -->|"|"| C["모듈 C<br>(구독자)"]
-    Ev -->|"|"| H["JSONL<br>(히스토리)"]
-</div>
+<svg viewBox="0 0 700 200" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+  </defs>
+    <g transform="translate(20, 80)">
+      <rect rx="6" width="160" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="80" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">모듈 A</text>
+      <text x="80" y="45" text-anchor="middle" font-size="10" fill="#666">(발행자)</text>
+    </g>
+    <line x1="180" y1="105" x2="280" y2="105" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <text x="230" y="97" text-anchor="middle" font-size="11" fill="#666">publish</text>
+    <g transform="translate(280, 75)">
+      <rect rx="6" width="140" height="50" fill="#e8f5e9" stroke="#1a7f37" stroke-width="2"/>
+      <text x="70" y="30" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">event.sh</text>
+      <text x="70" y="45" text-anchor="middle" font-size="10" fill="#666">(이벤트 버스)</text>
+    </g>
+    <line x1="420" y1="105" x2="500" y2="105" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(500, 80)">
+      <rect rx="6" width="160" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="80" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">모듈 B</text>
+      <text x="80" y="45" text-anchor="middle" font-size="10" fill="#666">(구독자)</text>
+    </g>
+</svg>
         </div>
         <div class="two-col" style="margin-top: 0.5em;">
           <div style="font-size: 0.7em; text-align: left;">
@@ -420,61 +654,125 @@ flowchart LR
       <section>
         <h2>$HERMES_ROOT 디렉토리 맵</h2>
         <div class="mermaid-wrap">
-<div class="mermaid">
-flowchart TB
-    subgraph root["$HERMES_ROOT"]
-        direction TB
+<svg viewBox="0 0 1080 520" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+  </defs>
+    <g transform="translate(40, 20)">
+      <rect rx="8" width="1000" height="50" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">$HERMES_ROOT</text>
 
-        subgraph T1["Tier 1 Core"]
-            direction LR
-            T1C1["config.yaml"]
-            T1C2["AGENTS.md"]
-            subgraph T1Sk["skills/"]
-                T1A["skill-a/"]
-                T1B["skill-b/"]
-            end
-            T1W["workflow.sh"]
-        end
+    <g transform="translate(60, 80)">
+      <rect rx="8" width="220" height="120" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="110" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">core/</text>
 
-        subgraph T2["Tier 2 Runtime"]
-            subgraph T2K["knowledge/"]
-                T2Ki["input/"]
-                T2Ko["output/"]
-            end
-            subgraph T2C["cron/"]
-                T2Cr["registry.yaml"]
-                T2Cj["jobs/"]
-            end
-            subgraph T2S["sessions/"]
-                T2Sa["active/"]
-            end
-            T2Ws[".workflow-state"]
-        end
+    <g transform="translate(70, 100)">
+      <rect rx="6" width="180" height="30" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="90" y="20" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">config.yaml</text>
+    </g>
+    <g transform="translate(70, 140)">
+      <rect rx="6" width="180" height="30" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="90" y="20" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">skills/</text>
+    </g>
+    <g transform="translate(70, 180)">
+      <rect rx="6" width="180" height="30" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="90" y="20" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">AGENTS.md</text>
+    </g>
+    </g>
+    <g transform="translate(300, 80)">
+      <rect rx="8" width="220" height="160" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="110" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">runtime/</text>
 
-        subgraph T3["Tier 3 Interfaces"]
-            T3D["discord/"]
-            T3T["telegram/"]
-        end
+    <g transform="translate(310, 100)">
+      <rect rx="6" width="180" height="30" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="90" y="20" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">knowledge/</text>
+    </g>
+    <g transform="translate(310, 140)">
+      <rect rx="6" width="180" height="30" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="90" y="20" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">cron/</text>
+    </g>
+    <g transform="translate(310, 180)">
+      <rect rx="6" width="180" height="30" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="90" y="20" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">sessions/</text>
+    </g>
+    <g transform="translate(310, 220)">
+      <rect rx="6" width="180" height="30" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="90" y="20" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">memory/</text>
+    </g>
+    </g>
+    <g transform="translate(540, 80)">
+      <rect rx="8" width="200" height="120" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="100" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">interfaces/</text>
 
-        subgraph T4["Tier 4 Infra"]
-            T4Do["docker/"]
-            T4Ga["github-actions/"]
-        end
+    <g transform="translate(550, 100)">
+      <rect rx="6" width="160" height="30" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="80" y="20" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Discord/</text>
+    </g>
+    <g transform="translate(550, 140)">
+      <rect rx="6" width="160" height="30" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="80" y="20" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Telegram/</text>
+    </g>
+    <g transform="translate(550, 180)">
+      <rect rx="6" width="160" height="30" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="80" y="20" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">CLI/</text>
+    </g>
+    </g>
+    <g transform="translate(760, 80)">
+      <rect rx="8" width="260" height="120" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="130" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">infra/</text>
 
-        subgraph T5["Tier 5 Release"]
-            subgraph T5Docs["docs/"]
-                T5W["wiki/"]
-                T5Sl["slides/"]
-            end
-            T5L["llms.txt"]
-        end
-    end
+    <g transform="translate(770, 100)">
+      <rect rx="6" width="140" height="30" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="20" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">GitHub/</text>
+    </g>
+    <g transform="translate(770, 140)">
+      <rect rx="6" width="140" height="30" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="20" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Docker/</text>
+    </g>
+    <g transform="translate(770, 180)">
+      <rect rx="6" width="140" height="30" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="20" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">WSL/</text>
+    </g>
+    </g>
+    <g transform="translate(40, 260)">
+      <rect rx="8" width="500" height="100" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="250" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Global (공통)</text>
 
-    subgraph Gbl["전역"]
-        EvG["event.sh"]
-        SCG["system-common/"]
-    end
-</div>
+    <g transform="translate(60, 280)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">event.sh</text>
+      <text x="100" y="45" text-anchor="middle" font-size="10" fill="#666">이벤트 버스</text>
+    </g>
+    <g transform="translate(300, 280)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">system-common/</text>
+      <text x="100" y="45" text-anchor="middle" font-size="10" fill="#666">공통 유틸</text>
+    </g>
+    </g>
+    <g transform="translate(560, 260)">
+      <rect rx="8" width="480" height="100" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
+      <text x="240" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Release (출력)</text>
+
+    <g transform="translate(580, 280)">
+      <rect rx="6" width="140" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">docs/</text>
+    </g>
+    <g transform="translate(760, 280)">
+      <rect rx="6" width="140" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">slides/</text>
+    </g>
+    <g transform="translate(900, 280)">
+      <rect rx="6" width="120" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="60" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">llms.txt</text>
+    </g>
+    </g>
+    <line x1="280" y1="180" x2="300" y2="160" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="520" y1="140" x2="540" y2="140" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="500" y1="220" x2="500" y2="260" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="760" y1="140" x2="760" y2="260" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+</svg>
         </div>
       </section>
 

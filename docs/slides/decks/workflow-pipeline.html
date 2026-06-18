@@ -6,10 +6,8 @@
   <title>Workflow Pipeline: 9단계 상태머신 — 에이전트의 안전장치</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
-  <!-- Mermaid.js -->
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
-  <!-- svg-pan-zoom -->
-  <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+  <!-- Google Fonts (한글) -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
   <!-- Highlight.js -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11/styles/github.min.css">
   <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/highlight.min.js"></script>
@@ -37,75 +35,6 @@
     .two-col > div { flex: 1; }
     .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
     .stat-label { font-size: 0.5em; color: #666; }
-    /* Mermaid 컨테이너 - 컴팩트 기본 */
-    .mermaid-wrap {
-      text-align: center;
-      font-size: 0.65em;
-      max-width: 80%;
-      margin: 0.5em auto;
-      cursor: zoom-in;
-      position: relative;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      padding: 0.4em;
-      background: #fafafa;
-      transition: all 0.2s ease;
-    }
-    .mermaid-wrap .mermaid { max-width: 100%; margin: 0 auto; }
-    .mermaid-wrap svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
-    /* 확대 아이콘 */
-    .mermaid-wrap::after {
-      content: '\2636';
-      position: absolute;
-      top: 0.3em;
-      right: 0.3em;
-      font-size: 1.4em;
-      opacity: 0.4;
-      transition: opacity 0.2s;
-      pointer-events: none;
-    }
-    .mermaid-wrap:hover::after { opacity: 0.8; }
-    /* 스크롤바 최소화 */
-    .mermaid-wrap::-webkit-scrollbar { width: 4px; height: 4px; }
-    .mermaid-wrap::-webkit-scrollbar-track { background: transparent; }
-    .mermaid-wrap::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 2px; }
-    /* 전체화면 오버레이 */
-    .mermaid-wrap.fullscreen {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      z-index: 10000;
-      background: rgba(0,0,0,0.92);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      max-width: none;
-      font-size: 1em;
-      cursor: zoom-out;
-      border: none;
-      border-radius: 0;
-      padding: 2em;
-      margin: 0;
-      transform: none;
-    }
-    .mermaid-wrap.fullscreen .mermaid { max-width: 90vw; max-height: 85vh; }
-    .mermaid-wrap.fullscreen svg { max-width: 90vw; max-height: 85vh; }
-    .mermaid-wrap.fullscreen::after {
-      content: '\2715';
-      position: fixed;
-      top: 1.5em; right: 2em;
-      font-size: 2em;
-      color: #fff;
-      opacity: 0.8;
-      cursor: pointer;
-    }
-    .mermaid-wrap.fullscreen:hover::after { opacity: 1; }
-    .mermaid-wrap.fullscreen .diagram-caption {
-      color: #fff;
-      font-size: 0.9em;
-      margin-top: 1em;
-      text-align: center;
-    }
     pre code { font-size: var(--code-font); }
     .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
     .tree li { margin: 0.2em 0; }
@@ -195,20 +124,57 @@
       <section>
         <h2>9단계 상태 전이도</h2>
         <div class="mermaid-wrap">
-<div class="mermaid">
-flowchart LR
-    A["1.Request"] --> B["2.Investigation"]
-    B --> C["3.Design"]
-    C --> D["4.Review"]
-    D --> E["5.Approval 인간 최종 승인권"]
-    E -->|승인| F["6.Execution"]
-    E -->|거부/수정요청| C
-    F --> G["7.Test"]
-    G -->|테스트 실패| F
-    G --> H["8.Exec Review"]
-    F --> H
-    H --> I["9.Done"]
-</div>
+<svg viewBox="0 0 1080 160" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+  </defs>
+    <g transform="translate(20, 30)">
+      <rect rx="6" width="100" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="50" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">1.Request</text>
+    </g>
+    <g transform="translate(140, 30)">
+      <rect rx="6" width="130" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="65" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">2.Investigation</text>
+    </g>
+    <g transform="translate(290, 30)">
+      <rect rx="6" width="100" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="50" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">3.Design</text>
+    </g>
+    <g transform="translate(410, 30)">
+      <rect rx="6" width="90" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="45" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">4.Review</text>
+    </g>
+    <g transform="translate(520, 30)">
+      <rect rx="6" width="100" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="50" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">5.Approval</text>
+    </g>
+    <g transform="translate(640, 30)">
+      <rect rx="6" width="100" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="50" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">6.Execution</text>
+    </g>
+    <g transform="translate(760, 30)">
+      <rect rx="6" width="80" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="40" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">7.Test</text>
+    </g>
+    <g transform="translate(860, 30)">
+      <rect rx="6" width="120" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="60" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">8.Exec.Review</text>
+    </g>
+    <g transform="translate(1000, 30)">
+      <rect rx="6" width="70" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="35" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">9.Done</text>
+    </g>
+    <line x1="120" y1="80" x2="140" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="270" y1="80" x2="290" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="390" y1="80" x2="410" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="500" y1="80" x2="520" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="620" y1="80" x2="640" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="740" y1="80" x2="760" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="840" y1="80" x2="860" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="980" y1="80" x2="1000" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+</svg>
         </div>
         <p style="font-size: 0.65em; color: #666;">점선(피드백 루프): 설계 결함·테스트 실패 시 이전 단계로 되돌아감</p>
       </section>

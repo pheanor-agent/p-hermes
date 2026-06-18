@@ -6,10 +6,8 @@
   <title>Spec-Driven Dev: 명세서가 코드보다 먼저</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
-  <!-- Mermaid.js -->
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
-  <!-- svg-pan-zoom -->
-  <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+  <!-- Google Fonts (한글) -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
   <!-- Highlight.js -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11/styles/github.min.css">
   <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/highlight.min.js"></script>
@@ -37,75 +35,6 @@
     .two-col > div { flex: 1; }
     .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
     .stat-label { font-size: 0.5em; color: #666; }
-    /* Mermaid 컨테이너 - 컴팩트 기본 */
-    .mermaid-wrap {
-      text-align: center;
-      font-size: 0.65em;
-      max-width: 80%;
-      margin: 0.5em auto;
-      cursor: zoom-in;
-      position: relative;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      padding: 0.4em;
-      background: #fafafa;
-      transition: all 0.2s ease;
-    }
-    .mermaid-wrap .mermaid { max-width: 100%; margin: 0 auto; }
-    .mermaid-wrap svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
-    /* 확대 아이콘 */
-    .mermaid-wrap::after {
-      content: '\2636';
-      position: absolute;
-      top: 0.3em;
-      right: 0.3em;
-      font-size: 1.4em;
-      opacity: 0.4;
-      transition: opacity 0.2s;
-      pointer-events: none;
-    }
-    .mermaid-wrap:hover::after { opacity: 0.8; }
-    /* 스크롤바 최소화 */
-    .mermaid-wrap::-webkit-scrollbar { width: 4px; height: 4px; }
-    .mermaid-wrap::-webkit-scrollbar-track { background: transparent; }
-    .mermaid-wrap::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 2px; }
-    /* 전체화면 오버레이 */
-    .mermaid-wrap.fullscreen {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      z-index: 10000;
-      background: rgba(0,0,0,0.92);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      max-width: none;
-      font-size: 1em;
-      cursor: zoom-out;
-      border: none;
-      border-radius: 0;
-      padding: 2em;
-      margin: 0;
-      transform: none;
-    }
-    .mermaid-wrap.fullscreen .mermaid { max-width: 90vw; max-height: 85vh; }
-    .mermaid-wrap.fullscreen svg { max-width: 90vw; max-height: 85vh; }
-    .mermaid-wrap.fullscreen::after {
-      content: '\2715';
-      position: fixed;
-      top: 1.5em; right: 2em;
-      font-size: 2em;
-      color: #fff;
-      opacity: 0.8;
-      cursor: pointer;
-    }
-    .mermaid-wrap.fullscreen:hover::after { opacity: 1; }
-    .mermaid-wrap.fullscreen .diagram-caption {
-      color: #fff;
-      font-size: 0.9em;
-      margin-top: 1em;
-      text-align: center;
-    }
     pre code { font-size: var(--code-font); }
     .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
     .tree li { margin: 0.2em 0; }
@@ -222,12 +151,50 @@
       <section>
         <h2>의존성 그래프 예시</h2>
         <div class="mermaid-wrap">
-<div class="mermaid">
-flowchart TD
-    A[SPEC-D01 문서 구조 SSOT] -->|extends| B[SPEC-D04 문서 작성 요구사항]
-    A -->|extends| C[SPEC-D05 슬라이드 디자인]
-    B -->|raises 분량 1500자 → 3500자| D[(승인 시 부모 D01 업데이트)]
-</div>
+<svg viewBox="0 0 800 300" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+  </defs>
+    <g transform="translate(300, 20)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">SPEC-D01 문서 구조 SSOT</text>
+    </g>
+    <line x1="400" y1="70" x2="150" y2="100" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <text x="275" y="77" text-anchor="middle" font-size="11" fill="#666">extends</text>
+    <line x1="400" y1="70" x2="400" y2="100" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <text x="400" y="77" text-anchor="middle" font-size="11" fill="#666">extends</text>
+    <line x1="400" y1="70" x2="650" y2="100" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <text x="525" y="77" text-anchor="middle" font-size="11" fill="#666">extends</text>
+    <g transform="translate(20, 120)">
+      <rect rx="6" width="260" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="130" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">SPEC-D04 문서 작성 요구사항</text>
+    </g>
+    <g transform="translate(270, 120)">
+      <rect rx="6" width="260" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="130" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">SPEC-D05 슬라이드 디자인</text>
+    </g>
+    <g transform="translate(560, 120)">
+      <rect rx="6" width="220" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="110" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">SPEC-D06 블로그</text>
+    </g>
+    <line x1="150" y1="170" x2="150" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="400" y1="170" x2="400" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="670" y1="170" x2="670" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <g transform="translate(20, 230)">
+      <rect rx="6" width="260" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="130" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">docs/ 구조 자동 검증</text>
+    </g>
+    <g transform="translate(270, 230)">
+      <rect rx="6" width="260" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="130" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">슬라이드 스타일 강제</text>
+    </g>
+    <g transform="translate(560, 230)">
+      <rect rx="6" width="220" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="110" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">블로그 템플릿 생성</text>
+    </g>
+</svg>
         </div>
         <p style="font-size: 0.65em; color: #666;">부모는 구조/권위, 자식은 부분집합 상세화 — 계층 구조 유지</p>
       </section>
@@ -256,18 +223,55 @@ flowchart TD
       <section>
         <h2>검증 흐름도</h2>
         <div class="mermaid-wrap">
-<div class="mermaid">
-flowchart TD
-    A[Spec 작성] --> B{① 수치 비교}
-    B -->|상승| C[raises delta]
-    B -->|모순| D[conflicts]
-    B -->|일치| E{② 구조 재정의}
-    E -->|재정의| D
-    E -->|없음| F{③ 도메인 중복}
-    F -->|중복| D
-    F -->|없음| G[등록 완료 ✅]
-    D --> H[(proposed 상태 유지 승인 차단)]
-</div>
+<svg viewBox="0 0 1080 380" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+  </defs>
+    <g transform="translate(440, 20)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Spec 작성</text>
+    </g>
+    <line x1="540" y1="70" x2="540" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(440, 110)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">① 수치 비교</text>
+    </g>
+    <line x1="540" y1="160" x2="200" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <text x="370" y="172" text-anchor="middle" font-size="11" fill="#666">상승</text>
+    <line x1="540" y1="160" x2="540" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="540" y="172" text-anchor="middle" font-size="11" fill="#666">하락</text>
+    <line x1="540" y1="160" x2="880" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="710" y="172" text-anchor="middle" font-size="11" fill="#666">범위</text>
+    <g transform="translate(40, 220)">
+      <rect rx="6" width="320" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="160" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">raises delta</text>
+    </g>
+    <g transform="translate(340, 220)">
+      <rect rx="6" width="400" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="200" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">lowering threshold</text>
+    </g>
+    <g transform="translate(720, 220)">
+      <rect rx="6" width="300" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="150" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">within range: min-max</text>
+    </g>
+    <line x1="200" y1="270" x2="200" y2="310" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="540" y1="270" x2="540" y2="310" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="870" y1="270" x2="870" y2="310" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <g transform="translate(40, 320)">
+      <rect rx="6" width="320" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="160" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">수치 기반 검증</text>
+    </g>
+    <g transform="translate(340, 320)">
+      <rect rx="6" width="400" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="200" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">임계값 조정</text>
+    </g>
+    <g transform="translate(720, 320)">
+      <rect rx="6" width="300" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="150" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">허용 범위 설정</text>
+    </g>
+</svg>
         </div>
       </section>
 
@@ -284,17 +288,44 @@ flowchart TD
         <h2>Batch Modification: 병렬 수정</h2>
         <p style="font-size: 0.8em;">리뷰에서 여러 Spec 수정 사항이 발견되면 서브에이전트에게 병렬로 위임</p>
         <div class="mermaid-wrap">
-<div class="mermaid">
-flowchart TD
-    A[Review 문서] -->|수정 사항 추출 Checklist| B[Extractor]
-    B -->|병렬 위임| C[Sub 1 patch → A]
-    B -->|병렬 위임| D[Sub 2 patch → B]
-    B -->|병렬 위임| E[Sub 3 patch → C]
-    C -->|warning 예상된 동시 수정| F[Verification]
-    D -->|grep / read_file| F
-    E -->|grep / read_file| F
-    F -->|PASS / FAIL| G[완료 보고]
-</div>
+<svg viewBox="0 0 1080 300" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+  </defs>
+    <g transform="translate(440, 20)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Review 문서</text>
+    </g>
+    <line x1="540" y1="70" x2="540" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <text x="540" y="82" text-anchor="middle" font-size="11" fill="#666">수정 사항 추출 Checklist</text>
+    <g transform="translate(440, 110)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Extractor</text>
+    </g>
+    <line x1="540" y1="160" x2="200" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="370" y="172" text-anchor="middle" font-size="11" fill="#666">병렬 위임</text>
+    <line x1="540" y1="160" x2="540" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="540" y="172" text-anchor="middle" font-size="11" fill="#666">병렬 위임</text>
+    <line x1="540" y1="160" x2="880" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="710" y="172" text-anchor="middle" font-size="11" fill="#666">병렬 위임</text>
+    <g transform="translate(20, 220)">
+      <rect rx="6" width="360" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="180" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Sub 1 patch → A</text>
+    </g>
+    <g transform="translate(360, 220)">
+      <rect rx="6" width="360" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="180" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Sub 2 patch → B</text>
+    </g>
+    <g transform="translate(720, 220)">
+      <rect rx="6" width="360" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="180" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Sub 3 patch → C</text>
+    </g>
+    <line x1="200" y1="270" x2="400" y2="290" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="540" y1="270" x2="540" y2="290" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="880" y1="270" x2="640" y2="290" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+</svg>
         </div>
         <p style="font-size: 0.65em; color: #666;">핵심 규칙: 전체 컨텍스트 공유 · <code>patch</code> 도구 사용(전체 재작성 금지) · 수정 후 반드시 검증</p>
       </section>

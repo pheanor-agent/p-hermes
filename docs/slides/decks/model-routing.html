@@ -6,10 +6,8 @@
   <title>모델 라우팅 — 작업별 최적 모델 자동 선택</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
-  <!-- Mermaid.js -->
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
-  <!-- svg-pan-zoom -->
-  <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
+  <!-- Google Fonts (한글) -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
   <!-- Highlight.js -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11/styles/github.min.css">
   <script src="https://cdn.jsdelivr.net/npm/highlight.js@11/highlight.min.js"></script>
@@ -37,75 +35,6 @@
     .two-col > div { flex: 1; }
     .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
     .stat-label { font-size: 0.5em; color: #666; }
-    /* Mermaid 컨테이너 - 컴팩트 기본 */
-    .mermaid-wrap {
-      text-align: center;
-      font-size: 0.65em;
-      max-width: 80%;
-      margin: 0.5em auto;
-      cursor: zoom-in;
-      position: relative;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      padding: 0.4em;
-      background: #fafafa;
-      transition: all 0.2s ease;
-    }
-    .mermaid-wrap .mermaid { max-width: 100%; margin: 0 auto; }
-    .mermaid-wrap svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
-    /* 확대 아이콘 */
-    .mermaid-wrap::after {
-      content: '\2636';
-      position: absolute;
-      top: 0.3em;
-      right: 0.3em;
-      font-size: 1.4em;
-      opacity: 0.4;
-      transition: opacity 0.2s;
-      pointer-events: none;
-    }
-    .mermaid-wrap:hover::after { opacity: 0.8; }
-    /* 스크롤바 최소화 */
-    .mermaid-wrap::-webkit-scrollbar { width: 4px; height: 4px; }
-    .mermaid-wrap::-webkit-scrollbar-track { background: transparent; }
-    .mermaid-wrap::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 2px; }
-    /* 전체화면 오버레이 */
-    .mermaid-wrap.fullscreen {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      z-index: 10000;
-      background: rgba(0,0,0,0.92);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      max-width: none;
-      font-size: 1em;
-      cursor: zoom-out;
-      border: none;
-      border-radius: 0;
-      padding: 2em;
-      margin: 0;
-      transform: none;
-    }
-    .mermaid-wrap.fullscreen .mermaid { max-width: 90vw; max-height: 85vh; }
-    .mermaid-wrap.fullscreen svg { max-width: 90vw; max-height: 85vh; }
-    .mermaid-wrap.fullscreen::after {
-      content: '\2715';
-      position: fixed;
-      top: 1.5em; right: 2em;
-      font-size: 2em;
-      color: #fff;
-      opacity: 0.8;
-      cursor: pointer;
-    }
-    .mermaid-wrap.fullscreen:hover::after { opacity: 1; }
-    .mermaid-wrap.fullscreen .diagram-caption {
-      color: #fff;
-      font-size: 0.9em;
-      margin-top: 1em;
-      text-align: center;
-    }
     pre code { font-size: var(--code-font); }
     .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
     .tree li { margin: 0.2em 0; }
@@ -214,21 +143,47 @@
           라우팅 엔진이 실행 시점에 작업 단계별로 최적 모델을 선택합니다.
         </p>
         <div class="mermaid-wrap" style="margin-top: 1em;">
-<div class="mermaid">
-flowchart LR
-    A[요청] --> B[라우팅 엔진]
-    B --> C[작업 단계 분석]
-    C --> D[추론형]
-    C --> E[수행형]
-    C --> F[범용형]
-    D --> G[설계/논리]
-    E --> H[코드 구현]
-    F --> I[조사/검색]
-    G --> J[결과]
-    H --> J
-    I --> J
-    J --> K[검증형 교차 검증]
-</div>
+<svg viewBox="0 0 1080 160" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+  </defs>
+    <g transform="translate(20, 30)">
+      <rect rx="6" width="100" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="50" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">요청</text>
+    </g>
+    <g transform="translate(140, 30)">
+      <rect rx="6" width="140" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">라우팅 엔진</text>
+    </g>
+    <g transform="translate(300, 30)">
+      <rect rx="6" width="150" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="75" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">작업 단계 분석</text>
+    </g>
+    <g transform="translate(470, 30)">
+      <rect rx="6" width="170" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="85" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">model-roles 매핑</text>
+    </g>
+    <g transform="translate(660, 30)">
+      <rect rx="6" width="130" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="65" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">모델 선택</text>
+    </g>
+    <g transform="translate(810, 30)">
+      <rect rx="6" width="120" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="60" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">실행</text>
+    </g>
+    <g transform="translate(950, 30)">
+      <rect rx="6" width="100" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="50" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">결과</text>
+    </g>
+    <line x1="120" y1="80" x2="140" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="280" y1="80" x2="300" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="450" y1="80" x2="470" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="640" y1="80" x2="660" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="790" y1="80" x2="810" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="930" y1="80" x2="950" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+</svg>
         </div>
       </section>
 
@@ -311,13 +266,43 @@ flowchart LR
           </div>
         </div>
         <div class="mermaid-wrap" style="margin-top: 0.8em;">
-<div class="mermaid">
-flowchart LR
-    A[추론형 Design] -->|설계| B[검증형 Review]
-    B --> C{결함?}
-    C -->|발견| D[결함 발견 수정 요청]
-    C -->|없음| E[승인 다음 단계]
-</div>
+<svg viewBox="0 0 800 220" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+  </defs>
+    <g transform="translate(20, 70)">
+      <rect rx="6" width="180" height="80" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="90" y="45" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">추론형 Design</text>
+      <text x="90" y="60" text-anchor="middle" font-size="10" fill="#666">glm-5.2</text>
+    </g>
+    <g transform="translate(240, 70)">
+      <rect rx="6" width="180" height="80" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="90" y="45" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">검증형 Review</text>
+      <text x="90" y="60" text-anchor="middle" font-size="10" fill="#666">Gemma-4</text>
+    </g>
+    <g transform="translate(460, 70)">
+      <rect rx="6" width="100" height="80" fill="#fff5f5" stroke="#c0392b" stroke-width="1.5"/>
+      <text x="50" y="45" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">결함?</text>
+    </g>
+    <g transform="translate(600, 20)">
+      <rect rx="6" width="160" height="60" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="80" y="35" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">수정 사항</text>
+      <text x="80" y="50" text-anchor="middle" font-size="10" fill="#666">checklist 추출</text>
+    </g>
+    <g transform="translate(600, 160)">
+      <rect rx="6" width="140" height="60" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="70" y="35" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">검증 통과</text>
+    </g>
+    <line x1="200" y1="110" x2="240" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <text x="220" y="102" text-anchor="middle" font-size="11" fill="#666">설계</text>
+    <line x1="320" y1="110" x2="460" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="560" y1="90" x2="600" y2="90" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="580" y="82" text-anchor="middle" font-size="11" fill="#666">YES</text>
+    <line x1="560" y1="130" x2="600" y2="190" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <text x="580" y="152" text-anchor="middle" font-size="11" fill="#666">NO</text>
+</svg>
         </div>
         <p style="font-size: 0.65em; color: #666;">검증형 API 장애 시 추론형으로 대체 (Fallback)</p>
       </section>
@@ -368,17 +353,52 @@ model:
       <section>
         <h2>전체 라우팅 파이프라인</h2>
         <div class="mermaid-wrap">
-<div class="mermaid">
-flowchart TD
-    A[요청 수신] --> B[도메인 분석 작업 단계 식별]
-    B --> C[model-roles.yaml 역할 → 모델 매핑]
-    C --> D[모델 실행 주 모델]
-    C --> E[모델 실행 대체 모델]
-    D --> F{검증 필요?}
-    F -->|예| G[검증형 리뷰]
-    F -->|아니오| H[완료]
-    G -->|승인/수정| I[완료]
-</div>
+<svg viewBox="0 0 1080 400" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+  </defs>
+    <g transform="translate(440, 20)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">요청 수신</text>
+    </g>
+    <line x1="540" y1="70" x2="540" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(390, 110)">
+      <rect rx="6" width="300" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="150" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">도메인 분석 + 작업 단계 식별</text>
+    </g>
+    <line x1="540" y1="160" x2="540" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <g transform="translate(340, 200)">
+      <rect rx="6" width="400" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="200" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">model-roles.yaml 역할 → 모델 매핑</text>
+    </g>
+    <g transform="translate(40, 280)">
+      <rect rx="6" width="300" height="60" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="150" y="35" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Creative</text>
+      <text x="150" y="50" text-anchor="middle" font-size="10" fill="#666">glm-5.2 (창의/디자인)</text>
+    </g>
+    <g transform="translate(390, 280)">
+      <rect rx="6" width="300" height="60" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="150" y="35" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Coding</text>
+      <text x="150" y="50" text-anchor="middle" font-size="10" fill="#666">Qwen3.6 (코드/실행)</text>
+    </g>
+    <g transform="translate(740, 280)">
+      <rect rx="6" width="300" height="60" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="150" y="35" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Review</text>
+      <text x="150" y="50" text-anchor="middle" font-size="10" fill="#666">Gemma-4 (검증/검토)</text>
+    </g>
+    <line x1="440" y1="250" x2="230" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="540" y1="250" x2="540" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="640" y1="250" x2="820" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <g transform="translate(440, 360)">
+      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
+      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">최종 모델로 실행</text>
+    </g>
+    <line x1="230" y1="340" x2="540" y2="360" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="540" y1="340" x2="540" y2="360" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="820" y1="340" x2="540" y2="360" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+</svg>
         </div>
       </section>
 
