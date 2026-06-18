@@ -872,22 +872,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
   <script>
-    // Mermaid 초기화
-    mermaid.initialize({
-      startOnLoad: true,
-      theme: 'base',
-      fontFamily: 'Helvetica Neue, Arial, sans-serif',
-      flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
-      sequence: { useMaxWidth: true },
-      themeVariables: {
-        primaryColor: '#f0faf0',
-        primaryTextColor: '#333',
-        primaryBorderColor: '#1a7f37',
-        lineColor: '#666',
-        fontSize: '14px'
-      },
-      textHeightFixed: true
-    });
 
     Reveal.initialize({
       hash: true,
@@ -908,51 +892,7 @@
       });
     });
 
-    // viewBox 동적 조정 (잘림 방지)
-    function adjustViewBoxForScaling() {
-      var scale = Reveal.getScale();
-        if (svg.closest('.fullscreen')) return;
-        try {
-          var vb = svg.viewBox.baseVal;
-          var bbox = svg.getBBox();
-          var safetyMargin = 1 / scale;
-          var paddingX = bbox.width * 0.05 * safetyMargin;
-          var paddingY = bbox.height * 0.05 * safetyMargin;
-          vb.x = bbox.x - paddingX;
-          vb.y = bbox.y - paddingY;
-          vb.width = bbox.width + (paddingX * 2);
-          vb.height = bbox.height + (paddingY * 2);
-        } catch (e) {}
-      });
-    }
-    Reveal.addEventListener('slidechanged', adjustViewBoxForScaling);
-    Reveal.addEventListener('resize', adjustViewBoxForScaling);
 
-    // Mermaid 다이어그램 전체화면 토글
-    (function() {
-      function isMobile() { return window.matchMedia('(max-width: 768px)').matches; }
-      function toggleFullscreen(wrap) {
-        wrap.classList.toggle('fullscreen');
-        if (wrap.classList.contains('fullscreen')) {
-          document.body.style.overflow = 'hidden';
-          if (!isMobile() && typeof svgPanZoom !== 'undefined') {
-            var svg = wrap.querySelector('svg');
-            if (svg) {
-              try { svgPanZoom(svg, { zoomEnabled: true, panEnabled: true, controlIconsEnabled: false, fit: true, contain: true, minZoom: 0.5, maxZoom: 5 }); }
-              catch (e) { console.warn('svg-pan-zoom init failed:', e); }
-            }
-          }
-        } else {
-          document.body.style.overflow = '';
-        }
-      }
-        wrap.addEventListener('click', function(e) { e.stopPropagation(); toggleFullscreen(wrap); });
-      });
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-        }
-      });
-    })();
   </script>
 </body>
 </html>
