@@ -150,22 +150,21 @@
       <!-- Slide 8: 의존성 그래프 -->
       <section>
         <h2>의존성 그래프 예시</h2>
-        <div class="mermaid-wrap">
-<svg viewBox="0 0 800 300" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 800 300" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+    <marker id="a-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="ag-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="ad-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
   </defs>
     <g transform="translate(300, 20)">
       <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">SPEC-D01 문서 구조 SSOT</text>
     </g>
-    <line x1="400" y1="70" x2="150" y2="100" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="400" y1="70" x2="150" y2="100" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
     <text x="275" y="77" text-anchor="middle" font-size="11" fill="#666">extends</text>
-    <line x1="400" y1="70" x2="400" y2="100" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="400" y1="70" x2="400" y2="100" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
     <text x="400" y="77" text-anchor="middle" font-size="11" fill="#666">extends</text>
-    <line x1="400" y1="70" x2="650" y2="100" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="400" y1="70" x2="650" y2="100" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
     <text x="525" y="77" text-anchor="middle" font-size="11" fill="#666">extends</text>
     <g transform="translate(20, 120)">
       <rect rx="6" width="260" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
@@ -179,9 +178,9 @@
       <rect rx="6" width="220" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="110" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">SPEC-D06 블로그</text>
     </g>
-    <line x1="150" y1="170" x2="150" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="400" y1="170" x2="400" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="670" y1="170" x2="670" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="150" y1="170" x2="150" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#a-0)"/>
+    <line x1="400" y1="170" x2="400" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#a-0)"/>
+    <line x1="670" y1="170" x2="670" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#a-0)"/>
     <g transform="translate(20, 230)">
       <rect rx="6" width="260" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="130" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">docs/ 구조 자동 검증</text>
@@ -222,27 +221,26 @@
       <!-- Slide 10: Conflict Detection 흐름도 -->
       <section>
         <h2>검증 흐름도</h2>
-        <div class="mermaid-wrap">
-<svg viewBox="0 0 1080 380" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 1080 380" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+    <marker id="a-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="ag-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="ad-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
   </defs>
     <g transform="translate(440, 20)">
       <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Spec 작성</text>
     </g>
-    <line x1="540" y1="70" x2="540" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="540" y1="70" x2="540" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
     <g transform="translate(440, 110)">
       <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">① 수치 비교</text>
     </g>
-    <line x1="540" y1="160" x2="200" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="540" y1="160" x2="200" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
     <text x="370" y="172" text-anchor="middle" font-size="11" fill="#666">상승</text>
-    <line x1="540" y1="160" x2="540" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="540" y1="160" x2="540" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#a-1)"/>
     <text x="540" y="172" text-anchor="middle" font-size="11" fill="#666">하락</text>
-    <line x1="540" y1="160" x2="880" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="540" y1="160" x2="880" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#a-1)"/>
     <text x="710" y="172" text-anchor="middle" font-size="11" fill="#666">범위</text>
     <g transform="translate(40, 220)">
       <rect rx="6" width="320" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
@@ -256,9 +254,9 @@
       <rect rx="6" width="300" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="150" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">within range: min-max</text>
     </g>
-    <line x1="200" y1="270" x2="200" y2="310" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="540" y1="270" x2="540" y2="310" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="870" y1="270" x2="870" y2="310" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="200" y1="270" x2="200" y2="310" stroke="#666" stroke-width="1.5" marker-end="url(#a-1)"/>
+    <line x1="540" y1="270" x2="540" y2="310" stroke="#666" stroke-width="1.5" marker-end="url(#a-1)"/>
+    <line x1="870" y1="270" x2="870" y2="310" stroke="#666" stroke-width="1.5" marker-end="url(#a-1)"/>
     <g transform="translate(40, 320)">
       <rect rx="6" width="320" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="160" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">수치 기반 검증</text>
@@ -287,28 +285,27 @@
       <section>
         <h2>Batch Modification: 병렬 수정</h2>
         <p style="font-size: 0.8em;">리뷰에서 여러 Spec 수정 사항이 발견되면 서브에이전트에게 병렬로 위임</p>
-        <div class="mermaid-wrap">
-<svg viewBox="0 0 1080 300" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 1080 300" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+    <marker id="a-2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="ag-2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="ad-2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
   </defs>
     <g transform="translate(440, 20)">
       <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Review 문서</text>
     </g>
-    <line x1="540" y1="70" x2="540" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="540" y1="70" x2="540" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#ag-2)"/>
     <text x="540" y="82" text-anchor="middle" font-size="11" fill="#666">수정 사항 추출 Checklist</text>
     <g transform="translate(440, 110)">
       <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Extractor</text>
     </g>
-    <line x1="540" y1="160" x2="200" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="540" y1="160" x2="200" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
     <text x="370" y="172" text-anchor="middle" font-size="11" fill="#666">병렬 위임</text>
-    <line x1="540" y1="160" x2="540" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="540" y1="160" x2="540" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
     <text x="540" y="172" text-anchor="middle" font-size="11" fill="#666">병렬 위임</text>
-    <line x1="540" y1="160" x2="880" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="540" y1="160" x2="880" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
     <text x="710" y="172" text-anchor="middle" font-size="11" fill="#666">병렬 위임</text>
     <g transform="translate(20, 220)">
       <rect rx="6" width="360" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
@@ -322,9 +319,9 @@
       <rect rx="6" width="360" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="180" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">Sub 3 patch → C</text>
     </g>
-    <line x1="200" y1="270" x2="400" y2="290" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="540" y1="270" x2="540" y2="290" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="880" y1="270" x2="640" y2="290" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="200" y1="270" x2="400" y2="290" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
+    <line x1="540" y1="270" x2="540" y2="290" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
+    <line x1="880" y1="270" x2="640" y2="290" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
 </svg>
         </div>
         <p style="font-size: 0.65em; color: #666;">핵심 규칙: 전체 컨텍스트 공유 · <code>patch</code> 도구 사용(전체 재작성 금지) · 수정 후 반드시 검증</p>
@@ -457,7 +454,6 @@ grep -rn "old_value" specs/active/SPEC-*.md</code></pre>
     // viewBox 동적 조정 (잘림 방지)
     function adjustViewBoxForScaling() {
       var scale = Reveal.getScale();
-      document.querySelectorAll('.mermaid-wrap svg').forEach(function(svg) {
         if (svg.closest('.fullscreen')) return;
         try {
           var vb = svg.viewBox.baseVal;
@@ -493,12 +489,10 @@ grep -rn "old_value" specs/active/SPEC-*.md</code></pre>
           document.body.style.overflow = '';
         }
       }
-      document.querySelectorAll('.mermaid-wrap').forEach(function(wrap) {
         wrap.addEventListener('click', function(e) { e.stopPropagation(); toggleFullscreen(wrap); });
       });
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
-          document.querySelectorAll('.mermaid-wrap.fullscreen').forEach(function(wrap) { toggleFullscreen(wrap); });
         }
       });
     })();

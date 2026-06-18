@@ -123,12 +123,11 @@
       <!-- Slide 7: State machine diagram -->
       <section>
         <h2>9단계 상태 전이도</h2>
-        <div class="mermaid-wrap">
-<svg viewBox="0 0 1080 160" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 1080 160" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+    <marker id="a-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="ag-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="ad-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
   </defs>
     <g transform="translate(20, 30)">
       <rect rx="6" width="100" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
@@ -166,14 +165,14 @@
       <rect rx="6" width="70" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="35" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">9.Done</text>
     </g>
-    <line x1="120" y1="80" x2="140" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
-    <line x1="270" y1="80" x2="290" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
-    <line x1="390" y1="80" x2="410" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
-    <line x1="500" y1="80" x2="520" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
-    <line x1="620" y1="80" x2="640" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
-    <line x1="740" y1="80" x2="760" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
-    <line x1="840" y1="80" x2="860" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
-    <line x1="980" y1="80" x2="1000" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="120" y1="80" x2="140" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
+    <line x1="270" y1="80" x2="290" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
+    <line x1="390" y1="80" x2="410" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
+    <line x1="500" y1="80" x2="520" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
+    <line x1="620" y1="80" x2="640" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
+    <line x1="740" y1="80" x2="760" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
+    <line x1="840" y1="80" x2="860" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
+    <line x1="980" y1="80" x2="1000" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
 </svg>
         </div>
         <p style="font-size: 0.65em; color: #666;">점선(피드백 루프): 설계 결함·테스트 실패 시 이전 단계로 되돌아감</p>
@@ -207,15 +206,12 @@
             <div class="solution-card">
               <strong>Investigation</strong><br>
               "어떻게 고칠까" 이전에 "지금 어떻게 되어 있는가"를 먼저 본다
-            </div>
             <div class="solution-card">
               <strong>Design</strong><br>
               코드 한 줄 쓰기 전에 <code>design.md</code>에 모든 변경을 텍스트로 — 이것이 SSOT
-            </div>
             <div class="solution-card">
               <strong>Execution</strong><br>
               오직 <code>design.md</code>에 적힌 대로만. 임의 판단 금지
-            </div>
           </div>
           <div style="font-size: 0.7em; text-align: left; align-self: center;">
             <p style="color:#1a7f37;"><strong>무효 전이 금지</strong></p>
@@ -447,7 +443,6 @@ exit 1
     // viewBox 동적 조정 (잘림 방지)
     function adjustViewBoxForScaling() {
       var scale = Reveal.getScale();
-      document.querySelectorAll('.mermaid-wrap svg').forEach(function(svg) {
         if (svg.closest('.fullscreen')) return;
         try {
           var vb = svg.viewBox.baseVal;
@@ -483,12 +478,10 @@ exit 1
           document.body.style.overflow = '';
         }
       }
-      document.querySelectorAll('.mermaid-wrap').forEach(function(wrap) {
         wrap.addEventListener('click', function(e) { e.stopPropagation(); toggleFullscreen(wrap); });
       });
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
-          document.querySelectorAll('.mermaid-wrap.fullscreen').forEach(function(wrap) { toggleFullscreen(wrap); });
         }
       });
     })();

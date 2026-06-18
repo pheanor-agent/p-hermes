@@ -104,12 +104,11 @@
       <!-- Slide 6: 3-layer architecture -->
       <section>
         <h2>Registry → Wrapper → Runner 3층 아키텍처</h2>
-        <div class="mermaid-wrap">
-<svg viewBox="0 0 1080 400" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 1080 400" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+    <marker id="a-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="ag-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="ad-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
   </defs>
     <g transform="translate(40, 20)">
       <rect rx="8" width="1000" height="100" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
@@ -131,7 +130,7 @@
       <text x="110" y="45" text-anchor="middle" font-size="10" fill="#666">이벤트 발송</text>
     </g>
     </g>
-    <line x1="500" y1="120" x2="500" y2="150" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="500" y1="120" x2="500" y2="150" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
     <g transform="translate(40, 150)">
       <rect rx="8" width="1000" height="100" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
       <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Layer 2: Worker</text>
@@ -153,7 +152,7 @@
       <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">툴셋 로드</text>
     </g>
     </g>
-    <line x1="500" y1="250" x2="500" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="500" y1="250" x2="500" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
     <g transform="translate(40, 280)">
       <rect rx="8" width="1000" height="110" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
       <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Layer 3: Output</text>
@@ -258,7 +257,6 @@
               정상 실행 시 알림 전송 안 함. 실패/경고 시만 결과 전달 → 알림 피로도 낮춤.<br><br>
               <code style="font-size: 0.85em;">no_agent: true + script</code><br>
               스크립트 출력이 비어 있으면 전송 생략, 존재하면 알림 생성.
-            </div>
           </div>
           <div>
             <div class="solution-card" style="font-size: 0.8em; border-left-color: #0969da;">
@@ -267,7 +265,6 @@
               <code>deliver: origin,all</code> — 현재 채팅 + 모든 연결 채널 동시 전달.<br>
               <code>deliver: "discord:123"</code> — 특정 채널 명시 전달.<br><br>
              다중 채널 전달 시 실패 시 fallback 자동 동작.
-            </div>
           </div>
         </div>
       </section>
@@ -310,12 +307,11 @@ hermes cron create \
       <!-- Slide 13: 이벤트 흐름 (event.sh) -->
       <section>
         <h2>실행 시 이벤트 흐름 — end-to-end</h2>
-        <div class="mermaid-wrap">
-<svg viewBox="0 0 900 460" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 900 460" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+    <marker id="a-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="ag-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="ad-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
   </defs>
     <g transform="translate(20, 20)">
       <rect rx="6" width="120" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
@@ -337,19 +333,19 @@ hermes cron create \
     <line x1="350" y1="60" x2="350" y2="440" stroke="#ccc" stroke-dasharray="4,4"/>
     <line x1="620" y1="60" x2="620" y2="440" stroke="#ccc" stroke-dasharray="4,4"/>
     <line x1="890" y1="60" x2="890" y2="440" stroke="#ccc" stroke-dasharray="4,4"/>
-    <line x1="80" y1="100" x2="340" y2="100" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="80" y1="100" x2="340" y2="100" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
     <text x="210" y="92" text-anchor="middle" font-size="11" fill="#666">trigger(job_id)</text>
-    <line x1="350" y1="140" x2="610" y2="140" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="350" y1="140" x2="610" y2="140" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
     <text x="480" y="132" text-anchor="middle" font-size="11" fill="#666">dispatch(job_id)</text>
-    <line x1="620" y1="180" x2="880" y2="180" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="620" y1="180" x2="880" y2="180" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
     <text x="750" y="172" text-anchor="middle" font-size="11" fill="#666">notify(progress)</text>
-    <line x1="890" y1="220" x2="620" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="890" y1="220" x2="620" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#a-1)"/>
     <text x="755" y="212" text-anchor="middle" font-size="11" fill="#666">ack</text>
-    <line x1="620" y1="260" x2="350" y2="260" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="620" y1="260" x2="350" y2="260" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
     <text x="485" y="252" text-anchor="middle" font-size="11" fill="#666">complete(job_id)</text>
-    <line x1="350" y1="300" x2="80" y2="300" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="350" y1="300" x2="80" y2="300" stroke="#666" stroke-width="1.5" marker-end="url(#a-1)"/>
     <text x="215" y="292" text-anchor="middle" font-size="11" fill="#666">ack</text>
-    <line x1="350" y1="340" x2="880" y2="340" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="350" y1="340" x2="880" y2="340" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
     <text x="615" y="332" text-anchor="middle" font-size="11" fill="#666">deliver(result)</text>
 </svg>
         </div>
@@ -490,7 +486,6 @@ mutex_release "morning-news"</code></pre>
     // viewBox 동적 조정 (잘림 방지)
     function adjustViewBoxForScaling() {
       var scale = Reveal.getScale();
-      document.querySelectorAll('.mermaid-wrap svg').forEach(function(svg) {
         if (svg.closest('.fullscreen')) return;
         try {
           var vb = svg.viewBox.baseVal;
@@ -526,12 +521,10 @@ mutex_release "morning-news"</code></pre>
           document.body.style.overflow = '';
         }
       }
-      document.querySelectorAll('.mermaid-wrap').forEach(function(wrap) {
         wrap.addEventListener('click', function(e) { e.stopPropagation(); toggleFullscreen(wrap); });
       });
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
-          document.querySelectorAll('.mermaid-wrap.fullscreen').forEach(function(wrap) { toggleFullscreen(wrap); });
         }
       });
     })();

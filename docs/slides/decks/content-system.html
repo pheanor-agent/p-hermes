@@ -105,12 +105,10 @@
               <strong>문법 검사기의 맹점</strong><br>
               문법적으로 맞지만 부정-대조 패턴인 문장을 PASS 처리<br>
               <span style="color:#c0392b;">"~가 아닌, ~입니다" → 불필요한 강조</span>
-            </div>
             <div class="problem-card" style="margin: 0.3em 0; padding: 0.6em;">
               <strong>자기 참조 오류</strong><br>
               동일 모델이 생성·검증 시 자기 스타일을 '양질'로 인식<br>
               <span style="color:#c0392b;">AI-isms 포함 문장 78% 자체 검증 통과</span>
-            </div>
           </div>
           <div style="font-size: 0.7em; text-align: left;">
             <strong>휴리스틱 검출 실패 유형</strong>
@@ -136,12 +134,11 @@
       <!-- Slide 7: 3-Layer Architecture -->
       <section>
         <h2>3-Layer 아키텍처 전체 구조</h2>
-        <div class="mermaid-wrap">
-<svg viewBox="0 0 1080 420" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 1080 420" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+    <marker id="a-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="ag-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="ad-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
   </defs>
     <g transform="translate(40, 20)">
       <rect rx="8" width="1000" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
@@ -160,7 +157,7 @@
       <text x="130" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">검증 게이트 호출</text>
     </g>
     </g>
-    <line x1="500" y1="90" x2="500" y2="120" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="500" y1="90" x2="500" y2="120" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
     <g transform="translate(40, 120)">
       <rect rx="8" width="1000" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
       <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Layer 2: 도메인 (D1~D5)</text>
@@ -186,7 +183,7 @@
       <text x="80" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">D5 코드</text>
     </g>
     </g>
-    <line x1="500" y1="190" x2="500" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="500" y1="190" x2="500" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
     <g transform="translate(40, 220)">
       <rect rx="8" width="1000" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
       <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Layer 3: 엔진 (Anti-Slop)</text>
@@ -208,7 +205,7 @@
       <text x="90" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">emotion-merger</text>
     </g>
     </g>
-    <line x1="500" y1="290" x2="500" y2="320" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="500" y1="290" x2="500" y2="320" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
     <g transform="translate(40, 320)">
       <rect rx="8" width="1000" height="90" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
       <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Layer 4: 템플릿</text>
@@ -264,18 +261,17 @@
       <!-- Slide 10: 5-layer verification gates overview -->
       <section>
         <h2>5계층 검증 게이트 (L1~L5)</h2>
-        <div class="mermaid-wrap">
-<svg viewBox="0 0 1080 500" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 1080 500" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+    <marker id="a-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="ag-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="ad-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
   </defs>
     <g transform="translate(440, 20)">
       <rect rx="6" width="200" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="100" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">입력 텍스트</text>
     </g>
-    <line x1="540" y1="60" x2="540" y2="100" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="540" y1="60" x2="540" y2="100" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
     <g transform="translate(40, 100)">
       <rect rx="8" width="1000" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
       <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">GATES: 검증 게이트</text>
@@ -301,9 +297,9 @@
       <text x="80" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">⑤ 문장 패턴</text>
     </g>
     </g>
-    <line x1="200" y1="170" x2="200" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="200" y1="170" x2="200" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#a-1)"/>
     <text x="200" y="187" text-anchor="middle" font-size="11" fill="#666">FAIL</text>
-    <line x1="880" y1="170" x2="880" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="880" y1="170" x2="880" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
     <text x="880" y="187" text-anchor="middle" font-size="11" fill="#666">PASS</text>
     <g transform="translate(20, 230)">
       <rect rx="6" width="360" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
@@ -313,17 +309,17 @@
       <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">다음 게이트 통과</text>
     </g>
-    <line x1="800" y1="280" x2="800" y2="320" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="800" y1="280" x2="800" y2="320" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
     <g transform="translate(700, 320)">
       <rect rx="6" width="200" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="100" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">tone-adapter 실행</text>
     </g>
-    <line x1="800" y1="360" x2="800" y2="390" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="800" y1="360" x2="800" y2="390" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
     <g transform="translate(700, 390)">
       <rect rx="6" width="200" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="100" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">persona-generator</text>
     </g>
-    <line x1="800" y1="430" x2="800" y2="460" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="800" y1="430" x2="800" y2="460" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
     <g transform="translate(700, 460)">
       <rect rx="6" width="200" height="40" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="100" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">최종 출력</text>
@@ -386,7 +382,6 @@ $ python3 validator.py l3 \
             <div style="margin-top: 1.5em;">
               <span class="stat">23%</span><br>
               <span class="stat-label">L5 적용 Blog 독자 만족도 개선</span>
-            </div>
             <p style="font-size: 0.8em; color: #666; margin-top: 1.5em;">
               Wiki는 L1~L4로 충분<br>
               Blog는 L5 추가 시 유의미한 차이
@@ -593,7 +588,6 @@ def run_all_validators(text, domain):
     // viewBox 동적 조정 (잘림 방지)
     function adjustViewBoxForScaling() {
       var scale = Reveal.getScale();
-      document.querySelectorAll('.mermaid-wrap svg').forEach(function(svg) {
         if (svg.closest('.fullscreen')) return;
         try {
           var vb = svg.viewBox.baseVal;
@@ -629,12 +623,10 @@ def run_all_validators(text, domain):
           document.body.style.overflow = '';
         }
       }
-      document.querySelectorAll('.mermaid-wrap').forEach(function(wrap) {
         wrap.addEventListener('click', function(e) { e.stopPropagation(); toggleFullscreen(wrap); });
       });
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
-          document.querySelectorAll('.mermaid-wrap.fullscreen').forEach(function(wrap) { toggleFullscreen(wrap); });
         }
       });
     })();

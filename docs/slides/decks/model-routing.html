@@ -107,7 +107,6 @@
             <div style="font-size: 0.75em; text-align: left; margin-top: 0.5em;">
               <p>설계도를 그리는 <strong>건축가</strong>와 벽돌을 쌓는 <strong>숙련공</strong>, 현장을 파악하는 <strong>조사원</strong>이 필요합니다.</p>
               <p>건축가에게 벽돌을 쌓게 하면? 효율과 품질 모두 떨어짐.</p>
-            </div>
           </div>
           <div>
             <strong>LLM의 현실</strong>
@@ -118,7 +117,6 @@
 빠른 응답:  범용형 > 수행형
 비용 효율:  범용형 > 추론형</code></pre>
               <p style="color: #666; font-size: 0.9em;">벤치마크는 '평균'만 보여줌.<br>'특정 작업'에서의 상대적 강약은 다름.</p>
-            </div>
           </div>
         </div>
       </section>
@@ -142,12 +140,11 @@
           설정 파일 <code>model-roles.yaml</code>에서 역할→모델 매핑을 정의하고,<br>
           라우팅 엔진이 실행 시점에 작업 단계별로 최적 모델을 선택합니다.
         </p>
-        <div class="mermaid-wrap" style="margin-top: 1em;">
 <svg viewBox="0 0 1080 160" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+    <marker id="a-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="ag-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="ad-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
   </defs>
     <g transform="translate(20, 30)">
       <rect rx="6" width="100" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
@@ -177,12 +174,12 @@
       <rect rx="6" width="100" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="50" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">결과</text>
     </g>
-    <line x1="120" y1="80" x2="140" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
-    <line x1="280" y1="80" x2="300" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
-    <line x1="450" y1="80" x2="470" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
-    <line x1="640" y1="80" x2="660" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
-    <line x1="790" y1="80" x2="810" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
-    <line x1="930" y1="80" x2="950" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="120" y1="80" x2="140" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
+    <line x1="280" y1="80" x2="300" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
+    <line x1="450" y1="80" x2="470" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
+    <line x1="640" y1="80" x2="660" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
+    <line x1="790" y1="80" x2="810" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
+    <line x1="930" y1="80" x2="950" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
 </svg>
         </div>
       </section>
@@ -252,7 +249,6 @@
                 자기 논리적 오류 감지 불가.<br>
                 <strong>결함 발견율: 31%</strong>
               </span>
-            </div>
           </div>
           <div>
             <div class="solution-card">
@@ -262,15 +258,13 @@
                 완전히 다른 관점에서 검토.<br>
                 <strong>결함 발견율: 78% (+152%)</strong>
               </span>
-            </div>
           </div>
         </div>
-        <div class="mermaid-wrap" style="margin-top: 0.8em;">
 <svg viewBox="0 0 800 220" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+    <marker id="a-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="ag-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="ad-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
   </defs>
     <g transform="translate(20, 70)">
       <rect rx="6" width="180" height="80" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
@@ -295,12 +289,12 @@
       <rect rx="6" width="140" height="60" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="70" y="35" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">검증 통과</text>
     </g>
-    <line x1="200" y1="110" x2="240" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="200" y1="110" x2="240" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
     <text x="220" y="102" text-anchor="middle" font-size="11" fill="#666">설계</text>
-    <line x1="320" y1="110" x2="460" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="560" y1="90" x2="600" y2="90" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="320" y1="110" x2="460" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#a-1)"/>
+    <line x1="560" y1="90" x2="600" y2="90" stroke="#666" stroke-width="1.5" marker-end="url(#a-1)"/>
     <text x="580" y="82" text-anchor="middle" font-size="11" fill="#666">YES</text>
-    <line x1="560" y1="130" x2="600" y2="190" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="560" y1="130" x2="600" y2="190" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
     <text x="580" y="152" text-anchor="middle" font-size="11" fill="#666">NO</text>
 </svg>
         </div>
@@ -352,23 +346,22 @@ model:
       <!-- Slide 13: Routing flow diagram -->
       <section>
         <h2>전체 라우팅 파이프라인</h2>
-        <div class="mermaid-wrap">
-<svg viewBox="0 0 1080 400" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 1080 400" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+    <marker id="a-2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="ag-2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="ad-2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
   </defs>
     <g transform="translate(440, 20)">
       <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">요청 수신</text>
     </g>
-    <line x1="540" y1="70" x2="540" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="540" y1="70" x2="540" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#ag-2)"/>
     <g transform="translate(390, 110)">
       <rect rx="6" width="300" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="150" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">도메인 분석 + 작업 단계 식별</text>
     </g>
-    <line x1="540" y1="160" x2="540" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="540" y1="160" x2="540" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#ag-2)"/>
     <g transform="translate(340, 200)">
       <rect rx="6" width="400" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="200" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">model-roles.yaml 역할 → 모델 매핑</text>
@@ -388,16 +381,16 @@ model:
       <text x="150" y="35" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Review</text>
       <text x="150" y="50" text-anchor="middle" font-size="10" fill="#666">Gemma-4 (검증/검토)</text>
     </g>
-    <line x1="440" y1="250" x2="230" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="540" y1="250" x2="540" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="640" y1="250" x2="820" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="440" y1="250" x2="230" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
+    <line x1="540" y1="250" x2="540" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
+    <line x1="640" y1="250" x2="820" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
     <g transform="translate(440, 360)">
       <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">최종 모델로 실행</text>
     </g>
-    <line x1="230" y1="340" x2="540" y2="360" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="540" y1="340" x2="540" y2="360" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="820" y1="340" x2="540" y2="360" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="230" y1="340" x2="540" y2="360" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
+    <line x1="540" y1="340" x2="540" y2="360" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
+    <line x1="820" y1="340" x2="540" y2="360" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
 </svg>
         </div>
       </section>
@@ -555,7 +548,6 @@ model:
     // viewBox 동적 조정 (잘림 방지)
     function adjustViewBoxForScaling() {
       var scale = Reveal.getScale();
-      document.querySelectorAll('.mermaid-wrap svg').forEach(function(svg) {
         if (svg.closest('.fullscreen')) return;
         try {
           var vb = svg.viewBox.baseVal;
@@ -591,12 +583,10 @@ model:
           document.body.style.overflow = '';
         }
       }
-      document.querySelectorAll('.mermaid-wrap').forEach(function(wrap) {
         wrap.addEventListener('click', function(e) { e.stopPropagation(); toggleFullscreen(wrap); });
       });
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
-          document.querySelectorAll('.mermaid-wrap.fullscreen').forEach(function(wrap) { toggleFullscreen(wrap); });
         }
       });
     })();

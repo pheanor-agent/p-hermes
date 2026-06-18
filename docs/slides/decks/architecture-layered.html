@@ -171,12 +171,11 @@
         <div class="two-col">
           <div>
             <strong>Flat (모놀리식)</strong>
-            <div class="mermaid-wrap">
-<svg viewBox="0 0 1080 400" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 1080 400" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+    <marker id="a-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="ag-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="ad-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
   </defs>
     <g transform="translate(40, 20)">
       <rect rx="8" width="480" height="360" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
@@ -207,9 +206,9 @@
       <text x="80" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">직접 호출</text>
       <text x="80" y="45" text-anchor="middle" font-size="10" fill="#666">(결합도 ↑)</text>
     </g>
-    <line x1="220" y1="80" x2="280" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="220" y1="140" x2="280" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="220" y1="200" x2="280" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="220" y1="80" x2="280" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#a-0)"/>
+    <line x1="220" y1="140" x2="280" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#a-0)"/>
+    <line x1="220" y1="200" x2="280" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#a-0)"/>
     </g>
     <g transform="translate(560, 20)">
       <rect rx="8" width="480" height="100" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
@@ -264,16 +263,14 @@
     </g>
     </g>
 </svg>
-            </div>
           </div>
           <div>
             <strong>Layered (레이어드)</strong>
-            <div class="mermaid-wrap">
-<svg viewBox="0 0 1080 520" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 1080 520" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+    <marker id="a-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="ag-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="ad-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
   </defs>
     <g transform="translate(40, 20)">
       <rect rx="8" width="1000" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
@@ -292,7 +289,7 @@
       <text x="60" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">llms.txt</text>
     </g>
     </g>
-    <line x1="500" y1="90" x2="500" y2="120" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="500" y1="90" x2="500" y2="120" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
     <g transform="translate(40, 120)">
       <rect rx="8" width="1000" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
       <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Tier 1 Core</text>
@@ -314,7 +311,7 @@
       <text x="60" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">AGENTS.md</text>
     </g>
     </g>
-    <line x1="500" y1="190" x2="500" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="500" y1="190" x2="500" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
     <g transform="translate(40, 220)">
       <rect rx="8" width="1000" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
       <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Tier 2 Runtime</text>
@@ -336,7 +333,7 @@
       <text x="80" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">.workflow-state</text>
     </g>
     </g>
-    <line x1="500" y1="290" x2="500" y2="320" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="500" y1="290" x2="500" y2="320" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
     <g transform="translate(40, 320)">
       <rect rx="8" width="1000" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
       <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Tier 3 Interfaces</text>
@@ -354,7 +351,7 @@
       <text x="60" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">CLI</text>
     </g>
     </g>
-    <line x1="500" y1="390" x2="500" y2="420" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="500" y1="390" x2="500" y2="420" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
     <g transform="translate(40, 420)">
       <rect rx="8" width="1000" height="70" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
       <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Tier 4 Infra</text>
@@ -383,7 +380,6 @@
       <text x="50" y="40" text-anchor="middle" font-size="10" fill="#666">공통 유틸</text>
     </g>
 </svg>
-            </div>
           </div>
         </div>
         <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">직접 호출 → 이벤트 기반 비동기 통신으로 결합도 해방</p>
@@ -401,12 +397,11 @@
       <section>
         <h2>5계층 + 2글로벌 = 관계망</h2>
         <p style="font-size: 0.75em;">단방향 직선이 아닌, 실제 의존 관계 기반 망 구조</p>
-        <div class="mermaid-wrap">
-<svg viewBox="0 0 1080 520" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 1080 520" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+    <marker id="a-2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="ag-2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="ad-2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
   </defs>
     <g transform="translate(20, 20)">
       <rect rx="8" width="500" height="80" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
@@ -425,7 +420,7 @@
       <text x="60" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">llms.txt</text>
     </g>
     </g>
-    <line x1="250" y1="100" x2="250" y2="130" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="250" y1="100" x2="250" y2="130" stroke="#666" stroke-width="1.5" marker-end="url(#ag-2)"/>
     <g transform="translate(20, 130)">
       <rect rx="8" width="500" height="80" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
       <text x="250" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Tier 1 Core</text>
@@ -443,7 +438,7 @@
       <text x="50" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">AGENTS.md</text>
     </g>
     </g>
-    <line x1="250" y1="210" x2="250" y2="240" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="250" y1="210" x2="250" y2="240" stroke="#666" stroke-width="1.5" marker-end="url(#ag-2)"/>
     <g transform="translate(20, 240)">
       <rect rx="8" width="500" height="80" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
       <text x="250" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Tier 2 Runtime</text>
@@ -478,7 +473,7 @@
       <text x="50" y="25" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">CLI</text>
     </g>
     </g>
-    <line x1="800" y1="100" x2="800" y2="130" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="800" y1="100" x2="800" y2="130" stroke="#666" stroke-width="1.5" marker-end="url(#ag-2)"/>
     <g transform="translate(560, 130)">
       <rect rx="8" width="500" height="80" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
       <text x="250" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Tier 4 Infra</text>
@@ -506,8 +501,8 @@
       <text x="130" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">system-common/</text>
       <text x="130" y="45" text-anchor="middle" font-size="10" fill="#666">공통 유틸리티</text>
     </g>
-    <line x1="250" y1="320" x2="330" y2="340" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="800" y1="320" x2="660" y2="340" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="250" y1="320" x2="330" y2="340" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
+    <line x1="800" y1="320" x2="660" y2="340" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
 </svg>
         </div>
       </section>
@@ -568,26 +563,25 @@
       <section>
         <h2>event.sh — 시스템의 신경망</h2>
         <p style="font-size: 0.75em;">모든 모듈은 event.sh를 통해 통신. 직접 호출 X, 이벤트 발행/구독 O</p>
-        <div class="mermaid-wrap">
-<svg viewBox="0 0 700 200" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 700 200" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+    <marker id="a-3" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="ag-3" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="ad-3" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
   </defs>
     <g transform="translate(20, 80)">
       <rect rx="6" width="160" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="80" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">모듈 A</text>
       <text x="80" y="45" text-anchor="middle" font-size="10" fill="#666">(발행자)</text>
     </g>
-    <line x1="180" y1="105" x2="280" y2="105" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="180" y1="105" x2="280" y2="105" stroke="#666" stroke-width="1.5" marker-end="url(#ag-3)"/>
     <text x="230" y="97" text-anchor="middle" font-size="11" fill="#666">publish</text>
     <g transform="translate(280, 75)">
       <rect rx="6" width="140" height="50" fill="#e8f5e9" stroke="#1a7f37" stroke-width="2"/>
       <text x="70" y="30" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">event.sh</text>
       <text x="70" y="45" text-anchor="middle" font-size="10" fill="#666">(이벤트 버스)</text>
     </g>
-    <line x1="420" y1="105" x2="500" y2="105" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="420" y1="105" x2="500" y2="105" stroke="#666" stroke-width="1.5" marker-end="url(#ag-3)"/>
     <g transform="translate(500, 80)">
       <rect rx="6" width="160" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
       <text x="80" y="30" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">모듈 B</text>
@@ -653,12 +647,11 @@
       <!-- Slide 13: Directory tree -->
       <section>
         <h2>$HERMES_ROOT 디렉토리 맵</h2>
-        <div class="mermaid-wrap">
-<svg viewBox="0 0 1080 520" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 1080 520" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+    <marker id="a-4" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="ag-4" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="ad-4" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
   </defs>
     <g transform="translate(40, 20)">
       <rect rx="8" width="1000" height="50" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
@@ -768,10 +761,10 @@
       <text x="60" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">llms.txt</text>
     </g>
     </g>
-    <line x1="280" y1="180" x2="300" y2="160" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="520" y1="140" x2="540" y2="140" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="500" y1="220" x2="500" y2="260" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="760" y1="140" x2="760" y2="260" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="280" y1="180" x2="300" y2="160" stroke="#666" stroke-width="1.5" marker-end="url(#a-4)"/>
+    <line x1="520" y1="140" x2="540" y2="140" stroke="#666" stroke-width="1.5" marker-end="url(#a-4)"/>
+    <line x1="500" y1="220" x2="500" y2="260" stroke="#666" stroke-width="1.5" marker-end="url(#a-4)"/>
+    <line x1="760" y1="140" x2="760" y2="260" stroke="#666" stroke-width="1.5" marker-end="url(#a-4)"/>
 </svg>
         </div>
       </section>
@@ -918,7 +911,6 @@
     // viewBox 동적 조정 (잘림 방지)
     function adjustViewBoxForScaling() {
       var scale = Reveal.getScale();
-      document.querySelectorAll('.mermaid-wrap svg').forEach(function(svg) {
         if (svg.closest('.fullscreen')) return;
         try {
           var vb = svg.viewBox.baseVal;
@@ -954,12 +946,10 @@
           document.body.style.overflow = '';
         }
       }
-      document.querySelectorAll('.mermaid-wrap').forEach(function(wrap) {
         wrap.addEventListener('click', function(e) { e.stopPropagation(); toggleFullscreen(wrap); });
       });
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
-          document.querySelectorAll('.mermaid-wrap.fullscreen').forEach(function(wrap) { toggleFullscreen(wrap); });
         }
       });
     })();

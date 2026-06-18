@@ -211,12 +211,11 @@
       <!-- Slide 7: 3-tier architecture -->
       <section>
         <h2>Karpathy 3계층 구조</h2>
-        <div class="mermaid-wrap">
-<svg viewBox="0 0 1080 400" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 1080 400" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+    <marker id="a-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="ag-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="ad-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
   </defs>
     <g transform="translate(40, 20)">
       <rect rx="8" width="1000" height="100" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
@@ -243,7 +242,7 @@
       <text x="90" y="45" text-anchor="middle" font-size="10" fill="#666">외부 자료</text>
     </g>
     </g>
-    <line x1="500" y1="120" x2="500" y2="150" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="500" y1="120" x2="500" y2="150" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
     <g transform="translate(40, 150)">
       <rect rx="8" width="1000" height="100" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
       <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Processing (가공)</text>
@@ -265,7 +264,7 @@
       <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">index() 검색</text>
     </g>
     </g>
-    <line x1="500" y1="250" x2="500" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="500" y1="250" x2="500" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
     <g transform="translate(40, 280)">
       <rect rx="8" width="1000" height="100" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
       <text x="500" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">Output (출력)</text>
@@ -394,7 +393,6 @@
               system/models.md → pw=1.0, rs=0.8, us=0.9<br>
               score = 1.0×0.5 + 0.8×0.3 + 0.9×0.2 = <strong>0.74 (T1)</strong>
               </span>
-            </div>
           </div>
         </div>
       </section>
@@ -410,7 +408,6 @@
               <code>grep -rl "모델 라우팅" sessions/*.json</code><br>
               ⏱ 1.247초 · 3가지 다른 맥락 뒤섞임
               </span>
-            </div>
           </div>
           <div>
             <div class="solution-card">
@@ -419,7 +416,6 @@
               <code>SELECT * FROM wiki WHERE content MATCH '모델 라우팅'</code><br>
               ⏱ 0.003초 · 도메인+태그 정밀 필터링
               </span>
-            </div>
           </div>
         </div>
         <table style="width: 70%; margin: 0.8em auto; font-size: 0.7em;">
@@ -442,12 +438,11 @@
       <!-- Slide 13: Knowledge lifecycle walk-through -->
       <section>
         <h2>inbox.md → 필링 → T1 승격</h2>
-        <div class="mermaid-wrap">
-<svg viewBox="0 0 1080 380" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <svg viewBox="0 0 1080 380" class="diagram-svg" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="arrow-dashed" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
+    <marker id="a-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
+    <marker id="ag-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
+    <marker id="ad-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
   </defs>
     <g transform="translate(40, 20)">
       <rect rx="8" width="480" height="340" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
@@ -470,10 +465,10 @@
       <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">외부 뉴스/참조</text>
     </g>
     </g>
-    <line x1="280" y1="90" x2="460" y2="120" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="280" y1="170" x2="460" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="280" y1="250" x2="460" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
-    <line x1="280" y1="330" x2="460" y2="340" stroke="#666" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <line x1="280" y1="90" x2="460" y2="120" stroke="#666" stroke-width="1.5" marker-end="url(#a-1)"/>
+    <line x1="280" y1="170" x2="460" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#a-1)"/>
+    <line x1="280" y1="250" x2="460" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#a-1)"/>
+    <line x1="280" y1="330" x2="460" y2="340" stroke="#666" stroke-width="1.5" marker-end="url(#a-1)"/>
     <g transform="translate(540, 20)">
       <rect rx="8" width="500" height="340" fill="#fafafa" stroke="#c0c0c0" stroke-width="1"/>
       <text x="250" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a7f37">② 가공 → ③ 출력</text>
@@ -495,9 +490,9 @@
       <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">위키로 저장</text>
     </g>
     </g>
-    <line x1="580" y1="110" x2="680" y2="140" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
-    <line x1="680" y1="170" x2="680" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
-    <line x1="680" y1="250" x2="680" y2="300" stroke="#666" stroke-width="1.5" marker-end="url(#arrow-green)"/>
+    <line x1="580" y1="110" x2="680" y2="140" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
+    <line x1="680" y1="170" x2="680" y2="220" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
+    <line x1="680" y1="250" x2="680" y2="300" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
 </svg>
         </div>
       </section>
@@ -637,7 +632,6 @@
     // viewBox 동적 조정 (잘림 방지)
     function adjustViewBoxForScaling() {
       var scale = Reveal.getScale();
-      document.querySelectorAll('.mermaid-wrap svg').forEach(function(svg) {
         if (svg.closest('.fullscreen')) return;
         try {
           var vb = svg.viewBox.baseVal;
@@ -673,12 +667,10 @@
           document.body.style.overflow = '';
         }
       }
-      document.querySelectorAll('.mermaid-wrap').forEach(function(wrap) {
         wrap.addEventListener('click', function(e) { e.stopPropagation(); toggleFullscreen(wrap); });
       });
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
-          document.querySelectorAll('.mermaid-wrap.fullscreen').forEach(function(wrap) { toggleFullscreen(wrap); });
         }
       });
     })();
