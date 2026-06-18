@@ -37,9 +37,75 @@
     .two-col > div { flex: 1; }
     .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
     .stat-label { font-size: 0.5em; color: #666; }
-    .mermaid-wrap { text-align: center; font-size: var(--diagram-font); max-height: 60vh; overflow: auto; -webkit-overflow-scrolling: touch; position: relative; border: 1px solid #e0e0e0; border-radius: 8px; padding: 0.5em; background: #fafafa; }
+    /* Mermaid 컨테이너 - 컴팩트 기본 */
+    .mermaid-wrap {
+      text-align: center;
+      font-size: 0.65em;
+      max-width: 80%;
+      margin: 0.5em auto;
+      cursor: zoom-in;
+      position: relative;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 0.4em;
+      background: #fafafa;
+      transition: all 0.2s ease;
+    }
     .mermaid-wrap .mermaid { max-width: 100%; margin: 0 auto; }
     .mermaid-wrap svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+    /* 확대 아이콘 */
+    .mermaid-wrap::after {
+      content: '\2636';
+      position: absolute;
+      top: 0.3em;
+      right: 0.3em;
+      font-size: 1.4em;
+      opacity: 0.4;
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+    .mermaid-wrap:hover::after { opacity: 0.8; }
+    /* 스크롤바 최소화 */
+    .mermaid-wrap::-webkit-scrollbar { width: 4px; height: 4px; }
+    .mermaid-wrap::-webkit-scrollbar-track { background: transparent; }
+    .mermaid-wrap::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 2px; }
+    /* 전체화면 오버레이 */
+    .mermaid-wrap.fullscreen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: 10000;
+      background: rgba(0,0,0,0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: none;
+      font-size: 1em;
+      cursor: zoom-out;
+      border: none;
+      border-radius: 0;
+      padding: 2em;
+      margin: 0;
+      transform: none;
+    }
+    .mermaid-wrap.fullscreen .mermaid { max-width: 90vw; max-height: 85vh; }
+    .mermaid-wrap.fullscreen svg { max-width: 90vw; max-height: 85vh; }
+    .mermaid-wrap.fullscreen::after {
+      content: '\2715';
+      position: fixed;
+      top: 1.5em; right: 2em;
+      font-size: 2em;
+      color: #fff;
+      opacity: 0.8;
+      cursor: pointer;
+    }
+    .mermaid-wrap.fullscreen:hover::after { opacity: 1; }
+    .mermaid-wrap.fullscreen .diagram-caption {
+      color: #fff;
+      font-size: 0.9em;
+      margin-top: 1em;
+      text-align: center;
+    }
     pre code { font-size: var(--code-font); }
     .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
     .tree li { margin: 0.2em 0; }
@@ -414,10 +480,15 @@ flowchart TD
       <!-- Slide 18: Q&A -->
       <section>
         <h1 style="font-size: 3em;">Q&A</h1>
-        <p style="font-size: 0.9em;">질문이 있으시면 편하게 말씀해주세요.</p>
-        <p style="font-size: 0.6em; color: #888; margin-top: 2em;">
-          🔗 참고: <code>model-roles.yaml</code> · Wiki 가이드 · 모델 라우팅 설계 Blog
-        </p>
+        <p style="font-size: 1em;">질문이 있으시면 편하게 말씀해주세요.</p>
+        <div style="font-size: 0.7em; text-align: left; width: 80%; margin: 1em auto;">
+          <p>📌 <strong>더 알아보기</strong></p>
+          <ul>
+            <li>📖 <a href="../../README.md">README</a></li>
+            <li>📚 <a href="../../wiki/guides/model-routing.md">Wiki 가이드</a></li>
+            <li>📝 <a href="../../blog/posts/model-routing-design.md">Blog 분석</a></li>
+          </ul>
+        </div>
       </section>
 
     </div>
@@ -461,19 +532,54 @@ flowchart TD
       });
     });
 
-    // svg-pan-zoom 초기화
-    Reveal.addEventListener('ready', () => {
-      setTimeout(() => {
-        document.querySelectorAll('.mermaid-wrap svg').forEach((svg) => {
-          try {
-            svgPanZoom(svg, {
-              zoomEnabled: true, panEnabled: true, controlIconsEnabled: false,
-              fit: true, contain: true, minZoom: 0.5, maxZoom: 5
-            });
-          } catch (e) { console.warn('svg-pan-zoom init failed:', e); }
-        });
-      }, 1000);
-    });
+    // viewBox 동적 조정 (잘림 방지)
+    function adjustViewBoxForScaling() {
+      var scale = Reveal.getScale();
+      document.querySelectorAll('.mermaid-wrap svg').forEach(function(svg) {
+        if (svg.closest('.fullscreen')) return;
+        try {
+          var vb = svg.viewBox.baseVal;
+          var bbox = svg.getBBox();
+          var safetyMargin = 1 / scale;
+          var paddingX = bbox.width * 0.05 * safetyMargin;
+          var paddingY = bbox.height * 0.05 * safetyMargin;
+          vb.x = bbox.x - paddingX;
+          vb.y = bbox.y - paddingY;
+          vb.width = bbox.width + (paddingX * 2);
+          vb.height = bbox.height + (paddingY * 2);
+        } catch (e) {}
+      });
+    }
+    Reveal.addEventListener('slidechanged', adjustViewBoxForScaling);
+    Reveal.addEventListener('resize', adjustViewBoxForScaling);
+
+    // Mermaid 다이어그램 전체화면 토글
+    (function() {
+      function isMobile() { return window.matchMedia('(max-width: 768px)').matches; }
+      function toggleFullscreen(wrap) {
+        wrap.classList.toggle('fullscreen');
+        if (wrap.classList.contains('fullscreen')) {
+          document.body.style.overflow = 'hidden';
+          if (!isMobile() && typeof svgPanZoom !== 'undefined') {
+            var svg = wrap.querySelector('svg');
+            if (svg) {
+              try { svgPanZoom(svg, { zoomEnabled: true, panEnabled: true, controlIconsEnabled: false, fit: true, contain: true, minZoom: 0.5, maxZoom: 5 }); }
+              catch (e) { console.warn('svg-pan-zoom init failed:', e); }
+            }
+          }
+        } else {
+          document.body.style.overflow = '';
+        }
+      }
+      document.querySelectorAll('.mermaid-wrap').forEach(function(wrap) {
+        wrap.addEventListener('click', function(e) { e.stopPropagation(); toggleFullscreen(wrap); });
+      });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          document.querySelectorAll('.mermaid-wrap.fullscreen').forEach(function(wrap) { toggleFullscreen(wrap); });
+        }
+      });
+    })();
   </script>
 </body>
 </html>
