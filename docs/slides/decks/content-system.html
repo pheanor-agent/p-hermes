@@ -229,11 +229,11 @@
   G4["L4: Domain Gates\n도메인 게이트"] --> G5
   G5["L5: Judge Model\n거시적 심사\n(Blog 전용)"] --> OK
 
-  G1 --""실패" "--> FIX1["↩ 재수정"]
-  G2 --""실패" "--> FIX2["↩ 재수정"]
-  G3 --""실패" "--> FIX3["↩ 재수정"]
-  G4 --""실패" "--> FIX4["↩ 재수정"]
-  G5 --""실패" "--> FIX5["↩ 재수정"]
+  G1 -- "실패" --> FIX1["↩ 재수정"]
+  G2 -- "실패" --> FIX2["↩ 재수정"]
+  G3 -- "실패" --> FIX3["↩ 재수정"]
+  G4 -- "실패" --> FIX4["↩ 재수정"]
+  G5 -- "실패" --> FIX5["↩ 재수정"]
 
   style G1 fill:#3498db,stroke:#2980b9,color:#fff
   style G2 fill:#1abc9c,stroke:#16a085,color:#fff

@@ -161,22 +161,22 @@
           <div>
             <strong>챗봇 시대</strong>
             <pre class="mermaid">graph TD
-  U["사용자"] --""요청" "--> CB["Chatbot"]
-  CB --""응답" "--> U
+  U["사용자"] -- "요청" --> CB["Chatbot"]
+  CB -- "응답" --> U
   style CB fill:#c0392b,stroke:#922b21,color:#fff
 </pre>
           </div>
           <div>
             <strong>자율 에이전트 시대</strong>
             <pre class="mermaid">graph TD
-  U["사용자"] --""요청" "--> AG["Agent"]
-  AG --""실행" "--> T["Tools"]
-  AG --""학습" "--> GE["GEPA Loop"]
-  AG --""메모리" "--> PM["Persistent Memory"]
-  AG --""다중 API" "--> M1["Model 1"]
-  AG --""다중 API" "--> M2["Model 2"]
-  AG --""다중 API" "--> M3["Model 3"]
-  AG --""응답" "--> U
+  U["사용자"] -- "요청" --> AG["Agent"]
+  AG -- "실행" --> T["Tools"]
+  AG -- "학습" --> GE["GEPA Loop"]
+  AG -- "메모리" --> PM["Persistent Memory"]
+  AG -- "다중 API" --> M1["Model 1"]
+  AG -- "다중 API" --> M2["Model 2"]
+  AG -- "다중 API" --> M3["Model 3"]
+  AG -- "응답" --> U
   style AG fill:#2ecc71,stroke:#1e8449,color:#fff
   style GE fill:#f39c12,stroke:#d68910,color:#fff
   style PM fill:#3498db,stroke:#2980b9,color:#fff
@@ -240,9 +240,9 @@
     AP["LLM Providers\n20+"]
   end
 
-  US --""요청" "--> AG
-  PL --""메시지" "--> AG
-  AG --""호출" "--> AP
+  US -- "요청" --> AG
+  PL -- "메시지" --> AG
+  AG -- "호출" --> AP
   AG --> WF
   AG --> SP
   AG --> CO
