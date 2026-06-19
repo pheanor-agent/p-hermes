@@ -360,6 +360,14 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
 /*********************************************
  * MERMAID DIAGRAM CENTERING
  *********************************************/
+.reveal pre.mermaid {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  margin: 20px auto;
+  max-width: 100%;
+}
+
 .mermaid {
   display: flex;
   justify-content: center;
