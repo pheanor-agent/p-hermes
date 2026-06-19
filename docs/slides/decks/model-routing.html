@@ -140,47 +140,7 @@
           설정 파일 <code>model-roles.yaml</code>에서 역할→모델 매핑을 정의하고,<br>
           라우팅 엔진이 실행 시점에 작업 단계별로 최적 모델을 선택합니다.
         </p>
-<svg viewBox="0 0 1080 160" class="diagram-svg" width="100%" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <marker id="a-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="ag-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="ad-0" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
-  </defs>
-    <g transform="translate(20, 30)">
-      <rect rx="6" width="100" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
-      <text x="50" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">요청</text>
-    </g>
-    <g transform="translate(140, 30)">
-      <rect rx="6" width="140" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
-      <text x="70" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">라우팅 엔진</text>
-    </g>
-    <g transform="translate(300, 30)">
-      <rect rx="6" width="150" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
-      <text x="75" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">작업 단계 분석</text>
-    </g>
-    <g transform="translate(470, 30)">
-      <rect rx="6" width="170" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
-      <text x="85" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">model-roles 매핑</text>
-    </g>
-    <g transform="translate(660, 30)">
-      <rect rx="6" width="130" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
-      <text x="65" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">모델 선택</text>
-    </g>
-    <g transform="translate(810, 30)">
-      <rect rx="6" width="120" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
-      <text x="60" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">실행</text>
-    </g>
-    <g transform="translate(950, 30)">
-      <rect rx="6" width="100" height="100" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
-      <text x="50" y="55" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">결과</text>
-    </g>
-    <line x1="120" y1="80" x2="140" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
-    <line x1="280" y1="80" x2="300" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
-    <line x1="450" y1="80" x2="470" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
-    <line x1="640" y1="80" x2="660" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
-    <line x1="790" y1="80" x2="810" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
-    <line x1="930" y1="80" x2="950" y2="80" stroke="#666" stroke-width="1.5" marker-end="url(#ag-0)"/>
-</svg>
+<img src="../images/model-routing_0.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
         </div>
       </section>
 
@@ -260,43 +220,7 @@
               </span>
           </div>
         </div>
-<svg viewBox="0 0 800 220" class="diagram-svg" width="100%" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <marker id="a-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="ag-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="ad-1" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
-  </defs>
-    <g transform="translate(20, 70)">
-      <rect rx="6" width="180" height="80" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
-      <text x="90" y="45" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">추론형 Design</text>
-      <text x="90" y="60" text-anchor="middle" font-size="10" fill="#666">glm-5.2</text>
-    </g>
-    <g transform="translate(240, 70)">
-      <rect rx="6" width="180" height="80" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
-      <text x="90" y="45" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">검증형 Review</text>
-      <text x="90" y="60" text-anchor="middle" font-size="10" fill="#666">Gemma-4</text>
-    </g>
-    <g transform="translate(460, 70)">
-      <rect rx="6" width="100" height="80" fill="#fff5f5" stroke="#c0392b" stroke-width="1.5"/>
-      <text x="50" y="45" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">결함?</text>
-    </g>
-    <g transform="translate(600, 20)">
-      <rect rx="6" width="160" height="60" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
-      <text x="80" y="35" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">수정 사항</text>
-      <text x="80" y="50" text-anchor="middle" font-size="10" fill="#666">checklist 추출</text>
-    </g>
-    <g transform="translate(600, 160)">
-      <rect rx="6" width="140" height="60" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
-      <text x="70" y="35" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">검증 통과</text>
-    </g>
-    <line x1="200" y1="110" x2="240" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
-    <text x="220" y="102" text-anchor="middle" font-size="11" fill="#666">설계</text>
-    <line x1="320" y1="110" x2="460" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#a-1)"/>
-    <line x1="560" y1="90" x2="600" y2="90" stroke="#666" stroke-width="1.5" marker-end="url(#a-1)"/>
-    <text x="580" y="82" text-anchor="middle" font-size="11" fill="#666">YES</text>
-    <line x1="560" y1="130" x2="600" y2="190" stroke="#666" stroke-width="1.5" marker-end="url(#ag-1)"/>
-    <text x="580" y="152" text-anchor="middle" font-size="11" fill="#666">NO</text>
-</svg>
+<img src="../images/model-routing_1.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
         </div>
         <p style="font-size: 0.65em; color: #666;">검증형 API 장애 시 추론형으로 대체 (Fallback)</p>
       </section>
@@ -346,55 +270,7 @@ model:
       <!-- Slide 13: Routing flow diagram -->
       <section>
         <h2>전체 라우팅 파이프라인</h2>
-        <svg viewBox="0 0 1080 400" class="diagram-svg" width="100%" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <marker id="a-2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker>
-    <marker id="ag-2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#1a7f37"/></marker>
-    <marker id="ad-2" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#999"/></marker>
-  </defs>
-    <g transform="translate(440, 20)">
-      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
-      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">요청 수신</text>
-    </g>
-    <line x1="540" y1="70" x2="540" y2="110" stroke="#666" stroke-width="1.5" marker-end="url(#ag-2)"/>
-    <g transform="translate(390, 110)">
-      <rect rx="6" width="300" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
-      <text x="150" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">도메인 분석 + 작업 단계 식별</text>
-    </g>
-    <line x1="540" y1="160" x2="540" y2="200" stroke="#666" stroke-width="1.5" marker-end="url(#ag-2)"/>
-    <g transform="translate(340, 200)">
-      <rect rx="6" width="400" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
-      <text x="200" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">
-        <tspan x="200" dy="0" text-anchor="middle">model-roles.yaml</tspan>
-        <tspan x="200" dy="14" text-anchor="middle">역할 → 모델 매핑</tspan>
-      </text>
-    </g>
-    <g transform="translate(40, 280)">
-      <rect rx="6" width="300" height="60" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
-      <text x="150" y="35" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Creative</text>
-      <text x="150" y="50" text-anchor="middle" font-size="10" fill="#666">glm-5.2 (창의/디자인)</text>
-    </g>
-    <g transform="translate(390, 280)">
-      <rect rx="6" width="300" height="60" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
-      <text x="150" y="35" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Coding</text>
-      <text x="150" y="50" text-anchor="middle" font-size="10" fill="#666">Qwen3.6 (코드/실행)</text>
-    </g>
-    <g transform="translate(740, 280)">
-      <rect rx="6" width="300" height="60" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
-      <text x="150" y="35" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">Review</text>
-      <text x="150" y="50" text-anchor="middle" font-size="10" fill="#666">Gemma-4 (검증/검토)</text>
-    </g>
-    <line x1="440" y1="250" x2="230" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
-    <line x1="540" y1="250" x2="540" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
-    <line x1="640" y1="250" x2="820" y2="280" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
-    <g transform="translate(440, 360)">
-      <rect rx="6" width="200" height="50" fill="#f0faf0" stroke="#1a7f37" stroke-width="1.5"/>
-      <text x="100" y="30" text-anchor="middle" font-size="13" font-weight="normal" fill="#333">최종 모델로 실행</text>
-    </g>
-    <line x1="230" y1="340" x2="540" y2="360" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
-    <line x1="540" y1="340" x2="540" y2="360" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
-    <line x1="820" y1="340" x2="540" y2="360" stroke="#666" stroke-width="1.5" marker-end="url(#a-2)"/>
-</svg>
+        <img src="../images/model-routing_2.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
         </div>
       </section>
 
