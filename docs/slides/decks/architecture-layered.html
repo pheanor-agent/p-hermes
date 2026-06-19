@@ -11,9 +11,10 @@
   <!-- Highlight.js -->
   <link rel="stylesheet" href="../css/highlight-github.min.css">
   <script src="../js/highlight.min.js"></script>
+  <script src="../js/mermaid.min.js"></script>
+  <script> window.mermaidConfig = { startOnLoad: false, theme: 'default' }; </script>
   <style>
     .reveal { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', 'Noto Sans KR', 'Helvetica Neue', sans-serif; }
-    /* SVG 다이어그램 - 16:9 준수 */
     :root {
       --scale-h1: 2.2em;
       --scale-h2: 1.5em;
@@ -32,35 +33,16 @@
       --diagram-max-width: 1080px;
       --diagram-max-height: 520px;
     }
-    
-    /* SVG 다이어그램 */
-    .diagram-svg {
-      max-width: var(--diagram-max-width);
-      max-height: var(--diagram-max-height);
-      width: 100%;
-      height: auto;
-      display: block;
-      margin: var(--diagram-margin) auto;
-      background: #fafafa;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      padding: 10px;
-      box-sizing: border-box;
-    }
-    
-    .diagram-svg text {
-      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
-    }
-    
-    /* 테이블 마진 개선 */
+
+    .mermaid { max-width: 1080px; margin: 40px auto; }
+
     .reveal .slides table {
       max-width: var(--content-width) !important;
       margin: 30px auto !important;
       table-layout: fixed !important;
       word-break: keep-all !important;
     }
-    
-    /* 문단 마진 개선 */
+
     .reveal .slides p,
     .reveal .slides .problem-card,
     .reveal .slides .solution-card {
@@ -68,8 +50,7 @@
       margin: 20px auto !important;
       padding: 0 40px !important;
     }
-    
-    /* 두 컬럼 레이아웃 */
+
     .two-col {
       display: flex;
       gap: 40px !important;
@@ -78,13 +59,11 @@
       padding: 20px 40px !important;
     }
     .two-col > div { flex: 1; }
-    
-    /* 제목 마진 */
+
     .reveal .slides h2 {
       margin-bottom: 20px !important;
     }
-    
-    /* 다이어그램 캡션 */
+
     .diagram-caption {
       font-size: var(--scale-caption, 0.65em);
       color: #666;
@@ -171,11 +150,47 @@
         <div class="two-col">
           <div>
             <strong>Flat (모놀리식)</strong>
-            <img src="../images/architecture-layered_0.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
+            <pre class="mermaid">graph TD
+  A["모듈 A"] -- 직접 호출 --> B["모듈 B"]
+  A -- 직접 호출 --> C["모듈 C"]
+  B -- 직접 호출 --> C
+  D["모듈 D"] -- 직접 호출 --> B
+  C -- 직접 호출 --> A
+  style A fill:#c0392b,stroke:#922b21,color:#fff
+  style B fill:#c0392b,stroke:#922b21,color:#fff
+  style C fill:#c0392b,stroke:#922b21,color:#fff
+  style D fill:#c0392b,stroke:#922b21,color:#fff
+</pre>
           </div>
           <div>
             <strong>Layered (레이어드)</strong>
-            <img src="../images/architecture-layered_1.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
+            <pre class="mermaid">graph TD
+  subgraph L1["T1: Core"]
+    C["config.yaml / workflow.sh"]
+  end
+  subgraph L2["T2: Runtime"]
+    R["knowledge/ cron/ sessions/"]
+  end
+  subgraph L3["T3: Interfaces"]
+    I["Discord / Telegram / CLI"]
+  end
+  subgraph L4["T4: Infra"]
+    F["GitHub / Docker"]
+  end
+  subgraph L5["T5: Release"]
+    S["docs/ slides/ llms.txt"]
+  end
+  L1 --> L2
+  L2 --> L3
+  L3 --> L4
+  L4 --> L5
+  E["event.sh ◁ Global"] -.-> L1
+  E -.-> L2
+  E -.-> L3
+  E -.-> L4
+  E -.-> L5
+  style E fill:#2ecc71,stroke:#1e8449,color:#fff
+</pre>
           </div>
         </div>
         <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">직접 호출 → 이벤트 기반 비동기 통신으로 결합도 해방</p>
@@ -189,12 +204,61 @@
         <h2>관계망 아키텍처</h2>
       </section>
 
-      <!-- Slide 7: Network architecture ASCII diagram -->
+      <!-- Slide 7: Network architecture -->
       <section>
         <h2>5계층 + 2글로벌 = 관계망</h2>
         <p style="font-size: 0.75em;">단방향 직선이 아닌, 실제 의존 관계 기반 망 구조</p>
-        <img src="../images/architecture-layered_2.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
-        </div>
+        <pre class="mermaid">graph TD
+  subgraph T1["T1: Core"]
+    C1["config.yaml"]
+    C2["AGENTS.md"]
+    C3["skills/"]
+    C4["workflow.sh"]
+  end
+
+  subgraph T2["T2: Runtime"]
+    R1["knowledge/"]
+    R2["cron/"]
+    R3["sessions/"]
+    R4[".workflow-state"]
+  end
+
+  subgraph T3["T3: Interfaces"]
+    I1["Discord"]
+    I2["Telegram"]
+    I3["CLI"]
+  end
+
+  subgraph T4["T4: Infra"]
+    F1["GitHub"]
+    F2["Docker"]
+  end
+
+  subgraph T5["T5: Release"]
+    S1["docs/"]
+    S2["slides/"]
+    S3["llms.txt"]
+  end
+
+  E["event.sh ◁ Global"] -.-> T1
+  E -.-> T2
+  E -.-> T3
+  E -.-> T4
+  E -.-> T5
+  U["system-common/ ◁ Global"] -.-> T1
+  U -.-> T2
+  U -.-> T3
+  U -.-> T4
+  U -.-> T5
+
+  T1 --> T2
+  T2 --> T3
+  T3 --> T4
+  T4 --> T5
+
+  style E fill:#2ecc71,stroke:#1e8449,color:#fff
+  style U fill:#f39c12,stroke:#d68910,color:#fff
+</pre>
       </section>
 
       <!-- Slide 8: Layer roles table -->
@@ -253,8 +317,19 @@
       <section>
         <h2>event.sh — 시스템의 신경망</h2>
         <p style="font-size: 0.75em;">모든 모듈은 event.sh를 통해 통신. 직접 호출 X, 이벤트 발행/구독 O</p>
-        <img src="../images/architecture-layered_3.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
-        </div>
+        <pre class="mermaid">graph TD
+  S["Scheduler\n(스케줄러)"] -- publish --> EB["event.sh\n이벤트 버스"]
+  W["Workflow Engine\n(워크플로우 엔진)"] -- subscribe --> EB
+  W -- publish --> EB
+  R["Runner\n(런너)"] -- subscribe --> EB
+  R -- publish --> EB
+  I["Interface\n(인터페이스)"] -- subscribe --> EB
+  K["Knowledge\n(지식 시스템)"] -- subscribe --> EB
+  EB -- write --> L["JSONL Log\n(JSONL 로그)"]
+
+  style EB fill:#2ecc71,stroke:#1e8449,color:#fff
+  style L fill:#3498db,stroke:#2980b9,color:#fff
+</pre>
         <div class="two-col" style="margin-top: 0.5em;">
           <div style="font-size: 0.7em; text-align: left;">
             <strong>이벤트 발행</strong><br>
@@ -313,8 +388,56 @@
       <!-- Slide 13: Directory tree -->
       <section>
         <h2>$HERMES_ROOT 디렉토리 맵</h2>
-        <img src="../images/architecture-layered_4.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
-        </div>
+        <pre class="mermaid">graph TD
+  ROOT["$HERMES_ROOT"] --> T1
+  ROOT --> T2
+  ROOT --> T3
+  ROOT --> T4
+  ROOT --> T5
+  ROOT --> E
+  ROOT --> U
+
+  subgraph T1["T1: Core"]
+    CFG["config.yaml"]
+    AGT["AGENTS.md"]
+    SKL["skills/"]
+    WFS["workflow.sh"]
+  end
+
+  subgraph T2["T2: Runtime"]
+    KNW["knowledge/"]
+    CRN["cron/"]
+    SES["sessions/"]
+    STT[".workflow-state"]
+  end
+
+  subgraph T3["T3: Interfaces"]
+    DSC["discord/"]
+    TGL["telegram/"]
+    CLI["CLI"]
+  end
+
+  subgraph T4["T4: Infra"]
+    GIT[".git/"]
+    DEP["deploy/"]
+  end
+
+  subgraph T5["T5: Release"]
+    DOC["docs/"]
+    SLI["slides/"]
+    WIK["wiki/"]
+    BLG["blog/"]
+  end
+
+  E["event.sh ◁ Global"]
+  U["system-common/ ◁ Global"]
+
+  style T1 fill:#1a7f37,stroke:#145a25,color:#fff
+  style T2 fill:#2ecc71,stroke:#1e8449,color:#fff
+  style T3 fill:#3498db,stroke:#2980b9,color:#fff
+  style T4 fill:#8e44ad,stroke:#6c3483,color:#fff
+  style T5 fill:#e67e22,stroke:#d35400,color:#fff
+</pre>
       </section>
 
       <!-- Slide 14: Data flow example -->
@@ -420,7 +543,6 @@
 
   <script src="../js/reveal.js"></script>
   <script>
-
     Reveal.initialize({
       hash: true,
       slideNumber: 'c/t',
@@ -431,16 +553,16 @@
       fragments: true,
       minScale: 0.15,
       maxScale: 2.0
+    }).then(() => {
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      mermaid.run({ querySelector: '.mermaid' });
     });
 
-    // Highlight.js 초기화
     Reveal.addEventListener('ready', () => {
       document.querySelectorAll('pre code').forEach((block) => {
         hljs.highlightElement(block);
       });
     });
-
-
   </script>
 </body>
 </html>

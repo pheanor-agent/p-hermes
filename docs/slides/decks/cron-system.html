@@ -11,6 +11,8 @@
   <!-- Highlight.js -->
   <link rel="stylesheet" href="../css/highlight-github.min.css">
   <script src="../js/highlight.min.js"></script>
+  <script src="../js/mermaid.min.js"></script>
+  <script> window.mermaidConfig = { startOnLoad: false, theme: 'default' }; </script>
   <style>
     :root {
       --scale-h1: 2.2em;
@@ -40,6 +42,7 @@
     .tree li { margin: 0.2em 0; }
     .tree .folder::before { content: "📁 "; }
     .tree .file::before { content: "📄 "; }
+    .mermaid { max-width: 1080px; margin: 40px auto; }
   </style>
 </head>
 <body>
@@ -104,8 +107,35 @@
       <!-- Slide 6: 3-layer architecture -->
       <section>
         <h2>Registry → Wrapper → Runner 3층 아키텍처</h2>
-        <img src="../images/cron-system_0.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
-        </div>
+        <pre class="mermaid">graph TD
+  subgraph L1["Layer 1: Scheduler\n스케줄러"]
+    SC["Cron 스케줄러"]
+    RG["registry.yaml\nSSOT"]
+    EB1["event.sh"]
+  end
+
+  subgraph L2["Layer 2: Wrapper\n래퍼"]
+    WR["wrapper.sh\nJob 래퍼 스크립트"]
+    DL["Deliver\n전달 핸들러"]
+  end
+
+  subgraph L3["Layer 3: Runner\n런너"]
+    RU["Runner"]
+    SH["Shell Script\n스크립트 실행"]
+    LM["LLM API\n추론 호출"]
+  end
+
+  SC --> WR
+  WR --> RU
+  RU --> SH
+  RU --> LM
+  EB1 -.-> WR
+  DL --> EB1
+
+  style L1 fill:#3498db,stroke:#2980b9,color:#fff
+  style L2 fill:#2ecc71,stroke:#1e8449,color:#fff
+  style L3 fill:#e67e22,stroke:#d35400,color:#fff
+</pre>
       </section>
 
       <!-- Slide 7: SSOT — registry.yaml -->
@@ -195,6 +225,7 @@
               정상 실행 시 알림 전송 안 함. 실패/경고 시만 결과 전달 → 알림 피로도 낮춤.<br><br>
               <code style="font-size: 0.85em;">no_agent: true + script</code><br>
               스크립트 출력이 비어 있으면 전송 생략, 존재하면 알림 생성.
+            </div>
           </div>
           <div>
             <div class="solution-card" style="font-size: 0.8em; border-left-color: #0969da;">
@@ -202,7 +233,8 @@
               <code>deliver: origin</code> — 작업이 시작된 대화 창으로 자동 전달.<br>
               <code>deliver: origin,all</code> — 현재 채팅 + 모든 연결 채널 동시 전달.<br>
               <code>deliver: "discord:123"</code> — 특정 채널 명시 전달.<br><br>
-             다중 채널 전달 시 실패 시 fallback 자동 동작.
+              다중 채널 전달 시 실패 시 fallback 자동 동작.
+            </div>
           </div>
         </div>
       </section>
@@ -245,8 +277,27 @@ hermes cron create \
       <!-- Slide 13: 이벤트 흐름 (event.sh) -->
       <section>
         <h2>실행 시 이벤트 흐름 — end-to-end</h2>
-        <img src="../images/cron-system_1.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
-        </div>
+        <pre class="mermaid">graph TD
+  SC["Schedule Check\n스케줄 확인"] --> WR["wrapper.sh\nJob 래퍼"]
+  WR --> RU["Runner\n작업 실행"]
+  WR --> EB1["event.sh publish\nstarted"]
+
+  RU --> SH["Shell Script\n스크립트 실행"]
+  RU --> LM["LLM API\n추론 호출"]
+
+  SH --> DL["Deliver\n결과 전송"]
+  LM --> DL
+
+  DL --> EB2["event.sh publish\ncompleted"]
+  DL --> OR["Origin Channel\n원본 채널"]
+  DL --> DS["Dest Channel\n지정 채널"]
+
+  EB2 --> LG["JSONL Log\n히스토리 기록"]
+
+  style EB1 fill:#2ecc71,stroke:#1e8449,color:#fff
+  style EB2 fill:#2ecc71,stroke:#1e8449,color:#fff
+  style LG fill:#3498db,stroke:#2980b9,color:#fff
+</pre>
         <p style="font-size: 0.6em; color: #666;">모든 단계가 event.sh에 JSONL로 기록 → event.sh history로 전체 추적 가능</p>
       </section>
 
@@ -355,17 +406,16 @@ mutex_release "morning-news"</code></pre>
       fragments: true,
       minScale: 0.15,
       maxScale: 2.0
+    }).then(() => {
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      mermaid.run({ querySelector: '.mermaid' });
     });
 
-
-    // Highlight.js 초기화
     Reveal.addEventListener('ready', () => {
       document.querySelectorAll('pre code').forEach((block) => {
         hljs.highlightElement(block);
       });
     });
-
-
   </script>
 </body>
 </html>

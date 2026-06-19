@@ -11,9 +11,10 @@
   <!-- Highlight.js -->
   <link rel="stylesheet" href="../css/highlight-github.min.css">
   <script src="../js/highlight.min.js"></script>
+  <script src="../js/mermaid.min.js"></script>
+  <script> window.mermaidConfig = { startOnLoad: false, theme: 'default' }; </script>
   <style>
     .reveal { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', 'Noto Sans KR', 'Helvetica Neue', sans-serif; }
-    /* SVG 다이어그램 - 16:9 준수 */
     :root {
       --scale-h1: 2.2em;
       --scale-h2: 1.5em;
@@ -32,35 +33,16 @@
       --diagram-max-width: 1080px;
       --diagram-max-height: 520px;
     }
-    
-    /* SVG 다이어그램 */
-    .diagram-svg {
-      max-width: var(--diagram-max-width);
-      max-height: var(--diagram-max-height);
-      width: 100%;
-      height: auto;
-      display: block;
-      margin: var(--diagram-margin) auto;
-      background: #fafafa;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      padding: 10px;
-      box-sizing: border-box;
-    }
-    
-    .diagram-svg text {
-      font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
-    }
-    
-    /* 테이블 마진 개선 */
+
+    .mermaid { max-width: 1080px; margin: 40px auto; }
+
     .reveal .slides table {
       max-width: var(--content-width) !important;
       margin: 30px auto !important;
       table-layout: fixed !important;
       word-break: keep-all !important;
     }
-    
-    /* 문단 마진 개선 */
+
     .reveal .slides p,
     .reveal .slides .problem-card,
     .reveal .slides .solution-card {
@@ -68,8 +50,7 @@
       margin: 20px auto !important;
       padding: 0 40px !important;
     }
-    
-    /* 두 컬럼 레이아웃 */
+
     .two-col {
       display: flex;
       gap: 40px !important;
@@ -78,13 +59,11 @@
       padding: 20px 40px !important;
     }
     .two-col > div { flex: 1; }
-    
-    /* 제목 마진 */
+
     .reveal .slides h2 {
       margin-bottom: 20px !important;
     }
-    
-    /* 다이어그램 캡션 */
+
     .diagram-caption {
       font-size: var(--scale-caption, 0.65em);
       color: #666;
@@ -171,11 +150,27 @@
         <div class="two-col">
           <div>
             <strong>챗봇 시대</strong>
-            <img src="../images/hermes-overview_0.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
+            <pre class="mermaid">graph TD
+  U["사용자"] -- "요청" --> CB["Chatbot"]
+  CB -- "응답" --> U
+  style CB fill:#c0392b,stroke:#922b21,color:#fff
+</pre>
           </div>
           <div>
             <strong>자율 에이전트 시대</strong>
-            <img src="../images/hermes-overview_1.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
+            <pre class="mermaid">graph TD
+  U["사용자"] -- "요청" --> AG["Agent"]
+  AG -- "실행" --> T["Tools"]
+  AG -- "학습" --> GE["GEPA Loop"]
+  AG -- "메모리" --> PM["Persistent Memory"]
+  AG -- "다중 API" --> M1["Model 1"]
+  AG -- "다중 API" --> M2["Model 2"]
+  AG -- "다중 API" --> M3["Model 3"]
+  AG -- "응답" --> U
+  style AG fill:#2ecc71,stroke:#1e8449,color:#fff
+  style GE fill:#f39c12,stroke:#d68910,color:#fff
+  style PM fill:#3498db,stroke:#2980b9,color:#fff
+</pre>
           </div>
         </div>
         <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">단순한 도구 → 작업을 실행하는 파트너</p>
@@ -217,8 +212,36 @@
       <!-- Slide 8: Architecture overview -->
       <section>
         <h2>시스템 전체 구조</h2>
-        <img src="../images/hermes-overview_2.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
-        </div>
+        <pre class="mermaid">graph TD
+  AG["Hermes Agent\nCore"]
+
+  subgraph SYS["Core Systems"]
+    WF["🔧 Workflow\n9단계 상태머신"]
+    SP["📋 Spec-Driven Dev\n명세서 기반 개발"]
+    CO["🎨 Content System\nAI 텍스트 품질 관리"]
+    KS["📚 Knowledge System\n지식 기반 통합"]
+    CR["⏰ Cron\n24시간 자동화"]
+    MR["🧭 Model Routing\n작업별 모델 선택"]
+  end
+
+  subgraph EXT["External"]
+    US["사용자"]
+    PL["Messaging Platforms"]
+    AP["LLM Providers\n20+"]
+  end
+
+  US -- "요청" --> AG
+  PL -- "메시지" --> AG
+  AG -- "호출" --> AP
+  AG --> WF
+  AG --> SP
+  AG --> CO
+  AG --> KS
+  AG --> CR
+  AG --> MR
+
+  style AG fill:#1a7f37,stroke:#145a25,color:#fff
+</pre>
       </section>
 
       <!-- Slide 9: 6 core systems -->
@@ -267,8 +290,17 @@
       <section>
         <h2>GEPA 학습 루프</h2>
         <p style="font-size: 0.8em;">에이전트가 경험을 재사용 가능한 지식으로 변환하는 사이클</p>
-        <img src="../images/hermes-overview_3.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
-        </div>
+        <pre class="mermaid">graph LR
+  G["Gather\n실행 기록 수집"] --> E["Evaluate\n재사용성 평가"]
+  E --> P["Produce\nSKILL.md 생성"]
+  P --> A["Apply\n다음 세션 자동 로드"]
+  A --> G
+
+  style G fill:#3498db,stroke:#2980b9,color:#fff
+  style E fill:#f39c12,stroke:#d68910,color:#fff
+  style P fill:#2ecc71,stroke:#1e8449,color:#fff
+  style A fill:#9b59b6,stroke:#8e44ad,color:#fff
+</pre>
         <p style="font-size: 0.65em; color: #666;">복잡한 작업을 해결한 후 자동으로 SKILL.md 생성 → 다음 세션에서 자동 로드</p>
       </section>
 
@@ -408,7 +440,6 @@ $ hermes chat
 
   <script src="../js/reveal.js"></script>
   <script>
-
     Reveal.initialize({
       hash: true,
       slideNumber: 'c/t',
@@ -419,16 +450,16 @@ $ hermes chat
       fragments: true,
       minScale: 0.15,
       maxScale: 2.0
+    }).then(() => {
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      mermaid.run({ querySelector: '.mermaid' });
     });
 
-    // Highlight.js 초기화
     Reveal.addEventListener('ready', () => {
       document.querySelectorAll('pre code').forEach((block) => {
         hljs.highlightElement(block);
       });
     });
-
-
   </script>
 </body>
 </html>

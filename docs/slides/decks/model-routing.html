@@ -11,6 +11,8 @@
   <!-- Highlight.js -->
   <link rel="stylesheet" href="../css/highlight-github.min.css">
   <script src="../js/highlight.min.js"></script>
+  <script src="../js/mermaid.min.js"></script>
+  <script> window.mermaidConfig = { startOnLoad: false, theme: 'default' }; </script>
   <style>
     :root {
       --scale-h1: 2.2em;
@@ -45,6 +47,7 @@
     .role-execution { background: #16a34a; }
     .role-review { background: #dc2626; }
     .role-general { background: #7c3aed; }
+    .mermaid { max-width: 1080px; margin: 40px auto; }
   </style>
 </head>
 <body>
@@ -107,6 +110,7 @@
             <div style="font-size: 0.75em; text-align: left; margin-top: 0.5em;">
               <p>설계도를 그리는 <strong>건축가</strong>와 벽돌을 쌓는 <strong>숙련공</strong>, 현장을 파악하는 <strong>조사원</strong>이 필요합니다.</p>
               <p>건축가에게 벽돌을 쌓게 하면? 효율과 품질 모두 떨어짐.</p>
+            </div>
           </div>
           <div>
             <strong>LLM의 현실</strong>
@@ -117,6 +121,7 @@
 빠른 응답:  범용형 > 수행형
 비용 효율:  범용형 > 추론형</code></pre>
               <p style="color: #666; font-size: 0.9em;">벤치마크는 '평균'만 보여줌.<br>'특정 작업'에서의 상대적 강약은 다름.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -140,8 +145,21 @@
           설정 파일 <code>model-roles.yaml</code>에서 역할→모델 매핑을 정의하고,<br>
           라우팅 엔진이 실행 시점에 작업 단계별로 최적 모델을 선택합니다.
         </p>
-<img src="../images/model-routing_0.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
-        </div>
+        <pre class="mermaid">graph TD
+  REQ["사용자 요청"] --> ANA["의도 분석\nIntent Analysis"]
+  ANA --> RT["Model Router\n모델 라우터"]
+  RT --> R["추론형\nReasoning"]
+  RT --> E["수행형\nExecution"]
+  RT --> V["검증형\nReview"]
+  RT --> G["범용형\nGeneral"]
+
+  style REQ fill:#ecf0f1,stroke:#bdc3c7,color:#2c3e50
+  style RT fill:#1a7f37,stroke:#145a25,color:#fff
+  style R fill:#2563eb,stroke:#1d4ed8,color:#fff
+  style E fill:#16a34a,stroke:#15803d,color:#fff
+  style V fill:#dc2626,stroke:#b91c1c,color:#fff
+  style G fill:#7c3aed,stroke:#6d28d9,color:#fff
+</pre>
       </section>
 
       <!-- Slide 8: 4 domain roles -->
@@ -209,6 +227,7 @@
                 자기 논리적 오류 감지 불가.<br>
                 <strong>결함 발견율: 31%</strong>
               </span>
+            </div>
           </div>
           <div>
             <div class="solution-card">
@@ -218,10 +237,25 @@
                 완전히 다른 관점에서 검토.<br>
                 <strong>결함 발견율: 78% (+152%)</strong>
               </span>
+            </div>
           </div>
         </div>
-<img src="../images/model-routing_1.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
-        </div>
+        <pre class="mermaid">graph LR
+  subgraph SG1["Design 단계"]
+    DM["추론형 모델\n(설계)"]
+  end
+  subgraph SG2["Review 단계"]
+    RM["검증형 모델\n(검증)"]
+  end
+
+  DM -->|설계서| RM
+  RM -->|"결함 발견율 78%"| OK["✅ 검증 완료"]
+  RM -->|"결함 발견" --> FIX["↩ 재설계"]
+  FIX --> DM
+
+  style DM fill:#2563eb,stroke:#1d4ed8,color:#fff
+  style RM fill:#dc2626,stroke:#b91c1c,color:#fff
+</pre>
         <p style="font-size: 0.65em; color: #666;">검증형 API 장애 시 추론형으로 대체 (Fallback)</p>
       </section>
 
@@ -270,8 +304,22 @@ model:
       <!-- Slide 13: Routing flow diagram -->
       <section>
         <h2>전체 라우팅 파이프라인</h2>
-        <img src="../images/model-routing_2.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
-        </div>
+        <pre class="mermaid">graph TD
+  U["User Request\n사용자 요청"] --> RA["Request Analysis\n요청 분석"]
+  RA --> MR["Model Router\n라우팅 엔진"]
+  MR --> MS["model-roles.yaml\n역할 매핑 조회"]
+  MR --> DM["Design Model\n추론형"]
+  MR --> RM["Review Model\n검증형"]
+  MR --> EM["Execution Model\n수행형"]
+  MR --> GM["General Model\n범용형"]
+
+  DM -->|실패 시| FB["Fallback\n대체 모델"]
+  FB --> RM
+
+  style MR fill:#1a7f37,stroke:#145a25,color:#fff
+  style MS fill:#f39c12,stroke:#d68910,color:#fff
+  style FB fill:#c0392b,stroke:#922b21,color:#fff
+</pre>
       </section>
 
       <!-- Slide 14: Workflow stage example -->
@@ -388,7 +436,6 @@ model:
 
   <script src="../js/reveal.js"></script>
   <script>
-
     Reveal.initialize({
       hash: true,
       slideNumber: 'c/t',
@@ -399,16 +446,16 @@ model:
       fragments: true,
       minScale: 0.15,
       maxScale: 2.0
+    }).then(() => {
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      mermaid.run({ querySelector: '.mermaid' });
     });
 
-    // Highlight.js 초기화
     Reveal.addEventListener('ready', () => {
       document.querySelectorAll('pre code').forEach((block) => {
         hljs.highlightElement(block);
       });
     });
-
-
   </script>
 </body>
 </html>

@@ -11,6 +11,8 @@
   <!-- Highlight.js -->
   <link rel="stylesheet" href="../css/highlight-github.min.css">
   <script src="../js/highlight.min.js"></script>
+  <script src="../js/mermaid.min.js"></script>
+  <script> window.mermaidConfig = { startOnLoad: false, theme: 'default' }; </script>
   <style>
     :root {
       --scale-h1: 2.2em;
@@ -40,6 +42,7 @@
     .tree li { margin: 0.2em 0; }
     .tree .folder::before { content: "📁 "; }
     .tree .file::before { content: "📄 "; }
+    .mermaid { max-width: 1080px; margin: 40px auto; }
   </style>
 </head>
 <body>
@@ -123,8 +126,30 @@
       <!-- Slide 7: State machine diagram -->
       <section>
         <h2>9단계 상태 전이도</h2>
-        <img src="../images/workflow-pipeline_0.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
-        </div>
+        <pre class="mermaid">graph TD
+  REQ["1. Request"] --> INV["2. Investigation"]
+  INV --> DES["3. Design"]
+  DES --> REV["4. Review"]
+  REV --> APP["5. Approval"]
+  APP --> EXE["6. Execution"]
+  EXE --> TST["7. Test"]
+  TST --> EREV["8. Exec Review"]
+  EREV --> DON["9. Done"]
+
+  EXE -.->|"실행 오류"| DES
+  TST -.->|"테스트 실패"| REV
+  REV -.->|"설계 결함"| DES
+
+  style REQ fill:#3498db,stroke:#2980b9,color:#fff
+  style INV fill:#3498db,stroke:#2980b9,color:#fff
+  style DES fill:#f39c12,stroke:#d68910,color:#fff
+  style REV fill:#e74c3c,stroke:#c0392b,color:#fff
+  style APP fill:#9b59b6,stroke:#8e44ad,color:#fff
+  style EXE fill:#1a7f37,stroke:#145a25,color:#fff
+  style TST fill:#2ecc71,stroke:#1e8449,color:#fff
+  style EREV fill:#16a34a,stroke:#15803d,color:#fff
+  style DON fill:#2563eb,stroke:#1d4ed8,color:#fff
+</pre>
         <p style="font-size: 0.65em; color: #666;">점선(피드백 루프): 설계 결함·테스트 실패 시 이전 단계로 되돌아감</p>
       </section>
 
@@ -156,12 +181,15 @@
             <div class="solution-card">
               <strong>Investigation</strong><br>
               "어떻게 고칠까" 이전에 "지금 어떻게 되어 있는가"를 먼저 본다
+            </div>
             <div class="solution-card">
               <strong>Design</strong><br>
               코드 한 줄 쓰기 전에 <code>design.md</code>에 모든 변경을 텍스트로 — 이것이 SSOT
+            </div>
             <div class="solution-card">
               <strong>Execution</strong><br>
               오직 <code>design.md</code>에 적힌 대로만. 임의 판단 금지
+            </div>
           </div>
           <div style="font-size: 0.7em; text-align: left; align-self: center;">
             <p style="color:#1a7f37;"><strong>무효 전이 금지</strong></p>
@@ -354,7 +382,6 @@ exit 1
 
   <script src="../js/reveal.js"></script>
   <script>
-
     Reveal.initialize({
       hash: true,
       slideNumber: 'c/t',
@@ -365,16 +392,16 @@ exit 1
       fragments: true,
       minScale: 0.15,
       maxScale: 2.0
+    }).then(() => {
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      mermaid.run({ querySelector: '.mermaid' });
     });
 
-    // Highlight.js 초기화
     Reveal.addEventListener('ready', () => {
       document.querySelectorAll('pre code').forEach((block) => {
         hljs.highlightElement(block);
       });
     });
-
-
   </script>
 </body>
 </html>

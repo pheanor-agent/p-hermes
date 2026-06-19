@@ -8,11 +8,11 @@
   <link rel="stylesheet" href="../css/white.css">
   <!-- Google Fonts (한글) -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-   <!-- svg-pan-zoom -->
-   <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
   <!-- Highlight.js -->
   <link rel="stylesheet" href="../css/highlight-github.min.css">
   <script src="../js/highlight.min.js"></script>
+  <script src="../js/mermaid.min.js"></script>
+  <script> window.mermaidConfig = { startOnLoad: false, theme: 'default' }; </script>
   <style>
     :root {
       --scale-h1: 2.2em;
@@ -42,6 +42,7 @@
     .tree li { margin: 0.2em 0; }
     .tree .folder::before { content: "📁 "; }
     .tree .file::before { content: "📄 "; }
+    .mermaid { max-width: 1080px; margin: 40px auto; }
   </style>
 </head>
 <body>
@@ -105,10 +106,12 @@
               <strong>문법 검사기의 맹점</strong><br>
               문법적으로 맞지만 부정-대조 패턴인 문장을 PASS 처리<br>
               <span style="color:#c0392b;">"~가 아닌, ~입니다" → 불필요한 강조</span>
+            </div>
             <div class="problem-card" style="margin: 0.3em 0; padding: 0.6em;">
               <strong>자기 참조 오류</strong><br>
               동일 모델이 생성·검증 시 자기 스타일을 '양질'로 인식<br>
               <span style="color:#c0392b;">AI-isms 포함 문장 78% 자체 검증 통과</span>
+            </div>
           </div>
           <div style="font-size: 0.7em; text-align: left;">
             <strong>휴리스틱 검출 실패 유형</strong>
@@ -134,8 +137,40 @@
       <!-- Slide 7: 3-Layer Architecture -->
       <section>
         <h2>3-Layer 아키텍처 전체 구조</h2>
-        <img src="../images/content-system_0.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
-        </div>
+        <pre class="mermaid">graph TD
+  subgraph L1["Layer 1: Domain Classification\n도메인 분류"]
+    D1["D1: 기술 문서"]
+    D2["D2: 교육 콘텐츠"]
+    D3["D3: 프레젠테이션"]
+    D4["D4: 창작물"]
+    D5["D5: 비즈니스"]
+  end
+
+  subgraph L2["Layer 2: Shared Engines\n7개 공유 엔진"]
+    SG["Tier Generator"]
+    TA["Tone Adapter"]
+    AB["Analogy Builder"]
+    TF["Template Filler"]
+    VA["Validator"]
+    MS["Model Selector"]
+    IP["Image Prompt Builder"]
+  end
+
+  subgraph L3["Layer 3: Domain Overlay\n도메인 오버레이"]
+    DO1["D1 Overlay"]
+    DO2["D2 Overlay"]
+    DO3["D3 Overlay"]
+    DO4["D4 Overlay"]
+    DO5["D5 Overlay"]
+  end
+
+  L1 --> L2
+  L2 --> L3
+
+  style L1 fill:#3498db,stroke:#2980b9,color:#fff
+  style L2 fill:#2ecc71,stroke:#1e8449,color:#fff
+  style L3 fill:#e67e22,stroke:#d35400,color:#fff
+</pre>
         <p style="font-size: 0.6em; color: #666;">데이터는 단일 방향으로 흐름. 각 레이어는 명확한 책임 분리.</p>
       </section>
 
@@ -176,8 +211,27 @@
       <!-- Slide 10: 5-layer verification gates overview -->
       <section>
         <h2>5계층 검증 게이트 (L1~L5)</h2>
-        <img src="../images/content-system_1.png" alt="diagram" class="diagram-svg" style="max-width: 1080px; width: 100%; height: auto; margin: 40px auto; display: block;">
-        </div>
+        <pre class="mermaid">graph LR
+  IN["Engine Output\n엔진 출력"] --> G1
+  G1["L1: Syntax\n구문 검사"] --> G2
+  G2["L2: Error Strings\n오류 문자열"] --> G3
+  G3["L3: Anti-Slop\n어조 검증"] --> G4
+  G4["L4: Domain Gates\n도메인 게이트"] --> G5
+  G5["L5: Judge Model\n거시적 심사\n(Blog 전용)"] --> OK
+
+  G1 -- "실패" --> FIX1["↩ 재수정"]
+  G2 -- "실패" --> FIX2["↩ 재수정"]
+  G3 -- "실패" --> FIX3["↩ 재수정"]
+  G4 -- "실패" --> FIX4["↩ 재수정"]
+  G5 -- "실패" --> FIX5["↩ 재수정"]
+
+  style G1 fill:#3498db,stroke:#2980b9,color:#fff
+  style G2 fill:#1abc9c,stroke:#16a085,color:#fff
+  style G3 fill:#2ecc71,stroke:#1e8449,color:#fff
+  style G4 fill:#f39c12,stroke:#d68910,color:#fff
+  style G5 fill:#9b59b6,stroke:#8e44ad,color:#fff
+  style OK fill:#1a7f37,stroke:#145a25,color:#fff
+</pre>
         <p style="font-size: 0.6em; color: #666;">각 계층은 독립 동작. 이전 계층 통과 시에만 다음 계층으로 전달.</p>
       </section>
 
@@ -234,6 +288,7 @@ $ python3 validator.py l3 \
             <div style="margin-top: 1.5em;">
               <span class="stat">23%</span><br>
               <span class="stat-label">L5 적용 Blog 독자 만족도 개선</span>
+            </div>
             <p style="font-size: 0.8em; color: #666; margin-top: 1.5em;">
               Wiki는 L1~L4로 충분<br>
               Blog는 L5 추가 시 유의미한 차이
@@ -407,21 +462,19 @@ def run_all_validators(text, domain):
       progress: true,
       center: true,
       transition: 'slide',
-      fragments: true
-     ,
-       minScale: 0.15,
-       maxScale: 2.0
+      fragments: true,
+      minScale: 0.15,
+      maxScale: 2.0
+    }).then(() => {
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+      mermaid.run({ querySelector: '.mermaid' });
     });
 
-
-    // Highlight.js 초기화
     Reveal.addEventListener('ready', () => {
       document.querySelectorAll('pre code').forEach((block) => {
         hljs.highlightElement(block);
       });
     });
-
-
-    </script>
+  </script>
 </body>
 </html>
