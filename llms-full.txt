@@ -12,6 +12,7 @@
 - **docs/blog/posts/why-9-step-workflow.md** (455 lines): 왜 9단계 상태머신인가? AI의 파괴적 실행을 막는 안전장치
 - **docs/slides/index.md** (28 lines): 🖼️ p-hermes Slides
 - **docs/wiki/getting-started/install.md** (186 lines): 설치 및 환경 설정
+- **docs/wiki/getting-started/overview.md** (133 lines): 에르메스 에이전트 개요
 - **docs/wiki/guides/automation.md** (394 lines): Cron/자동화 시스템 가이드
 - **docs/wiki/guides/content-system.md** (371 lines): Content System (콘텐츠 시스템)
 - **docs/wiki/guides/knowledge-system.md** (310 lines): 지식 시스템 사용 가이드
