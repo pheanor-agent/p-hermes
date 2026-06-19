@@ -6,12 +6,12 @@
   <title>모델 라우팅 — 작업별 최적 모델 자동 선택</title>
   <link rel="stylesheet" href="../css/reveal.css">
   <link rel="stylesheet" href="../css/white.css">
-  <!-- Google Fonts (한글) -->
+  <!--"Google Fonts (한글) "-->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
   <!-- Highlight.js -->
   <link rel="stylesheet" href="../css/highlight-github.min.css">
   <script src="../js/highlight.min.js"></script>
-  <script src="../js/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <script> window.mermaidConfig = { startOnLoad: false, theme: 'default' }; </script>
   <style>
     :root {
@@ -40,14 +40,24 @@
     pre code { font-size: var(--code-font); }
     .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
     .tree li { margin: 0.2em 0; }
-    .tree .folder::before { content: "📁 "; }
-    .tree .file::before { content: "📄 "; }
+    .tree .folder::before { content:"📁 "; }
+    .tree .file::before { content:"📄 "; }
     .role-tag { display: inline-block; padding: 0.15em 0.5em; border-radius: 6px; font-size: 0.65em; font-weight: bold; color: #fff; vertical-align: middle; }
     .role-reasoning { background: #2563eb; }
     .role-execution { background: #16a34a; }
     .role-review { background: #dc2626; }
     .role-general { background: #7c3aed; }
-    .mermaid { max-width: 1080px; margin: 40px auto; }
+    .mermaid { 
+      max-width: 1080px; 
+      margin: 40px auto; 
+      overflow: visible;
+    }
+    .mermaid svg { 
+      max-width: 100%; 
+      height: auto; 
+      display: block;
+      overflow: visible;
+    }
   </style>
 </head>
 <body>
@@ -93,7 +103,7 @@
         </div>
         <div class="problem-card">
           <strong>② 성능 불일치 (Performance Mismatch)</strong><br>
-          <span style="font-size: 0.8em;">추론 특화 모델이 단순 코딩에서 '너무 많이 생각' → 시간 40% 증가, 오버엔지니어링.</span>
+          <span style="font-size: 0.8em;">추론 특화 모델이 단순 코딩에서 '너무 많이 생각' -> 시간 40% 증가, 오버엔지니어링.</span>
         </div>
         <div class="problem-card">
           <strong>③ 자기 확증 편향 (Self-Confirmation Bias)</strong><br>
@@ -142,7 +152,7 @@
           <span style="font-size: 0.85em;">작업의 성격(설계, 실행, 검증, 조사)에 따라 가장 적합한 모델을 자동으로 배정합니다. 비용은 낮추고 성능은 극대화하는 '적재적소' 전략입니다.</span>
         </div>
         <p style="font-size: 0.7em; color: #666; margin-top: 0.5em;">
-          설정 파일 <code>model-roles.yaml</code>에서 역할→모델 매핑을 정의하고,<br>
+          설정 파일 <code>model-roles.yaml</code>에서 역할->모델 매핑을 정의하고,<br>
           라우팅 엔진이 실행 시점에 작업 단계별로 최적 모델을 선택합니다.
         </p>
         <pre class="mermaid">graph TD
@@ -198,7 +208,7 @@
 
       <!-- Slide 9: Work-role mapping -->
       <section>
-        <h2>작업 → 역할 매핑</h2>
+        <h2>작업 -> 역할 매핑</h2>
         <div style="font-size: 0.78em; text-align: left; width: 90%; margin: 0 auto;">
           <table style="width: 100%;">
             <tr style="border-bottom: 1px solid #ddd;">
@@ -262,35 +272,35 @@
       <!-- Slide 11: model-roles.yaml structure -->
       <section>
         <h2>설정 구조: model-roles.yaml</h2>
-        <pre style="font-size: 0.6em; width: 90%; margin: 0 auto;"><code class="language-yaml" data-trim># SSOT: 모든 역할→모델 매핑의 단일 진리원
+        <pre style="font-size: 0.6em; width: 90%; margin: 0 auto;"><code class="language-yaml" data-trim># SSOT: 모든 역할->모델 매핑의 단일 진리원
 model:
   default: general        # 기본 역할
   roles:
     design:
       primary:
         role: reasoning
-        description: "논리적 설계 및 아키텍처"
+        description:"논리적 설계 및 아키텍처"
       fallback:
         role: review
 
     review:
       primary:
         role: review
-        description: "비판적 검증 및 코드 리뷰"
+        description:"비판적 검증 및 코드 리뷰"
       fallback:
         role: reasoning
 
     execution:
       primary:
         role: execution
-        description: "코드 구현 및 파일 수정"
+        description:"코드 구현 및 파일 수정"
 
     investigation:
       primary:
         role: general
-        description: "빠른 현황 분석 및 검색"
+        description:"빠른 현황 분석 및 검색"
 </code></pre>
-        <p style="font-size: 0.65em; color: #666;">역할 이름만 지정 → 실제 프로바이더/모델명은 infra 레이어에서 해석</p>
+        <p style="font-size: 0.65em; color: #666;">역할 이름만 지정 -> 실제 프로바이더/모델명은 infra 레이어에서 해석</p>
       </section>
 
       <!-- ===== SECTION 3: HOW ===== -->
@@ -411,7 +421,7 @@ model:
         <ol style="font-size: 0.85em;">
           <li class="fragment"><strong>단일 모델</strong>으로 모든 작업을 하면 비용 폭주, 성능 불일치, 자기 확증 편향이 발생</li>
           <li class="fragment"><strong>4가지 도메인 역할</strong>(추론형/수행형/검증형/범용형)로 작업을 특화 모델에 배정</li>
-          <li class="fragment"><strong>교차 검증</strong>: Design과 Review를 다른 모델로 → 결함 발견율 31% → 78%</li>
+          <li class="fragment"><strong>교차 검증</strong>: Design과 Review를 다른 모델로 -> 결함 발견율 31% -> 78%</li>
           <li class="fragment"><strong>SSOT</strong>은 <code>model-roles.yaml</code>. 역할 이름만 정의, 실제 모델명은 infra 레이어 해석</li>
         </ol>
         <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 1em;">"서로 다른 지능의 앙상블 — 적재적소가 극대극소"</p>
@@ -447,8 +457,11 @@ model:
       minScale: 0.15,
       maxScale: 2.0
     }).then(() => {
-      mermaid.initialize({ startOnLoad: false, theme: 'default' });
-      mermaid.run({ querySelector: '.mermaid' });
+      mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+      document.querySelectorAll('.mermaid').forEach((el, idx) => {
+        const code = el.textContent.trim();
+        mermaid.render('m' + idx, code).then(({ svg }) => { el.innerHTML = svg; });
+      });
     });
 
     Reveal.addEventListener('ready', () => {

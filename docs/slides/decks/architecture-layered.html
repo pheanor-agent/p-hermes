@@ -6,12 +6,12 @@
   <title>Hermes Agent: 레이어드 아키텍처</title>
   <link rel="stylesheet" href="../css/reveal.css">
   <link rel="stylesheet" href="../css/white.css">
-  <!-- Google Fonts (한글) -->
+  <!--"Google Fonts (한글) "-->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
   <!-- Highlight.js -->
   <link rel="stylesheet" href="../css/highlight-github.min.css">
   <script src="../js/highlight.min.js"></script>
-  <script src="../js/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <script> window.mermaidConfig = { startOnLoad: false, theme: 'default' }; </script>
   <style>
     .reveal { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', 'Noto Sans KR', 'Helvetica Neue', sans-serif; }
@@ -34,7 +34,17 @@
       --diagram-max-height: 520px;
     }
 
-    .mermaid { max-width: 1080px; margin: 40px auto; }
+    .mermaid { 
+      max-width: 1080px; 
+      margin: 40px auto; 
+      overflow: visible;
+    }
+    .mermaid svg { 
+      max-width: 100%; 
+      height: auto; 
+      display: block;
+      overflow: visible;
+    }
 
     .reveal .slides table {
       max-width: var(--content-width) !important;
@@ -89,8 +99,8 @@
     pre code { font-size: var(--code-font); }
     .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
     .tree li { margin: 0.2em 0; }
-    .tree .folder::before { content: "📁 "; }
-    .tree .file::before { content: "📄 "; }
+    .tree .folder::before { content:"📁 "; }
+    .tree .file::before { content:"📄 "; }
   </style>
 </head>
 <body>
@@ -151,11 +161,11 @@
           <div>
             <strong>Flat (모놀리식)</strong>
             <pre class="mermaid">graph TD
-  A["모듈 A"] -- 직접 호출 --> B["모듈 B"]
-  A -- 직접 호출 --> C["모듈 C"]
-  B -- 직접 호출 --> C
-  D["모듈 D"] -- 직접 호출 --> B
-  C -- 직접 호출 --> A
+  A["모듈 A"] --"직접 호출 "--> B["모듈 B"]
+  A --"직접 호출 "--> C["모듈 C"]
+  B --"직접 호출 "--> C
+  D["모듈 D"] --"직접 호출 "--> B
+  C --"직접 호출 "--> A
   style A fill:#c0392b,stroke:#922b21,color:#fff
   style B fill:#c0392b,stroke:#922b21,color:#fff
   style C fill:#c0392b,stroke:#922b21,color:#fff
@@ -165,35 +175,25 @@
           <div>
             <strong>Layered (레이어드)</strong>
             <pre class="mermaid">graph TD
-  subgraph L1["T1: Core"]
-    C["config.yaml / workflow.sh"]
-  end
-  subgraph L2["T2: Runtime"]
-    R["knowledge/ cron/ sessions/"]
-  end
-  subgraph L3["T3: Interfaces"]
-    I["Discord / Telegram / CLI"]
-  end
-  subgraph L4["T4: Infra"]
-    F["GitHub / Docker"]
-  end
-  subgraph L5["T5: Release"]
-    S["docs/ slides/ llms.txt"]
-  end
-  L1 --> L2
-  L2 --> L3
-  L3 --> L4
-  L4 --> L5
-  E["event.sh ◁ Global"] -.-> L1
-  E -.-> L2
-  E -.-> L3
-  E -.-> L4
-  E -.-> L5
+  T1["T1: Core<br/>config.yaml / workflow.sh"] --> T2["T2: Runtime<br/>knowledge/ cron/ sessions/"]
+  T2 --> T3["T3: Interfaces<br/>Discord / Telegram / CLI"]
+  T3 --> T4["T4: Infra<br/>GitHub / Docker"]
+  T4 --> T5["T5: Release<br/>docs/ slides/ llms.txt"]
+  E["event.sh Global"] -.-> T1
+  E -.-> T2
+  E -.-> T3
+  E -.-> T4
+  E -.-> T5
+  style T1 fill:#3498db,stroke:#2980b9,color:#fff
+  style T2 fill:#3498db,stroke:#2980b9,color:#fff
+  style T3 fill:#3498db,stroke:#2980b9,color:#fff
+  style T4 fill:#3498db,stroke:#2980b9,color:#fff
+  style T5 fill:#3498db,stroke:#2980b9,color:#fff
   style E fill:#2ecc71,stroke:#1e8449,color:#fff
 </pre>
           </div>
         </div>
-        <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">직접 호출 → 이벤트 기반 비동기 통신으로 결합도 해방</p>
+        <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">직접 호출 -> 이벤트 기반 비동기 통신으로 결합도 해방</p>
       </section>
 
       <!-- ===== SECTION 2: WHAT ===== -->
@@ -240,12 +240,12 @@
     S3["llms.txt"]
   end
 
-  E["event.sh ◁ Global"] -.-> T1
+  E["event.sh <- Global"] -.-> T1
   E -.-> T2
   E -.-> T3
   E -.-> T4
   E -.-> T5
-  U["system-common/ ◁ Global"] -.-> T1
+  U["system-common/ <- Global"] -.-> T1
   U -.-> T2
   U -.-> T3
   U -.-> T4
@@ -429,8 +429,8 @@
     BLG["blog/"]
   end
 
-  E["event.sh ◁ Global"]
-  U["system-common/ ◁ Global"]
+  E["event.sh <- Global"]
+  U["system-common/ <- Global"]
 
   style T1 fill:#1a7f37,stroke:#145a25,color:#fff
   style T2 fill:#2ecc71,stroke:#1e8449,color:#fff
@@ -455,7 +455,7 @@
             </tr>
             <tr class="fragment fade-in">
               <td><span class="stat" style="font-size:1.2em; color:#1a7f37;">3</span></td>
-              <td><strong>Core</strong>가 이벤트를 구독 → workflow.sh에서 9-Step 실행</td>
+              <td><strong>Core</strong>가 이벤트를 구독 -> workflow.sh에서 9-Step 실행</td>
             </tr>
             <tr class="fragment fade-in">
               <td><span class="stat" style="font-size:1.2em; color:#1a7f37;">4</span></td>
@@ -467,11 +467,11 @@
             </tr>
             <tr class="fragment fade-in">
               <td><span class="stat" style="font-size:1.2em; color:#1a7f37;">6</span></td>
-              <td><strong>event.sh</strong>에 <code>cron.job.completed</code> 발행 → JSONL 히스토리에 기록</td>
+              <td><strong>event.sh</strong>에 <code>cron.job.completed</code> 발행 -> JSONL 히스토리에 기록</td>
             </tr>
           </table>
         </div>
-        <p class="fragment" style="font-size: 0.65em; color: #1a7f37; margin-top: 0.5em;">→ 모든 단계가 event.sh를 경유. 직접 호출은 0회.</p>
+        <p class="fragment" style="font-size: 0.65em; color: #1a7f37; margin-top: 0.5em;">-> 모든 단계가 event.sh를 경유. 직접 호출은 0회.</p>
       </section>
 
       <!-- ===== SECTION 4: TRADE-OFFS ===== -->
@@ -554,8 +554,11 @@
       minScale: 0.15,
       maxScale: 2.0
     }).then(() => {
-      mermaid.initialize({ startOnLoad: false, theme: 'default' });
-      mermaid.run({ querySelector: '.mermaid' });
+      mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+      document.querySelectorAll('.mermaid').forEach((el, idx) => {
+        const code = el.textContent.trim();
+        mermaid.render('m' + idx, code).then(({ svg }) => { el.innerHTML = svg; });
+      });
     });
 
     Reveal.addEventListener('ready', () => {

@@ -6,12 +6,12 @@
   <title>Workflow Pipeline: 9단계 상태머신 — 에이전트의 안전장치</title>
   <link rel="stylesheet" href="../css/reveal.css">
   <link rel="stylesheet" href="../css/white.css">
-  <!-- Google Fonts (한글) -->
+  <!--"Google Fonts (한글) "-->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
   <!-- Highlight.js -->
   <link rel="stylesheet" href="../css/highlight-github.min.css">
   <script src="../js/highlight.min.js"></script>
-  <script src="../js/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <script> window.mermaidConfig = { startOnLoad: false, theme: 'default' }; </script>
   <style>
     :root {
@@ -40,9 +40,19 @@
     pre code { font-size: var(--code-font); }
     .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
     .tree li { margin: 0.2em 0; }
-    .tree .folder::before { content: "📁 "; }
-    .tree .file::before { content: "📄 "; }
-    .mermaid { max-width: 1080px; margin: 40px auto; }
+    .tree .folder::before { content:"📁 "; }
+    .tree .file::before { content:"📄 "; }
+    .mermaid { 
+      max-width: 1080px; 
+      margin: 40px auto; 
+      overflow: visible;
+    }
+    .mermaid svg { 
+      max-width: 100%; 
+      height: auto; 
+      display: block;
+      overflow: visible;
+    }
   </style>
 </head>
 <body>
@@ -63,7 +73,7 @@
       <section>
         <h2>오늘의 여정</h2>
         <table style="font-size: 0.75em; width: 80%; margin: 0 auto;">
-          <tr><td style="color:#c0392b; width: 15%;">WHY</td><td>"빨리 해줘"가 "빨리 망가뜨려"가 되는 이유</td></tr>
+          <tr><td style="color:#c0392b; width: 15%;">WHY</td><td>"빨리 해줘"가"빨리 망가뜨려"가 되는 이유</td></tr>
           <tr><td style="color:#1a7f37; width: 15%;">WHAT</td><td>9단계 상태머신: 설계 · 검증 · 승인 · 실행</td></tr>
           <tr><td style="color:#0969da; width: 15%;">HOW</td><td>workflow-gate.sh · .workflow-state · 실제 JOB 사례</td></tr>
           <tr><td style="color:#bc4c00; width: 15%;">TRADE-OFFS</td><td>9단계가 과도한 경우 — TASK vs JOB</td></tr>
@@ -84,15 +94,15 @@
         <h2>실행의 함정 — 3가지 치명적 사고</h2>
         <div class="problem-card">
           <strong>① 컨텍스트 미스 (Context Miss)</strong><br>
-          <span style="font-size: 0.8em;">config.yaml의 들여쓰기를 파악하기 전에 값 하나만 바꾸다가 → 시스템 전체 부팅 실패</span>
+          <span style="font-size: 0.8em;">config.yaml의 들여쓰기를 파악하기 전에 값 하나만 바꾸다가 -> 시스템 전체 부팅 실패</span>
         </div>
         <div class="problem-card">
           <strong>② 롤백 불가 (Irreversible Change)</strong><br>
-          <span style="font-size: 0.8em;">수백 줄 스크립트를 한 번에 재작성 → 기존 예외 처리 로직 증발, 수 시간 복구</span>
+          <span style="font-size: 0.8em;">수백 줄 스크립트를 한 번에 재작성 -> 기존 예외 처리 로직 증발, 수 시간 복구</span>
         </div>
         <div class="problem-card">
           <strong>③ 에이전트 폭주 (Agent Rampage)</strong><br>
-          <span style="font-size: 0.8em;">"아키텍처를 효율적으로 바꿔줘" → 15개 파일 동시 수정 → 경로 참조 붕괴, 복구 6시간</span>
+          <span style="font-size: 0.8em;">"아키텍처를 효율적으로 바꿔줘" -> 15개 파일 동시 수정 -> 경로 참조 붕괴, 복구 6시간</span>
         </div>
       </section>
 
@@ -110,7 +120,7 @@
           </div>
         </div>
         <p class="fragment" style="font-size: 0.9em; color: #1a7f37; margin-top: 1em;">
-          → <strong>상태머신</strong>: 유효 전이만 허용하고, 각 단계에 산출물을 강제한다
+          -> <strong>상태머신</strong>: 유효 전이만 허용하고, 각 단계에 산출물을 강제한다
         </p>
         <p style="font-size: 0.6em; color: #666; margin-top: 0.5em;">ATM 비유: 비밀번호 없이 금액 선택으로 점프할 수 없는 것처럼</p>
       </section>
@@ -170,17 +180,17 @@
           <tr class="fragment fade-in"><td>8</td><td><strong>Exec Review</strong></td><td>실행 결과 ↔ 설계 일치 확인</td><td><code>execution-review.md</code></td></tr>
           <tr class="fragment fade-in"><td>9</td><td><strong>Done</strong></td><td>결과 보고·지식 동기화</td><td><code>result.md</code></td></tr>
         </table>
-        <p class="fragment fade-in" style="font-size: 0.65em; color: #1a7f37; margin-top: 0.5em;">→ 단계별 산출물로 추적 가능성(Traceability) 확보</p>
+        <p class="fragment fade-in" style="font-size: 0.65em; color: #1a7f37; margin-top: 0.5em;">-> 단계별 산출물로 추적 가능성(Traceability) 확보</p>
       </section>
 
       <!-- Slide 9: Core separation -->
       <section>
-        <h2>핵심 분리: Investigation → Design → Execution</h2>
+        <h2>핵심 분리: Investigation -> Design -> Execution</h2>
         <div class="two-col">
           <div style="font-size: 0.78em; text-align: left;">
             <div class="solution-card">
               <strong>Investigation</strong><br>
-              "어떻게 고칠까" 이전에 "지금 어떻게 되어 있는가"를 먼저 본다
+             "어떻게 고칠까" 이전에"지금 어떻게 되어 있는가"를 먼저 본다
             </div>
             <div class="solution-card">
               <strong>Design</strong><br>
@@ -204,21 +214,21 @@
         <h2>Approval 단계 — 인간의 최종 승인권</h2>
         <p style="font-size: 0.8em;">시스템의 가장 핵심적인 안전장치</p>
         <div class="problem-card" style="background:#fff8e1; border-left-color:#bc4c00;">
-          <strong>"진행해" / "승인"이라고 명시하기 전까지</strong><br>
+          <strong>"진행해" /"승인"이라고 명시하기 전까지</strong><br>
           <span style="font-size: 0.8em;">에이전트는 절대 <code>patch</code>·<code>write_file</code> 도구로 파일을 수정하지 않는다</span>
         </div>
         <div class="two-col" style="font-size: 0.72em; margin-top: 0.5em;">
           <div>
             <strong>❌ 좋지 않은 승인</strong>
             <p style="font-size: 0.9em;">"응, 진행해."
-<br>(설계 오류를 방치 → 나중에 수정 비용 발생)</p>
+<br>(설계 오류를 방치 -> 나중에 수정 비용 발생)</p>
           </div>
           <div>
             <strong>✅ 권장되는 승인</strong>
             <p style="font-size: 0.9em;">"src/utils.py는 새 래퍼 함수로 분리해줘. 그 점만 반영하면 승인할게."</p>
           </div>
         </div>
-        <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">→ 구체적 피드백일수록 Design 단계로 되돌아가 정교화 → 리스크 제거 후 실행</p>
+        <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">-> 구체적 피드백일수록 Design 단계로 되돌아가 정교화 -> 리스크 제거 후 실행</p>
       </section>
 
       <!-- Slide 11: Multi-layer defense -->
@@ -234,7 +244,7 @@
           </tr>
           <tr>
             <td><strong>② 콘텐츠 검증</strong><br>Content System</td>
-            <td><code>content: true</code> 시 L1(구조)→L2(오류)→L3(표현)→L4(도메인), Blog 도메인은 L5 Judge 추가</td>
+            <td><code>content: true</code> 시 L1(구조)->L2(오류)->L3(표현)->L4(도메인), Blog 도메인은 L5 Judge 추가</td>
           </tr>
           <tr>
             <td><strong>③ 인간 승인</strong><br>Approval Gate</td>
@@ -261,14 +271,14 @@
             <pre style="font-size: 0.5em;"><code class="language-json" data-trim>$ bash core/scripts/workflow-gate.sh \
       --status --job JOB-2047
 {
-  "job_id": "JOB-2047",
-  "current_step": "design",
-  "completed_artifacts": [
-    "request.md",
-    "investigation.md",
-    "design.md"
+ "job_id":"JOB-2047",
+ "current_step":"design",
+ "completed_artifacts": [
+   "request.md",
+   "investigation.md",
+   "design.md"
   ],
-  "next_allowed_steps": ["review"]
+ "next_allowed_steps": ["review"]
 }
             </code></pre>
           </div>
@@ -290,13 +300,13 @@ exit 1
         <h2>실제 사례: JOB-2047 세션 DB 마이그레이션</h2>
         <div style="font-size: 0.68em; text-align: left; width: 95%; margin: 0 auto;">
           <p><strong>Investigation</strong> — 1,247개 세션, 48MB, 의존 스크립트 3개(sessions.db 직접 조회) 발견</p>
-          <p><strong>Design</strong> — 이중 쓰기 레이어 → 배치 변환 → 스크립트 수정 → 검증 → 아카이브 (5 Phase)</p>
+          <p><strong>Design</strong> — 이중 쓰기 레이어 -> 배치 변환 -> 스크립트 수정 -> 검증 -> 아카이브 (5 Phase)</p>
           <p class="fragment"><strong style="color:#c0392b;">사건 1 (Design)</strong> — healthcheck.sh의 <code>PRAGMA integrity_check</code> 의존성 사전 발견. 단순 실행했다면 누락.</p>
-          <p class="fragment"><strong style="color:#c0392b;">사건 2 (Review)</strong> — Design→Execution 점프 시도를 workflow-gate.sh가 차단</p>
+          <p class="fragment"><strong style="color:#c0392b;">사건 2 (Review)</strong> — Design->Execution 점프 시도를 workflow-gate.sh가 차단</p>
           <p class="fragment"><strong>Execution</strong> — 1247/1247 변환(23초), 의존 스크립트 3개 수정</p>
           <p class="fragment"><strong>Test</strong> — 4/4 PASS · <strong>Exec Review</strong> — 설계 ↔ 결과 일치 확인</p>
         </div>
-        <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">→ 재작업 0회, 롤백 0회로 통제된 마이그레이션 완료</p>
+        <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">-> 재작업 0회, 롤백 0회로 통제된 마이그레이션 완료</p>
       </section>
 
       <!-- Slide 15: By the numbers -->
@@ -304,12 +314,12 @@ exit 1
         <h2>도입 전후 비교 (89개 JOB, 2026년 1-6월)</h2>
         <table style="width: 95%; margin: 0 auto;">
           <tr>
-            <td style="text-align:center;"><span class="stat">2.7 → 0.4</span><br><span class="stat-label">재작업 회수/JOB</span></td>
-            <td style="text-align:center;"><span class="stat">47% → 7%</span><br><span class="stat-label">롤백 발생률</span></td>
-            <td style="text-align:center;"><span class="stat">5 → 0</span><br><span class="stat-label">폭주 사고 건수</span></td>
+            <td style="text-align:center;"><span class="stat">2.7 -> 0.4</span><br><span class="stat-label">재작업 회수/JOB</span></td>
+            <td style="text-align:center;"><span class="stat">47% -> 7%</span><br><span class="stat-label">롤백 발생률</span></td>
+            <td style="text-align:center;"><span class="stat">5 -> 0</span><br><span class="stat-label">폭주 사고 건수</span></td>
           </tr>
         </table>
-        <p style="font-size: 0.7em; color: #666; margin-top: 0.8em;">초기 2주는 학습 기간(72분) → 이후 JOB당 52분, 총 완료 시간은 단축</p>
+        <p style="font-size: 0.7em; color: #666; margin-top: 0.8em;">초기 2주는 학습 기간(72분) -> 이후 JOB당 52분, 총 완료 시간은 단축</p>
         <p style="font-size: 0.65em; color: #1a7f37;">작업당 비용 32% 절감 · 승인 거부 12%는 평균 3시간 복구 절약 효과</p>
       </section>
 
@@ -331,7 +341,7 @@ exit 1
           <tr>
             <td><strong>TASK</strong></td>
             <td>파일 한 줄 수정, 간단한 질문</td>
-            <td>Request → Execution → Done <strong>(3단계)</strong></td>
+            <td>Request -> Execution -> Done <strong>(3단계)</strong></td>
             <td>2-5분</td>
           </tr>
           <tr>
@@ -355,7 +365,7 @@ exit 1
         <h2>핵심 요약</h2>
         <ol style="font-size: 0.9em;">
           <li class="fragment">에이전트 사고의 원인은 <strong>지능이 아니라 관문의 부재</strong></li>
-          <li class="fragment">9단계 상태머신: <strong>조사 → 설계 → 검토 → 승인 → 실행 → 검증</strong></li>
+          <li class="fragment">9단계 상태머신: <strong>조사 -> 설계 -> 검토 -> 승인 -> 실행 -> 검증</strong></li>
           <li class="fragment">Approval 단계가 <strong>인간의 통제권</strong>을 확보</li>
           <li class="fragment"><code>workflow-gate.sh</code>가 LLM 판단과 무관하게 무효 전이 차단</li>
           <li class="fragment">TASK/JOB 분리로 <strong>안전과 속도의 균형</strong></li>
@@ -393,8 +403,11 @@ exit 1
       minScale: 0.15,
       maxScale: 2.0
     }).then(() => {
-      mermaid.initialize({ startOnLoad: false, theme: 'default' });
-      mermaid.run({ querySelector: '.mermaid' });
+      mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+      document.querySelectorAll('.mermaid').forEach((el, idx) => {
+        const code = el.textContent.trim();
+        mermaid.render('m' + idx, code).then(({ svg }) => { el.innerHTML = svg; });
+      });
     });
 
     Reveal.addEventListener('ready', () => {

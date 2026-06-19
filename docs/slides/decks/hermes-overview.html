@@ -6,12 +6,12 @@
   <title>Hermes Agent: 자율 AI 에이전트 플랫폼</title>
   <link rel="stylesheet" href="../css/reveal.css">
   <link rel="stylesheet" href="../css/white.css">
-  <!-- Google Fonts (한글) -->
+  <!--"Google Fonts (한글) "-->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
   <!-- Highlight.js -->
   <link rel="stylesheet" href="../css/highlight-github.min.css">
   <script src="../js/highlight.min.js"></script>
-  <script src="../js/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <script> window.mermaidConfig = { startOnLoad: false, theme: 'default' }; </script>
   <style>
     .reveal { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', 'Noto Sans KR', 'Helvetica Neue', sans-serif; }
@@ -34,7 +34,17 @@
       --diagram-max-height: 520px;
     }
 
-    .mermaid { max-width: 1080px; margin: 40px auto; }
+    .mermaid { 
+      max-width: 1080px; 
+      margin: 40px auto; 
+      overflow: visible;
+    }
+    .mermaid svg { 
+      max-width: 100%; 
+      height: auto; 
+      display: block;
+      overflow: visible;
+    }
 
     .reveal .slides table {
       max-width: var(--content-width) !important;
@@ -89,8 +99,8 @@
     pre code { font-size: var(--code-font); }
     .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
     .tree li { margin: 0.2em 0; }
-    .tree .folder::before { content: "📁 "; }
-    .tree .file::before { content: "📄 "; }
+    .tree .folder::before { content:"📁 "; }
+    .tree .file::before { content:"📄 "; }
   </style>
 </head>
 <body>
@@ -136,7 +146,7 @@
         </div>
         <div class="problem-card">
           <strong>② 텍스트 응답만 가능</strong><br>
-          <span style="font-size: 0.8em;">파일 수정, 명령어 실행, 외부 API 호출 불가. "말만" 할 수 있음.</span>
+          <span style="font-size: 0.8em;">파일 수정, 명령어 실행, 외부 API 호출 불가."말만" 할 수 있음.</span>
         </div>
         <div class="problem-card">
           <strong>③ 단일 제공자 종속</strong><br>
@@ -151,29 +161,29 @@
           <div>
             <strong>챗봇 시대</strong>
             <pre class="mermaid">graph TD
-  U["사용자"] -- "요청" --> CB["Chatbot"]
-  CB -- "응답" --> U
+  U["사용자"] --""요청" "--> CB["Chatbot"]
+  CB --""응답" "--> U
   style CB fill:#c0392b,stroke:#922b21,color:#fff
 </pre>
           </div>
           <div>
             <strong>자율 에이전트 시대</strong>
             <pre class="mermaid">graph TD
-  U["사용자"] -- "요청" --> AG["Agent"]
-  AG -- "실행" --> T["Tools"]
-  AG -- "학습" --> GE["GEPA Loop"]
-  AG -- "메모리" --> PM["Persistent Memory"]
-  AG -- "다중 API" --> M1["Model 1"]
-  AG -- "다중 API" --> M2["Model 2"]
-  AG -- "다중 API" --> M3["Model 3"]
-  AG -- "응답" --> U
+  U["사용자"] --""요청" "--> AG["Agent"]
+  AG --""실행" "--> T["Tools"]
+  AG --""학습" "--> GE["GEPA Loop"]
+  AG --""메모리" "--> PM["Persistent Memory"]
+  AG --""다중 API" "--> M1["Model 1"]
+  AG --""다중 API" "--> M2["Model 2"]
+  AG --""다중 API" "--> M3["Model 3"]
+  AG --""응답" "--> U
   style AG fill:#2ecc71,stroke:#1e8449,color:#fff
   style GE fill:#f39c12,stroke:#d68910,color:#fff
   style PM fill:#3498db,stroke:#2980b9,color:#fff
 </pre>
           </div>
         </div>
-        <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">단순한 도구 → 작업을 실행하는 파트너</p>
+        <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">단순한 도구 -> 작업을 실행하는 파트너</p>
       </section>
 
       <!-- ===== SECTION 2: WHAT ===== -->
@@ -230,9 +240,9 @@
     AP["LLM Providers\n20+"]
   end
 
-  US -- "요청" --> AG
-  PL -- "메시지" --> AG
-  AG -- "호출" --> AP
+  US --""요청" "--> AG
+  PL --""메시지" "--> AG
+  AG --""호출" "--> AP
   AG --> WF
   AG --> SP
   AG --> CO
@@ -301,7 +311,7 @@
   style P fill:#2ecc71,stroke:#1e8449,color:#fff
   style A fill:#9b59b6,stroke:#8e44ad,color:#fff
 </pre>
-        <p style="font-size: 0.65em; color: #666;">복잡한 작업을 해결한 후 자동으로 SKILL.md 생성 → 다음 세션에서 자동 로드</p>
+        <p style="font-size: 0.65em; color: #666;">복잡한 작업을 해결한 후 자동으로 SKILL.md 생성 -> 다음 세션에서 자동 로드</p>
       </section>
 
       <!-- Slide 13: GEPA detail with fragments -->
@@ -313,7 +323,7 @@
           <tr class="fragment fade-in"><td><strong>Produce</strong></td><td>YAML 프런트매터 + 마크다운 본문으로 스킬 문서화</td></tr>
           <tr class="fragment fade-in"><td><strong>Apply</strong></td><td>다음 세션에서 일치하는 스킬 자동 로드</td></tr>
         </table>
-        <p class="fragment fade-in" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">→ 매번 같은 실수를 반복하지 않는 "성숙하는" 에이전트</p>
+        <p class="fragment fade-in" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">-> 매번 같은 실수를 반복하지 않는"성숙하는" 에이전트</p>
       </section>
 
       <!-- Slide 14: Code example -->
@@ -324,7 +334,7 @@
 $ hermes chat
 
 # 에이전트가 자율적으로 작업 수행
-> "로그 파일에서 에러 패턴 분석해서 리포트 만들어줘"
+>"로그 파일에서 에러 패턴 분석해서 리포트 만들어줘"
 
 # 1. 터미널로 로그 수집
 # 2. 패턴 분석 (Python 스크립트)
@@ -332,7 +342,7 @@ $ hermes chat
 # 4. 결과를 Telegram으로 전송
 
 # 완료 후 자동으로 스킬 생성 (GEPA)
-# → 다음번 로그 분석 요청은 더 빠르게 수행
+# -> 다음번 로그 분석 요청은 더 빠르게 수행
         </code></pre>
         <p style="font-size: 0.6em; color: #666;">CLI, 메시징 플랫폼 어디서든 동일한 에이전트 인스턴스</p>
       </section>
@@ -370,7 +380,7 @@ $ hermes chat
             <td>부패한 스킬 관리 필요 (Curator)</td>
           </tr>
         </table>
-        <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">→ 그래서 9단계 워크플로우와 5계층 검증이 존재</p>
+        <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">-> 그래서 9단계 워크플로우와 5계층 검증이 존재</p>
       </section>
 
       <!-- Slide 17: When NOT to use -->
@@ -451,8 +461,11 @@ $ hermes chat
       minScale: 0.15,
       maxScale: 2.0
     }).then(() => {
-      mermaid.initialize({ startOnLoad: false, theme: 'default' });
-      mermaid.run({ querySelector: '.mermaid' });
+      mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+      document.querySelectorAll('.mermaid').forEach((el, idx) => {
+        const code = el.textContent.trim();
+        mermaid.render('m' + idx, code).then(({ svg }) => { el.innerHTML = svg; });
+      });
     });
 
     Reveal.addEventListener('ready', () => {

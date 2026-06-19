@@ -6,12 +6,12 @@
   <title>Hermes Knowledge System: 구조화된 AI 지식 관리</title>
   <link rel="stylesheet" href="../css/reveal.css">
   <link rel="stylesheet" href="../css/white.css">
-  <!-- Google Fonts (한글) -->
+  <!--"Google Fonts (한글) "-->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
   <!-- Highlight.js -->
   <link rel="stylesheet" href="../css/highlight-github.min.css">
   <script src="../js/highlight.min.js"></script>
-  <script src="../js/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <script> window.mermaidConfig = { startOnLoad: false, theme: 'default' }; </script>
   <style>
     .reveal { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', 'Noto Sans KR', 'Helvetica Neue', sans-serif; }
@@ -34,7 +34,17 @@
       --diagram-max-height: 520px;
     }
 
-    .mermaid { max-width: 1080px; margin: 40px auto; }
+    .mermaid { 
+      max-width: 1080px; 
+      margin: 40px auto; 
+      overflow: visible;
+    }
+    .mermaid svg { 
+      max-width: 100%; 
+      height: auto; 
+      display: block;
+      overflow: visible;
+    }
 
     .reveal .slides table {
       max-width: var(--content-width) !important;
@@ -89,8 +99,8 @@
     pre code { font-size: var(--code-font); }
     .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
     .tree li { margin: 0.2em 0; }
-    .tree .folder::before { content: "📁 "; }
-    .tree .file::before { content: "📄 "; }
+    .tree .folder::before { content:"📁 "; }
+    .tree .file::before { content:"📄 "; }
   </style>
 </head>
 <body>
@@ -103,7 +113,7 @@
       <section class="title-slide">
         <p style="color: var(--r-heading-color); margin-bottom: 1rem; font-size: 0.8em;">p-hermes · 기술 컨셉 강의</p>
         <h1>Hermes Knowledge System</h1>
-        <p style="font-size: 1.1em;">Raw 원본 → 계층적 Wiki → 정밀 검색까지</p>
+        <p style="font-size: 1.1em;">Raw 원본 -> 계층적 Wiki -> 정밀 검색까지</p>
         <p style="font-size: 0.6em; color: #888; margin-top: 2em;">Wikipedia meets SQLite · Karpathy 3-tier</p>
       </section>
 
@@ -113,7 +123,7 @@
         <table style="font-size: 0.75em; width: 80%; margin: 0 auto;">
           <tr><td style="color:#c0392b; width: 15%;">WHY</td><td>지식 없이 에이전트에게 무슨 일이 발생하는가</td></tr>
           <tr><td style="color:#1a7f37; width: 15%;">WHAT</td><td>3계층 구조 · T1/T2/T3 스코어링 · FTS5 검색</td></tr>
-          <tr><td style="color:#0969da; width: 15%;">HOW</td><td>inbox.md → 필링 → T1 승격의 실제 흐름</td></tr>
+          <tr><td style="color:#0969da; width: 15%;">HOW</td><td>inbox.md -> 필링 -> T1 승격의 실제 흐름</td></tr>
           <tr><td style="color:#bc4c00; width: 15%;">TRADE-OFFS</td><td>유지보수 비용과 지식 부패 관리</td></tr>
         </table>
         <p style="font-size: 0.6em; color: #888; margin-top: 1em;">약 15분 소요</p>
@@ -132,15 +142,15 @@
         <h2>지식이 없으면 세 가지 문제</h2>
         <div class="problem-card">
           <strong>① 컨텍스트 오버플로우</strong><br>
-          <span style="font-size: 0.8em;">50개 세션 이력 + 100개 뉴스 요약이 컨텍스트를 가득 채우면, "지금 이 코드를 수정해줘"라는 핵심 지시가 뒤로 밀려남.</span>
+          <span style="font-size: 0.8em;">50개 세션 이력 + 100개 뉴스 요약이 컨텍스트를 가득 채우면,"지금 이 코드를 수정해줘"라는 핵심 지시가 뒤로 밀려남.</span>
         </div>
         <div class="problem-card">
           <strong>② 추론 오염 (Inference Contamination)</strong><br>
-          <span style="font-size: 0.8em;">6개월 전 "A 모델이 최고다"라는 기록을 읽고 최신 벤치마크 결과를 무시. 노후 데이터를 사실로 착각.</span>
+          <span style="font-size: 0.8em;">6개월 전"A 모델이 최고다"라는 기록을 읽고 최신 벤치마크 결과를 무시. 노후 데이터를 사실로 착각.</span>
         </div>
         <div class="problem-card">
           <strong>③ 검색 불가</strong><br>
-          <span style="font-size: 0.8em;"><code>grep -rl "모델"</code>로 3가지 다른 맥락이 뒤섞인 결과. 도메인/태그 기반 정밀 검색이 필요.</span>
+          <span style="font-size: 0.8em;"><code>grep -rl"모델"</code>로 3가지 다른 맥락이 뒤섞인 결과. 도메인/태그 기반 정밀 검색이 필요.</span>
         </div>
       </section>
 
@@ -176,7 +186,7 @@
             <td style="text-align:right; font-weight:bold; color:#1a7f37;">-87%</td>
           </tr>
         </table>
-        <p style="font-size: 0.6em; color: #888; margin-top: 0.8em;">Raw Data → 정제된 Wiki로 전환할 때 4개 지표 모두 30~89% 개선</p>
+        <p style="font-size: 0.6em; color: #888; margin-top: 0.8em;">Raw Data -> 정제된 Wiki로 전환할 때 4개 지표 모두 30~89% 개선</p>
       </section>
 
       <!-- ===== SECTION 2: WHAT ===== -->
@@ -206,8 +216,8 @@
     T1S["scores.json\n점수 데이터"]
   end
 
-  T3 -- "LLM 파이프라인" --> T2
-  T2 -- "점수 계산" --> T1
+  T3 --""LLM 파이프라인" "--> T2
+  T2 --""점수 계산" "--> T1
 
   style T1 fill:#1a7f37,stroke:#145a25,color:#fff
   style T2 fill:#2ecc71,stroke:#1e8449,color:#fff
@@ -226,7 +236,7 @@
           <tr class="fragment fade-in">
             <td><strong>① process</strong></td>
             <td><code>daily-knowledge-process.sh</code></td>
-            <td>변경된 원본 스캔 → wiki entity/concept 페이지 생성</td>
+            <td>변경된 원본 스캔 -> wiki entity/concept 페이지 생성</td>
           </tr>
           <tr class="fragment fade-in">
             <td><strong>② clean</strong></td>
@@ -235,7 +245,7 @@
           </tr>
           <tr class="fragment fade-in">
             <td><strong>③ graph</strong></td>
-            <td><code>build-metadata.sh</code> → <code>build-graph.sh</code></td>
+            <td><code>build-metadata.sh</code> -> <code>build-graph.sh</code></td>
             <td>metadata.json + graph_edges.json (페이지 간 관계 그래프)</td>
           </tr>
           <tr class="fragment fade-in">
@@ -246,7 +256,7 @@
           <tr class="fragment fade-in">
             <td><strong>⑤ health</strong></td>
             <td><code>knowledge-health-report.sh</code></td>
-            <td>일일 건강도 리포트 → T3 아카이빙 트리거</td>
+            <td>일일 건강도 리포트 -> T3 아카이빙 트리거</td>
           </tr>
         </table>
       </section>
@@ -283,7 +293,7 @@
           </tr>
         </table>
         <p style="font-size: 0.6em; color: #1a7f37; margin-top: 0.5em;">
-          Core Immunity: <code>priority: core</code> 지정 시 rs=1.0 고정 → 시간 경과에도 T1 유지
+          Core Immunity: <code>priority: core</code> 지정 시 rs=1.0 고정 -> 시간 경과에도 T1 유지
         </p>
       </section>
 
@@ -316,7 +326,7 @@
             <div class="solution-card" style="margin-top: 1em;">
               <strong>실제 예시</strong><br>
               <span style="font-size:0.9em;">
-              system/models.md → pw=1.0, rs=0.8, us=0.9<br>
+              system/models.md -> pw=1.0, rs=0.8, us=0.9<br>
               score = 1.0×0.5 + 0.8×0.3 + 0.9×0.2 = <strong>0.74 (T1)</strong>
               </span>
             </div>
@@ -332,7 +342,7 @@
             <div class="problem-card">
               <strong>Raw grep (느림)</strong><br>
               <span style="font-size: 0.75em;">
-              <code>grep -rl "모델 라우팅" sessions/*.json</code><br>
+              <code>grep -rl"모델 라우팅" sessions/*.json</code><br>
               ⏱ 1.247초 · 3가지 다른 맥락 뒤섞임
               </span>
             </div>
@@ -366,18 +376,18 @@
 
       <!-- Slide 13: Knowledge lifecycle walk-through -->
       <section>
-        <h2>inbox.md → 필링 → T1 승격</h2>
+        <h2>inbox.md -> 필링 -> T1 승격</h2>
         <pre class="mermaid">graph TD
   IN["inbox.md\n신규 지식 입력"] --> PP["Processing Pipeline\n가공 파이프라인"]
   PP --> SC["Score Calculation\n점수 계산"]
   SC --> D["Score ≥ 0.70?"]
-  D -- "예" --> T1["T1 Core 승격\n항상 노출"]
-  D -- "아니오" --> T2["T2 Working\n조건부 노출"]
+  D --""예" "--> T1["T1 Core 승격\n항상 노출"]
+  D --""아니오" "--> T2["T2 Working\n조건부 노출"]
 
   T1 --> AG["Agent Reads\n에이전트 읽기"]
   T2 --> AG
 
-  T2 -- "점수 하락" --> AR["Archive\n아카이빙"]
+  T2 --""점수 하락" "--> AR["Archive\n아카이빙"]
 
   style IN fill:#95a5a6,stroke:#7f8c8d,color:#fff
   style PP fill:#3498db,stroke:#2980b9,color:#fff
@@ -395,14 +405,14 @@
           <tr style="border-bottom: 2px solid #1a7f37;">
             <th>시간</th><th>작업</th><th>역할</th>
           </tr>
-          <tr class="fragment"><td>03:00</td><td><code>daily-knowledge-process.sh</code></td><td>원본 스캔 → wiki 페이지 생성</td></tr>
+          <tr class="fragment"><td>03:00</td><td><code>daily-knowledge-process.sh</code></td><td>원본 스캔 -> wiki 페이지 생성</td></tr>
           <tr class="fragment"><td>03:30</td><td><code>build-graph.sh</code></td><td>metadata + 페이지 간 관계 그래프</td></tr>
           <tr class="fragment"><td>04:00</td><td><code>build-scores.sh</code></td><td>점수 재계산 + index.md 갱신</td></tr>
-          <tr class="fragment"><td>04:30</td><td><code>knowledge-health-report.sh</code></td><td>건강도 체크 → T3 아카이빙 트리거</td></tr>
+          <tr class="fragment"><td>04:30</td><td><code>knowledge-health-report.sh</code></td><td>건강도 체크 -> T3 아카이빙 트리거</td></tr>
           <tr class="fragment"><td>06:00/18:00</td><td>외부 데이터 수집</td><td>HN, GeekNews, AI Frontier 피드</td></tr>
         </table>
         <p style="font-size: 0.6em; color: #1a7f37; margin-top: 0.5em;">
-          → 수동 실행도 가능: <code>bash ~/.hermes/knowledge/pipeline/build-scores.sh</code>
+          -> 수동 실행도 가능: <code>bash ~/.hermes/knowledge/pipeline/build-scores.sh</code>
         </p>
       </section>
 
@@ -422,11 +432,11 @@
             <th style="width: 45%;">비용</th>
           </tr>
           <tr class="fragment">
-            <td>환각률 41% → 8% (80% 감소)</td>
+            <td>환각률 41% -> 8% (80% 감소)</td>
             <td>LLM 호출 비용 (가공 파이프라인)</td>
           </tr>
           <tr class="fragment">
-            <td>Token 사용량 -87% (32K → 4.2K)</td>
+            <td>Token 사용량 -87% (32K -> 4.2K)</td>
             <td>점수 재계산 + 그래프 동기화 오버헤드</td>
           </tr>
           <tr class="fragment">
@@ -441,8 +451,8 @@
         <div class="solution-card fragment" style="margin-top: 0.8em;">
           <strong>부패 방지 3가지 규칙</strong><br>
           <span style="font-size: 0.85em;">
-          ① 1년 경과 + 신뢰도 0.7 미만 → 아카이브 &nbsp;
-          ② 반증된 정보 → 즉시 삭제 &nbsp;
+          ① 1년 경과 + 신뢰도 0.7 미만 -> 아카이브 &nbsp;
+          ② 반증된 정보 -> 즉시 삭제 &nbsp;
           ③ Core Immunity로 핵심 지식 보호
           </span>
         </div>
@@ -455,13 +465,13 @@
         <h2>핵심 요약</h2>
         <ol style="font-size: 0.85em;">
           <li class="fragment">Raw 원본은 <strong>수정 금지</strong> — append-only, 직접 참조만</li>
-          <li class="fragment">LLM 파이프라인이 "의견"을 걸러내고 "사실"만 Wiki로 정제</li>
+          <li class="fragment">LLM 파이프라인이"의견"을 걸러내고"사실"만 Wiki로 정제</li>
           <li class="fragment"><strong>T1/T2/T3 스코어링</strong>으로 에이전트가 중요한 지식부터 읽음</li>
           <li class="fragment"><strong>FTS5 검색</strong>으로 3ms 내 정밀 탐색 (grep 대비 400배)</li>
           <li class="fragment">매일 자동 갱신 — 에이전트가 <strong>오래된 지식으로 실수하지 않음</strong></li>
         </ol>
         <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 1em;">
-          "Raw 데이터는 흙, 파이프라인은 체, Wiki는 정제된 금 — 에이전트는 금만 읽는다"
+         "Raw 데이터는 흙, 파이프라인은 체, Wiki는 정제된 금 — 에이전트는 금만 읽는다"
         </p>
       </section>
 
@@ -495,8 +505,11 @@
       minScale: 0.15,
       maxScale: 2.0
     }).then(() => {
-      mermaid.initialize({ startOnLoad: false, theme: 'default' });
-      mermaid.run({ querySelector: '.mermaid' });
+      mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+      document.querySelectorAll('.mermaid').forEach((el, idx) => {
+        const code = el.textContent.trim();
+        mermaid.render('m' + idx, code).then(({ svg }) => { el.innerHTML = svg; });
+      });
     });
 
     Reveal.addEventListener('ready', () => {

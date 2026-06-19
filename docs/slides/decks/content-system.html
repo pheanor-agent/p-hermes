@@ -6,12 +6,12 @@
   <title>Content System: AI 생성 텍스트의 품질을 보증하는 파이프라인</title>
   <link rel="stylesheet" href="../css/reveal.css">
   <link rel="stylesheet" href="../css/white.css">
-  <!-- Google Fonts (한글) -->
+  <!--"Google Fonts (한글) "-->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
   <!-- Highlight.js -->
   <link rel="stylesheet" href="../css/highlight-github.min.css">
   <script src="../js/highlight.min.js"></script>
-  <script src="../js/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <script> window.mermaidConfig = { startOnLoad: false, theme: 'default' }; </script>
   <style>
     :root {
@@ -40,9 +40,19 @@
     pre code { font-size: var(--code-font); }
     .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
     .tree li { margin: 0.2em 0; }
-    .tree .folder::before { content: "📁 "; }
-    .tree .file::before { content: "📄 "; }
-    .mermaid { max-width: 1080px; margin: 40px auto; }
+    .tree .folder::before { content:"📁 "; }
+    .tree .file::before { content:"📄 "; }
+    .mermaid { 
+      max-width: 1080px; 
+      margin: 40px auto; 
+      overflow: visible;
+    }
+    .mermaid svg { 
+      max-width: 100%; 
+      height: auto; 
+      display: block;
+      overflow: visible;
+    }
   </style>
 </head>
 <body>
@@ -92,12 +102,12 @@
         </div>
         <div class="problem-card">
           <strong>③ 독자 신뢰도 하락</strong><br>
-          <span style="font-size: 0.8em;">반복되는 패턴이 인공적인 느낌을 전달. 신호-노이즈 비율 저하 → 정보 탐색 시간 증가.</span>
+          <span style="font-size: 0.8em;">반복되는 패턴이 인공적인 느낌을 전달. 신호-노이즈 비율 저하 -> 정보 탐색 시간 증가.</span>
         </div>
         <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">단순한 '글쓰기 스타일' 문제가 아닌, 지식 시스템의 근본적 가치 훼손</p>
       </section>
 
-      <!-- Slide 5: 기존 검증의 한계 -->
+      <!--"Slide 5: 기존 검증의 한계 "-->
       <section>
         <h2>기존 검증은 왜 실패하는가?</h2>
         <div class="two-col">
@@ -105,7 +115,7 @@
             <div class="problem-card" style="margin: 0.3em 0; padding: 0.6em;">
               <strong>문법 검사기의 맹점</strong><br>
               문법적으로 맞지만 부정-대조 패턴인 문장을 PASS 처리<br>
-              <span style="color:#c0392b;">"~가 아닌, ~입니다" → 불필요한 강조</span>
+              <span style="color:#c0392b;">"~가 아닌, ~입니다" -> 불필요한 강조</span>
             </div>
             <div class="problem-card" style="margin: 0.3em 0; padding: 0.6em;">
               <strong>자기 참조 오류</strong><br>
@@ -123,7 +133,7 @@
             </table>
           </div>
         </div>
-        <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">→ 단일 검증기로는 한계, <strong>다층 검증 아키텍처</strong>가 필요</p>
+        <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">-> 단일 검증기로는 한계, <strong>다층 검증 아키텍처</strong>가 필요</p>
       </section>
 
       <!-- ===== SECTION 2: WHAT ===== -->
@@ -188,7 +198,7 @@
           <tr><td><strong>D4 창작물</strong></td><td>소설, 시나리오, 에세이</td><td>독창성, 내러티브 흐름</td></tr>
           <tr><td><strong>D5 비즈니스</strong></td><td>제안서, 이메일, SNS</td><td>명확성, 설득력</td></tr>
         </table>
-        <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">도메인 분류 결과 → 엔진 선택 매트릭스 생성</p>
+        <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">도메인 분류 결과 -> 엔진 선택 매트릭스 생성</p>
       </section>
 
       <!-- Slide 9: Layer 2 - 7 shared engines -->
@@ -198,9 +208,9 @@
           <tr style="border-bottom: 2px solid #1a7f37;">
             <th>엔진</th><th>역할</th><th>방식</th>
           </tr>
-          <tr><td><strong>Tier Generator</strong></td><td>L1(인상)→L2(개요)→L3(상세) 계층화</td><td>룰 기반</td></tr>
+          <tr><td><strong>Tier Generator</strong></td><td>L1(인상)->L2(개요)->L3(상세) 계층화</td><td>룰 기반</td></tr>
           <tr><td><strong>Tone Adapter</strong></td><td>도메인별 어조·어휘·문체 적응</td><td>룰 기반</td></tr>
-          <tr><td><strong>Analogy Builder</strong></td><td>추상 개념 → 비유/시각 메타포 변환</td><td>RAG + LLM</td></tr>
+          <tr><td><strong>Analogy Builder</strong></td><td>추상 개념 -> 비유/시각 메타포 변환</td><td>RAG + LLM</td></tr>
           <tr><td><strong>Template Filler</strong></td><td>도메인별 표준 템플릿 렌더링</td><td>템플릿 엔진</td></tr>
           <tr><td><strong>Validator</strong></td><td>T1(구문) + T2(의미) 2단계 검증</td><td>Hybrid</td></tr>
           <tr><td><strong>Model Selector</strong></td><td>의도/타겟별 최적 모델 매핑</td><td>룰 기반</td></tr>
@@ -219,11 +229,11 @@
   G4["L4: Domain Gates\n도메인 게이트"] --> G5
   G5["L5: Judge Model\n거시적 심사\n(Blog 전용)"] --> OK
 
-  G1 -- "실패" --> FIX1["↩ 재수정"]
-  G2 -- "실패" --> FIX2["↩ 재수정"]
-  G3 -- "실패" --> FIX3["↩ 재수정"]
-  G4 -- "실패" --> FIX4["↩ 재수정"]
-  G5 -- "실패" --> FIX5["↩ 재수정"]
+  G1 --""실패" "--> FIX1["↩ 재수정"]
+  G2 --""실패" "--> FIX2["↩ 재수정"]
+  G3 --""실패" "--> FIX3["↩ 재수정"]
+  G4 --""실패" "--> FIX4["↩ 재수정"]
+  G5 --""실패" "--> FIX5["↩ 재수정"]
 
   style G1 fill:#3498db,stroke:#2980b9,color:#fff
   style G2 fill:#1abc9c,stroke:#16a085,color:#fff
@@ -253,15 +263,15 @@
             <strong>실제 검증 예시</strong>
 <pre><code class="language-bash" data-trim>
 $ python3 validator.py l3 \
-  "이 시스템은 단순한 도구이며 \
+ "이 시스템은 단순한 도구이며 \
    지능적인 플랫폼입니다"
 
 # 결과
 {
-  "passed": false,
-  "layer": 3,
-  "reason": "negation-contrast pattern",
-  "suggestion": "이 시스템은 \
+ "passed": false,
+ "layer": 3,
+ "reason":"negation-contrast pattern",
+ "suggestion":"이 시스템은 \
                 지능적인 플랫폼입니다"
 }
 </code></pre>
@@ -309,16 +319,16 @@ $ python3 validator.py l3 \
       <section>
         <h2>파이프라인 코드 예시</h2>
         <pre><code class="language-bash" data-trim data-line="4-6,12-17">
-# 1. JOB에 content: true 플래그 → workflow-gate.sh가 자동 감지
+# 1. JOB에 content: true 플래그 -> workflow-gate.sh가 자동 감지
 #    content-gate.sh를 호출하여 .content-state 생성
 
 bash content-gate.sh JOB-1658 init investigation
 bash content-gate.sh JOB-1658 route design
 
 # 2. validator.py — 레이어별 검증
-python3 validator.py l3 "검증할 텍스트"          # 어조
-python3 validator.py l4 "Python 3.11 사용" D1    # 도메인
-python3 validator.py l5 "Blog 포스트 본문"       # Judge
+python3 validator.py l3"검증할 텍스트"          # 어조
+python3 validator.py l4"Python 3.11 사용" D1    # 도메인
+python3 validator.py l5"Blog 포스트 본문"       # Judge
 
 # 3. 전체 검증 (Python API)
 def run_all_validators(text, domain):
@@ -334,24 +344,24 @@ def run_all_validators(text, domain):
         <p style="font-size: 0.6em; color: #666;">.content-state JSON이 각 단계의 엔진 실행 상태를 추적</p>
       </section>
 
-      <!-- Slide 15: 실제 적용 사례 -->
+      <!--"Slide 15: 실제 적용 사례 "-->
       <section>
         <h2>실제 적용 사례</h2>
         <div class="two-col">
           <div class="solution-card" style="font-size: 0.78em;">
             <strong>사례 1: Blog 포스트 확장 (JOB-1657)</strong><br>
-            3,500자 개요 → <strong>10,000자 Blog</strong> (2.8배)<br>
+            3,500자 개요 -> <strong>10,000자 Blog</strong> (2.8배)<br>
             <span style="font-size: 0.85em;">
-            D2 분류 → Tier + Tone + Analogy 엔진<br>
-            L1→L5 전체 검증 통과
+            D2 분류 -> Tier + Tone + Analogy 엔진<br>
+            L1->L5 전체 검증 통과
             </span>
           </div>
           <div class="solution-card" style="font-size: 0.78em;">
             <strong>사례 2: Slides 덱 최적화</strong><br>
-            6장 기본 → <strong>8-9장 최적화 슬라이드</strong><br>
+            6장 기본 -> <strong>8-9장 최적화 슬라이드</strong><br>
             <span style="font-size: 0.85em;">
-            D3 분류 → Tier + Template + Image Prompt<br>
-            L1→L4 검증 (L5 제외)
+            D3 분류 -> Tier + Template + Image Prompt<br>
+            L1->L4 검증 (L5 제외)
             </span>
           </div>
         </div>
@@ -360,7 +370,7 @@ def run_all_validators(text, domain):
             <th>도메인</th><th>검증 항목</th><th>예시</th>
           </tr>
           <tr><td>D1 기술</td><td>코드 블록, 버전 명시</td><td>Python 3.11</td></tr>
-          <tr><td>D2 교육</td><td>예시 3개+, 단계별 안내</td><td>1단계 → 2단계 → 3단계</td></tr>
+          <tr><td>D2 교육</td><td>예시 3개+, 단계별 안내</td><td>1단계 -> 2단계 -> 3단계</td></tr>
           <tr><td>D3 프레젠테이션</td><td>핵심 메시지 1슬라이드</td><td>Progressive disclosure</td></tr>
           <tr><td>D4 창작</td><td>감정어, 문체 일관성</td><td>시적 표현</td></tr>
         </table>
@@ -400,7 +410,7 @@ def run_all_validators(text, domain):
           </tr>
         </table>
         <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">
-          → Wiki는 L1~L4로 충분, L5 Judge는 Blog에만 선택적 적용 (비용-효용 균형)
+          -> Wiki는 L1~L4로 충분, L5 Judge는 Blog에만 선택적 적용 (비용-효용 균형)
         </p>
       </section>
 
@@ -410,9 +420,9 @@ def run_all_validators(text, domain):
       <section>
         <h2>핵심 요약</h2>
         <ol style="font-size: 0.85em;">
-          <li class="fragment"><strong>3-Layer 아키텍처</strong>: 메타 스킬(분류) → 공유 엔진(처리) → 도메인 오버레이(렌더링)</li>
+          <li class="fragment"><strong>3-Layer 아키텍처</strong>: 메타 스킬(분류) -> 공유 엔진(처리) -> 도메인 오버레이(렌더링)</li>
           <li class="fragment"><strong>7개 공유 엔진</strong>: Tier·Tone·Analogy·Template·Validator·Model·Image가 구조와 톤 결정</li>
-          <li class="fragment"><strong>5계층 검증 게이트</strong>: L1 구조 → L2 에러 → L3 어조(Anti-Slop 핵심) → L4 도메인 → L5 Judge</li>
+          <li class="fragment"><strong>5계층 검증 게이트</strong>: L1 구조 -> L2 에러 -> L3 어조(Anti-Slop 핵심) -> L4 도메인 -> L5 Judge</li>
           <li class="fragment"><strong>D1~D5 도메인 분류</strong>로 기술·교육·프레젠테이션·창작·비즈니스 각각에 최적화</li>
           <li class="fragment">L5 Judge는 Blog 전용 — <strong>23% 독자 만족도 개선</strong>, 비용-효용 균형 설계</li>
         </ol>
@@ -466,8 +476,11 @@ def run_all_validators(text, domain):
       minScale: 0.15,
       maxScale: 2.0
     }).then(() => {
-      mermaid.initialize({ startOnLoad: false, theme: 'default' });
-      mermaid.run({ querySelector: '.mermaid' });
+      mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+      document.querySelectorAll('.mermaid').forEach((el, idx) => {
+        const code = el.textContent.trim();
+        mermaid.render('m' + idx, code).then(({ svg }) => { el.innerHTML = svg; });
+      });
     });
 
     Reveal.addEventListener('ready', () => {
