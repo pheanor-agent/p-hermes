@@ -459,7 +459,7 @@ mutex_release"morning-news"</code></pre>
     }).then(() => {
       mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
       // Wait for all mermaid renders then attach zoom
-      Promise.all(document.querySelectorAll('.mermaid').map((el, idx) => {
+      Promise.all(Array.from(document.querySelectorAll('.mermaid')).map((el, idx) => {
         const code = el.textContent.trim();
         return mermaid.render('m' + idx, code).then(({ svg }) => { el.innerHTML = svg; });
       })).then(() => {
