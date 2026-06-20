@@ -1,0 +1,59 @@
+{
+  "version": "v3",
+  "label": "v3 — GC Refined",
+  "commit": "5850a13",
+  "job": "JOB-1736 + JOB-1737",
+  "releasedAt": "2026-06-20T22:15:00+09:00",
+  "summary": "UI/UX 개선 (페이지 분할·중앙 정렬) + 콘텐츠 정정 (듀얼→바닐라, WF 실제 반영, 모델명 제거, 종료 페이지)",
+  "changes": [
+    "8개 GC 슬라이드 12~15슬라이드 분할",
+    "다크 테마 중앙 정렬 레이아웃",
+    "컴팩트 내비게이션 (opacity 0.45)",
+    "듀얼 에이전트→바닐라 (15→0곳)",
+    "워크플로우 단계·CLI·산출물 실제 시스템 반영",
+    "모델명→역할 기반 추상화",
+    "종료 페이지 추가 (8개 덱)"
+  ],
+  "decks": [
+    {
+      "name": "architecture-layered",
+      "size": 29370,
+      "path": "slides-v3/gc/architecture-layered.html"
+    },
+    {
+      "name": "content-system",
+      "size": 41448,
+      "path": "slides-v3/gc/content-system.html"
+    },
+    {
+      "name": "cron-system",
+      "size": 27481,
+      "path": "slides-v3/gc/cron-system.html"
+    },
+    {
+      "name": "hermes-overview",
+      "size": 29159,
+      "path": "slides-v3/gc/hermes-overview.html"
+    },
+    {
+      "name": "knowledge-system",
+      "size": 26559,
+      "path": "slides-v3/gc/knowledge-system.html"
+    },
+    {
+      "name": "model-routing",
+      "size": 34751,
+      "path": "slides-v3/gc/model-routing.html"
+    },
+    {
+      "name": "spec-driven-dev",
+      "size": 29975,
+      "path": "slides-v3/gc/spec-driven-dev.html"
+    },
+    {
+      "name": "workflow-pipeline",
+      "size": 27847,
+      "path": "slides-v3/gc/workflow-pipeline.html"
+    }
+  ]
+}

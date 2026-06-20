@@ -9,42 +9,54 @@
         "name": "GPT Slide Content & Design Review",
         "status": "active",
         "createdAt": "2026-06-20T16:00:00+09:00",
-        "summary": "GPT 피드백 기반 슬라이드 개선 검토"
+        "summary": "GPT 피드백 기반 슬라이드 개선 검토",
+        "file": "experiments/exp-001-gpt-slide-review.md",
+        "appliedIn": "v3"
       },
       {
         "id": "exp-002",
         "name": "GPT Design Review (content-system v2)",
         "status": "active",
         "createdAt": "2026-06-20T16:37:00+09:00",
-        "summary": "GPT 설계 리뷰 1차 — 7개 구조적 빈틈 지적"
+        "summary": "GPT 설계 리뷰 1차 — 7개 구조적 빈틈 지적",
+        "file": "experiments/exp-002-gpt-design-review.md",
+        "appliedIn": "v3"
       },
       {
         "id": "exp-003",
         "name": "GPT Design Review v2 (content-system v3)",
         "status": "active",
         "createdAt": "2026-06-20T17:05:00+09:00",
-        "summary": "GPT 설계 리뷰 2차 — 5개 위험 지적"
+        "summary": "GPT 설계 리뷰 2차 — 5개 위험 지적",
+        "file": "experiments/exp-003-gpt-design-review-v2.md",
+        "appliedIn": "v3"
       },
       {
         "id": "exp-004",
         "name": "Hero Slide direction-guide 적용",
         "status": "active",
         "createdAt": "2026-06-20T17:40:00+09:00",
-        "summary": "direction-guide golden_circle section_flow[0] Hero 적용"
+        "summary": "direction-guide golden_circle section_flow[0] Hero 적용",
+        "file": "slides-v2/exp-004-hero.html",
+        "appliedIn": "v2"
       },
       {
         "id": "exp-005",
         "name": "Golden Circle Hero + WHY",
         "status": "active",
         "createdAt": "2026-06-20T17:42:00+09:00",
-        "summary": "section_flow[0]+[1] 3열 비교 카드 실험"
+        "summary": "section_flow[0]+[1] 3열 비교 카드 실험",
+        "file": "slides-v2/exp-005-hero-why.html",
+        "appliedIn": "v2"
       },
       {
         "id": "exp-006",
         "name": "Golden Circle 전체 6단계 흐름",
         "status": "active",
         "createdAt": "2026-06-20T17:45:00+09:00",
-        "summary": "direction-guide section_flow 6단계 전체 적용"
+        "summary": "direction-guide section_flow 6단계 전체 적용",
+        "file": "slides-v2/exp-006-full-flow.html",
+        "appliedIn": "v2"
       }
     ]
   }

@@ -1,0 +1,55 @@
+{
+  "version": "v2",
+  "label": "v2 — Golden Circle",
+  "commit": "ba127e4",
+  "job": "JOB-1734",
+  "releasedAt": "2026-06-20T18:16:00+09:00",
+  "summary": "8개 운영 슬라이드 → Golden Circle 변환 (direction-guide 최초 적용)",
+  "changes": [
+    "8개 슬라이드 Golden Circle 포맷 변환",
+    "direction-guide section_flow 기반",
+    "template/golden-circle.html 템플릿"
+  ],
+  "decks": [
+    {
+      "name": "architecture-layered",
+      "size": 26358,
+      "path": "slides-v2/gc/architecture-layered.html"
+    },
+    {
+      "name": "content-system",
+      "size": 14238,
+      "path": "slides-v2/gc/content-system.html"
+    },
+    {
+      "name": "cron-system",
+      "size": 16468,
+      "path": "slides-v2/gc/cron-system.html"
+    },
+    {
+      "name": "hermes-overview",
+      "size": 19166,
+      "path": "slides-v2/gc/hermes-overview.html"
+    },
+    {
+      "name": "knowledge-system",
+      "size": 9045,
+      "path": "slides-v2/gc/knowledge-system.html"
+    },
+    {
+      "name": "model-routing",
+      "size": 34132,
+      "path": "slides-v2/gc/model-routing.html"
+    },
+    {
+      "name": "spec-driven-dev",
+      "size": 32408,
+      "path": "slides-v2/gc/spec-driven-dev.html"
+    },
+    {
+      "name": "workflow-pipeline",
+      "size": 25691,
+      "path": "slides-v2/gc/workflow-pipeline.html"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "current": "v3",
+  "versions": [
+    {
+      "id": "v3",
+      "label": "v3 — GC Refined",
+      "path": "slides-v3/gc/",
+      "commit": "5850a13",
+      "job": "JOB-1736 + JOB-1737",
+      "releasedAt": "2026-06-20T22:15:00+09:00",
+      "summary": "UI/UX 개선 (페이지 분할·중앙 정렬) + 콘텐츠 정정 (듀얼→바닐라, WF 실제 반영, 모델명 제거, 종료 페이지)",
+      "changes": [
+        "8개 GC 슬라이드 12~15슬라이드 분할",
+        "다크 테마 중앙 정렬 레이아웃",
+        "컴팩트 내비게이션 (opacity 0.45)",
+        "듀얼 에이전트→바닐라 (15→0곳)",
+        "워크플로우 단계·CLI·산출물 실제 시스템 반영",
+        "모델명→역할 기반 추상화",
+        "종료 페이지 추가 (8개 덱)"
+      ]
+    },
+    {
+      "id": "v2",
+      "label": "v2 — Golden Circle",
+      "path": "slides-v2/gc/",
+      "commit": "ba127e4",
+      "job": "JOB-1734",
+      "releasedAt": "2026-06-20T18:16:00+09:00",
+      "summary": "8개 운영 슬라이드 → Golden Circle 변환 (direction-guide 최초 적용)",
+      "changes": [
+        "8개 슬라이드 Golden Circle 포맷 변환",
+        "direction-guide section_flow 기반",
+        "template/golden-circle.html 템플릿"
+      ]
+    }
+  ],
+  "experiments": [
+    {
+      "id": "exp-001",
+      "name": "GPT Slide Content & Design Review",
+      "file": "experiments/exp-001-gpt-slide-review.md",
+      "appliedIn": "v3",
+      "createdAt": "2026-06-20T16:00:00+09:00",
+      "summary": "GPT 피드백 기반 슬라이드 개선 검토"
+    },
+    {
+      "id": "exp-002",
+      "name": "GPT Design Review (content-system v2)",
+      "file": "experiments/exp-002-gpt-design-review.md",
+      "appliedIn": "v3",
+      "createdAt": "2026-06-20T16:37:00+09:00",
+      "summary": "GPT 설계 리뷰 1차 — 7개 구조적 빈틈 지적"
+    },
+    {
+      "id": "exp-003",
+      "name": "GPT Design Review v2 (content-system v3)",
+      "file": "experiments/exp-003-gpt-design-review-v2.md",
+      "appliedIn": "v3",
+      "createdAt": "2026-06-20T17:05:00+09:00",
+      "summary": "GPT 설계 리뷰 2차 — 5개 위험 지적"
+    },
+    {
+      "id": "exp-004",
+      "name": "Hero Slide direction-guide 적용",
+      "file": "slides-v2/exp-004-hero.html",
+      "appliedIn": "v2",
+      "createdAt": "2026-06-20T17:40:00+09:00",
+      "summary": "direction-guide golden_circle section_flow[0] Hero 적용"
+    },
+    {
+      "id": "exp-005",
+      "name": "Golden Circle Hero + WHY",
+      "file": "slides-v2/exp-005-hero-why.html",
+      "appliedIn": "v2",
+      "createdAt": "2026-06-20T17:42:00+09:00",
+      "summary": "section_flow[0]+[1] 3열 비교 카드 실험"
+    },
+    {
+      "id": "exp-006",
+      "name": "Golden Circle 전체 6단계 흐름",
+      "file": "slides-v2/exp-006-full-flow.html",
+      "appliedIn": "v2",
+      "createdAt": "2026-06-20T17:45:00+09:00",
+      "summary": "direction-guide section_flow 6단계 전체 적용"
+    }
+  ],
+  "comparisons": {
+    "totalSizeV2": 177506,
+    "totalSizeV3": 246590,
+    "sizeChange": "+69,084 bytes (+38.9%)",
+    "decks": [
+      {"name": "workflow-pipeline", "v2Size": 25691, "v3Size": 27847},
+      {"name": "knowledge-system", "v2Size": 9045, "v3Size": 26559},
+      {"name": "cron-system", "v2Size": 16468, "v3Size": 27481},
+      {"name": "architecture-layered", "v2Size": 26358, "v3Size": 29370},
+      {"name": "spec-driven-dev", "v2Size": 32408, "v3Size": 29975},
+      {"name": "content-system", "v2Size": 14238, "v3Size": 41448},
+      {"name": "model-routing", "v2Size": 34132, "v3Size": 34751},
+      {"name": "hermes-overview", "v2Size": 19166, "v3Size": 29159}
+    ]
+  }
+}

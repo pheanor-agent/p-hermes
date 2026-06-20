@@ -23,6 +23,27 @@
 
 ## 실험 목록
 
-| ID | 제목 | 상태 | 일시 |
-|----|------|------|------|
-| — | (실험 없음) | — | — |
+| ID | 제목 | 상태 | 적용 버전 | 일시 |
+|----|------|------|-----------|------|
+| exp-001 | GPT Slide Content & Design Review | ✅ active | v3 | 2026-06-20 16:00 |
+| exp-002 | GPT Design Review (content-system v2) | ✅ active | v3 | 2026-06-20 16:37 |
+| exp-003 | GPT Design Review v2 (content-system v3) | ✅ active | v3 | 2026-06-20 17:05 |
+| exp-004 | Hero Slide direction-guide 적용 | ✅ active | v2 | 2026-06-20 17:40 |
+| exp-005 | Golden Circle Hero + WHY | ✅ active | v2 | 2026-06-20 17:42 |
+| exp-006 | Golden Circle 전체 6단계 흐름 | ✅ active | v2 | 2026-06-20 17:45 |
+
+---
+
+## 버전 이력
+
+### v3 — GC Refined (최신)
+- **커밋**: `5850a13` (2026-06-20 22:15)
+- **JOB**: JOB-1736 (UI/UX 개선) + JOB-1737 (콘텐츠 정정)
+- **주요 변경**: 페이지 분할(12~15), 중앙 정렬, 듀얼→바닐라, WF 실제 반영, 모델명 추상화, 종료 페이지
+
+### v2 — Golden Circle (구버전)
+- **커밋**: `ba127e4` (2026-06-20 18:16)
+- **JOB**: JOB-1734
+- **주요 변경**: 8개 운영 슬라이드 Golden Circle 변환, direction-guide 최초 적용
+
+> 버전 비교: [compare.html](compare.html)에서 v2 vs v3 side-by-side 확인 가능

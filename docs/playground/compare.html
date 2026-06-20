@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Playground — 슬라이드 버전 비교</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0f1117;
+      color: #e8eaed;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+    }
+    .toolbar {
+      background: #16213e;
+      padding: 12px 16px;
+      border-bottom: 1px solid #333;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .toolbar select, .toolbar button, .toolbar a {
+      background: #0f3460;
+      color: #e0e0e0;
+      border: 1px solid #333;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      text-decoration: none;
+    }
+    .toolbar select:hover, .toolbar button:hover, .toolbar a:hover {
+      background: #1a5276;
+    }
+    .toolbar label {
+      color: #a0a0b8;
+      font-size: 0.85rem;
+    }
+    .toolbar .info {
+      margin-left: auto;
+      color: #606078;
+      font-size: 0.78rem;
+    }
+    .compare-container {
+      display: flex;
+      height: calc(100vh - 56px);
+    }
+    .compare-panel {
+      flex: 1;
+      border-right: 1px solid #333;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .compare-panel:last-child {
+      border-right: none;
+    }
+    .compare-header {
+      padding: 10px 16px;
+      background: #1a1a2e;
+      border-bottom: 1px solid #333;
+      font-size: 0.85rem;
+    }
+    .compare-header .label {
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+    .compare-header .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.72rem;
+      margin-left: 6px;
+    }
+    .compare-header .badge-latest {
+      background: rgba(74, 222, 128, 0.15);
+      color: #4ade80;
+      border: 1px solid rgba(74, 222, 128, 0.3);
+    }
+    .compare-header .badge-legacy {
+      background: rgba(148, 163, 184, 0.12);
+      color: #94a3b8;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+    .compare-header .meta {
+      color: #8080a0;
+      font-size: 0.75rem;
+      margin-top: 4px;
+    }
+    .compare-header .meta code {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 0.72rem;
+    }
+    iframe {
+      flex: 1;
+      border: none;
+      width: 100%;
+      background: #0a0b0e;
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <label>📊 덱 선택:</label>
+    <select id="deck-select">
+      <option value="workflow-pipeline">⚡ Workflow Pipeline</option>
+      <option value="knowledge-system">📚 Knowledge System</option>
+      <option value="cron-system">⏰ Cron System</option>
+      <option value="architecture-layered">🏗️ Architecture</option>
+      <option value="spec-driven-dev">📋 Spec-Driven Dev</option>
+      <option value="content-system">🎨 Content System</option>
+      <option value="model-routing">🧭 Model Routing</option>
+      <option value="hermes-overview">🤖 Hermes Overview</option>
+    </select>
+    <a href="index.html">← 인덱스로</a>
+    <span class="info">동일 출처 iframe · v2(ba127e4) vs v3(5850a13)</span>
+  </div>
+  <div class="compare-container">
+    <div class="compare-panel">
+      <div class="compare-header">
+        <span class="label">v2 — Golden Circle</span>
+        <span class="badge badge-legacy">구버전</span>
+        <div class="meta"><code>ba127e4</code> · JOB-1734 · 2026-06-20 18:16 · 8덱 177KB</div>
+      </div>
+      <iframe id="v2-frame" src="about:blank" title="v2 슬라이드"></iframe>
+    </div>
+    <div class="compare-panel">
+      <div class="compare-header">
+        <span class="label">v3 — GC Refined</span>
+        <span class="badge badge-latest">최신</span>
+        <div class="meta"><code>5850a13</code> · JOB-1736+1737 · 2026-06-20 22:15 · 8덱 246KB (+38.9%)</div>
+      </div>
+      <iframe id="v3-frame" src="about:blank" title="v3 슬라이드"></iframe>
+    </div>
+  </div>
+  <script>
+    const baseV2 = 'slides-v2/gc/';
+    const baseV3 = 'slides-v3/gc/';
+    function loadCompare() {
+      const deck = document.getElementById('deck-select').value;
+      document.getElementById('v2-frame').src = baseV2 + deck + '.html';
+      document.getElementById('v3-frame').src = baseV3 + deck + '.html';
+    }
+    document.getElementById('deck-select').addEventListener('change', loadCompare);
+    loadCompare();
+  </script>
+</body>
+</html>
