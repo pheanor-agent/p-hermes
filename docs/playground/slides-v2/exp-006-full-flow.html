@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>exp-006: Golden Circle 6단계 전체 흐름</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="template/card-grid.css">
+<style>
+/* direction-guide 상단 상태바 */
+.status-bar {
+  position: sticky;
+  top: 0;
+  background: #0F172A;
+  color: #94A3B8;
+  padding: 6px 16px;
+  font-size: 11px;
+  font-family: monospace;
+  display: flex;
+  gap: 12px;
+  z-index: 100;
+  flex-wrap: wrap;
+}
+.status-bar .section-active {
+  color: #60A5FA;
+  font-weight: bold;
+}
+.status-bar .section-done {
+  color: #10B981;
+}
+.status-bar .section-pending {
+  color: #475569;
+}
+
+/* 섹션 구분자 */
+.section-divider {
+  text-align: center;
+  padding: 8px;
+  margin: 24px 0;
+  font-size: 11px;
+  color: #94A3B8;
+  border-top: 1px dashed #E2E8F0;
+  letter-spacing: 2px;
+}
+</style>
+</head>
+<body>
+
+<!-- 섹션 진행 상태 표시줄 -->
+<div class="status-bar">
+  <span class="section-done">[0] Hero ✅</span>
+  <span class="section-done">[1] WHY ✅</span>
+  <span class="section-done">[2] WHAT ✅</span>
+  <span class="section-done">[3] HOW ✅</span>
+  <span class="section-done">[4] Trade-offs ✅</span>
+  <span class="section-done">[5] Summary ✅</span>
+  <span>| direction-guide golden_circle | max_words/slide: ≤80 | layout: card_grid</span>
+</div>
+
+<!-- ==================== HERO ==================== -->
+<div class="section-divider">section_flow[0] · HERO</div>
+
+<section class="hero" style="min-height:30vh;padding:24px;">
+  <div style="font-size:12px;color:#2563EB;letter-spacing:2px;margin-bottom:8px;">
+    Golden Circle · section_flow[0]
+  </div>
+  <h1 style="font-size:36px;margin:8px 0;color:#0F172A;">
+    Hermes Agent 슬라이드
+  </h1>
+  <p style="font-size:16px;color:#475569;">
+    Pre-Direction Engine이 설계한 Golden Circle 프레임워크 전체 적용
+  </p>
+</section>
+
+<!-- ==================== WHY ==================== -->
+<div class="section-divider">section_flow[1] · WHY</div>
+
+<section style="max-width:1200px;margin:0 auto;padding:16px;">
+  <h2 style="text-align:center;font-size:24px;">🤔 WHY — 왜 필요한가?</h2>
+  <div class="comparison">
+    <div class="comparison__item">
+      <h3>📚 문서 한계</h3>
+      <p style="font-size:14px;">위키는 읽기용,<br>발표 흐름 부재</p>
+    </div>
+    <div class="comparison__item">
+      <h3>⚡ 기존 슬라이드</h3>
+      <p style="font-size:14px;">정보 밀도 과다,<br>청중 미고려</p>
+    </div>
+    <div class="comparison__item">
+      <h3>🎯 Golden Circle</h3>
+      <p style="font-size:14px;">WHY→HOW→WHAT,<br>1슬라이드 1메시지</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== WHAT ==================== -->
+<div class="section-divider">section_flow[2] · WHAT</div>
+
+<section style="max-width:1200px;margin:0 auto;padding:16px;">
+  <h2 style="text-align:center;font-size:24px;">💡 WHAT — 핵심 요소</h2>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card__icon">🎯</div>
+      <div class="card__title">Golden Circle</div>
+      <div class="card__body" style="font-size:14px;">
+        WHY→WHAT→HOW→Trade-offs 6단계 구조
+      </div>
+    </div>
+    <div class="card">
+      <div class="card__icon">📐</div>
+      <div class="card__title">card_grid</div>
+      <div class="card__body" style="font-size:14px;">
+        direction-guide design_tokens 기반 레이아웃
+      </div>
+    </div>
+    <div class="card">
+      <div class="card__icon">👤</div>
+      <div class="card__title">청중 분석</div>
+      <div class="card__body" style="font-size:14px;">
+        3축 모델로 tone/밀도/깊이 자동 결정
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== HOW ==================== -->
+<div class="section-divider">section_flow[3] · HOW</div>
+
+<section style="max-width:1200px;margin:0 auto;padding:16px;">
+  <h2 style="text-align:center;font-size:24px;">🔧 HOW — 적용 방법</h2>
+  <div class="step-flow">
+    <div class="step">
+      <div class="step__number">1</div>
+      <div class="step__content">
+        <strong>direction-guide 생성</strong>
+        <p style="font-size:14px;color:#475569;margin:4px 0 0 0;">
+          pre_direction engine이 request.md 분석 → JSON 출력
+        </p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step__number">2</div>
+      <div class="step__content">
+        <strong>청중 분석</strong>
+        <p style="font-size:14px;color:#475569;margin:4px 0 0 0;">
+          audience_analyzer 3축 모델로 tone/밀도 결정
+        </p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step__number">3</div>
+      <div class="step__content">
+        <strong>템플릿 적용</strong>
+        <p style="font-size:14px;color:#475569;margin:4px 0 0 0;">
+          template_selector가 section_flow 6단계 제공
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TRADE-OFFS ==================== -->
+<div class="section-divider">section_flow[4] · TRADE-OFFS</div>
+
+<section style="max-width:1200px;margin:0 auto;padding:16px;">
+  <h2 style="text-align:center;font-size:24px;">⚖️ Trade-offs</h2>
+  <div class="trade-off-grid">
+    <div class="trade-off__pros">
+      <h3>✅ 장점</h3>
+      <ul style="font-size:14px;">
+        <li>체계적인 방향성 제공</li>
+        <li>청중 분석 기반</li>
+        <li>재현 가능한 프로세스</li>
+      </ul>
+    </div>
+    <div class="trade-off__cons">
+      <h3>⚠️ 한계</h3>
+      <ul style="font-size:14px;">
+        <li>초기 설정 비용</li>
+        <li>템플릿 의존성</li>
+        <li>고유 창작성 제약 가능성</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SUMMARY ==================== -->
+<div class="section-divider">section_flow[5] · SUMMARY</div>
+
+<section class="summary" style="max-width:1200px;margin:0 auto;padding:16px;">
+  <h2>📝 3줄 요약</h2>
+  <p class="summary__item">1️⃣ Golden Circle 6단계 = 체계적 슬라이드 구조화 프레임워크</p>
+  <p class="summary__item">2️⃣ Pre-Direction Engine이 생성한 direction-guide로 설계 품질 향상</p>
+  <p class="summary__item">3️⃣ exp-004~006: content-system v1.0 실제 적용 검증 완료</p>
+  <a class="summary__next" href="./exp-004-hero.html" target="_blank">
+    ➡ exp-004 상세 보기
+  </a>
+</section>
+
+<div style="max-width:1200px;margin:16px auto;padding:16px;background:#F0FDF4;border-radius:12px;font-size:13px;color:#166534;">
+  <strong>📋 direction-guide 전체 적용 결과</strong><br>
+  ✅ section_flow 6단계 순서 일치 (Hero→WHY→WHAT→HOW→Trade-offs→Summary)<br>
+  ✅ 각 섹션 direction-guide 규칙 준수 (1메시지/슬라이드, ≤80단어/섹션)<br>
+  ✅ design_tokens: color_primary #2563EB, card_bg #F8FAFC, border_radius 16px<br>
+  ✅ audience: 개발자 → educational tone, full code level<br>
+  ✅ 구조 vs 디자인 격리: section_flow는 내용, card-grid.css는 디자인<br>
+  <span style="color:#F59E0B;">
+    ⚠️ direction-guide에 section_flow 각 섹션의 슬라이드 수가 명시되지 않음<br>
+    → 각 섹션의 실제 슬라이드 수 추정은 domain_specific에 의존
+  </span>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>exp-004: Hero 슬라이드 direction-guide 적용</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="template/card-grid.css">
+<style>
+/* direction-guide.constraints: 1 message/slide, ≤80 words, 3m readability */
+.meta-badge {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  background: #1E293B;
+  color: #94A3B8;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: monospace;
+  z-index: 100;
+}
+.meta-badge span { color: #10B981; }
+.content-guide {
+  max-width: 800px;
+  margin: 40px auto;
+  background: #F0FDF4;
+  border: 1px solid #86EFAC;
+  border-radius: 12px;
+  padding: 20px;
+  font-size: 13px;
+  color: #166534;
+}
+.hero {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px;
+}
+.hero__label {
+  color: #2563EB;
+  font-size: 14px;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+.hero__title {
+  font-size: 56px;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  color: #0F172A;
+  line-height: 1.1;
+}
+.hero__subtitle {
+  font-size: 24px;
+  color: #475569;
+  max-width: 600px;
+  line-height: 1.4;
+  margin: 0 0 32px 0;
+}
+.hero__meta {
+  display: flex;
+  gap: 24px;
+  font-size: 14px;
+  color: #94A3B8;
+}
+.hero__meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+</style>
+</head>
+<body>
+
+<!-- direction-guide 적용 현황 (debug) -->
+<div class="meta-badge">
+  📋 direction-guide: <span>golden_circle</span> | 
+  section_flow[0]: <span>Hero</span> | 
+  max_words: <span>≤80</span> | 
+  audience: <span>developer</span>
+</div>
+
+<div class="content-guide">
+  <strong>📋 exp-004: direction-guide → Hero 슬라이드 적용</strong><br>
+  <strong>전략:</strong> Golden Circle · <strong>섹션:</strong> section_flow[0] (Hero)<br>
+  <strong>규칙:</strong> "중앙 대형 타이포, 1줄 메시지"<br>
+  <strong>청중:</strong> developer (high/high/low) → educational tone<br>
+  <strong>제약:</strong> ≤20단어 (Hero), 3m 가독성 (제목 ≥48px)<br>
+  <strong>design_tokens:</strong> color_primary:#2563EB, border_radius:16px, card_bg:#F8FAFC
+</div>
+
+<!-- Hero :: Golden Circle section_flow[0] -->
+<section class="hero">
+  <div class="hero__label">Hermes Agent · 콘텐츠 시스템</div>
+  <h1 class="hero__title">
+    만들면서 배우는<br>Hermes Agent 슬라이드
+  </h1>
+  <p class="hero__subtitle">
+    Pre-Direction Engine이 설계한 Golden Circle 프레임워크로<br>
+    슬라이드 품질을 체계적으로 개선합니다
+  </p>
+  <div class="hero__meta">
+    <span class="hero__meta-item">🎯 1줄 메시지</span>
+    <span class="hero__meta-item">📐 section_flow[0]</span>
+    <span class="hero__meta-item">🖌️ educational tone</span>
+  </div>
+</section>
+
+<div class="content-guide" style="background:#FEF2F2;border-color:#FCA5A5;color:#991B1B;">
+  <strong>📋 direction-guide 적용 결과</strong><br>
+  ✅ section_flow[0] 규칙 적용: "중앙 대형 타이포, 1줄 메시지"<br>
+  ✅ max_words 제한: 33단어 (Hero는 ≤80, 여유 있음)<br>
+  ✅ 3m 가독성: 제목 56px, 부제 24px<br>
+  ✅ educational tone: "만들면서 배우는" — 학습형 강조<br>
+  ✅ design_tokens: primary #2563EB, card_bg #F8FAFC<br>
+  ❌ card_grid 레이아웃 미사용 (Hero는 중앙 정렬)
+</div>
+
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golden Circle Template — Pre-Direction Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="template/card-grid.css">
+<style>
+/* direction-guide structure.section_flow 적용 */
+.guide-badge {
+  display: inline-block;
+  background: var(--color-primary);
+  color: white;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.guide-debug {
+  background: #f0f0f0;
+  padding: 12px;
+  margin: 12px 0;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #666;
+  border-left: 3px solid var(--color-primary);
+}
+</style>
+</head>
+<body>
+
+<div class="guide-debug">
+  <strong>📋 direction-guide 적용 대상:</strong><br>
+  Framework: golden_circle<br>
+  Section flow: Hero → WHY → WHAT → HOW → Trade-offs → Summary<br>
+  Audience: high knowledge / low decision / high technical<br>
+  Tone: educational | Max words: 80 | Code level: full
+</div>
+
+<!-- === HERO === -->
+<section class="hero" data-guide-section="Hero">
+  <span class="guide-badge">Hero · direction-guide section_flow[0]</span>
+  <h1 class="hero__title">중앙 대형 타이포, 1줄 메시지</h1>
+  <p class="hero__subtitle">슬라이드 전체를 관통하는 핵심 메시지</p>
+  <p class="hero__meta">educational · ≤20단어</p>
+</section>
+
+<!-- === WHY === -->
+<section>
+  <h2 class="section-title">🤔 WHY — 왜 중요한가</h2>
+  <div class="comparison" data-guide-section="WHY">
+    <div class="comparison__item">
+      <div style="font-size:2em;margin-bottom:8px">🔴</div>
+      <h3>문제 1</h3>
+      <p>—</p>
+    </div>
+    <div class="comparison__item">
+      <div style="font-size:2em;margin-bottom:8px">🟡</div>
+      <h3>문제 2</h3>
+      <p>—</p>
+    </div>
+    <div class="comparison__item">
+      <div style="font-size:2em;margin-bottom:8px">🟢</div>
+      <h3>문제 3</h3>
+      <p>—</p>
+    </div>
+  </div>
+</section>
+
+<!-- === WHAT === -->
+<section>
+  <h2 class="section-title">💡 WHAT — 핵심 내용</h2>
+  <div class="card-grid" data-guide-section="WHAT">
+    <div class="card">
+      <div class="card__icon">1️⃣</div>
+      <div class="card__title">핵심 1</div>
+      <div class="card__body">—</div>
+    </div>
+    <div class="card">
+      <div class="card__icon">2️⃣</div>
+      <div class="card__title">핵심 2</div>
+      <div class="card__body">—</div>
+    </div>
+    <div class="card">
+      <div class="card__icon">3️⃣</div>
+      <div class="card__title">핵심 3</div>
+      <div class="card__body">—</div>
+    </div>
+  </div>
+</section>
+
+<!-- === HOW === -->
+<section>
+  <h2 class="section-title">🔧 HOW — 단계별 플로우</h2>
+  <div class="step-flow" data-guide-section="HOW">
+    <div class="step">
+      <div class="step__number">1</div>
+      <div class="step__content"><strong>단계 1</strong><br>—</div>
+    </div>
+    <div class="step">
+      <div class="step__number">2</div>
+      <div class="step__content"><strong>단계 2</strong><br>—</div>
+    </div>
+    <div class="step">
+      <div class="step__number">3</div>
+      <div class="step__content"><strong>단계 3</strong><br>—</div>
+    </div>
+  </div>
+</section>
+
+<!-- === TRADE-OFFS === -->
+<section>
+  <h2 class="section-title">⚖️ Trade-offs — 한계와 대안</h2>
+  <div class="trade-off-grid" data-guide-section="Trade-offs">
+    <div class="trade-off__pros">
+      <h3>✅ 장점</h3>
+      <ul><li>—</li></ul>
+    </div>
+    <div class="trade-off__cons">
+      <h3>⚠️ 한계</h3>
+      <ul><li>—</li></ul>
+    </div>
+  </div>
+</section>
+
+<!-- === SUMMARY === -->
+<section class="summary" data-guide-section="Summary">
+  <h2>📝 3줄 요약</h2>
+  <p class="summary__item">1. —</p>
+  <p class="summary__item">2. —</p>
+  <p class="summary__item">3. —</p>
+  <a class="summary__next" href="#" target="_blank">➡ 다음 단계</a>
+</section>
+
+</body>
+</html>

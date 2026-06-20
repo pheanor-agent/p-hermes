@@ -49,7 +49,6 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    /* Space Comparison Cards */
     .comparison {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -86,7 +85,6 @@
     .status-fixed { color: #94a3b8; }
     .status-experimental { color: #c084fc; }
 
-    /* Experiment Cards */
     .experiments {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -103,7 +101,7 @@
 
     .exp-card:hover { border-color: rgba(102, 126, 234, 0.4); }
 
-    .exp-empty {
+    .no-experiments {
       grid-column: 1 / -1;
       text-align: center;
       padding: 40px;
@@ -111,7 +109,6 @@
       font-style: italic;
     }
 
-    /* Deck Grid */
     .deck-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -211,11 +208,55 @@
       </div>
     </div>
 
-    <h2 class="section-title">🔬 실험 목록</h2>
+    <h2 class="section-title">🔬 실험 목록 (exp-001~006)</h2>
     <div class="experiments">
-      <div class="exp-empty">
-        아직 등록된 실험이 없습니다.<br>
-        새로운 실험은 <code>experiments/</code> 폴더에 추가됩니다.
+      <div class="exp-card">
+        <div class="space-icon">📝</div>
+        <div class="space-name"><a href="experiments/exp-001-gpt-slide-review.md" style="color:#a0b4ff;text-decoration:none;">exp-001: GPT Slide Review</a></div>
+        <div class="space-desc">GPT 피드백 기반 슬라이드 검토</div>
+        <div class="space-meta"><span class="status-active">● input</span></div>
+      </div>
+      <div class="exp-card">
+        <div class="space-icon">🎨</div>
+        <div class="space-name"><a href="experiments/exp-002-gpt-design-review.md" style="color:#a0b4ff;text-decoration:none;">exp-002: GPT Design Review v1</a></div>
+        <div class="space-desc">GPT content-system v2 — 7개 지적</div>
+        <div class="space-meta"><span class="status-active">● input</span></div>
+      </div>
+      <div class="exp-card">
+        <div class="space-icon">🔧</div>
+        <div class="space-name"><a href="experiments/exp-003-gpt-design-review-v2.md" style="color:#a0b4ff;text-decoration:none;">exp-003: GPT Design Review v2</a></div>
+        <div class="space-desc">GPT content-system v3 — 5개 위험</div>
+        <div class="space-meta"><span class="status-active">● input</span></div>
+      </div>
+      <div class="exp-card">
+        <div class="space-icon">🌟</div>
+        <div class="space-name"><a href="slides-v2/exp-004-hero.html" style="color:#a0b4ff;text-decoration:none;" target="_blank">exp-004: Hero 적용</a></div>
+        <div class="space-desc">direction-guide section_flow[0]</div>
+        <div class="space-meta"><span class="status-active">● new</span></div>
+      </div>
+      <div class="exp-card">
+        <div class="space-icon">🤔</div>
+        <div class="space-name"><a href="slides-v2/exp-005-hero-why.html" style="color:#a0b4ff;text-decoration:none;" target="_blank">exp-005: Hero + WHY</a></div>
+        <div class="space-desc">3열 비교 카드 실험</div>
+        <div class="space-meta"><span class="status-active">● new</span></div>
+      </div>
+      <div class="exp-card">
+        <div class="space-icon">📐</div>
+        <div class="space-name"><a href="slides-v2/exp-006-full-flow.html" style="color:#a0b4ff;text-decoration:none;" target="_blank">exp-006: 6단계 전체 흐름</a></div>
+        <div class="space-desc">Golden Circle 6단계 전체 적용</div>
+        <div class="space-meta"><span class="status-active">● new</span></div>
+      </div>
+    </div>
+
+    <h2 class="section-title">📂 templates (direction-guide 기반)</h2>
+    <div class="deck-grid">
+      <div class="deck-card">
+        <a href="slides-v2/template/card-grid.css" target="_blank">🎨 card-grid.css</a>
+        <p>design_tokens → CSS</p>
+      </div>
+      <div class="deck-card">
+        <a href="slides-v2/template/golden-circle.html" target="_blank">📄 golden-circle.html</a>
+        <p>section_flow 템플릿</p>
       </div>
     </div>
 

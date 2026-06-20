@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>exp-005: Golden Circle Hero + WHY</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="template/card-grid.css">
+<style>
+.guide-bar {
+  background: #1E293B;
+  color: #CBD5E1;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-family: monospace;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.guide-bar .ok { color: #10B981; }
+.guide-bar .warn { color: #F59E0B; }
+</style>
+</head>
+<body>
+
+<div class="guide-bar">
+  <span>📋 section_flow: [0]Hero → <span class="ok">[1]WHY</span></span>
+  <span>| max_words/slide: ≤80</span>
+  <span>| layout: card_grid + 3열 비교</span>
+  <span>| design_tokens: corporate_blue</span>
+</div>
+
+<!-- === HERO (section_flow[0]) === -->
+<section class="hero" style="min-height:40vh;padding:32px;">
+  <div class="hero__label" style="color:#2563EB;font-size:12px;letter-spacing:2px;">
+    direction-guide · section_flow[0] = Hero
+  </div>
+  <h1 class="hero__title" style="font-size:40px;">
+    Hermes Agent<br>슬라이드 시스템
+  </h1>
+  <p class="hero__subtitle" style="font-size:18px;">
+    Golden Circle 프레임워크를 통한 슬라이드 구조화 실험
+  </p>
+  <p class="hero__meta" style="font-size:12px;color:#94A3B8;">
+    🎯 1줄 메시지 | 📐 section_flow[0] Hero | ⌨️ direction-guide v1.0
+  </p>
+</section>
+
+<!-- === WHY (section_flow[1]) === -->
+<section style="max-width:1200px;margin:0 auto;padding:24px;">
+  <div style="text-align:center;margin-bottom:8px;">
+    <span style="background:#2563EB;color:white;font-size:12px;padding:4px 12px;border-radius:12px;">
+      📋 direction-guide · section_flow[1] = WHY
+    </span>
+  </div>
+  <h2 style="text-align:center;font-size:28px;color:#0F172A;">
+    🤔 WHY — 왜 Hermes Agent 슬라이드인가?
+  </h2>
+  <p style="text-align:center;color:#64748B;margin-bottom:32px;">
+    <span class="guide-bar" style="display:inline;background:#F8FAFC;color:#64748B;">
+      rule: "3열 비교 카드 (문제 명확히)" · audience: developer · tone: educational
+    </span>
+  </p>
+
+  <!-- 3열 비교 카드 :: direction-guide WHY rule -->
+  <div class="comparison">
+    <div class="comparison__item">
+      <div style="font-size:3em;margin-bottom:12px">📚</div>
+      <h3>지식 문서의 한계</h3>
+      <p>위키/README는 <strong>읽기용</strong> — 발표/교육에 부적합</p>
+      <ul style="font-size:13px;color:#475569;padding-left:16px;">
+        <li>정보 밀도 과다</li>
+        <li>시각적 계층 부재</li>
+        <li>발표 흐름 없음</li>
+      </ul>
+    </div>
+    <div class="comparison__item">
+      <div style="font-size:3em;margin-bottom:12px">⚡</div>
+      <h3>기존 슬라이드의 문제</h3>
+      <p>단순 문서→HTML 변환 — <strong>습득 곡선</strong> 미고려</p>
+      <ul style="font-size:13px;color:#475569;padding-left:16px;">
+        <li>슬라이드당 2~3메시지</li>
+        <li>청중 분석 부재</li>
+        <li>디자인 체계 없음</li>
+      </ul>
+    </div>
+    <div class="comparison__item">
+      <div style="font-size:3em;margin-bottom:12px">🎯</div>
+      <h3>Golden Circle의 해결</h3>
+      <p><strong>WHY→WHAT→HOW→Trade-offs</strong> 구조화</p>
+      <ul style="font-size:13px;color:#475569;padding-left:16px;">
+        <li>1슬라이드 1메시지</li>
+        <li>청중 맞춤 톤</li>
+        <li>방향성 가이드 제공</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div style="max-width:1200px;margin:24px auto;padding:16px;background:#F0FDF4;border-radius:12px;font-size:13px;color:#166534;">
+  <strong>📋 direction-guide 적용 결과</strong><br>
+  ✅ section_flow[1] 규칙 적용: "3열 비교 카드 (문제 명확히)"<br>
+  ✅ 각 카드 ≤80 단어 확인 (좌:52, 중:49, 우:47)<br>
+  ✅ tone: educational (각 비교에 설명형 문장)<br>
+  ✅ icon: emoji_unicode (📚 ⚡ 🎯)<br>
+  ✅ card_grid layout 자동 적용 (CSS .comparison 3열)<br>
+  <span style="color:#F59E0B;">⚠️ 각 카드 내 목록 항목 3개 제한 (읽기 편함) - direction-guide에 불명시</span>
+</div>
+
+</body>
+</html>
