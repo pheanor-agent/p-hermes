@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Model Routing: 작업별 최적 모델 자동 선택</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0a0b0e;
+    --surface: #111318;
+    --surface2: #181b22;
+    --border: #262a33;
+    --ink: #e8eaed;
+    --ink-dim: #8b8fa3;
+    --accent: #6366f1;
+    --accent-glow: rgba(99,102,241,0.25);
+    --gold: #f59e0b;
+    --gold-dim: rgba(245,158,11,0.15);
+    --green: #22c55e;
+    --red: #ef4444;
+    --orange: #f97316;
+    --cyan: #22d3ee;
+    --cyan-dim: rgba(34,211,238,0.12);
+    --purple: #a855f7;
+    --purple-dim: rgba(168,85,247,0.15);
+    --radius: 12px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .deck { width: 1920px; height: 1080px; position: relative; margin: 0 auto; overflow: hidden; transform-origin: top left; }
+  .slides { width: 100%; height: 100%; position: relative; }
+  .slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 0.6s var(--ease); display: flex; flex-direction: column; justify-content: center; padding: 80px 100px; }
+  .slide.active { opacity: 1; pointer-events: auto; z-index: 2; }
+
+  .slide::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(99,102,241,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .step-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 600; letter-spacing: 2px;
+    color: rgba(255,255,255,0.2); margin-bottom: 4px;
+  }
+  .section-icon {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; font-weight: 600; letter-spacing: 3px;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+  .slide-title {
+    font-size: 56px; font-weight: 900; line-height: 1.2;
+    letter-spacing: -1px; margin-bottom: 24px;
+  }
+  .slide-subtitle {
+    font-size: 22px; font-weight: 400; color: var(--ink-dim);
+    line-height: 1.6; max-width: 900px;
+  }
+
+  /* ── Hero ── */
+  .hero { text-align: center; align-items: center; }
+  .hero .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 20px; border-radius: 100px;
+    background: var(--accent-glow); border: 1px solid rgba(99,102,241,0.3);
+    font-size: 14px; font-weight: 500; color: var(--accent);
+    margin-bottom: 40px; font-family: 'JetBrains Mono', monospace; letter-spacing: 2px;
+  }
+  .hero .hero-badge::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+  .hero h1 {
+    font-size: 96px; font-weight: 900; letter-spacing: -2px;
+    margin-bottom: 16px; line-height: 1.1;
+  }
+  .hero .hero-kr {
+    font-size: 44px; font-weight: 500; color: var(--ink-dim);
+    margin-bottom: 48px;
+  }
+  .hero .hero-circles {
+    display: flex; justify-content: center; gap: 48px; margin-top: 16px;
+  }
+  .hero .circle-item {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .hero .circle {
+    width: 72px; height: 72px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700;
+    border: 2px solid; transition: 0.3s var(--ease);
+  }
+  .hero .circle-why { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+  .hero .circle-what { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+  .hero .circle-how { border-color: var(--green); color: var(--green); background: rgba(34,197,94,0.1); }
+  .hero .circle-label {
+    font-size: 15px; font-weight: 600; letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .hero .circle-why + .circle-label { color: var(--gold); }
+  .hero .circle-what + .circle-label { color: var(--accent); }
+  .hero .circle-how + .circle-label { color: var(--green); }
+
+  /* ── WHY Slides ── */
+  .problems { display: flex; gap: 24px; margin-top: 32px; }
+  .problem-card {
+    flex: 1; background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px; position: relative;
+    overflow: hidden;
+  }
+  .problem-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .problem-card:nth-child(1)::before { background: var(--red); }
+  .problem-card:nth-child(2)::before { background: var(--orange); }
+  .problem-card:nth-child(3)::before { background: var(--red); }
+  .problem-card .num {
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+    letter-spacing: 2px; color: var(--ink-dim); margin-bottom: 8px;
+  }
+  .problem-card h3 {
+    font-size: 22px; font-weight: 700; margin-bottom: 12px;
+  }
+  .problem-card p {
+    font-size: 15px; line-height: 1.7; color: var(--ink-dim);
+  }
+  .problem-card .example {
+    margin-top: 16px; padding: 12px 16px;
+    background: rgba(0,0,0,0.3); border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; line-height: 1.6; color: var(--ink-dim);
+  }
+  .problem-card .example em { color: var(--red); font-style: normal; }
+  .problem-card .example em.green { color: var(--green); }
+  .problem-card .example em.blue { color: var(--accent); }
+
+  /* ── Impact Cards (WHY Step 2) ── */
+  .impact-cards { display: flex; gap: 24px; margin-top: 40px; }
+  .impact-card {
+    flex: 1; background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .impact-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .impact-card:nth-child(1)::before { background: var(--orange); }
+  .impact-card:nth-child(2)::before { background: var(--red); }
+  .impact-card .impact-icon {
+    font-size: 36px; margin-bottom: 12px;
+  }
+  .impact-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+  .impact-card p { font-size: 14px; line-height: 1.7; color: var(--ink-dim); }
+  .impact-card .cost {
+    display: inline-block; margin-top: 16px;
+    padding: 6px 16px; border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; font-weight: 600;
+  }
+  .impact-card:nth-child(1) .cost { background: rgba(249,115,22,0.1); color: var(--orange); border: 1px solid rgba(249,115,22,0.3); }
+  .impact-card:nth-child(2) .cost { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+
+  /* ── WHAT Grid ── */
+  .what-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 40px; }
+  .what-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px; text-align: center;
+  }
+  .what-item .icon-circle {
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px; font-family: 'JetBrains Mono', monospace;
+    font-size: 20px; font-weight: 700;
+  }
+  .what-item:nth-child(1) .icon-circle { background: var(--gold-dim); color: var(--gold); border: 2px solid var(--gold); }
+  .what-item:nth-child(2) .icon-circle { background: var(--accent-glow); color: var(--accent); border: 2px solid var(--accent); }
+  .what-item h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+  .what-item p { font-size: 14px; line-height: 1.7; color: var(--ink-dim); }
+  .what-item .what-detail { margin-top: 16px; }
+  .what-item .what-detail li {
+    list-style: none; font-size: 14px; line-height: 1.8;
+    padding-left: 16px; position: relative; color: var(--ink-dim);
+  }
+  .what-item .what-detail li::before {
+    content: '→'; position: absolute; left: 0; color: var(--accent);
+  }
+
+  /* ── Fallback Chain ── */
+  .fallback-section { margin-top: 32px; }
+  .fallback-section h3 {
+    font-size: 20px; font-weight: 700; margin-bottom: 16px; text-align: center;
+  }
+  .fallback-chain {
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    margin-top: 24px;
+  }
+  .fallback-node {
+    padding: 20px 32px; border-radius: var(--radius);
+    text-align: center; font-family: 'JetBrains Mono', monospace;
+    font-size: 18px; font-weight: 600;
+    border: 2px solid; min-width: 140px;
+  }
+  .fallback-node.primary { border-color: var(--accent); background: var(--accent-glow); color: var(--accent); }
+  .fallback-node.secondary { border-color: var(--green); background: rgba(34,197,94,0.1); color: var(--green); }
+  .fallback-node.tertiary { border-color: var(--cyan); background: var(--cyan-dim); color: var(--cyan); }
+  .fallback-arrow {
+    font-size: 28px; color: var(--ink-dim);
+    font-family: 'JetBrains Mono', monospace;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .fallback-arrow .label {
+    font-size: 11px; font-weight: 500; color: var(--ink-dim);
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+
+  /* ── HOW Slide ── */
+  .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 40px; }
+  .how-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px;
+  }
+  .how-card .cmd {
+    display: inline-block; padding: 6px 14px; border-radius: 6px;
+    background: rgba(0,0,0,0.4); border: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 600;
+    margin-bottom: 16px; color: var(--accent);
+  }
+  .how-card .cmd .highlight { color: var(--gold); }
+  .how-card .cmd .highlight-green { color: var(--green); }
+  .how-card .cmd .highlight-cyan { color: var(--cyan); }
+  .how-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+  .how-card p { font-size: 14px; line-height: 1.7; color: var(--ink-dim); }
+  .how-card .step-detail { margin-top: 16px; }
+  .how-card .step-detail li {
+    list-style: none; font-size: 14px; line-height: 1.8;
+    padding-left: 16px; position: relative; color: var(--ink-dim);
+  }
+  .how-card .step-detail li::before {
+    content: '→'; position: absolute; left: 0; color: var(--accent);
+  }
+
+  /* ── HOW Flow Diagram ── */
+  .flow-row {
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px; margin-top: 32px;
+  }
+  .flow-step {
+    padding: 14px 28px; border-radius: var(--radius);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px; font-weight: 600;
+    text-align: center; border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .flow-step.f1 { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+  .flow-step.f2 { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+  .flow-step.f3 { border-color: var(--green); color: var(--green); background: rgba(34,197,94,0.1); }
+  .flow-arrow { color: var(--ink-dim); font-size: 24px; }
+
+  /* ── Trade-offs ── */
+  .trade-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 40px; }
+  .trade-col { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px; }
+  .trade-col.pro { border-color: rgba(34,197,94,0.3); }
+  .trade-col.con { border-color: rgba(239,68,68,0.3); }
+  .trade-col h3 {
+    font-size: 24px; font-weight: 700; margin-bottom: 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .trade-col.pro h3 { color: var(--green); }
+  .trade-col.con h3 { color: var(--red); }
+  .trade-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
+  }
+  .trade-item:last-child { border-bottom: none; }
+  .trade-item .metric { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; white-space: nowrap; min-width: 80px; }
+  .trade-col.pro .trade-item .metric { color: var(--green); }
+  .trade-col.con .trade-item .metric { color: var(--red); }
+  .trade-item .desc { font-size: 14px; line-height: 1.5; color: var(--ink-dim); }
+
+  /* ── Summary ── */
+  .summary-block {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 40px;
+    margin-top: 32px; text-align: center;
+  }
+  .summary-block .big-text {
+    font-size: 32px; font-weight: 700; line-height: 1.4;
+    margin-bottom: 16px;
+  }
+  .summary-block .big-text em { color: var(--accent); font-style: normal; }
+  .summary-block .big-text .gold { color: var(--gold); }
+  .summary-block .big-text .green { color: var(--green); }
+  .summary-block .big-text .cyan-text { color: var(--cyan); }
+  .summary-block p { font-size: 16px; color: var(--ink-dim); line-height: 1.7; }
+  .summary-stats { display: flex; justify-content: center; gap: 48px; margin-top: 28px; }
+  .summary-stat { text-align: center; }
+  .summary-stat .val { font-family: 'JetBrains Mono', monospace; font-size: 36px; font-weight: 700; }
+  .summary-stat:nth-child(1) .val { color: var(--gold); }
+  .summary-stat:nth-child(2) .val { color: var(--accent); }
+  .summary-stat:nth-child(3) .val { color: var(--green); }
+  .summary-stat .label { font-size: 13px; color: var(--ink-dim); margin-top: 4px; }
+
+  /* ── Navigation ── */
+  .nav {
+    position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 24px; z-index: 100;
+    padding: 12px 24px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 100px;
+    font-size: 14px; backdrop-filter: blur(16px);
+  }
+  .nav button {
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--ink); font-size: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.2s var(--ease);
+  }
+  .nav button:hover { background: var(--surface2); border-color: var(--accent); }
+  .nav .count { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--ink-dim); min-width: 60px; text-align: center; }
+  .nav .dots { display: flex; gap: 6px; }
+  .nav .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border); cursor: pointer; transition: 0.3s var(--ease);
+  }
+  .nav .dot.active { background: var(--accent); width: 24px; border-radius: 4px; }
+
+  /* ── Responsive Scaling ── */
+  @media (max-width: 1920px) {
+    .deck { transform: scale(calc(100vw / 1920)); }
+  }
+  @media (max-width: 768px) {
+    .deck { transform: scale(calc(100vw / 1920)); }
+    .hero h1 { font-size: 48px; }
+    .slide-title { font-size: 32px; }
+    .problems { flex-direction: column; }
+    .impact-cards { flex-direction: column; }
+    .what-grid { grid-template-columns: 1fr; }
+    .how-grid { grid-template-columns: 1fr; }
+    .trade-grid { grid-template-columns: 1fr; }
+    .summary-stats { flex-direction: column; gap: 16px; }
+    .fallback-chain { flex-direction: column; }
+    .flow-row { flex-direction: column; }
+  }
+
+  /* ── Animations ── */
+  .slide.active .anim-up { animation: fadeUp 0.7s var(--ease) forwards; }
+  .slide.active .anim-up-1 { animation: fadeUp 0.7s var(--ease) 0.1s forwards; opacity: 0; }
+  .slide.active .anim-up-2 { animation: fadeUp 0.7s var(--ease) 0.2s forwards; opacity: 0; }
+  .slide.active .anim-up-3 { animation: fadeUp 0.7s var(--ease) 0.3s forwards; opacity: 0; }
+  .slide.active .anim-up-4 { animation: fadeUp 0.7s var(--ease) 0.4s forwards; opacity: 0; }
+  .slide.active .anim-up-5 { animation: fadeUp 0.7s var(--ease) 0.5s forwards; opacity: 0; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+  <div class="slides" id="slides">
+
+    <!-- ── SLIDE 0: Hero ── -->
+    <div class="slide hero active" data-slide="0">
+      <div class="hero-badge anim-up">GOLDEN CIRCLE · 6-STEP</div>
+      <h1 class="anim-up-1">Model Routing</h1>
+      <div class="hero-kr anim-up-2">작업별 최적 모델 자동 선택</div>
+      <div class="hero-circles anim-up-3">
+        <div class="circle-item">
+          <div class="circle circle-why">W</div>
+          <span class="circle-label">WHY</span>
+        </div>
+        <div class="circle-item">
+          <div class="circle circle-what">W</div>
+          <span class="circle-label">WHAT</span>
+        </div>
+        <div class="circle-item">
+          <div class="circle circle-how">H</div>
+          <span class="circle-label">HOW</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SLIDE 1: WHY Step 1 — 모델별 특화 ── -->
+    <div class="slide" data-slide="1">
+      <div class="step-num anim-up">GOLDEN CIRCLE · STEP 1</div>
+      <div class="section-icon anim-up" style="color:var(--gold)">WHY · 문제</div>
+      <div class="slide-title anim-up-1">왜 Model Routing이 필요한가?</div>
+      <div class="slide-subtitle anim-up-2">
+        하나의 모델로 모든 작업을 최적으로 처리할 수 없습니다.<br>
+        작업 유형별 특화 모델이 필요하지만, 이를 수동으로 관리하면 복잡도가 폭발합니다.
+      </div>
+      <div class="problems">
+        <div class="problem-card anim-up-3">
+          <div class="num">PROBLEM 01</div>
+          <h3>모델별 특화</h3>
+          <p>모든 작업에 하나의 모델로 최적의 결과를 내는 것은 불가능합니다. 코딩, 추론, 창작 등 각 작업에 특화된 모델이 필요하지만 수동 전환은 비효율적입니다.</p>
+          <div class="example">하나의 모델로 모든 작업 → <em>최적 불가</em></div>
+        </div>
+        <div class="problem-card anim-up-4">
+          <div class="num">PROBLEM 02</div>
+          <h3>비용 효율</h3>
+          <p>고성능 모델은 비용이 높습니다. 단순한 질문에도 고성능 모델을 사용하면 불필요한 비용이 발생합니다. 작업 난이도에 맞는 모델 선택이 필요합니다.</p>
+          <div class="example">단순 작업에 고성능 모델 → <em>비용 낭비</em></div>
+        </div>
+        <div class="problem-card anim-up-5">
+          <div class="num">PROBLEM 03</div>
+          <h3>가용성 관리</h3>
+          <p>단일 모델에 의존하면 장애 발생 시 전체 시스템이 마비됩니다. 모델 제공자 장애, Rate Limit, 네트워크 문제 등에 대응할 Fallback 체계가 필수입니다.</p>
+          <div class="example">단일 모델 의존 → <em>장애 시 전체 마비</em></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SLIDE 2: WHY Step 2 — 비용과 가용성 문제의 영향 ── -->
+    <div class="slide" data-slide="2">
+      <div class="step-num anim-up">GOLDEN CIRCLE · STEP 2</div>
+      <div class="section-icon anim-up" style="color:var(--gold)">WHY · 영향</div>
+      <div class="slide-title anim-up-1">세 가지 문제가 초래하는 손실</div>
+      <div class="slide-subtitle anim-up-2">
+        모델 선택의 비효율성은 단순한 불편을 넘어, 비용 증가와 서비스 불안정이라는<br>
+        실질적인 손실로 이어집니다. Model Routing이 이 모든 문제를 해결합니다.
+      </div>
+      <div class="impact-cards">
+        <div class="impact-card anim-up-3">
+          <div class="impact-icon">💰</div>
+          <h3>비용 증가</h3>
+          <p>고성능 모델을 모든 작업에 사용하면 API 비용이 급증합니다. 코딩 작업에는 Claude, 추론에는 DeepSeek, 창작에는 Qwen 등 각 작업에 최적화된 모델로 비용을 절감할 수 있습니다.</p>
+          <div class="cost">최대 70% 비용 절감 가능</div>
+        </div>
+        <div class="impact-card anim-up-4">
+          <div class="impact-icon">⏱️</div>
+          <h3>서비스 불안정</h3>
+          <p>모델 제공자의 장애나 Rate Limit에 대응할 Fallback이 없으면 서비스 중단이 발생합니다. 빠른 모델(fast)과 정확한 모델(reasoning)을 구분하여 응답 시간과 품질을 동시에 확보해야 합니다.</p>
+          <div class="cost">장애 시 서비스 마비</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SLIDE 3: WHAT Step 1 — 라우팅 + 2계층 설정 ── -->
+    <div class="slide" data-slide="3">
+      <div class="step-num anim-up">GOLDEN CIRCLE · STEP 3</div>
+      <div class="section-icon anim-up" style="color:var(--accent)">WHAT · 해결책</div>
+      <div class="slide-title anim-up-1">Role 기반 라우팅 + 2계층 설정</div>
+      <div class="slide-subtitle anim-up-2">
+        Model Routing은 작업 유형(Role)에 따라 최적의 모델을 자동 선택합니다.<br>
+        2계층 설정(SSOT + Override)으로 유연성과 일관성을 동시에 확보합니다.
+      </div>
+      <div class="what-grid">
+        <div class="what-item anim-up-3">
+          <div class="icon-circle">R</div>
+          <h3>Role 기반 라우팅</h3>
+          <p>작업 유형별로 Role을 정의합니다. <strong>default / coding / reasoning / creative / fast / vision</strong> — 6개 Role이 각각 최적의 모델에 매핑되어 자동 라우팅됩니다.</p>
+          <ul class="what-detail">
+            <li>coding → Claude Sonnet</li>
+            <li>reasoning → DeepSeek R1</li>
+            <li>fast → GPT-4o Mini</li>
+          </ul>
+        </div>
+        <div class="what-item anim-up-4">
+          <div class="icon-circle">2</div>
+          <h3>2계층 설정</h3>
+          <p><strong>SSOT model-roles.yaml</strong>이 단일 진실 공급원으로 모든 Role-모델 매핑을 정의합니다. <strong>config.yaml</strong>에서 프로필별 오버라이드로 유연하게 커스터마이징합니다.</p>
+          <ul class="what-detail">
+            <li>SSOT: model-roles.yaml (팀 공통)</li>
+            <li>Override: config.yaml (개인 설정)</li>
+            <li>계층 구조로 충돌 해소</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SLIDE 4: WHAT Step 2 — 자동 Fallback ── -->
+    <div class="slide" data-slide="4">
+      <div class="step-num anim-up">GOLDEN CIRCLE · STEP 4</div>
+      <div class="section-icon anim-up" style="color:var(--accent)">WHAT · Fallback</div>
+      <div class="slide-title anim-up-1">자동 Fallback 체인</div>
+      <div class="slide-subtitle anim-up-2">
+        장애나 오류 발생 시 사전 정의된 Fallback 체인을 따라 자동으로 대체 모델로 전환합니다.<br>
+        사용자는 중단 없이 서비스를 계속 사용할 수 있습니다.
+      </div>
+      <div class="fallback-section anim-up-3">
+        <h3>Fallback Chain</h3>
+        <div class="fallback-chain">
+          <div class="fallback-node primary">
+            1차<br>DeepSeek
+          </div>
+          <div class="fallback-arrow">
+            ↓
+            <span class="label">Fallback</span>
+          </div>
+          <div class="fallback-node secondary">
+            2차<br>Qwen
+          </div>
+          <div class="fallback-arrow">
+            ↓
+            <span class="label">Fallback</span>
+          </div>
+          <div class="fallback-node tertiary">
+            3차<br>GLM
+          </div>
+        </div>
+      </div>
+      <div class="what-grid anim-up-4" style="margin-top:24px; grid-template-columns:1fr 1fr 1fr;">
+        <div class="what-item" style="padding:20px;">
+          <div class="icon-circle" style="width:44px;height:44px;font-size:16px;background:rgba(239,68,68,0.1);color:var(--red);border-color:var(--red);">✕</div>
+          <h3 style="font-size:16px;">1차 장애</h3>
+          <p style="font-size:13px;">DeepSeek 장애 시 자동으로 Qwen으로 전환</p>
+        </div>
+        <div class="what-item" style="padding:20px;">
+          <div class="icon-circle" style="width:44px;height:44px;font-size:16px;background:rgba(249,115,22,0.1);color:var(--orange);border-color:var(--orange);">✕</div>
+          <h3 style="font-size:16px;">2차 장애</h3>
+          <p style="font-size:13px;">Qwen까지 장애 시 GLM으로 최종 Fallback</p>
+        </div>
+        <div class="what-item" style="padding:20px;">
+          <div class="icon-circle" style="width:44px;height:44px;font-size:16px;background:rgba(34,197,94,0.1);color:var(--green);border-color:var(--green);">✓</div>
+          <h3 style="font-size:16px;">복구</h3>
+          <p style="font-size:13px;">복구 후 자동으로 1차 모델 재시도</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SLIDE 5: HOW ── -->
+    <div class="slide" data-slide="5">
+      <div class="step-num anim-up">GOLDEN CIRCLE · STEP 5</div>
+      <div class="section-icon anim-up" style="color:var(--green)">HOW · 적용 방법</div>
+      <div class="slide-title anim-up-1">3단계 설정 워크플로우</div>
+      <div class="slide-subtitle anim-up-2">
+        복잡해 보이지만 실제 설정은 단 3단계입니다.<br>
+        역할 정의 → 모델 매핑 → 장애 대응, 이 순서대로만 따라가면 됩니다.
+      </div>
+      <div class="how-grid">
+        <div class="how-card anim-up-3">
+          <div><span class="cmd">STEP 01</span></div>
+          <h3>역할 정의</h3>
+          <p>JOB 유형별로 필요한 역할(Role)을 정의합니다. 각 작업의 특성에 맞는 Role을 할당하여 최적의 결과를 보장합니다.</p>
+          <ul class="step-detail">
+            <li>작업 유형 분류 (coding / reasoning / creative 등)</li>
+            <li>각 Role에 요구사항 명시</li>
+            <li>우선순위 및 성능 기준 설정</li>
+          </ul>
+        </div>
+        <div class="how-card anim-up-4">
+          <div><span class="cmd">STEP 02</span></div>
+          <h3>모델 매핑</h3>
+          <p>각 Role에 최적의 모델을 매핑합니다. <strong>model-roles.yaml</strong>에서 SSOT를 정의하고, 필요시 config.yaml로 오버라이드합니다.</p>
+          <ul class="step-detail">
+            <li>Role별 1차/2차/3차 모델 지정</li>
+            <li>model-roles.yaml에 SSOT 기록</li>
+            <li>config.yaml로 개인 설정 오버라이드</li>
+          </ul>
+        </div>
+        <div class="how-card anim-up-5">
+          <div><span class="cmd">STEP 03</span></div>
+          <h3>장애 대응</h3>
+          <p>Fallback 체인을 구성하여 장애에 대비합니다. 1차 모델 실패 시 자동으로 2차, 3차로 전환되어 서비스 연속성을 보장합니다.</p>
+          <ul class="step-detail">
+            <li>Fallback 우선순위 설정</li>
+            <li>장애 탐지 조건 정의</li>
+            <li>복구 후 자동 재시도 정책</li>
+          </ul>
+        </div>
+      </div>
+      <div class="flow-row anim-up-3">
+        <div class="flow-step f1">역할 정의</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step f2">모델 매핑</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step f3">장애 대응</div>
+      </div>
+    </div>
+
+    <!-- ── SLIDE 6: Trade-offs ── -->
+    <div class="slide" data-slide="6">
+      <div class="step-num anim-up">GOLDEN CIRCLE · STEP 6</div>
+      <div class="section-icon anim-up" style="color:var(--ink-dim)">BALANCE · 트레이드오프</div>
+      <div class="slide-title anim-up-1">장점과 한계</div>
+      <div class="slide-subtitle anim-up-2">
+        모든 설계 결정은 트레이드오프를 수반합니다. Model Routing의 장단점을 투명하게 공개합니다.
+      </div>
+      <div class="trade-grid">
+        <div class="trade-col pro anim-up-3">
+          <h3>✓ Pros</h3>
+          <div class="trade-item">
+            <span class="metric">최적</span>
+            <span class="desc"><strong>작업별 최적 성능</strong> — 각 작업 유형에 가장 적합한 모델이 자동 선택되어 최고의 결과물 보장</span>
+          </div>
+          <div class="trade-item">
+            <span class="metric">절감</span>
+            <span class="desc"><strong>비용 효율</strong> — 간단한 작업에는 경량 모델, 복잡한 작업에는 고성능 모델을 사용하여 API 비용 최적화</span>
+          </div>
+          <div class="trade-item">
+            <span class="metric">강건</span>
+            <span class="desc"><strong>장애 복원력</strong> — Fallback 체인으로 단일 모델 장애가 전체 시스템에 영향을 주지 않음</span>
+          </div>
+        </div>
+        <div class="trade-col con anim-up-4">
+          <h3>✗ Cons</h3>
+          <div class="trade-item">
+            <span class="metric">복잡</span>
+            <span class="desc"><strong>설정 복잡</strong> — 2계층 설정(model-roles.yaml + config.yaml)의 이해와 초기 구성에 시간 필요</span>
+          </div>
+          <div class="trade-item">
+            <span class="metric">지연</span>
+            <span class="desc"><strong>라우팅 오버헤드</strong> — Role 판별 및 Fallback 로직으로 인한 미세한 추가 지연 발생 (보통 수ms)</span>
+          </div>
+          <div class="trade-item">
+            <span class="metric">학습</span>
+            <span class="desc"><strong>모델 특성 파악 필요</strong> — 각 모델의 강점과 약점을 이해해야 최적의 Role-모델 매핑이 가능</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SLIDE 7: Summary ── -->
+    <div class="slide" data-slide="7">
+      <div class="step-num anim-up">SUMMARY</div>
+      <div class="section-icon anim-up" style="color:var(--gold)">요약</div>
+      <div class="slide-title anim-up-1">결론</div>
+      <div class="slide-subtitle anim-up-2">
+        Model Routing은 <strong>작업 유형에 최적화된 모델 선택</strong>이라는 단순한 아이디어에서 시작해,<br>
+        <strong>2계층 설정</strong>과 <strong>자동 Fallback</strong>으로 완성되는 종합 솔루션입니다.
+      </div>
+      <div class="summary-block anim-up-3">
+        <div class="big-text">
+          <em>작업 유형별</em> 최적 모델 <span class="gold">자동 선택</span><br>
+          <span class="green">2계층 설정</span>으로 유연한 <em>오버라이드</em><br>
+          <span class="cyan-text">자동 Fallback</span>으로 <span class="green">장애 대응</span>
+        </div>
+        <p>
+          하나의 모델에 의존하지 말고, 작업의 성격에 맞는 최적의 모델을 활용하세요.<br>
+          Model Routing이 복잡한 결정을 대신하고, 사용자는 결과에만 집중할 수 있습니다.
+        </p>
+        <div class="summary-stats">
+          <div class="summary-stat">
+            <div class="val">6</div>
+            <div class="label">Role (default/coding/reasoning/creative/fast/vision)</div>
+          </div>
+          <div class="summary-stat">
+            <div class="val">2계층</div>
+            <div class="label">SSOT + Override 설정</div>
+          </div>
+          <div class="summary-stat">
+            <div class="val">3중</div>
+            <div class="label">Fallback 체인 (DeepSeek→Qwen→GLM)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /slides -->
+</div><!-- /deck -->
+
+<!-- ── Navigation ── -->
+<div class="nav" id="nav">
+  <button id="prevBtn" aria-label="Previous slide">←</button>
+  <div class="dots" id="dots"></div>
+  <span class="count" id="slideCount">1 / 8</span>
+  <button id="nextBtn" aria-label="Next slide">→</button>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const dotsContainer = document.getElementById('dots');
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.dataset.index = i;
+    dot.addEventListener('click', () => goTo(i));
+    dotsContainer.appendChild(dot);
+  }
+
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const slideCount = document.getElementById('slideCount');
+
+  function updateNav() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === current));
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === current));
+    slideCount.textContent = (current + 1) + ' / ' + total;
+  }
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= total) return;
+    current = idx;
+    updateNav();
+    try { localStorage.setItem('gc-mr-slide', current); } catch(e) {}
+  }
+
+  prevBtn.addEventListener('click', () => goTo(current - 1));
+  nextBtn.addEventListener('click', () => goTo(current + 1));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); goTo(current + 1);
+    }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); goTo(current - 1);
+    }
+  });
+
+  // Restore
+  try {
+    const saved = parseInt(localStorage.getItem('gc-mr-slide'));
+    if (!isNaN(saved) && saved >= 0 && saved < total) {
+      current = saved;
+      updateNav();
+    }
+  } catch(e) {}
+
+  // Fit to viewport
+  function fitDeck() {
+    const deck = document.getElementById('deck');
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const sx = w / 1920;
+    const sy = h / 1080;
+    const s = Math.min(sx, sy);
+    deck.style.transform = `scale(${s})`;
+    deck.style.transformOrigin = 'top left';
+  }
+  fitDeck();
+  window.addEventListener('resize', fitDeck);
+})();
+</script>
+
+</body>
+</html>

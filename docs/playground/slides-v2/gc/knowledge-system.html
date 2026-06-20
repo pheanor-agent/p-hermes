@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Knowledge System: 구조화된 AI 지식 관리 — Golden Circle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../template/card-grid.css">
+<style>
+/* direction-guide 상단 상태바 */
+.status-bar {
+  position: sticky;
+  top: 0;
+  background: #0F172A;
+  color: #94A3B8;
+  padding: 6px 16px;
+  font-size: 11px;
+  font-family: monospace;
+  display: flex;
+  gap: 12px;
+  z-index: 100;
+  flex-wrap: wrap;
+}
+.status-bar .section-active {
+  color: #60A5FA;
+  font-weight: bold;
+}
+.status-bar .section-done {
+  color: #10B981;
+}
+.status-bar .section-pending {
+  color: #475569;
+}
+
+/* 섹션 구분자 */
+.section-divider {
+  text-align: center;
+  padding: 8px;
+  margin: 24px 0;
+  font-size: 11px;
+  color: #94A3B8;
+  border-top: 1px dashed #E2E8F0;
+  letter-spacing: 2px;
+}
+
+/* Knowledge System 특화 스타일 */
+.stat-highlight {
+  font-size: 2.5em;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.2;
+}
+.stat-label {
+  font-size: 0.9em;
+  color: var(--color-dark);
+  opacity: 0.7;
+}
+.tier-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.tier-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #E2E8F0;
+  font-size: 14px;
+}
+.tier-list li:last-child {
+  border-bottom: none;
+}
+.tier-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 10px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+.tier-badge--t1 { background: #FEE2E2; color: #DC2626; }
+.tier-badge--t2 { background: #FEF9C3; color: #CA8A04; }
+.tier-badge--t3 { background: #DCFCE7; color: #16A34A; }
+</style>
+</head>
+<body>
+
+<!-- 섹션 진행 상태 표시줄 -->
+<div class="status-bar">
+  <span class="section-done">[0] Hero ✅</span>
+  <span class="section-done">[1] WHY ✅</span>
+  <span class="section-done">[2] WHAT ✅</span>
+  <span class="section-done">[3] HOW ✅</span>
+  <span class="section-done">[4] Trade-offs ✅</span>
+  <span class="section-done">[5] Summary ✅</span>
+  <span>| direction-guide golden_circle | max_words/slide: ≤80 | topic: knowledge-system</span>
+</div>
+
+<!-- ==================== HERO ==================== -->
+<div class="section-divider">section_flow[0] · HERO</div>
+
+<section class="hero" style="min-height:30vh;padding:24px;">
+  <div style="font-size:12px;color:#2563EB;letter-spacing:2px;margin-bottom:8px;">
+    Golden Circle · section_flow[0]
+  </div>
+  <h1 style="font-size:36px;margin:8px 0;color:#0F172A;">
+    Knowledge System
+  </h1>
+  <p style="font-size:18px;color:#475569;font-weight:600;">
+    구조화된 AI 지식 관리
+  </p>
+  <p style="font-size:14px;color:#64748B;max-width:600px;margin:12px auto 0 auto;">
+    3계층 품질 관리 + FTS5 전역 검색 + cron 자동 동기화
+  </p>
+</section>
+
+<!-- ==================== WHY ==================== -->
+<div class="section-divider">section_flow[1] · WHY</div>
+
+<section style="max-width:1200px;margin:0 auto;padding:16px;">
+  <h2 style="text-align:center;font-size:24px;">🤔 WHY — 왜 Knowledge System인가?</h2>
+  <div class="comparison">
+    <div class="comparison__item">
+      <div style="font-size:2em;margin-bottom:8px">🧠</div>
+      <h3>기억의 한계</h3>
+      <p style="font-size:14px;">컨텍스트 증발로 인해<br>세션이 끝나면 지식 소실</p>
+    </div>
+    <div class="comparison__item">
+      <div style="font-size:2em;margin-bottom:8px">🔍</div>
+      <h3>검색 불가능</h3>
+      <p style="font-size:14px;">FTS5 없이 과거 내용<br>찾기가 어려움</p>
+    </div>
+    <div class="comparison__item">
+      <div style="font-size:2em;margin-bottom:8px">♻️</div>
+      <h3>중복 지식</h3>
+      <p style="font-size:14px;">동일 내용 반복 작성,<br>버전 관리 부재</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== WHAT ==================== -->
+<div class="section-divider">section_flow[2] · WHAT</div>
+
+<section style="max-width:1200px;margin:0 auto;padding:16px;">
+  <h2 style="text-align:center;font-size:24px;">💡 WHAT — Knowledge System 구성</h2>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card__icon">📊</div>
+      <div class="card__title">3계층 구조 (T1/T2/T3)</div>
+      <div class="card__body" style="font-size:14px;">
+        T1: 핵심 참조 (불변)<br>
+        T2: 세부 가이드 (반안정)<br>
+        T3: 초안/실험 (휘발)
+      </div>
+    </div>
+    <div class="card">
+      <div class="card__icon">🔎</div>
+      <div class="card__title">FTS5 전역 검색</div>
+      <div class="card__body" style="font-size:14px;">
+        모든 문서를 SQLite FTS5 인덱싱<br>
+        초고속 전문 검색 지원
+      </div>
+    </div>
+    <div class="card">
+      <div class="card__icon">🔄</div>
+      <div class="card__title">자동 동기화</div>
+      <div class="card__body" style="font-size:14px;">
+        cron 5분 간격 자동 동기화<br>
+        변경 사항 실시간 반영
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== HOW ==================== -->
+<div class="section-divider">section_flow[3] · HOW</div>
+
+<section style="max-width:1200px;margin:0 auto;padding:16px;">
+  <h2 style="text-align:center;font-size:24px;">🔧 HOW — 운영 워크플로우</h2>
+  <div class="step-flow">
+    <div class="step">
+      <div class="step__number">1</div>
+      <div class="step__content">
+        <strong>Wiki 작성</strong>
+        <p style="font-size:14px;color:#475569;margin:4px 0 0 0;">
+          마크다운 기반 문서 작성, T1~T3 계층 분류 지정
+        </p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step__number">2</div>
+      <div class="step__content">
+        <strong>Scoring (build-scores.sh)</strong>
+        <p style="font-size:14px;color:#475569;margin:4px 0 0 0;">
+          자동 점수 산정 → 품질 등급 결정, T1 승격 기준
+        </p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step__number">3</div>
+      <div class="step__content">
+        <strong>검증 (wiki-validate.sh)</strong>
+        <p style="font-size:14px;color:#475569;margin:4px 0 0 0;">
+          링크 무결성, 메타데이터, 계층 규칙 준수 확인
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TRADE-OFFS ==================== -->
+<div class="section-divider">section_flow[4] · TRADE-OFFS</div>
+
+<section style="max-width:1200px;margin:0 auto;padding:16px;">
+  <h2 style="text-align:center;font-size:24px;">⚖️ Trade-offs</h2>
+  <div class="trade-off-grid">
+    <div class="trade-off__pros">
+      <h3>✅ 장점</h3>
+      <ul style="font-size:14px;">
+        <li><strong>전역 검색:</strong> 모든 문서 FTS5 인덱싱으로 즉시 검색</li>
+        <li><strong>자동 점수:</strong> build-scores.sh로 품질 등급 자동 산정</li>
+        <li><strong>중복 방지:</strong> T2→T1 승격 과정에서 문서 병합/정리</li>
+      </ul>
+    </div>
+    <div class="trade-off__cons">
+      <h3>⚠️ 한계</h3>
+      <ul style="font-size:14px;">
+        <li><strong>초기 구축 비용:</strong> 3계층 분류 + FTS5 설정 필요</li>
+        <li><strong>수동 유지보수:</strong> T2→T1 승격은 사람이 판단해야 함</li>
+        <li><strong>T1 기준 모호:</strong> 점수만으로 불변 대상 선정이 어려움</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SUMMARY ==================== -->
+<div class="section-divider">section_flow[5] · SUMMARY</div>
+
+<section class="summary" style="max-width:1200px;margin:0 auto;padding:16px;">
+  <h2>📝 3줄 요약</h2>
+  <p class="summary__item">1️⃣ 구조화된 지식 = 검색 가능한 자산, 컨텍스트 증발 방지</p>
+  <p class="summary__item">2️⃣ 3계층(T1/T2/T3) 품질 관리로 신뢰도와 신선도 균형</p>
+  <p class="summary__item">3️⃣ cron 5분 자동 동기화로 최신 상태 유지</p>
+  <a class="summary__next" href="../decks/knowledge-system.html" target="_blank">
+    ➡ Reveal.js 버전 보기
+  </a>
+</section>
+
+<!-- direction-guage 적용 결과 -->
+<div style="max-width:1200px;margin:16px auto;padding:16px;background:#F0FDF4;border-radius:12px;font-size:13px;color:#166534;">
+  <strong>📋 direction-guide 전체 적용 결과</strong><br>
+  ✅ section_flow 6단계 순서 일치 (Hero→WHY→WHAT→HOW→Trade-offs→Summary)<br>
+  ✅ 각 섹션 direction-guide 규칙 준수 (1메시지/슬라이드, ≤80단어/섹션)<br>
+  ✅ design_tokens: #2563EB primary, #F8FAFC card_bg, 16px border_radius<br>
+  ✅ audience: high knowledge / low decision / high technical → educational tone<br>
+  ✅ Knowledge System 컨텐츠: 3계층 + FTS5 + cron 동기화 + build-scores + wiki-validate
+</div>
+
+</body>
+</html>

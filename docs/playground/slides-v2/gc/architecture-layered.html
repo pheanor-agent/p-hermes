@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=1280, height=720, initial-scale=1.0">
+  <title>Layered Architecture: 5-Tier 구조</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+
+    .reveal {
+      font-family: 'Noto Sans KR', 'Helvetica Neue', sans-serif;
+      color: #1a1a2e;
+    }
+    .reveal .slides { text-align: center; }
+
+    /* ===== Color Palette ===== */
+    :root {
+      --gc-gold: #d4a017;
+      --gc-gold-light: #f5e6b8;
+      --gc-why: #c0392b;
+      --gc-how: #0969da;
+      --gc-what: #1a7f37;
+      --gc-bg-why: #fff5f5;
+      --gc-bg-how: #f0f4ff;
+      --gc-bg-what: #f0faf0;
+      --t1-core: #e74c3c;
+      --t2-runtime: #e67e22;
+      --t3-interface: #2ecc71;
+      --t4-infra: #3498db;
+      --t5-release: #9b59b6;
+      --dark: #1a1a2e;
+      --text-muted: #666;
+    }
+
+    /* ===== Typography ===== */
+    .reveal h1 { font-size: 2.6em; font-weight: 900; color: var(--dark); }
+    .reveal h2 { font-size: 1.6em; font-weight: 700; }
+    .reveal h3 { font-size: 1.1em; font-weight: 500; color: var(--text-muted); }
+    .reveal p, .reveal li { font-size: 0.7em; line-height: 1.5; }
+    .reveal ul { display: inline-block; text-align: left; }
+    .reveal li { margin: 0.3em 0; }
+
+    /* ===== Golden Circle Hero ===== */
+    .gc-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
+    .gc-hero .gc-rings {
+      display: flex;
+      gap: 1.5em;
+      margin: 1.5em 0;
+    }
+    .gc-ring {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9em;
+      color: #fff;
+      position: relative;
+      transition: transform 0.3s;
+    }
+    .gc-ring:hover { transform: scale(1.08); }
+    .gc-ring-why { background: var(--gc-why); box-shadow: 0 4px 15px rgba(192,57,43,0.4); }
+    .gc-ring-how { background: var(--gc-how); box-shadow: 0 4px 15px rgba(9,105,218,0.4); }
+    .gc-ring-what { background: var(--gc-what); box-shadow: 0 4px 15px rgba(26,127,55,0.4); }
+    .gc-ring .sub { font-size: 0.6em; font-weight: 300; opacity: 0.85; }
+
+    .gc-hero-subtitle {
+      font-size: 1em;
+      color: var(--text-muted);
+      font-weight: 300;
+      margin-top: 0.5em;
+    }
+
+    /* ===== Section Divider ===== */
+    .section-divider { text-align: left !important; padding: 1.5em !important; }
+    .badge {
+      display: inline-block;
+      padding: 0.25em 0.8em;
+      border-radius: 14px;
+      font-size: 0.55em;
+      font-weight: 700;
+      color: #fff;
+      vertical-align: middle;
+      letter-spacing: 1px;
+    }
+    .badge-why { background: var(--gc-why); }
+    .badge-how { background: var(--gc-how); }
+    .badge-what { background: var(--gc-what); }
+    .badge-summary { background: var(--gc-gold); }
+
+    .section-divider h2 {
+      font-size: 1.8em;
+      border-bottom: 3px solid var(--gc-gold);
+      padding-bottom: 0.3em;
+      margin-top: 0.3em;
+    }
+
+    /* ===== Cards ===== */
+    .problem-card {
+      background: var(--gc-bg-why);
+      border-left: 4px solid var(--gc-why);
+      padding: 1em 1.2em;
+      text-align: left;
+      margin: 0.5em 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .solution-card {
+      background: var(--gc-bg-what);
+      border-left: 4px solid var(--gc-what);
+      padding: 1em 1.2em;
+      text-align: left;
+      margin: 0.5em 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .approach-card {
+      background: var(--gc-bg-how);
+      border-left: 4px solid var(--gc-how);
+      padding: 1em 1.2em;
+      text-align: left;
+      margin: 0.5em 0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .card-title { font-weight: 700; font-size: 0.8em; margin-bottom: 0.3em; }
+    .card-desc { font-size: 0.65em; color: var(--text-muted); }
+
+    /* ===== Two Column ===== */
+    .two-col { display: flex; gap: 1.5em; margin: 1em 0; }
+    .two-col > div { flex: 1; }
+    .two-col h4 { font-size: 0.8em; margin-bottom: 0.4em; }
+
+    /* ===== Numbered Step ===== */
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--gc-gold);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.65em;
+      margin-right: 0.5em;
+      flex-shrink: 0;
+    }
+
+    /* ===== 5-Tier Diagram ===== */
+    .tier-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-width: 500px;
+      margin: 1em auto;
+    }
+    .tier-item {
+      padding: 0.5em 1em;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.7em;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .tier-item:hover { transform: scale(1.02); }
+    .tier-core { background: var(--t1-core); }
+    .tier-runtime { background: var(--t2-runtime); }
+    .tier-interface { background: var(--t3-interface); }
+    .tier-infra { background: var(--t4-infra); }
+    .tier-release { background: var(--t5-release); }
+    .tier-item .tier-sub {
+      font-weight: 300;
+      font-size: 0.75em;
+      opacity: 0.8;
+      display: block;
+      margin-top: 2px;
+    }
+    .tier-arrow {
+      text-align: center;
+      font-size: 0.6em;
+      color: var(--text-muted);
+      margin: -2px 0;
+    }
+
+    /* ===== Trade-off Table ===== */
+    .trade-table {
+      border-collapse: collapse;
+      margin: 1em auto;
+      font-size: 0.6em;
+      width: 90%;
+    }
+    .trade-table th, .trade-table td {
+      padding: 0.6em 0.8em;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    .trade-table th {
+      background: var(--dark);
+      color: #fff;
+      font-weight: 600;
+    }
+    .trade-table td:first-child { font-weight: 700; text-align: left; }
+    .trade-pros td { background: #e8f5e9; }
+    .trade-cons td { background: #fce4ec; }
+
+    /* ===== Rule indicator ===== */
+    .rule-green  { color: #1a7f37; font-weight: 700; }
+    .rule-red    { color: #c0392b; font-weight: 700; }
+
+    /* ===== Stat ===== */
+    .stat { font-size: 2em; font-weight: 900; }
+    .stat-label { font-size: 0.5em; color: var(--text-muted); display: block; }
+
+    /* ===== Mermaid ===== */
+    .mermaid-wrap { text-align: center; font-size: 0.55em; margin: 1em 0; }
+    .mermaid { max-width: 100%; margin: 0 auto; }
+    .mermaid svg { max-width: 100%; height: auto; }
+
+    /* ===== Fragments ===== */
+    .fragment { opacity: 0; transition: opacity 0.4s ease; }
+    .fragment.visible { opacity: 1; }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 800px) {
+      .gc-ring { width: 80px; height: 80px; font-size: 0.7em; }
+      .two-col { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 1: TITLE                                               -->
+  <!-- ============================================================ -->
+  <section>
+    <div class="gc-hero">
+      <div style="display:flex; gap:0.3em; margin-bottom:0.3em;">
+        <span class="badge badge-why">WHY</span>
+        <span class="badge badge-how">HOW</span>
+        <span class="badge badge-what">WHAT</span>
+      </div>
+      <h1 style="margin:0.2em 0;">Layered Architecture</h1>
+      <h2 style="font-size:1.2em; font-weight:500; color:var(--text-muted);">
+        5-Tier 구조
+      </h2>
+      <div class="gc-rings">
+        <div class="gc-ring gc-ring-why">
+          WHY<br><span class="sub">문제</span>
+        </div>
+        <div class="gc-ring gc-ring-how">
+          HOW<br><span class="sub">방법</span>
+        </div>
+        <div class="gc-ring gc-ring-what">
+          WHAT<br><span class="sub">해결</span>
+        </div>
+      </div>
+      <p class="gc-hero-subtitle">
+        Hermes Agent의 5-Tier 아키텍처 &middot; Golden Circle 6-Step
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- SLIDE 2: AGENDA / OVERVIEW                                   -->
+  <!-- ============================================================ -->
+  <section>
+    <h2>Golden Circle 6-Step Overview</h2>
+    <div style="display:flex; flex-direction:column; gap:0.6em; max-width:600px; margin:1em auto; text-align:left;">
+      <div style="display:flex; align-items:center;">
+        <span class="step-number">1</span>
+        <span><strong style="color:var(--gc-why);">WHY 문제</strong> &mdash; 모듈 간 의존성 &amp; 연쇄 파괴</span>
+      </div>
+      <div style="display:flex; align-items:center;">
+        <span class="step-number">2</span>
+        <span><strong style="color:var(--gc-why);">WHY 영향</strong> &mdash; 계층 분리 부재 &amp; 확장성 부족</span>
+      </div>
+      <div style="display:flex; align-items:center;">
+        <span class="step-number">3</span>
+        <span><strong style="color:var(--gc-how);">HOW 접근</strong> &mdash; 계층 식별 &amp; 의존성 검증</span>
+      </div>
+      <div style="display:flex; align-items:center;">
+        <span class="step-number">4</span>
+        <span><strong style="color:var(--gc-how);">HOW 실행</strong> &mdash; 인터페이스 분리 &amp; 추상화</span>
+      </div>
+      <div style="display:flex; align-items:center;">
+        <span class="step-number">5</span>
+        <span><strong style="color:var(--gc-what);">WHAT 구조</strong> &mdash; 5-Tier 상세 아키텍처</span>
+      </div>
+      <div style="display:flex; align-items:center;">
+        <span class="step-number">6</span>
+        <span><strong style="color:var(--gc-gold);">TRADE-OFFS</strong> &mdash; 장단점 &amp; 요약</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- --- WHY: STEP 1 ---                                          -->
+  <!-- ============================================================ -->
+  <section class="section-divider">
+    <span class="badge badge-why">WHY &mdash; Step 1</span>
+    <h2>문제: 모듈 간 의존성</h2>
+  </section>
+
+  <section>
+    <h2>수정 시 연쇄 파괴</h2>
+    <div class="two-col">
+      <div>
+        <div class="problem-card">
+          <div class="card-title" style="color:var(--gc-why);">🔗 순환 의존성</div>
+          <div class="card-desc">
+            Core와 Interface 모듈이 서로 참조<br>
+            A 수정 → B 오류 → A 재수정 (무한 루프)
+          </div>
+        </div>
+        <div class="problem-card fragment" data-fragment-index="1">
+          <div class="card-title" style="color:var(--gc-why);">💥 연쇄 변경</div>
+          <div class="card-desc">
+            한 모듈 수정 시 관련 모듈 3~5개 추가 수정 필요<br>
+            배포 일정 지연, 회귀 버그 증가
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="mermaid-wrap">
+          <pre class="mermaid">
+            graph LR
+              Core -- "직접 호출" --> Interface
+              Interface -- "역참조" --> Core
+              Interface -- "호출" --> Infra
+              Infra -- "직접 호출" --> Runtime
+              Runtime -- "역참조" --> Infra
+              style Core fill:#e74c3c,color:#fff
+              style Interface fill:#2ecc71,color:#fff
+              style Infra fill:#3498db,color:#fff
+              style Runtime fill:#e67e22,color:#fff
+          </pre>
+        </div>
+        <p style="font-size:0.5em; color:var(--gc-why);">⬆ 역참조로 인한 순환 의존성</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- --- WHY: STEP 2 ---                                          -->
+  <!-- ============================================================ -->
+  <section class="section-divider">
+    <span class="badge badge-why">WHY &mdash; Step 2</span>
+    <h2>영향: 계층 분리 부재</h2>
+  </section>
+
+  <section>
+    <h2>Core + Interface 혼재</h2>
+    <div class="two-col">
+      <div>
+        <div class="problem-card">
+          <div class="card-title">🧩 Core + Interface 혼재</div>
+          <div class="card-desc">
+            핵심 로직(Core)과 외부 연결(Interface)이<br>
+            동일 모듈에 공존 → 수정 범위 폭발
+          </div>
+        </div>
+        <div class="problem-card fragment" data-fragment-index="1">
+          <div class="card-title">🧱 확장성 부족</div>
+          <div class="card-desc">
+            새 Interface(WebSocket, IPC 등) 추가 시<br>
+            Core 전체 수정 필요 → 대규모 리팩토링
+          </div>
+        </div>
+        <div class="problem-card fragment" data-fragment-index="2">
+          <div class="card-title">🔄 심링크(Symlink) 오염</div>
+          <div class="card-desc">
+            <code>$HERMES_ROOT</code> 없이 절대 경로 심링크 사용<br>
+            → 환경 이전 시 참조 붕괴
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="mermaid-wrap">
+          <pre class="mermaid">
+            graph TD
+              subgraph "현재: 혼재 구조"
+                M1["Core + Interface<br/>모듈 A"]
+                M2["Runtime + Infra<br/>모듈 B"]
+                M3["Core + Infra<br/>모듈 C"]
+              end
+              M1 -.- M2
+              M2 -.- M3
+              M3 -.- M1
+              style M1 fill:#e74c3c,color:#fff,stroke:#fff
+              style M2 fill:#e67e22,color:#fff,stroke:#fff
+              style M3 fill:#c0392b,color:#fff,stroke:#fff
+          </pre>
+        </div>
+        <p style="font-size:0.5em; color:var(--text-muted);">&ldquo;모든 것이 모든 것과 연결됨&rdquo; 상태</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- --- HOW: STEP 3 ---                                          -->
+  <!-- ============================================================ -->
+  <section class="section-divider">
+    <span class="badge badge-how">HOW &mdash; Step 3</span>
+    <h2>접근: 계층 식별 &amp; 의존성 검증</h2>
+  </section>
+
+  <section>
+    <h2>계층 식별 &amp; 단방향 의존성</h2>
+    <div class="two-col">
+      <div>
+        <div class="approach-card">
+          <div class="card-title">🔍 계층 식별 (Layer Identification)</div>
+          <div class="card-desc">
+            모든 모듈을 관심사(concern)별로 분류<br>
+            Core &rarr; Runtime &rarr; Interfaces &rarr; Infra &rarr; Release
+          </div>
+        </div>
+        <div class="approach-card fragment" data-fragment-index="1">
+          <div class="card-title">⬇ 단방향 의존성 규칙</div>
+          <div class="card-desc">
+            <span class="rule-green">✅ 상위 계층이 하위 계층만 참조</span><br>
+            <span class="rule-red">❌ 하위 계층이 상위 계층 참조 금지</span><br>
+            위반 시 컴파일/빌드 실패
+          </div>
+        </div>
+        <div class="approach-card fragment" data-fragment-index="2">
+          <div class="card-title">🔐 $HERMES_ROOT 추상화</div>
+          <div class="card-desc">
+            심링크 금지, 환경 변수 기반 경로 참조<br>
+            환경 독립적 이식성 확보
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="mermaid-wrap">
+          <pre class="mermaid">
+            graph TD
+              L5["Release<br/>배포/CI/CD"] --> L4["Infrastructure<br/>DB/Network/File"]
+              L4 --> L3["Interfaces<br/>API/WebSocket/IPC"]
+              L3 --> L2["Runtime<br/>실행/스케줄링"]
+              L2 --> L1["Core<br/>핵심 로직"]
+              style L1 fill:#e74c3c,color:#fff
+              style L2 fill:#e67e22,color:#fff
+              style L3 fill:#2ecc71,color:#fff
+              style L4 fill:#3498db,color:#fff
+              style L5 fill:#9b59b6,color:#fff
+          </pre>
+        </div>
+        <p style="font-size:0.5em; color:var(--gc-how);"><span class="rule-green">단방향</span> 의존성 화살표</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- --- HOW: STEP 4 ---                                          -->
+  <!-- ============================================================ -->
+  <section class="section-divider">
+    <span class="badge badge-how">HOW &mdash; Step 4</span>
+    <h2>실행: 인터페이스 분리 &amp; 검증</h2>
+  </section>
+
+  <section>
+    <h2>인터페이스 분리 패턴</h2>
+    <div class="two-col">
+      <div>
+        <h4>🔌 계층 간 통신 (Interface Segregation)</h4>
+        <div class="approach-card">
+          <div class="card-title">공개 API + 내부 구현 분리</div>
+          <div class="card-desc">
+            각 계층은 <strong>공개 인터페이스(Public API)</strong>만 노출<br>
+            내부 구현 변경이 외부에 영향 없음
+          </div>
+        </div>
+        <div class="approach-card fragment" data-fragment-index="1">
+          <div class="card-title">의존성 검증 자동화</div>
+          <div class="card-desc">
+            CI 단계에서 <code>dep-validator</code> 실행<br>
+            역참조 발견 시 빌드 실패 → 조기 차단
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="mermaid-wrap">
+          <pre class="mermaid">
+            graph LR
+              subgraph "계층 A (Core)"
+                A_Pub["Public API"]
+                A_Impl["Internal Impl"]
+              end
+              subgraph "계층 B (Runtime)"
+                B_Client["Runtime Client"]
+              end
+              B_Client -- "API 호출" --> A_Pub
+              A_Impl -- "구현" --> A_Pub
+              B_Client -. "직접 접근 금지" .-> A_Impl
+              style A_Pub fill:#2ecc71,color:#fff
+              style A_Impl fill:#e74c3c,color:#fff
+              style B_Client fill:#e67e22,color:#fff
+          </pre>
+        </div>
+        <p style="font-size:0.5em; color:var(--gc-how);">Public API만 경유한 단방향 통신</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- --- WHAT: STEP 5 ---                                         -->
+  <!-- ============================================================ -->
+  <section class="section-divider">
+    <span class="badge badge-what">WHAT &mdash; Step 5</span>
+    <h2>구조: 5-Tier 아키텍처</h2>
+  </section>
+
+  <section>
+    <h2>5-Tier 계층 구조</h2>
+    <div class="two-col">
+      <div>
+        <div class="tier-stack">
+          <div class="tier-item tier-release">
+            🚀 Release
+            <span class="tier-sub">배포 · CI/CD · 버전 관리</span>
+          </div>
+          <div class="tier-arrow">⬆ 의존</div>
+          <div class="tier-item tier-infra">
+            🗄️ Infrastructure
+            <span class="tier-sub">DB · 네트워크 · 파일 시스템</span>
+          </div>
+          <div class="tier-arrow">⬆ 의존</div>
+          <div class="tier-item tier-interface">
+            🌐 Interfaces
+            <span class="tier-sub">API · WebSocket · IPC · CLI</span>
+          </div>
+          <div class="tier-arrow">⬆ 의존</div>
+          <div class="tier-item tier-runtime">
+            ⚙️ Runtime
+            <span class="tier-sub">실행 엔진 · 스케줄러 · 워커</span>
+          </div>
+          <div class="tier-arrow">⬆ 의존</div>
+          <div class="tier-item tier-core">
+            🧠 Core
+            <span class="tier-sub">핵심 로직 · 도메인 모델</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="solution-card">
+          <div class="card-title">📐 설계 원칙</div>
+          <div class="card-desc">
+            <span class="rule-green">✅ 단방향 의존성</span><br>
+            하위 계층만 참조, 역참조 금지<br><br>
+            <span class="rule-green">✅ 관심사 분리 (SoC)</span><br>
+            각 계층은 하나의 책임<br><br>
+            <span class="rule-green">✅ $HERMES_ROOT 추상화</span><br>
+            심링크 금지, 환경 변수 기반
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>데이터 흐름: End-to-End</h2>
+    <div class="mermaid-wrap" style="font-size:0.5em;">
+      <pre class="mermaid">
+        sequenceDiagram
+          participant C as Client
+          participant I as Interfaces
+          participant R as Runtime
+          participant Co as Core
+          participant Inf as Infrastructure
+
+          C->>I: HTTP/WebSocket 요청
+          I->>R: 명령 디스패치
+          R->>Co: 도메인 로직 실행
+          Co->>Inf: 데이터 조회/저장
+          Inf-->>Co: 결과 반환
+          Co-->>R: 처리 결과
+          R-->>I: 응답 변환
+          I-->>C: 응답 전송
+      </pre>
+    </div>
+    <p style="font-size:0.55em; color:var(--text-muted); margin-top:0.5em;">
+      모든 통신은 계층 경계를 따라 <span class="rule-green">단방향</span>으로 흐름
+    </p>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- --- WHAT: STEP 6 ---                                         -->
+  <!-- ============================================================ -->
+  <section class="section-divider">
+    <span class="badge badge-summary">TRADE-OFFS &mdash; Step 6</span>
+    <h2>장단점 &amp; 요약</h2>
+  </section>
+
+  <section>
+    <h2>Trade-offs</h2>
+    <div class="two-col">
+      <div>
+        <h4 style="color:var(--gc-what);">✅ 장점 (Pros)</h4>
+        <table class="trade-table">
+          <tr><th>항목</th><th>효과</th></tr>
+          <tr class="trade-pros"><td>유지보수 용이</td><td>계층별 수정 → 타 계층 영향 Zero</td></tr>
+          <tr class="trade-pros"><td>독립 배포</td><td>계층별 단위 배포 가능</td></tr>
+          <tr class="trade-pros"><td>계층별 테스트</td><td>Mock/Stub으로 계층 단위 검증</td></tr>
+          <tr class="trade-pros"><td>확장성</td><td>새 Interface 추가 시 Core 불변</td></tr>
+        </table>
+      </div>
+      <div>
+        <h4 style="color:var(--gc-why);">⚠️ 단점 (Cons)</h4>
+        <table class="trade-table">
+          <tr><th>항목</th><th>영향</th></tr>
+          <tr class="trade-cons"><td>초기 설계 비용</td><td>계층 분할 + 인터페이스 정의 시간</td></tr>
+          <tr class="trade-cons"><td>계층 통과 필요</td><td>기능 추가 시 N개 계층 변경</td></tr>
+          <tr class="trade-cons"><td>인터페이스 오버헤드</td><td>추상화 계층에 의한 성능 저하</td></tr>
+          <tr class="trade-cons"><td>러닝 커브</td><td>팀 전체 계층 규칙 숙지 필요</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- FINAL SLIDE: SUMMARY                                         -->
+  <!-- ============================================================ -->
+  <section>
+    <h2>Summary</h2>
+    <div class="gc-hero" style="margin-top:0.5em;">
+      <div class="gc-rings" style="gap:1em;">
+        <div class="gc-ring gc-ring-why" style="width:90px;height:90px;font-size:0.75em;">
+          WHY<br><span class="sub">문제 인식</span>
+        </div>
+        <div class="gc-ring gc-ring-how" style="width:90px;height:90px;font-size:0.75em;">
+          HOW<br><span class="sub">방법 설계</span>
+        </div>
+        <div class="gc-ring gc-ring-what" style="width:90px;height:90px;font-size:0.75em;">
+          WHAT<br><span class="sub">구조 완성</span>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:1em; max-width:650px; margin:0.5em auto;">
+        <div class="solution-card" style="flex:1;">
+          <div class="card-title">WHY → 5-Tier 분리</div>
+          <div class="card-desc">
+            모듈 간 연쇄 파괴 →<br>
+            관심사 분리로 해결
+          </div>
+        </div>
+        <div class="approach-card" style="flex:1;">
+          <div class="card-title">단방향 의존성</div>
+          <div class="card-desc">
+            하위 계층만 참조<br>
+            역참조 금지 규칙
+          </div>
+        </div>
+        <div class="solution-card" style="flex:1;">
+          <div class="card-title">인터페이스 통신</div>
+          <div class="card-desc">
+            Public API로만<br>
+            계층 간 통신
+          </div>
+        </div>
+      </div>
+
+      <p style="font-size:0.65em; color:var(--text-muted); margin-top:0.5em;">
+        5-Tier 관심사 분리 &middot; 단방향 의존성 &middot; 인터페이스 통신
+      </p>
+    </div>
+  </section>
+
+</div>
+</div>
+
+<!-- ===== Reveal.js + Mermaid ===== -->
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: 'c/t',
+  controls: true,
+  progress: true,
+  center: true,
+  transition: 'slide',
+  fragments: true
+}).then(() => {
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: 'default',
+    securityLevel: 'loose',
+    themeVariables: {
+      primaryColor: '#f0f4ff',
+      primaryBorderColor: '#0969da',
+      lineColor: '#666',
+      secondaryColor: '#f5e6b8',
+      tertiaryColor: '#fff'
+    }
+  });
+  document.querySelectorAll('.mermaid').forEach((el, idx) => {
+    const code = el.textContent.trim();
+    mermaid.render('mermaid-svg-' + idx, code).then(({ svg }) => {
+      el.innerHTML = svg;
+    }).catch(err => {
+      console.warn('Mermaid render failed for block ' + idx + ':', err);
+      el.innerHTML = '<p style="color:#c0392b;font-size:0.7em;">⚠️ Diagram render error</p>';
+    });
+  });
+});
+</script>
+</body>
+</html>

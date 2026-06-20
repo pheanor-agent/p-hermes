@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermes Agent Overview — Golden Circle</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&family=Noto+Sans+KR:wght@300;500;700;900&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0b0d12;
+    --surface: #12151c;
+    --card: #181c28;
+    --border: #262b3a;
+    --gold: #f0b429;
+    --gold-dim: #b8861e;
+    --gold-glow: rgba(240,180,41,.15);
+    --text: #e8edf5;
+    --text-dim: #8892a8;
+    --accent-cyan: #5bc0eb;
+    --accent-magenta: #f15bb5;
+    --accent-green: #00f5d4;
+    --radius: 18px;
+    --transition: 400ms cubic-bezier(.22,1,.36,1);
+  }
+
+  html, body {
+    height: 100%;
+    font-family: 'Inter','Noto Sans KR',system-ui,-apple-system,sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+  }
+
+  /* ── slide deck ── */
+  .deck {
+    display: flex;
+    height: 100vh;
+    scroll-snap-type: x mandatory;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  .deck::-webkit-scrollbar { display: none; }
+
+  .slide {
+    flex: 0 0 100vw;
+    height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── nav dots ── */
+  .nav {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 14px; z-index: 100;
+  }
+  .nav a {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--border); transition: var(--transition);
+    display: block;
+  }
+  .nav a.active, .nav a:hover { background: var(--gold); box-shadow: 0 0 16px var(--gold-glow); }
+
+  /* ── step indicator ── */
+  .step-badge {
+    position: absolute; top: 32px; left: 50%; transform: translateX(-50%);
+    font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--gold); background: var(--gold-glow); padding: 6px 20px;
+    border-radius: 100px; border: 1px solid var(--gold-dim);
+  }
+
+  /* ── slide 0 : hero ── */
+  .hero { text-align: center; }
+  .hero .ring {
+    width: 240px; height: 240px; border-radius: 50%;
+    border: 3px solid var(--gold); margin: 0 auto 32px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    animation: pulse-ring 3s ease-in-out infinite;
+  }
+  .hero .ring::before {
+    content: ''; position: absolute; inset: -16px; border-radius: 50%;
+    border: 1px solid var(--gold-dim); opacity: .25; animation: spin 20s linear infinite;
+  }
+  @keyframes pulse-ring {
+    0%,100% { box-shadow: 0 0 30px var(--gold-glow); }
+    50%      { box-shadow: 0 0 60px var(--gold-glow); }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .hero h1 {
+    font-size: clamp(44px,7vw,80px); font-weight: 900; letter-spacing: -2px;
+    background: linear-gradient(135deg,var(--gold) 0%,#fff3c4 50%,var(--gold) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    line-height: 1.1;
+  }
+  .hero .sub {
+    font-size: clamp(18px,2.5vw,28px); font-weight: 300; color: var(--text-dim);
+    margin-top: 12px;
+  }
+  .hero .tagline {
+    margin-top: 32px; display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;
+  }
+  .hero .tagline span {
+    font-size: 14px; background: var(--card); padding: 8px 20px;
+    border-radius: 100px; border: 1px solid var(--border); color: var(--text-dim);
+  }
+
+  /* ── slide 1 : WHY ── */
+  .why-grid {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 24px;
+    max-width: 1100px; width: 100%; margin-top: 32px;
+  }
+  .why-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 32px 28px; text-align: center; transition: var(--transition);
+  }
+  .why-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.4); }
+  .why-card .icon { font-size: 40px; margin-bottom: 16px; }
+  .why-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+  .why-card p  { font-size: 14px; color: var(--text-dim); line-height: 1.7; }
+
+  /* ── slide 2 : WHAT ── */
+  .what-grid {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 24px;
+    max-width: 1100px; width: 100%; margin-top: 32px;
+  }
+  .what-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 32px 24px; text-align: center; transition: var(--transition);
+    position: relative; overflow: hidden;
+  }
+  .what-card::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .what-card:nth-child(1)::after { background: var(--accent-cyan); }
+  .what-card:nth-child(2)::after { background: var(--accent-magenta); }
+  .what-card:nth-child(3)::after { background: var(--accent-green); }
+  .what-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.4); }
+  .what-card .num {
+    display: inline-flex; width: 44px; height: 44px; border-radius: 50%;
+    align-items: center; justify-content: center; font-weight: 900;
+    margin-bottom: 16px; font-size: 20px;
+  }
+  .what-card:nth-child(1) .num { background: var(--accent-cyan); color: #000; }
+  .what-card:nth-child(2) .num { background: var(--accent-magenta); color: #000; }
+  .what-card:nth-child(3) .num { background: var(--accent-green); color: #000; }
+  .what-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 10px; }
+  .what-card p  { font-size: 13px; color: var(--text-dim); line-height: 1.7; }
+
+  /* ── slide 3 : HOW ── */
+  .how-flow {
+    display: flex; align-items: center; gap: 0;
+    max-width: 1000px; width: 100%; margin-top: 32px;
+  }
+  .how-step {
+    flex: 1; text-align: center; padding: 24px 12px;
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    position: relative;
+  }
+  .how-step:not(:last-child)::after {
+    content: '→'; position: absolute; right: -18px; top: 50%; transform: translateY(-50%);
+    font-size: 22px; color: var(--gold); font-weight: 700;
+  }
+  .how-step .icon { font-size: 32px; margin-bottom: 8px; }
+  .how-step h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .how-step p  { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+
+  /* ── slide 4 : trade ── */
+  .trade-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+    max-width: 1000px; width: 100%; margin-top: 28px;
+  }
+  .trade-col { }
+  .trade-col h3 {
+    font-size: 20px; font-weight: 700; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .trade-col:nth-child(1) h3 { color: var(--accent-green); }
+  .trade-col:nth-child(2) h3 { color: #ff6b6b; }
+  .trade-item {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 20px; margin-bottom: 12px;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .trade-item .mark { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+  .trade-item .body h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .trade-item .body p  { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+
+  /* ── slide 5 : summary ── */
+  .summary-ring {
+    position: relative; width: 320px; height: 320px; margin: 0 auto 32px;
+  }
+  .summary-ring .label {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    text-align: center;
+  }
+  .summary-ring .label h2 { font-size: 26px; font-weight: 900; color: var(--gold); }
+  .summary-ring .label p  { font-size: 14px; color: var(--text-dim); margin-top: 4px; }
+  .summary-ring .arc {
+    position: absolute; width: 100%; height: 100%; border-radius: 50%;
+    border: 3px solid transparent;
+  }
+  .summary-ring .arc:nth-child(2) {
+    border-top-color: var(--accent-cyan);
+    animation: spin-a 12s linear infinite;
+  }
+  .summary-ring .arc:nth-child(3) {
+    inset: 24px; width: auto; height: auto;
+    border-right-color: var(--accent-magenta);
+    animation: spin-b 16s linear infinite reverse;
+  }
+  .summary-ring .arc:nth-child(4) {
+    inset: 48px; width: auto; height: auto;
+    border-bottom-color: var(--accent-green);
+    animation: spin-c 20s linear infinite;
+  }
+  @keyframes spin-a { to { transform: rotate(360deg); } }
+  @keyframes spin-b { to { transform: rotate(-360deg); } }
+  @keyframes spin-c { to { transform: rotate(360deg); } }
+  .summary-points {
+    display: flex; gap: 24px; max-width: 960px; width: 100%; justify-content: center;
+  }
+  .summary-points li {
+    flex: 1; list-style: none; background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px 20px; text-align: center;
+    font-size: 14px; line-height: 1.6; color: var(--text-dim);
+    transition: var(--transition);
+  }
+  .summary-points li:hover {
+    border-color: var(--gold-dim); color: var(--text);
+    box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  }
+  .summary-points li strong { color: var(--gold); display: block; margin-bottom: 6px; font-size: 15px; }
+
+  /* ── section titles ── */
+  .section-title {
+    font-size: clamp(32px,5vw,52px); font-weight: 900;
+    letter-spacing: -1.5px;
+  }
+  .section-title .hl { color: var(--gold); }
+  .section-sub {
+    font-size: 16px; color: var(--text-dim); margin-top: 8px;
+    font-weight: 300;
+  }
+
+  /* ── responsive ── */
+  @media (max-width: 900px) {
+    .slide { padding: 32px 24px; }
+    .why-grid, .what-grid { grid-template-columns: 1fr; max-width: 480px; }
+    .how-flow { flex-direction: column; max-width: 360px; gap: 12px; }
+    .how-step:not(:last-child)::after { content: '↓'; right: auto; bottom: -20px; top: auto; left: 50%; transform: translateX(-50%); }
+    .trade-grid { grid-template-columns: 1fr; }
+    .summary-points { flex-direction: column; max-width: 400px; }
+  }
+
+  /* ── fade-in on scroll ── */
+  .slide > * { opacity: 0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; }
+  .slide.active > * { opacity: 1; transform: translateY(0); }
+  .slide.active > *:nth-child(2) { transition-delay: .1s; }
+  .slide.active > *:nth-child(3) { transition-delay: .2s; }
+  .slide.active > *:nth-child(4) { transition-delay: .3s; }
+  .slide.active > *:nth-child(5) { transition-delay: .4s; }
+  .slide.active > *:nth-child(6) { transition-delay: .5s; }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav class="nav" id="nav">
+  <a href="#s0" class="active"></a>
+  <a href="#s1"></a>
+  <a href="#s2"></a>
+  <a href="#s3"></a>
+  <a href="#s4"></a>
+  <a href="#s5"></a>
+</nav>
+
+<div class="deck" id="deck">
+
+  <!-- ═══ STEP 0 : HERO ═══ -->
+  <section class="slide" id="s0">
+    <span class="step-badge">⏺ Golden Circle · 6 Step</span>
+    <div class="hero">
+      <div class="ring">
+        <span style="font-size:80px;filter:drop-shadow(0 0 20px var(--gold-glow));">⚡</span>
+      </div>
+      <h1>Hermes Agent</h1>
+      <p class="sub">자율 AI 에이전트 플랫폼</p>
+      <div class="tagline">
+        <span>🤖 듀얼 에이전트</span>
+        <span>⚙️ Workflow Engine</span>
+        <span>🧠 전역 지식 시스템</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ STEP 1 : WHY ═══ -->
+  <section class="slide" id="s1">
+    <span class="step-badge">Step 1 · WHY</span>
+    <h2 class="section-title">왜 <span class="hl">Hermes</span> 인가?</h2>
+    <p class="section-sub">AI 에이전트 플랫폼이 해결해야 할 세 가지 핵심 문제</p>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="icon">🧩</div>
+        <h3>복잡한 AI 시스템</h3>
+        <p>단일 LLM 호출로 해결 불가능한<br>다단계 추론 &amp; 도구 조합이 필요한 작업</p>
+      </div>
+      <div class="why-card">
+        <div class="icon">⚡</div>
+        <h3>자동화 필요성</h3>
+        <p>반복 작업의 생산성 저하 —<br>수동 개입 없이 흐름을 자동으로 실행</p>
+      </div>
+      <div class="why-card">
+        <div class="icon">🛡️</div>
+        <h3>품질과 안전</h3>
+        <p>AI의 자율 실행을 관리하고<br>검증·승인 단계로 품질을 보장</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ STEP 2 : WHAT ═══ -->
+  <section class="slide" id="s2">
+    <span class="step-badge">Step 2 · WHAT</span>
+    <h2 class="section-title">무엇을 <span class="hl">제공</span>하나?</h2>
+    <p class="section-sub">Hermes Agent의 세 가지 핵심 구성 요소</p>
+    <div class="what-grid">
+      <div class="what-card">
+        <div class="num">1</div>
+        <h3>듀얼 에이전트</h3>
+        <p><strong>Hermes UI/App</strong> — 사용자 인터페이스 및 명령 처리<br>
+        <strong>OpenClaw OS/Backend</strong> — 시스템 운영 및 백엔드</p>
+      </div>
+      <div class="what-card">
+        <div class="num">2</div>
+        <h3>Workflow Engine</h3>
+        <p>9단계 상태 머신 기반 워크플로우<br>
+        조사 → 설계 → 실행 → 검증 → 승인</p>
+      </div>
+      <div class="what-card">
+        <div class="num">3</div>
+        <h3>지식 시스템</h3>
+        <p>FTS5 기반 전역 검색 Wiki<br>
+        과거 세션 · 문서 · 메모리 통합 검색</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ STEP 3 : HOW ═══ -->
+  <section class="slide" id="s3">
+    <span class="step-badge">Step 3 · HOW</span>
+    <h2 class="section-title">어떻게 <span class="hl">작동</span>하나?</h2>
+    <p class="section-sub">명령 수신부터 결과 전달까지의 3단계 흐름</p>
+    <div class="how-flow">
+      <div class="how-step">
+        <div class="icon">📨</div>
+        <h4>1. 작업 수신</h4>
+        <p>Discord · Telegram 등<br>다중 채널에서 명령 접수</p>
+      </div>
+      <div class="how-step">
+        <div class="icon">⚙️</div>
+        <h4>2. Workflow 실행</h4>
+        <p>조사 → 설계 → 실행 →<br>검증 · 승인 9단계 처리</p>
+      </div>
+      <div class="how-step">
+        <div class="icon">✅</div>
+        <h4>3. 결과 전달</h4>
+        <p>원래 채널로<br>자동 응답 및 전달</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ STEP 4 : TRADE ═══ -->
+  <section class="slide" id="s4">
+    <span class="step-badge">Step 4 · Trade-offs</span>
+    <h2 class="section-title">장점 &amp; <span class="hl">단점</span></h2>
+    <p class="section-sub">Hermes Agent 도입 시 고려할 균형</p>
+    <div class="trade-grid">
+      <div class="trade-col">
+        <h3>👍 Pros</h3>
+        <div class="trade-item">
+          <span class="mark">✅</span>
+          <div class="body">
+            <h4>완전 자동화 개발</h4>
+            <p>9단계 Workflow가 모든 작업을 자동으로 조율</p>
+          </div>
+        </div>
+        <div class="trade-item">
+          <span class="mark">✅</span>
+          <div class="body">
+            <h4>다중 채널 지원</h4>
+            <p>Discord, Telegram 등 여러 플랫폼 동시 운영</p>
+          </div>
+        </div>
+        <div class="trade-item">
+          <span class="mark">✅</span>
+          <div class="body">
+            <h4>체계적 품질 관리</h4>
+            <p>State Machine 기반 단계별 검증 및 승인 절차</p>
+          </div>
+        </div>
+      </div>
+      <div class="trade-col">
+        <h3>👎 Cons</h3>
+        <div class="trade-item">
+          <span class="mark">⚠️</span>
+          <div class="body">
+            <h4>시스템 복잡도</h4>
+            <p>9단계 상태 머신 · 듀얼 에이전트 구조 운영 부담</p>
+          </div>
+        </div>
+        <div class="trade-item">
+          <span class="mark">⚠️</span>
+          <div class="body">
+            <h4>초기 학습 필요</h4>
+            <p>에이전트 시스템 이해와 설정에 시간 필요</p>
+          </div>
+        </div>
+        <div class="trade-item">
+          <span class="mark">⚠️</span>
+          <div class="body">
+            <h4>에이전트 통신 오버헤드</h4>
+            <p>듀얼 에이전트 간 통신 및 동기화 비용</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ STEP 5 : SUMMARY ═══ -->
+  <section class="slide" id="s5">
+    <span class="step-badge">Step 5 · Summary</span>
+    <h2 class="section-title">핵심 <span class="hl">요약</span></h2>
+    <p class="section-sub">Golden Circle 관점에서 본 Hermes Agent</p>
+    <div class="summary-ring">
+      <div class="label">
+        <h2>Hermes</h2>
+        <p>Agent</p>
+      </div>
+      <div class="arc"></div>
+      <div class="arc"></div>
+      <div class="arc"></div>
+    </div>
+    <ul class="summary-points">
+      <li>
+        <strong>🎯 듀얼 에이전트 역할 분리</strong>
+        Hermes UI + OpenClaw의<br>명확한 책임 분담
+      </li>
+      <li>
+        <strong>🔒 9단계 Workflow</strong>
+        품질과 안전을 보장하는<br>체계적 상태 머신
+      </li>
+      <li>
+        <strong>🌐 다중 채널 + 전역 지식</strong>
+        어디서든 명령하고<br>모든 지식을 검색
+      </li>
+    </ul>
+  </section>
+
+</div>
+
+<script>
+  (function(){
+    const deck = document.getElementById('deck');
+    const links = document.querySelectorAll('.nav a');
+    const slides = document.querySelectorAll('.slide');
+
+    function updateNav(){
+      let best = 0, bestOff = Infinity;
+      slides.forEach((s,i)=>{
+        const r = s.getBoundingClientRect();
+        const off = Math.abs(r.left);
+        if(off < bestOff){ bestOff = off; best = i; }
+      });
+      links.forEach((a,i)=> a.classList.toggle('active', i===best));
+      slides.forEach((s,i)=> s.classList.toggle('active', i===best));
+    }
+
+    // IntersectionObserver fallback for scroll-based activation
+    const obs = new IntersectionObserver(entries=>{
+      entries.forEach(e=>{ if(e.isIntersecting) updateNav(); });
+    }, { threshold: .4 });
+    slides.forEach(s=> obs.observe(s));
+
+    // Listen for manual scroll
+    deck.addEventListener('scroll', updateNav, { passive: true });
+
+    // Click nav dots → scroll smoothly
+    links.forEach(a=>{
+      a.addEventListener('click', e=>{
+        e.preventDefault();
+        const id = a.getAttribute('href').slice(1);
+        document.getElementById(id)?.scrollIntoView({ behavior:'smooth' });
+      });
+    });
+
+    // Keyboard support
+    document.addEventListener('keydown', e=>{
+      if(e.key==='ArrowRight'||e.key==='ArrowDown'){
+        e.preventDefault();
+        deck.scrollBy({ left: window.innerWidth, behavior:'smooth' });
+      } else if(e.key==='ArrowLeft'||e.key==='ArrowUp'){
+        e.preventDefault();
+        deck.scrollBy({ left: -window.innerWidth, behavior:'smooth' });
+      }
+    });
+
+    updateNav();
+  })();
+</script>
+
+</body>
+</html>
