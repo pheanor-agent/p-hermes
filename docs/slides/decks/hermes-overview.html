@@ -198,7 +198,7 @@
           </div>
           <div>
             <strong>자율 에이전트 시대</strong>
-            <pre class="mermaid">graph TD
+            <pre class="mermaid">graph LR
   U["사용자"] -- "요청" --> AG["Agent"]
   AG -- "실행" --> T["Tools"]
   AG -- "학습" --> GE["GEPA Loop"]
@@ -206,7 +206,7 @@
   AG -- "다중 API" --> M1["Model 1"]
   AG -- "다중 API" --> M2["Model 2"]
   AG -- "다중 API" --> M3["Model 3"]
-  AG -- "응답" --> U
+  AG -. "응답" .-> U
   style AG fill:#2ecc71,stroke:#1e8449,color:#fff
   style GE fill:#f39c12,stroke:#d68910,color:#fff
   style PM fill:#3498db,stroke:#2980b9,color:#fff
