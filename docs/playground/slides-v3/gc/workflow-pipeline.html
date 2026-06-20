@@ -287,11 +287,24 @@ const slides = [
           <div class="lbl">approval.json</div>
         </div>
       </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:14px auto;max-width:840px">
+        <div style="background:#1e2029;border:1px solid #8ab4f844;border-radius:10px;padding:10px 16px;font-size:.9rem">
+          <strong style="color:#8ab4f8">SD 게이트</strong> <span style="color:#9aa0a6">구조</span>
+        </div>
+        <div style="background:#1e2029;border:1px solid #81c99544;border-radius:10px;padding:10px 16px;font-size:.9rem">
+          <strong style="color:#81c995">CS 게이트</strong> <span style="color:#9aa0a6">품질</span>
+        </div>
+        <div style="background:#1e2029;border:1px solid #fbbc0444;border-radius:10px;padding:10px 16px;font-size:.9rem">
+          <strong style="color:#fbbc04">Accuracy 게이트</strong> <span style="color:#9aa0a6">사실정확성 (0-tolerance)</span>
+        </div>
+        <div style="background:#1e2029;border:1px solid #f28b8244;border-radius:10px;padding:10px 16px;font-size:.9rem">
+          <strong style="color:#f28b82">안전 게이트</strong> <span style="color:#9aa0a6">위험 차단</span>
+        </div>
+      </div>
       <div class="list-compact" style="margin:8px auto">
         <li><strong>설계 진입:</strong> architecture.md 없으면 ⛔ 차단</li>
         <li><strong>실행 진입:</strong> approval.json 필수 (6필드 검증)</li>
         <li><strong>완료:</strong> result.md + validate-deliverables.sh 검증</li>
-        <li><strong>자동진행:</strong> 조사→설계→검토→승인 4단계 (auto-process)</li>
       </div>`
   },
   // ────────────── 8: WHAT - 산출물 강제 ──────────────
@@ -515,7 +528,7 @@ const slides = [
       <p style="margin-bottom:16px">더 많은 실험과 비교를 Playground에서 확인하세요</p>
       <div class="summary-item">
         <div class="num">🔙</div>
-        <p><a href="../playground/" style="color:#8ab4f8">🧪 p-hermes Playground →</a></p>
+        <p><a href="../../" style="color:#8ab4f8">🧪 p-hermes Playground →</a></p>
       </div>`
   }
 ];
