@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hermes Agent: 레이어드 아키텍처</title>
+  <link rel="stylesheet" href="../css/reveal.css">
+  <link rel="stylesheet" href="../css/white.css">
+  <!--"Google Fonts (한글) "-->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Highlight.js -->
+  <link rel="stylesheet" href="../css/highlight-github.min.css">
+  <script src="../js/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script> window.mermaidConfig = { startOnLoad: false, theme: 'default' }; </script>
+  <style>
+    .reveal { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', 'Noto Sans KR', 'Helvetica Neue', sans-serif; }
+    :root {
+      --scale-h1: 2.2em;
+      --scale-h2: 1.5em;
+      --scale-body: 0.85em;
+      --scale-small: 0.75em;
+      --scale-caption: 0.65em;
+      --scale-tiny: 0.55em;
+      --code-font: 0.76em;
+      --diagram-font: 0.82em;
+      --slide-width: 1280px;
+      --slide-height: 720px;
+      --slide-padding: 60px;
+      --content-width: 1160px;
+      --content-height: 600px;
+      --diagram-margin: 40px;
+      --diagram-max-width: 1080px;
+      --diagram-max-height: 520px;
+    }
+
+    .reveal pre.mermaid { 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      max-width: 1080px; 
+      margin: 40px auto; 
+      overflow: visible;
+    }
+    .mermaid svg { 
+      max-width: 100%; 
+      height: auto; 
+      display: block;
+      overflow: visible;
+    }
+
+    .reveal .slides table {
+      max-width: var(--content-width) !important;
+      margin: 30px auto !important;
+      table-layout: fixed !important;
+      word-break: keep-all !important;
+    }
+
+    .reveal .slides p,
+    .reveal .slides .problem-card,
+    .reveal .slides .solution-card {
+      max-width: var(--content-width) !important;
+      margin: 20px auto !important;
+      padding: 0 40px !important;
+    }
+
+    .two-col {
+      display: flex;
+      gap: 40px !important;
+      max-width: var(--content-width) !important;
+      margin: 0 auto !important;
+      padding: 20px 40px !important;
+    }
+    .two-col > div { flex: 1; }
+
+    .reveal .slides h2 {
+      margin-bottom: 20px !important;
+    }
+
+    .diagram-caption {
+      font-size: var(--scale-caption, 0.65em);
+      color: #666;
+      text-align: center;
+      margin-top: 10px;
+      max-width: var(--content-width);
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0 40px;
+    }
+    .reveal h1 { font-size: var(--scale-h1); }
+    .reveal h2 { font-size: var(--scale-h2); color: #1a7f37; }
+    .reveal section img { background: none; border: none; box-shadow: none; }
+    .reveal .slides section.section-divider { text-align: left; }
+    .reveal .slides section.section-divider h2 { font-size: 2em; border-bottom: 3px solid #1a7f37; padding-bottom: 0.2em; }
+    .badge { display: inline-block; background: #1a7f37; color: #fff; padding: 0.2em 0.6em; border-radius: 12px; font-size: 0.6em; vertical-align: middle; }
+    .problem-card { background: #fff5f5; border-left: 4px solid #c0392b; padding: 1em; text-align: left; margin: 0.5em 0; }
+    .solution-card { background: #f0faf0; border-left: 4px solid #1a7f37; padding: 1em; text-align: left; margin: 0.5em 0; }
+    .two-col { display: flex; gap: 1em; }
+    .two-col > div { flex: 1; }
+    .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
+    .stat-label { font-size: 0.5em; color: #666; }
+    pre code { font-size: var(--code-font); }
+    .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
+    .tree li { margin: 0.2em 0; }
+    .tree .folder::before { content:"📁 "; }
+    .tree .file::before { content:"📄 "; }
+
+    /* Mermaid Click-to-Zoom */
+    .mermaid-zoom-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+    .mermaid-zoom-overlay.active {
+      display: flex;
+    }
+    .mermaid-zoom-overlay svg {
+      max-width: 90%;
+      max-height: 90%;
+      width: auto;
+      height: auto;
+    }
+    .mermaid[data-zoomable="true"] {
+      cursor: zoom-in;
+    }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ===== SECTION 0: OPENING ===== -->
+
+      <!-- Slide 1: Title -->
+      <section class="title-slide">
+        <p style="color: var(--r-heading-color); margin-bottom: 1rem; font-size: 0.8em;">p-hermes · 기술 컨셉 강의</p>
+        <h1>레이어드 아키텍처</h1>
+        <p style="font-size: 1.1em;">모듈화가 에이전트 시스템의 생존 조건인 이유</p>
+        <p style="font-size: 0.6em; color: #888; margin-top: 2em;">System architecture · CALMER deck</p>
+      </section>
+
+      <!-- Slide 2: Agenda -->
+      <section>
+        <h2>오늘의 여정</h2>
+        <table style="font-size: 0.75em; width: 80%; margin: 0 auto;">
+          <tr><td style="color:#c0392b; width: 15%;">WHY</td><td>모놀리식의 한계 — 왜 레이어드 구조인가?</td></tr>
+          <tr><td style="color:#1a7f37; width: 15%;">WHAT</td><td>관계망 아키텍처, 레이어별 역할, 이벤트 버스</td></tr>
+          <tr><td style="color:#0969da; width: 15%;">HOW</td><td>실제 디렉토리 구조, 데이터 흐름 예시</td></tr>
+          <tr><td style="color:#bc4c00; width: 15%;">TRADE-OFFS</td><td>레이어드 구조의 한계와 주의점</td></tr>
+        </table>
+        <p style="font-size: 0.6em; color: #888; margin-top: 1em;">약 20분 소요</p>
+      </section>
+
+      <!-- ===== SECTION 1: WHY ===== -->
+
+      <!-- Slide 3: Section divider - WHY -->
+      <section class="section-divider">
+        <span class="badge">WHY</span>
+        <h2>왜 레이어드 구조인가?</h2>
+      </section>
+
+      <!-- Slide 4: Problem — flat directory chaos -->
+      <section>
+        <h2>모놀리식의 3가지 한계</h2>
+        <div class="problem-card">
+          <strong>① 파일 간 의존성 불명확</strong><br>
+          <span style="font-size: 0.8em;">모든 스크립트가 한 디렉토리에 혼재. 한 파일 수정이 예상치 못한 곳에서 오류 발생.</span>
+        </div>
+        <div class="problem-card">
+          <strong>② 절대 경로 하드코딩</strong><br>
+          <span style="font-size: 0.8em;">WSL ↔ macOS 간 이동 시 전체 경로 재수정 필요. 환경마다 다른 설정 파일.</span>
+        </div>
+        <div class="problem-card">
+          <strong>③ 직접 호출 = 결합도 폭발</strong><br>
+          <span style="font-size: 0.8em;">모듈 A가 모듈 B를 직접 호출하면 교착 상태(deadlock)와 종속성 지옥.</span>
+        </div>
+      </section>
+
+      <!-- Slide 5: Paradigm shift -->
+      <section>
+        <h2>패러다임 전환</h2>
+        <div class="two-col">
+          <div>
+            <strong>Flat (모놀리식)</strong>
+            <pre class="mermaid">graph TD
+  A["모듈 A"] --"직접 호출 "--> B["모듈 B"]
+  A --"직접 호출 "--> C["모듈 C"]
+  B --"직접 호출 "--> C
+  D["모듈 D"] --"직접 호출 "--> B
+  C --"직접 호출 "--> A
+  style A fill:#c0392b,stroke:#922b21,color:#fff
+  style B fill:#c0392b,stroke:#922b21,color:#fff
+  style C fill:#c0392b,stroke:#922b21,color:#fff
+  style D fill:#c0392b,stroke:#922b21,color:#fff
+</pre>
+          </div>
+          <div>
+            <strong>Layered (레이어드)</strong>
+            <pre class="mermaid">graph TD
+  T1["T1: Core<br/>config.yaml / workflow.sh"] --> T2["T2: Runtime<br/>knowledge/ cron/ sessions/"]
+  T2 --> T3["T3: Interfaces<br/>Discord / Telegram / CLI"]
+  T3 --> T4["T4: Infra<br/>GitHub / Docker"]
+  T4 --> T5["T5: Release<br/>docs/ slides/ llms.txt"]
+  E["event.sh Global"] -.-> T1
+  E -.-> T2
+  E -.-> T3
+  E -.-> T4
+  E -.-> T5
+  style T1 fill:#3498db,stroke:#2980b9,color:#fff
+  style T2 fill:#3498db,stroke:#2980b9,color:#fff
+  style T3 fill:#3498db,stroke:#2980b9,color:#fff
+  style T4 fill:#3498db,stroke:#2980b9,color:#fff
+  style T5 fill:#3498db,stroke:#2980b9,color:#fff
+  style E fill:#2ecc71,stroke:#1e8449,color:#fff
+</pre>
+          </div>
+        </div>
+        <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">직접 호출 -> 이벤트 기반 비동기 통신으로 결합도 해방</p>
+      </section>
+
+      <!-- ===== SECTION 2: WHAT ===== -->
+
+      <!-- Slide 6: Section divider - WHAT -->
+      <section class="section-divider">
+        <span class="badge">WHAT</span>
+        <h2>관계망 아키텍처</h2>
+      </section>
+
+      <!-- Slide 7: Network architecture -->
+      <section>
+        <h2>5계층 + 2글로벌 = 관계망</h2>
+        <p style="font-size: 0.75em;">단방향 직선이 아닌, 실제 의존 관계 기반 망 구조</p>
+        <pre class="mermaid">graph TD
+  subgraph T1["T1: Core"]
+    C1["config.yaml"]
+    C2["AGENTS.md"]
+    C3["skills/"]
+    C4["workflow.sh"]
+  end
+
+  subgraph T2["T2: Runtime"]
+    R1["knowledge/"]
+    R2["cron/"]
+    R3["sessions/"]
+    R4[".workflow-state"]
+  end
+
+  subgraph T3["T3: Interfaces"]
+    I1["Discord"]
+    I2["Telegram"]
+    I3["CLI"]
+  end
+
+  subgraph T4["T4: Infra"]
+    F1["GitHub"]
+    F2["Docker"]
+  end
+
+  subgraph T5["T5: Release"]
+    S1["docs/"]
+    S2["slides/"]
+    S3["llms.txt"]
+  end
+
+  E["event.sh <- Global"] -.-> T1
+  E -.-> T2
+  E -.-> T3
+  E -.-> T4
+  E -.-> T5
+  U["system-common/ <- Global"] -.-> T1
+  U -.-> T2
+  U -.-> T3
+  U -.-> T4
+  U -.-> T5
+
+  T1 --> T2
+  T2 --> T3
+  T3 --> T4
+  T4 --> T5
+
+  style E fill:#2ecc71,stroke:#1e8449,color:#fff
+  style U fill:#f39c12,stroke:#d68910,color:#fff
+</pre>
+      </section>
+
+      <!-- Slide 8: Layer roles table -->
+      <section>
+        <h2>레이어별 역할</h2>
+        <table style="font-size: 0.7em; width: 95%; text-align: left;">
+          <tr style="border-bottom: 2px solid #1a7f37;">
+            <th style="width:12%;">계층</th><th style="width:25%;">주요 구성</th><th>책임</th>
+          </tr>
+          <tr>
+            <td><strong>T1 Core</strong></td>
+            <td>config.yaml, AGENTS.md, skills/, workflow.sh</td>
+            <td>워크플로우 엔진, 스킬 정의, 전역 설정(SSOT)</td>
+          </tr>
+          <tr>
+            <td><strong>T2 Runtime</strong></td>
+            <td>knowledge/, cron/, sessions/, .workflow-state</td>
+            <td>실행 시간 데이터, 지식, 자동화, 세션 상태</td>
+          </tr>
+          <tr>
+            <td><strong>T3 Interfaces</strong></td>
+            <td>discord/, telegram/, CLI</td>
+            <td>외부 통신 채널 (프로토콜 차이는 계층 내부 처리)</td>
+          </tr>
+          <tr>
+            <td><strong>T4 Infra</strong></td>
+            <td>GitHub, Docker, WSL/Host</td>
+            <td>실행 환경, 지속화, CI/CD</td>
+          </tr>
+          <tr>
+            <td><strong>T5 Release</strong></td>
+            <td>docs/, slides/, llms.txt</td>
+            <td>배포 산출물, 문서, LLM 메타데이터</td>
+          </tr>
+        </table>
+      </section>
+
+      <!-- Slide 9: Design principles -->
+      <section>
+        <h2>3대 설계 원칙</h2>
+        <div class="solution-card">
+          <strong>① 심링크 금지</strong><br>
+          <span style="font-size: 0.8em;">물리적 경로만 사용. 심링크는 환경 간 경계에서 파괴됨. <code style="font-size:0.9em;">readlink -f</code>로 절대 경로 확보.</span>
+        </div>
+        <div class="solution-card">
+          <strong>② $HERMES_ROOT 추상화</strong><br>
+          <span style="font-size: 0.8em;">절대 경로 하드코딩 금지. 모든 경로 = 환경 변수 기반. WSL ↔ macOS 호환.</span>
+        </div>
+        <div class="solution-card">
+          <strong>③ 이벤트 기반 통신</strong><br>
+          <span style="font-size: 0.8em;">모듈 간 직접 호출 금지. <code style="font-size:0.9em;">event.sh</code> Pub/Sub 패턴으로 비동기 상태 전달.</span>
+        </div>
+      </section>
+
+      <!-- Slide 10: Event bus -->
+      <section>
+        <h2>event.sh — 시스템의 신경망</h2>
+        <p style="font-size: 0.75em;">모든 모듈은 event.sh를 통해 통신. 직접 호출 X, 이벤트 발행/구독 O</p>
+        <pre class="mermaid">graph TD
+  S["Scheduler\n(스케줄러)"] -- publish --> EB["event.sh\n이벤트 버스"]
+  W["Workflow Engine\n(워크플로우 엔진)"] -- subscribe --> EB
+  W -- publish --> EB
+  R["Runner\n(런너)"] -- subscribe --> EB
+  R -- publish --> EB
+  I["Interface\n(인터페이스)"] -- subscribe --> EB
+  K["Knowledge\n(지식 시스템)"] -- subscribe --> EB
+  EB -- write --> L["JSONL Log\n(JSONL 로그)"]
+
+  style EB fill:#2ecc71,stroke:#1e8449,color:#fff
+  style L fill:#3498db,stroke:#2980b9,color:#fff
+</pre>
+        <div class="two-col" style="margin-top: 0.5em;">
+          <div style="font-size: 0.7em; text-align: left;">
+            <strong>이벤트 발행</strong><br>
+            <code style="font-size:0.8em;">event.sh publish workflow.started</code>
+          </div>
+          <div style="font-size: 0.7em; text-align: left;">
+            <strong>이벤트 구독</strong><br>
+            <code style="font-size:0.8em;">event.sh subscribe workflow.completed</code>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 11: Layer comparison (traditional vs Hermes) -->
+      <section>
+        <h2>전통적 계층 vs Hermes 관계망</h2>
+        <table style="font-size: 0.75em; width: 90%; text-align: left;">
+          <tr style="border-bottom: 2px solid #1a7f37;">
+            <th></th><th style="color:#c0392b;">전통적 5계층</th><th style="color:#1a7f37;">Hermes 관계망</th>
+          </tr>
+          <tr>
+            <td>통신 방식</td>
+            <td>인접 계층만 ↔ 호출</td>
+            <td>event.sh로 전 계층 비동기</td>
+          </tr>
+          <tr>
+            <td>유틸리티</td>
+            <td>각 계층별 별도</td>
+            <td>system-common/ 전역 공유</td>
+          </tr>
+          <tr>
+            <td>경로 관리</td>
+            <td>상대 경로 혼합</td>
+            <td>$HERMES_ROOT 단일 기준</td>
+          </tr>
+          <tr>
+            <td>설정</td>
+            <td>계층별 중복</td>
+            <td>config.yaml / AGENTS.md SSOT</td>
+          </tr>
+          <tr>
+            <td>확장</td>
+            <td>전 계층 수정 필요</td>
+            <td>새 계층 event.sh 연결만</td>
+          </tr>
+        </table>
+      </section>
+
+      <!-- ===== SECTION 3: HOW ===== -->
+
+      <!-- Slide 12: Section divider - HOW -->
+      <section class="section-divider">
+        <span class="badge" style="background: #0969da;">HOW</span>
+        <h2>실제 디렉토리 구조</h2>
+      </section>
+
+      <!-- Slide 13: Directory tree -->
+      <section>
+        <h2>$HERMES_ROOT 디렉토리 맵</h2>
+        <pre class="mermaid">graph TD
+  ROOT["$HERMES_ROOT"] --> T1
+  ROOT --> T2
+  ROOT --> T3
+  ROOT --> T4
+  ROOT --> T5
+  ROOT --> E
+  ROOT --> U
+
+  subgraph T1["T1: Core"]
+    CFG["config.yaml"]
+    AGT["AGENTS.md"]
+    SKL["skills/"]
+    WFS["workflow.sh"]
+  end
+
+  subgraph T2["T2: Runtime"]
+    KNW["knowledge/"]
+    CRN["cron/"]
+    SES["sessions/"]
+    STT[".workflow-state"]
+  end
+
+  subgraph T3["T3: Interfaces"]
+    DSC["discord/"]
+    TGL["telegram/"]
+    CLI["CLI"]
+  end
+
+  subgraph T4["T4: Infra"]
+    GIT[".git/"]
+    DEP["deploy/"]
+  end
+
+  subgraph T5["T5: Release"]
+    DOC["docs/"]
+    SLI["slides/"]
+    WIK["wiki/"]
+    BLG["blog/"]
+  end
+
+  E["event.sh <- Global"]
+  U["system-common/ <- Global"]
+
+  style T1 fill:#1a7f37,stroke:#145a25,color:#fff
+  style T2 fill:#2ecc71,stroke:#1e8449,color:#fff
+  style T3 fill:#3498db,stroke:#2980b9,color:#fff
+  style T4 fill:#8e44ad,stroke:#6c3483,color:#fff
+  style T5 fill:#e67e22,stroke:#d35400,color:#fff
+</pre>
+      </section>
+
+      <!-- Slide 14: Data flow example -->
+      <section>
+        <h2>실제 데이터 흐름: Cron 작업 예시</h2>
+        <div style="font-size: 0.75em; text-align: left; width: 90%; margin: 0 auto;">
+          <table style="width:100%; font-size:0.95em;">
+            <tr class="fragment fade-in">
+              <td style="width:5%;"><span class="stat" style="font-size:1.2em; color:#1a7f37;">1</span></td>
+              <td><strong>Cron</strong>이 registry.yaml에서 스케줄 확인</td>
+            </tr>
+            <tr class="fragment fade-in">
+              <td><span class="stat" style="font-size:1.2em; color:#1a7f37;">2</span></td>
+              <td><strong>event.sh</strong>에 <code>cron.job.started</code> 이벤트 발행</td>
+            </tr>
+            <tr class="fragment fade-in">
+              <td><span class="stat" style="font-size:1.2em; color:#1a7f37;">3</span></td>
+              <td><strong>Core</strong>가 이벤트를 구독 -> workflow.sh에서 9-Step 실행</td>
+            </tr>
+            <tr class="fragment fade-in">
+              <td><span class="stat" style="font-size:1.2em; color:#1a7f37;">4</span></td>
+              <td><strong>system-common/lib/atomic.sh</strong>로 원자적 상태 파일 작성</td>
+            </tr>
+            <tr class="fragment fade-in">
+              <td><span class="stat" style="font-size:1.2em; color:#1a7f37;">5</span></td>
+              <td>결과를 <strong>session/</strong>에 기록, <strong>Discord/Telegram</strong>으로 전송</td>
+            </tr>
+            <tr class="fragment fade-in">
+              <td><span class="stat" style="font-size:1.2em; color:#1a7f37;">6</span></td>
+              <td><strong>event.sh</strong>에 <code>cron.job.completed</code> 발행 -> JSONL 히스토리에 기록</td>
+            </tr>
+          </table>
+        </div>
+        <p class="fragment" style="font-size: 0.65em; color: #1a7f37; margin-top: 0.5em;">-> 모든 단계가 event.sh를 경유. 직접 호출은 0회.</p>
+      </section>
+
+      <!-- ===== SECTION 4: TRADE-OFFS ===== -->
+
+      <!-- Slide 15: Section divider - TRADE-OFFS -->
+      <section class="section-divider">
+        <span class="badge" style="background: #bc4c00;">TRADE-OFFS</span>
+        <h2>한계와 주의점</h2>
+      </section>
+
+      <!-- Slide 16: Trade-offs -->
+      <section>
+        <h2>레이어드 구조의 트레이드오프</h2>
+        <table style="font-size: 0.75em; width: 90%;">
+          <tr>
+            <th style="width: 40%;">장점</th>
+            <th style="width: 40%;">비용</th>
+          </tr>
+          <tr>
+            <td>계층 간 결합도 ↓, 독립 배포</td>
+            <td>이벤트 버스 복잡성 ↑, 디버깅 간접적</td>
+          </tr>
+          <tr>
+            <td>환경 독립성 (WSL ↔ macOS)</td>
+            <td>$HERMES_ROOT 설정 전제, 초기화 오버헤드</td>
+          </tr>
+          <tr>
+            <td>수평 확장 용이 (새 인터페이스 추가 시 T3만 수정)</td>
+            <td>이벤트 스키마 관리 필요, 버전 마이그레이션</td>
+          </tr>
+          <tr>
+            <td>안티패턴 금지로 안정성 ↑</td>
+            <td>학습 곡선 — 직접 호출이 습관인 팀엔 부적합</td>
+          </tr>
+        </table>
+        <p class="fragment" style="font-size: 0.7em; color: #666; margin-top: 0.5em;">"구조의 자유는 구조의 책임을 전제로 한다"</p>
+      </section>
+
+      <!-- ===== SECTION 5: SUMMARY ===== -->
+
+      <!-- Slide 17: Summary -->
+      <section>
+        <h2>핵심 요약</h2>
+        <ol style="font-size: 0.9em;">
+          <li class="fragment">5계층(T1~T5) + 2글로벌(event.sh, system-common) <strong>관계망 구조</strong></li>
+          <li class="fragment"><strong>3대 설계 원칙</strong>: 심링크 금지, $HERMES_ROOT 추상화, 이벤트 기반 통신</li>
+          <li class="fragment">모듈 간 직접 호출 <strong>0회</strong> — event.sh가 유일한 통신 채널</li>
+          <li class="fragment">config.yaml + AGENTS.md = <strong>SSOT</strong> (중복 설정 금지)</li>
+        </ol>
+        <p class="fragment" style="font-size: 0.7em; color: #888; margin-top: 1em;">"단방향 직선이 아닌, 실제 의존 관계를 반영한 관계망"</p>
+      </section>
+
+      <!-- Slide 18: Q&A -->
+      <section>
+        <h1 style="font-size: 3em;">Q&A</h1>
+        <p style="font-size: 1em;">질문이 있으시면 편하게 말씀해주세요.</p>
+      </section>
+
+      <!-- 더 알아보기 -->
+      <section>
+        <h2>📌 더 알아보기</h2>
+        <div style="font-size: 0.7em; text-align: left; width: 80%; margin: 0 auto;">
+          <p><strong>참고 자료</strong></p>
+          <ul>
+            <li>📚 <a target="_blank" href="../../wiki/system-architecture.md">Wiki 가이드</a></li>
+            <li>📝 <a target="_blank" href="../../blog/posts/architecture-layered.md">Blog 분석</a></li>
+          </ul>
+          <p style="margin-top: 1em;"><strong>관련 슬라이드</strong></p>
+          <ul>
+                  <li>🎯 <a target="_blank" href="./hermes-overview.html">Hermes Overview</a></li>
+                  <li>🎯 <a target="_blank" href="./workflow-pipeline.html">Workflow Pipeline</a></li>
+                  <li>🎯 <a target="_blank" href="./cron-system.html">Cron System</a></li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="../js/reveal.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: 'c/t',
+      controls: true,
+      progress: true,
+      center: true,
+      transition: 'slide',
+      fragments: true,
+      minScale: 0.15,
+      maxScale: 2.0
+    }).then(() => {
+      mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+      // Wait for all mermaid renders then attach zoom
+      Promise.allSettled(Array.from(document.querySelectorAll('.mermaid')).map((el, idx) => {
+        const code = el.textContent.trim();
+        return mermaid.render('m' + idx, code).then(({ svg }) => { el.innerHTML = svg; }).catch(e => { console.error('Mermaid render failed', e); });
+      })).then(() => {
+        document.querySelectorAll('.mermaid').forEach(el => {
+          el.setAttribute('data-zoomable', 'true');
+          el.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const overlay = document.getElementById('mermaid-zoom-overlay');
+            overlay.innerHTML = el.innerHTML;
+            overlay.classList.add('active');
+          });
+        });
+        document.getElementById('mermaid-zoom-overlay').addEventListener('click', () => {
+          document.getElementById('mermaid-zoom-overlay').classList.remove('active');
+        });
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          document.getElementById('mermaid-zoom-overlay').classList.remove('active');
+        }
+      });
+    });
+    Reveal.addEventListener('ready', () => {
+      document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightElement(block);
+      });
+    });
+  </script>
+  <div id="mermaid-zoom-overlay" class="mermaid-zoom-overlay"></div>
+</body>
+</html>
