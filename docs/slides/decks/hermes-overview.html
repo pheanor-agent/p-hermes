@@ -456,8 +456,8 @@ $ hermes chat
         <div style="font-size: 0.7em; text-align: left; width: 80%; margin: 0 auto;">
           <p><strong>참고 자료</strong></p>
           <ul>
-            <li>📚 <a href="../../wiki/index.md">Wiki 가이드</a></li>
-            <li>📝 <a href="../../blog/posts/hermes-agent-intro.md">Blog 분석</a></li>
+            <li>📚 <a target="_blank" href="../../wiki/index.md">Wiki 가이드</a></li>
+            <li>📝 <a target="_blank" href="../../blog/posts/hermes-agent-intro.md">Blog 분석</a></li>
           </ul>
           <p style="margin-top: 1em;"><strong>관련 슬라이드</strong></p>
           <ul>
@@ -485,23 +485,23 @@ $ hermes chat
       maxScale: 2.0
     }).then(() => {
       mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
-      document.querySelectorAll('.mermaid').forEach((el, idx) => {
+      // Wait for all mermaid renders then attach zoom
+      Promise.all(document.querySelectorAll('.mermaid').map((el, idx) => {
         const code = el.textContent.trim();
-        mermaid.render('m' + idx, code).then(({ svg }) => { el.innerHTML = svg; });
-      });
-    });
-
-      // Mermaid click-to-zoom
-      document.querySelectorAll('.mermaid').forEach(el => {
-        el.setAttribute('data-zoomable', 'true');
-        el.addEventListener('click', () => {
-          const overlay = document.getElementById('mermaid-zoom-overlay');
-          overlay.innerHTML = el.innerHTML;
-          overlay.classList.add('active');
+        return mermaid.render('m' + idx, code).then(({ svg }) => { el.innerHTML = svg; });
+      })).then(() => {
+        document.querySelectorAll('.mermaid').forEach(el => {
+          el.setAttribute('data-zoomable', 'true');
+          el.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const overlay = document.getElementById('mermaid-zoom-overlay');
+            overlay.innerHTML = el.innerHTML;
+            overlay.classList.add('active');
+          });
         });
-      });
-      document.getElementById('mermaid-zoom-overlay').addEventListener('click', () => {
-        document.getElementById('mermaid-zoom-overlay').classList.remove('active');
+        document.getElementById('mermaid-zoom-overlay').addEventListener('click', () => {
+          document.getElementById('mermaid-zoom-overlay').classList.remove('active');
+        });
       });
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
