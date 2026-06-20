@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hermes Cron System — 24시간 자동화</title>
+  <link rel="stylesheet" href="../css/reveal.css">
+  <link rel="stylesheet" href="../css/white.css">
+  <!--"Google Fonts (한글) "-->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Highlight.js -->
+  <link rel="stylesheet" href="../css/highlight-github.min.css">
+  <script src="../js/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script> window.mermaidConfig = { startOnLoad: false, theme: 'default' }; </script>
+  <style>
+    :root {
+      --scale-h1: 2.2em;
+      --scale-h2: 1.5em;
+      --scale-body: 0.85em;
+      --scale-small: 0.75em;
+      --scale-caption: 0.65em;
+      --scale-tiny: 0.55em;
+      --code-font: 0.76em;
+      --diagram-font: 0.82em;
+    }
+    .reveal { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', 'Noto Sans KR', 'Helvetica Neue', sans-serif; }
+    .reveal h1 { font-size: var(--scale-h1); }
+    .reveal h2 { font-size: var(--scale-h2); color: #1a7f37; }
+    .reveal section img { background: none; border: none; box-shadow: none; }
+    .reveal .slides section.section-divider { text-align: left; }
+    .reveal .slides section.section-divider h2 { font-size: 2em; border-bottom: 3px solid #1a7f37; padding-bottom: 0.2em; }
+    .badge { display: inline-block; background: #1a7f37; color: #fff; padding: 0.2em 0.6em; border-radius: 12px; font-size: 0.6em; vertical-align: middle; }
+    .problem-card { background: #fff5f5; border-left: 4px solid #c0392b; padding: 1em; text-align: left; margin: 0.5em 0; }
+    .solution-card { background: #f0faf0; border-left: 4px solid #1a7f37; padding: 1em; text-align: left; margin: 0.5em 0; }
+    .two-col { display: flex; gap: 1em; }
+    .two-col > div { flex: 1; }
+    .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
+    .stat-label { font-size: 0.5em; color: #666; }
+    pre code { font-size: var(--code-font); }
+    .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
+    .tree li { margin: 0.2em 0; }
+    .tree .folder::before { content:"📁 "; }
+    .tree .file::before { content:"📄 "; }
+    .reveal pre.mermaid { 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      max-width: 1080px; 
+      margin: 40px auto; 
+      overflow: visible;
+    }
+    .mermaid svg { 
+      max-width: 100%; 
+      height: auto; 
+      display: block;
+      overflow: visible;
+    }
+
+    /* Mermaid Click-to-Zoom */
+    .mermaid-zoom-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+    .mermaid-zoom-overlay.active {
+      display: flex;
+    }
+    .mermaid-zoom-overlay svg {
+      max-width: 90%;
+      max-height: 90%;
+      width: auto;
+      height: auto;
+    }
+    .mermaid[data-zoomable="true"] {
+      cursor: zoom-in;
+    }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!--"===== SECTION 0: OPENING (2장) ===== "-->
+
+      <!-- Slide 1: Title -->
+      <section class="title-slide">
+        <p style="color: var(--r-heading-color); margin-bottom: 1rem; font-size: 0.8em;">p-hermes · 크론 자동화 시스템</p>
+        <h1>Cron System</h1>
+        <p style="font-size: 1.1em;">에이전트가 24시간 자지 않는 방법 — 이벤트 버스로 작동하는 디지털 루틴</p>
+        <p style="font-size: 0.6em; color: #888; margin-top: 2em;">event.sh · registry.yaml · Registry -> Wrapper -> Runner</p>
+      </section>
+
+      <!-- Slide 2: Agenda -->
+      <section>
+        <h2>오늘의 여정</h2>
+        <table style="font-size: 0.75em; width: 80%; margin: 0 auto;">
+          <tr><td style="color:#c0392b; width: 15%;">WHY</td><td>수동 모니터링의 한계, 에이전트가 '자는' 시간</td></tr>
+          <tr><td style="color:#1a7f37; width: 15%;">WHAT</td><td>이벤트 버스 · SSOT · 3층 아키텍처 · Job 타입</td></tr>
+          <tr><td style="color:#0969da; width: 15%;">HOW</td><td>실제 Job 등록 · 이벤트 흐름 · 자율적 감지 패턴</td></tr>
+          <tr><td style="color:#bc4c00; width: 15%;">TRADE-OFFS</td><td>무인 실행 리스크 · 연쇄 효과</td></tr>
+        </table>
+        <p style="font-size: 0.6em; color: #888; margin-top: 1em;">약 15분 소요</p>
+      </section>
+
+      <!--"===== SECTION 1: WHY (2장) ===== "-->
+
+      <!-- Slide 3: Section divider -->
+      <section class="section-divider">
+        <span class="badge" style="background: #c0392b;">WHY</span>
+        <h2>왜 자동화가 필요한가?</h2>
+      </section>
+
+      <!-- Slide 4: Problems -->
+      <section>
+        <h2>반복 작업이 수동일 때 겪는 문제</h2>
+        <div class="problem-card" style="font-size: 0.85em;">
+          <strong>① 에이전트는 '자'는 시간이 있음</strong><br>
+          세션이 종료되면 모든 작업 정지. 매일 아침 뉴스 요약 같은 루틴은 사용자가 직접 매번 요청해야 함.
+        </div>
+        <div class="problem-card" style="font-size: 0.85em;">
+          <strong>② 사람이 기억하면 누락 생김</strong><br>
+          주간 점검, 데이터 백업, 로그 회전 — 기억에 의존하면 일정 충돌과 중복 실행이 필연적.
+        </div>
+        <div class="problem-card" style="font-size: 0.85em;">
+          <strong>③ 실패해도 아무도 모름</strong><br>
+          수동으로 실행한 작업이 실패하면 재시도도, 알림도 없음. 문제를 지나치게 늦게 발견.
+        </div>
+      </section>
+
+      <!--"===== SECTION 2: WHAT (5장) ===== "-->
+
+      <!-- Slide 5: Section divider -->
+      <section class="section-divider">
+        <span class="badge">WHAT</span>
+        <h2>Cron System의 핵심 구조</h2>
+      </section>
+
+      <!-- Slide 6: 3-layer architecture -->
+      <section>
+        <h2>Registry -> Wrapper -> Runner 3층 아키텍처</h2>
+        <pre class="mermaid">graph TD
+  subgraph L1["Layer 1: Scheduler\n스케줄러"]
+    SC["Cron 스케줄러"]
+    RG["registry.yaml\nSSOT"]
+    EB1["event.sh"]
+  end
+
+  subgraph L2["Layer 2: Wrapper\n래퍼"]
+    WR["wrapper.sh\nJob 래퍼 스크립트"]
+    DL["Deliver\n전달 핸들러"]
+  end
+
+  subgraph L3["Layer 3: Runner\n런너"]
+    RU["Runner"]
+    SH["Shell Script\n스크립트 실행"]
+    LM["LLM API\n추론 호출"]
+  end
+
+  SC --> WR
+  WR --> RU
+  RU --> SH
+  RU --> LM
+  EB1 -.-> WR
+  DL --> EB1
+
+  style L1 fill:#3498db,stroke:#2980b9,color:#fff
+  style L2 fill:#2ecc71,stroke:#1e8449,color:#fff
+  style L3 fill:#e67e22,stroke:#d35400,color:#fff
+</pre>
+      </section>
+
+      <!-- Slide 7: SSOT — registry.yaml -->
+      <section>
+        <h2>registry.yaml — 모든 Job의 단일 진실 출처</h2>
+        <p style="font-size: 0.7em; color: #666;">~/.hermes/cron/registry.yaml</p>
+        <pre><code class="language-yaml">
+- id: morning-news
+  name:"매일 아침 뉴스 요약"
+  schedule:"0 8 * * *"
+  prompt: |
+    오늘 AI/기술 분야 주요 뉴스 5개를 검색하고
+    각 항목별로 2문장 이내로 요약해 주세요.
+  deliver:"discord:123456789"
+  model:
+    provider: openrouter
+    model:"anthropic/claude-sonnet-4"
+  enabled_toolsets: ["web","terminal"]
+
+- id: deploy-check
+  name:"배포 후 상태 점검"
+  schedule:"2026-07-01T14:30:00"
+  prompt:"서버 상태를 확인하고 응답 시간을 기록하세요."
+  deliver:"discord:123456789"
+</code></pre>
+        <p class="fragment" style="font-size: 0.65em; color: #1a7f37;">-> ISO 8601 일시면 one-shot 단회 실행, cron 표현식면 주기적 반복</p>
+      </section>
+
+      <!--"Slide 8: 이벤트 버스 "-->
+      <section>
+        <h2>event.sh — 실행 이력의 중앙 기록소</h2>
+        <div class="two-col">
+          <div style="font-size: 0.75em;">
+            <strong>이벤트 타입</strong>
+            <table style="font-size: 0.9em;">
+              <tr><td><code>started</code></td><td>Job 시작</td></tr>
+              <tr><td><code>running</code></td><td>추론 진행 중</td></tr>
+              <tr><td><code>completed</code></td><td>작업 완료</td></tr>
+              <tr><td><code>delivered</code></td><td>결과 배송됨</td></tr>
+            </table>
+          </div>
+          <div style="font-size: 0.75em;">
+            <strong>JSONL 로그 형식</strong>
+            <pre><code class="language-json">{
+ "ts":"2026-06-17T08:00:01Z",
+ "job":"morning-news",
+ "event":"started",
+ "session":"sess-abc123"
+}
+{
+ "ts":"2026-06-17T08:02:15Z",
+ "event":"completed",
+ "result":"success"
+}</code></pre>
+          </div>
+        </div>
+        <p style="font-size: 0.6em; color: #666;">event.sh history --limit 10 · event.sh history --job"JOB-1234"</p>
+      </section>
+
+      <!--"Slide 9: Job 타입 "-->
+      <section>
+        <h2>3가지 Job 타입 — 작업 성격에 맞는 실행 방식</h2>
+        <div class="solution-card" style="font-size: 0.8em;">
+          <strong>🧠 LLM-Driven Job</strong> — 자연어 프롬프트로 복잡한 작업 수행<br>
+          <span style="font-size: 0.85em;">예: 작업 리포트 생성, 데이터 분석 요약, 코드 리뷰</span><br>
+          <code style="font-size: 0.8em;">hermes cron create --name"daily-report" --prompt"..." --schedule"0 9 * * *"</code>
+        </div>
+        <div class="solution-card" style="font-size: 0.8em; border-left-color: #0969da;">
+          <strong>⚡ Script-Driven Job</strong> — LLM 오버헤드 없이 스크립트만 실행<br>
+          <span style="font-size: 0.85em;">예: Wiki 동기화, 데이터 백업, 로그 회전, 시스템 모니터링</span><br>
+          <code style="font-size: 0.8em;">hermes cron create --name"wiki-sync" --script"scripts/wiki-sync.sh" --schedule"every 5m"</code>
+        </div>
+        <div class="solution-card" style="font-size: 0.8em; border-left-color: #8b5cf6;">
+          <strong>🔔 Event-Driven Job</strong> — 특정 이벤트 발생 시 즉시 실행<br>
+          <span style="font-size: 0.85em;">예: GitHub PR 생성 시 리뷰, Slack 메시지 응답, 웹훅 처리</span><br>
+          <code style="font-size: 0.8em;">hermes cron create --name"pr-review" --trigger"github.pr.created" --prompt"..."</code>
+        </div>
+      </section>
+
+      <!--"Slide 10: 예외 처리 — silent-on-success & origin "-->
+      <section>
+        <h2>silent-on-success &amp; origin — 지능형 예외 처리</h2>
+        <div class="two-col">
+          <div>
+            <div class="solution-card" style="font-size: 0.8em;">
+              <strong>🤫 silent-on-success</strong><br>
+              정상 실행 시 알림 전송 안 함. 실패/경고 시만 결과 전달 -> 알림 피로도 낮춤.<br><br>
+              <code style="font-size: 0.85em;">no_agent: true + script</code><br>
+              스크립트 출력이 비어 있으면 전송 생략, 존재하면 알림 생성.
+            </div>
+          </div>
+          <div>
+            <div class="solution-card" style="font-size: 0.8em; border-left-color: #0969da;">
+              <strong>📮 origin 채널 해석</strong><br>
+              <code>deliver: origin</code> — 작업이 시작된 대화 창으로 자동 전달.<br>
+              <code>deliver: origin,all</code> — 현재 채팅 + 모든 연결 채널 동시 전달.<br>
+              <code>deliver:"discord:123"</code> — 특정 채널 명시 전달.<br><br>
+              다중 채널 전달 시 실패 시 fallback 자동 동작.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!--"===== SECTION 3: HOW (3장) ===== "-->
+
+      <!-- Slide 11: Section divider -->
+      <section class="section-divider">
+        <span class="badge" style="background: #0969da;">HOW</span>
+        <h2>실제로 어떻게 작동하는가?</h2>
+      </section>
+
+      <!--"Slide 12: 실제 Job 등록 예시 "-->
+      <section>
+        <h2>실제 CLI 명령어로 Job 등록하기</h2>
+        <pre><code class="language-bash" data-trim>
+# LLM 구동 — 매일 9시 작업 현황 리포트
+hermes cron create \
+  --name"daily-briefing" \
+  --prompt"오늘의 주요 작업 확인" \
+  --schedule"0 9 * * *" \
+  --deliver telegram
+
+# 스크립트 전용 — 5분마다 Wiki 동기화
+hermes cron create \
+  --name"wiki-sync" \
+  --script"scripts/wiki-sync.sh" \
+  --schedule"every 5m"
+
+# 이벤트 기반 — PR 생성 시 자동 리뷰
+hermes cron create \
+  --name"pr-review" \
+  --trigger"github.pr.created" \
+  --prompt"PR 코드 리뷰 수행" \
+  --deliver discord
+</code></pre>
+        <p style="font-size: 0.6em; color: #666;">등록 시 registry.yaml에 자동으로 YAML 엔트리 추가 -> 스케줄러가 감지</p>
+      </section>
+
+      <!--"Slide 13: 이벤트 흐름 (event.sh) "-->
+      <section>
+        <h2>실행 시 이벤트 흐름 — end-to-end</h2>
+        <pre class="mermaid">graph TD
+  SC["Schedule Check\n스케줄 확인"] --> WR["wrapper.sh\nJob 래퍼"]
+  WR --> RU["Runner\n작업 실행"]
+  WR --> EB1["event.sh publish\nstarted"]
+
+  RU --> SH["Shell Script\n스크립트 실행"]
+  RU --> LM["LLM API\n추론 호출"]
+
+  SH --> DL["Deliver\n결과 전송"]
+  LM --> DL
+
+  DL --> EB2["event.sh publish\ncompleted"]
+  DL --> OR["Origin Channel\n원본 채널"]
+  DL --> DS["Dest Channel\n지정 채널"]
+
+  EB2 --> LG["JSONL Log\n히스토리 기록"]
+
+  style EB1 fill:#2ecc71,stroke:#1e8449,color:#fff
+  style EB2 fill:#2ecc71,stroke:#1e8449,color:#fff
+  style LG fill:#3498db,stroke:#2980b9,color:#fff
+</pre>
+        <p style="font-size: 0.6em; color: #666;">모든 단계가 event.sh에 JSONL로 기록 -> event.sh history로 전체 추적 가능</p>
+      </section>
+
+      <!--"Slide 14: 자율적 감지 패턴 "-->
+      <section>
+        <h2>자율적 데이터 수집 / 변경 감지 패턴</h2>
+        <div class="two-col">
+          <div style="font-size: 0.75em; text-align: left;">
+            <strong>📊 주기적 모니터링</strong><br>
+            15분마다 시스템 상태 확인 -> 이상치 발생 시만 알림 (silent-on-success)
+            <br><br>
+            <strong>🔍 변경 감지</strong><br>
+            <code>mutex_acquire</code>로 중복 실행 차단<br>
+            스크립트 출력이 비어 있으면 '변경 없음'으로 처리
+            <br><br>
+            <strong>🔄 하이브리드 패턴</strong><br>
+            시간 기반 + 이벤트 기반 조합<br>
+            예: 매주 월요일 + GitHub 이벤트 발생 시 동시 실행
+          </div>
+          <div style="font-size: 0.75em; text-align: left;">
+            <strong>system-common 유틸리티</strong>
+            <table style="font-size: 0.9em;">
+              <tr><td><code>mutex_acquire</code></td><td>중복 실행 차단</td></tr>
+              <tr><td><code>mkdir_atomic</code></td><td>원자적 디렉토리 생성</td></tr>
+              <tr><td><code>log_event</code></td><td>표준 이벤트 기록</td></tr>
+            </table>
+            <br>
+            <pre><code class="language-bash">mutex_acquire"morning-news" || exit 0
+# ... 작업 실행 ...
+mutex_release"morning-news"</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!--"===== SECTION 4: TRADE-OFFS (1장) ===== "-->
+
+      <!-- Slide 15: Section divider -->
+      <section class="section-divider">
+        <span class="badge" style="background: #bc4c00;">TRADE-OFFS</span>
+        <h2>무인 실행의 리스크</h2>
+      </section>
+
+      <!-- Slide 16: Trade-offs -->
+      <section>
+        <h2>자동화에서 주의할 점</h2>
+        <div class="problem-card" style="font-size: 0.85em;">
+          <strong>⚠️ 잘못된 Job의 연쇄 효과</strong><br>
+          Event-Driven Job이 잘못 해석된 이벤트를 연쇄적으로 처리하면 오류가 기하급수적으로 증폭됨.
+        </div>
+        <div class="problem-card" style="font-size: 0.85em;">
+          <strong>⚠️ LLM 출력의 비결정성</strong><br>
+          같은 프롬프트라도 매번 다른 결과가 나올 수 있음. 스크립트 기반 Job은 확정적이지 않음.
+        </div>
+        <div class="problem-card" style="font-size: 0.85em;">
+          <strong>⚠️ 도구 권한 남용 가능성</strong><br>
+          <code>enabled_toolsets</code>를 제한하지 않으면 cron Job이 의도치 않은 파일 수정이나 API 호출을 함.
+        </div>
+        <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">
+          -> countermeasures: silent-on-success, mutex_acquire, enabled_toolsets 제한, event.sh history 모니터링
+        </p>
+      </section>
+
+      <!--"===== SECTION 5: SUMMARY (2장) ===== "-->
+
+      <!-- Slide 17: Summary -->
+      <section>
+        <h2>핵심 요약</h2>
+        <ol style="font-size: 0.85em;">
+          <li class="fragment"><strong>registry.yaml</strong>이 모든 Job 정의의 SSOT — YAML로 작업·스케줄·전달 채널 정의</li>
+          <li class="fragment"><strong>3층 아키텍처</strong>로 역할 분리 — Scheduler -> Wrapper -> Runner</li>
+          <li class="fragment"><strong>event.sh</strong>가 모든 실행 이력을 JSONL로 기록 — 추적/디버깅/Audit 가능</li>
+          <li class="fragment"><strong>3가지 Job 타입</strong> — LLM 구동, 스크립트 전용, 이벤트 기반 중 작업 성격에 맞춤</li>
+          <li class="fragment"><strong>silent-on-success</strong> + <strong>origin 채널</strong> — 지능형 알림으로 피로도 최소화</li>
+        </ol>
+        <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 1em;">
+         "에이전트가 자지 않는 시스템 — 사용자는 아침에 결과만 받으면 됨"
+        </p>
+      </section>
+
+      <!-- Slide 18: Q&A -->
+      <section>
+        <h1 style="font-size: 3em;">Q&A</h1>
+        <p style="font-size: 1em;">질문이 있으시면 편하게 말씀해주세요.</p>
+      </section>
+
+      <!-- 더 알아보기 -->
+      <section>
+        <h2>📌 더 알아보기</h2>
+        <div style="font-size: 0.7em; text-align: left; width: 80%; margin: 0 auto;">
+          <p><strong>참고 자료</strong></p>
+          <ul>
+            <li>📚 <a target="_blank" href="../../wiki/guides/automation.md">Wiki 가이드</a></li>
+            <li>📝 <a target="_blank" href="../../blog/posts/cron-automation-design.md">Blog 분석</a></li>
+          </ul>
+          <p style="margin-top: 1em;"><strong>관련 슬라이드</strong></p>
+          <ul>
+                  <li>🎯 <a target="_blank" href="./workflow-pipeline.html">Workflow Pipeline</a></li>
+                  <li>🎯 <a href="./architecture-layered.html">Architecture</a></li>
+                  <li>🎯 <a href="./model-routing.html">Model Routing</a></li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="../js/reveal.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: 'c/t',
+      controls: true,
+      progress: true,
+      center: true,
+      transition: 'slide',
+      fragments: true,
+      minScale: 0.15,
+      maxScale: 2.0
+    }).then(() => {
+      mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+      // Wait for all mermaid renders then attach zoom
+      Promise.allSettled(Array.from(document.querySelectorAll('.mermaid')).map((el, idx) => {
+        const code = el.textContent.trim();
+        return mermaid.render('m' + idx, code).then(({ svg }) => { el.innerHTML = svg; }).catch(e => { console.error('Mermaid render failed', e); });
+      })).then(() => {
+        document.querySelectorAll('.mermaid').forEach(el => {
+          el.setAttribute('data-zoomable', 'true');
+          el.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const overlay = document.getElementById('mermaid-zoom-overlay');
+            overlay.innerHTML = el.innerHTML;
+            overlay.classList.add('active');
+          });
+        });
+        document.getElementById('mermaid-zoom-overlay').addEventListener('click', () => {
+          document.getElementById('mermaid-zoom-overlay').classList.remove('active');
+        });
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          document.getElementById('mermaid-zoom-overlay').classList.remove('active');
+        }
+      });
+    });
+    Reveal.addEventListener('ready', () => {
+      document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightElement(block);
+      });
+    });
+  </script>
+  <div id="mermaid-zoom-overlay" class="mermaid-zoom-overlay"></div>
+</body>
+</html>

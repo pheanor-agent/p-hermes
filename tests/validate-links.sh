@@ -6,6 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
 # 검증 대상 디렉토리 및 파일 정의 (SPEC-D01 반영)
+# NOTE: archive/, playground/는 SPEC-D01 3-트랙 외부이므로 링크 검증 제외 (JOB-1733)
 TARGETS=(
   "$PROJECT_DIR/docs/wiki"
   "$PROJECT_DIR/docs/blog"

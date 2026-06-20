@@ -1,6 +1,7 @@
 # p-hermes Full Documentation Index
 
 ## Files
+- **docs/archive/slides-v1/index.md** (28 lines): 🖼️ p-hermes Slides
 - **docs/blog/index.md** (29 lines): ✍️ p-hermes Dev Blog
 - **docs/blog/posts/architecture-layered.md** (412 lines): 레이어드 아키텍처: 왜 모듈화가 에이전트 시스템의 생존 조건인가
 - **docs/blog/posts/content-system-design.md** (448 lines): Anti-Slop 파이프라인: AI 텍스트의 품질을 보증하는 5계층 검증
@@ -10,6 +11,10 @@
 - **docs/blog/posts/model-routing-design.md** (384 lines): 한 줄 요약
 - **docs/blog/posts/spec-driven-dev-design.md** (275 lines): Spec-Driven Development: 명세서가 코드보다 빠른 이유
 - **docs/blog/posts/why-9-step-workflow.md** (455 lines): 왜 9단계 상태머신인가? AI의 파괴적 실행을 막는 안전장치
+- **docs/playground/NOTES.md** (28 lines): 🧪 Playground 실험 일지
+- **docs/playground/experiments/README.md** (27 lines): 🧪 Playground Experiments
+- **docs/playground/experiments/exp-template.md** (23 lines): exp-NNN: [실험 제목]
+- **docs/playground/index.md** (28 lines): 🖼️ p-hermes Slides
 - **docs/slides/index.md** (28 lines): 🖼️ p-hermes Slides
 - **docs/wiki/getting-started/install.md** (186 lines): 설치 및 환경 설정
 - **docs/wiki/getting-started/overview.md** (133 lines): 에르메스 에이전트 개요

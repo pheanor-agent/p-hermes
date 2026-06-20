@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Content System: AI 생성 텍스트의 품질을 보증하는 파이프라인</title>
+  <link rel="stylesheet" href="../css/reveal.css">
+  <link rel="stylesheet" href="../css/white.css">
+  <!--"Google Fonts (한글) "-->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Highlight.js -->
+  <link rel="stylesheet" href="../css/highlight-github.min.css">
+  <script src="../js/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script> window.mermaidConfig = { startOnLoad: false, theme: 'default' }; </script>
+  <style>
+    :root {
+      --scale-h1: 2.2em;
+      --scale-h2: 1.5em;
+      --scale-body: 0.85em;
+      --scale-small: 0.75em;
+      --scale-caption: 0.65em;
+      --scale-tiny: 0.55em;
+      --code-font: 0.76em;
+      --diagram-font: 0.82em;
+    }
+    .reveal { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', 'Noto Sans KR', 'Helvetica Neue', sans-serif; }
+    .reveal h1 { font-size: var(--scale-h1); }
+    .reveal h2 { font-size: var(--scale-h2); color: #1a7f37; }
+    .reveal section img { background: none; border: none; box-shadow: none; }
+    .reveal .slides section.section-divider { text-align: left; }
+    .reveal .slides section.section-divider h2 { font-size: 2em; border-bottom: 3px solid #1a7f37; padding-bottom: 0.2em; }
+    .badge { display: inline-block; background: #1a7f37; color: #fff; padding: 0.2em 0.6em; border-radius: 12px; font-size: 0.6em; vertical-align: middle; }
+    .problem-card { background: #fff5f5; border-left: 4px solid #c0392b; padding: 1em; text-align: left; margin: 0.5em 0; }
+    .solution-card { background: #f0faf0; border-left: 4px solid #1a7f37; padding: 1em; text-align: left; margin: 0.5em 0; }
+    .two-col { display: flex; gap: 1em; }
+    .two-col > div { flex: 1; }
+    .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
+    .stat-label { font-size: 0.5em; color: #666; }
+    pre code { font-size: var(--code-font); }
+    .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
+    .tree li { margin: 0.2em 0; }
+    .tree .folder::before { content:"📁 "; }
+    .tree .file::before { content:"📄 "; }
+    .reveal pre.mermaid { 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      max-width: 1080px; 
+      margin: 40px auto; 
+      overflow: visible;
+    }
+    .mermaid svg { 
+      max-width: 100%; 
+      height: auto; 
+      display: block;
+      overflow: visible;
+    }
+
+    /* Mermaid Click-to-Zoom */
+    .mermaid-zoom-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+    .mermaid-zoom-overlay.active {
+      display: flex;
+    }
+    .mermaid-zoom-overlay svg {
+      max-width: 90%;
+      max-height: 90%;
+      width: auto;
+      height: auto;
+    }
+    .mermaid[data-zoomable="true"] {
+      cursor: zoom-in;
+    }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ===== SECTION 0: OPENING ===== -->
+
+      <!-- Slide 1: Title -->
+      <section class="title-slide">
+        <p style="color: var(--r-heading-color); margin-bottom: 1rem; font-size: 0.8em;">p-hermes · 기술 컨셉 강의</p>
+        <h1>Content System</h1>
+        <p style="font-size: 1.1em;">AI 생성 텍스트(Slop)를 검증하는 5계층 게이트 파이프라인</p>
+        <p style="font-size: 0.6em; color: #888; margin-top: 2em;">3-Layer 아키텍처 · 7개 공유 엔진 · D1~D5 도메인 분류</p>
+      </section>
+
+      <!-- Slide 2: Agenda -->
+      <section>
+        <h2>오늘의 여정</h2>
+        <table style="font-size: 0.75em; width: 80%; margin: 0 auto;">
+          <tr><td style="color:#c0392b; width: 15%;">WHY</td><td>AI Slop 현상과 기존 검증의 한계</td></tr>
+          <tr><td style="color:#1a7f37; width: 15%;">WHAT</td><td>3-Layer 아키텍처 + 5계층 검증 게이트 + 7개 엔진</td></tr>
+          <tr><td style="color:#0969da; width: 15%;">HOW</td><td>실제 파이프라인 코드와 적용 사례</td></tr>
+          <tr><td style="color:#bc4c00; width: 15%;">TRADE-OFFS</td><td>검증 비용과 Judge 모델 의존성</td></tr>
+        </table>
+        <p style="font-size: 0.6em; color: #888; margin-top: 1em;">약 18분 소요</p>
+      </section>
+
+      <!-- ===== SECTION 1: WHY ===== -->
+
+      <!-- Slide 3: Section divider - WHY -->
+      <section class="section-divider">
+        <span class="badge">WHY</span>
+        <h2>왜 콘텐츠 품질 시스템인가?</h2>
+      </section>
+
+      <!-- Slide 4: AI Slop problem -->
+      <section>
+        <h2>Slop: 검수되지 않은 AI 텍스트의 비용</h2>
+        <div class="problem-card">
+          <strong>① 문서 일관성 저하</strong><br>
+          <span style="font-size: 0.8em;">초급자 가이드와 전문가 레퍼런스가 동일한 톤·깊이로 작성됨. 독자가 원하는 정보 수준과 불일치.</span>
+        </div>
+        <div class="problem-card">
+          <strong>② 유지보수 비용 증가</strong><br>
+          <span style="font-size: 0.8em;">AI-isms(과도한 수식어, 전이 표현, 기계적 병렬 구조)로 채워진 문서는 수정 지점 식별이 어려움. 전체 재작성 발생.</span>
+        </div>
+        <div class="problem-card">
+          <strong>③ 독자 신뢰도 하락</strong><br>
+          <span style="font-size: 0.8em;">반복되는 패턴이 인공적인 느낌을 전달. 신호-노이즈 비율 저하 -> 정보 탐색 시간 증가.</span>
+        </div>
+        <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">단순한 '글쓰기 스타일' 문제가 아닌, 지식 시스템의 근본적 가치 훼손</p>
+      </section>
+
+      <!--"Slide 5: 기존 검증의 한계 "-->
+      <section>
+        <h2>기존 검증은 왜 실패하는가?</h2>
+        <div class="two-col">
+          <div style="font-size: 0.75em; text-align: left;">
+            <div class="problem-card" style="margin: 0.3em 0; padding: 0.6em;">
+              <strong>문법 검사기의 맹점</strong><br>
+              문법적으로 맞지만 부정-대조 패턴인 문장을 PASS 처리<br>
+              <span style="color:#c0392b;">"~가 아닌, ~입니다" -> 불필요한 강조</span>
+            </div>
+            <div class="problem-card" style="margin: 0.3em 0; padding: 0.6em;">
+              <strong>자기 참조 오류</strong><br>
+              동일 모델이 생성·검증 시 자기 스타일을 '양질'로 인식<br>
+              <span style="color:#c0392b;">AI-isms 포함 문장 78% 자체 검증 통과</span>
+            </div>
+          </div>
+          <div style="font-size: 0.7em; text-align: left;">
+            <strong>휴리스틱 검출 실패 유형</strong>
+            <table style="font-size: 0.9em;">
+              <tr><th>유형</th><th>설명</th></tr>
+              <tr><td>False Negative</td><td>표현적 문제를 통과</td></tr>
+              <tr><td>False Positive</td><td>합리적 부정 표현까지 차단</td></tr>
+              <tr><td>Multi-pattern</td><td>복합 문제 동시 발생 시 미검</td></tr>
+            </table>
+          </div>
+        </div>
+        <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">-> 단일 검증기로는 한계, <strong>다층 검증 아키텍처</strong>가 필요</p>
+      </section>
+
+      <!-- ===== SECTION 2: WHAT ===== -->
+
+      <!-- Slide 6: Section divider - WHAT -->
+      <section class="section-divider">
+        <span class="badge">WHAT</span>
+        <h2>3-Layer 아키텍처와 5계층 검증</h2>
+      </section>
+
+      <!-- Slide 7: 3-Layer Architecture -->
+      <section>
+        <h2>3-Layer 아키텍처 전체 구조</h2>
+        <pre class="mermaid">graph TD
+  subgraph L1["Layer 1: Domain Classification\n도메인 분류"]
+    D1["D1: 기술 문서"]
+    D2["D2: 교육 콘텐츠"]
+    D3["D3: 프레젠테이션"]
+    D4["D4: 창작물"]
+    D5["D5: 비즈니스"]
+  end
+
+  subgraph L2["Layer 2: Shared Engines\n7개 공유 엔진"]
+    SG["Tier Generator"]
+    TA["Tone Adapter"]
+    AB["Analogy Builder"]
+    TF["Template Filler"]
+    VA["Validator"]
+    MS["Model Selector"]
+    IP["Image Prompt Builder"]
+  end
+
+  subgraph L3["Layer 3: Domain Overlay\n도메인 오버레이"]
+    DO1["D1 Overlay"]
+    DO2["D2 Overlay"]
+    DO3["D3 Overlay"]
+    DO4["D4 Overlay"]
+    DO5["D5 Overlay"]
+  end
+
+  L1 --> L2
+  L2 --> L3
+
+  style L1 fill:#3498db,stroke:#2980b9,color:#fff
+  style L2 fill:#2ecc71,stroke:#1e8449,color:#fff
+  style L3 fill:#e67e22,stroke:#d35400,color:#fff
+</pre>
+        <p style="font-size: 0.6em; color: #666;">데이터는 단일 방향으로 흐름. 각 레이어는 명확한 책임 분리.</p>
+      </section>
+
+      <!-- Slide 8: Layer 1 - Domain classification -->
+      <section>
+        <h2>Layer 1: 도메인 분류 (D1~D5)</h2>
+        <p style="font-size: 0.75em;">메타 스킬이 요청을 수신하고 의도·키워드를 분석하여 5개 도메인으로 매핑</p>
+        <table style="font-size: 0.8em; width: 90%;">
+          <tr style="border-bottom: 2px solid #1a7f37;">
+            <th>도메인</th><th>유형</th><th>최우선 가치</th>
+          </tr>
+          <tr><td><strong>D1 기술 문서</strong></td><td>위키, README, API 문서</td><td>정확성, 구조화</td></tr>
+          <tr><td><strong>D2 교육 콘텐츠</strong></td><td>블로그, 가이드, 튜토리얼</td><td>이해 용이성, 비유</td></tr>
+          <tr><td><strong>D3 프레젠테이션</strong></td><td>슬라이드, 대시보드</td><td>시각적 압축, 진행적 공개</td></tr>
+          <tr><td><strong>D4 창작물</strong></td><td>소설, 시나리오, 에세이</td><td>독창성, 내러티브 흐름</td></tr>
+          <tr><td><strong>D5 비즈니스</strong></td><td>제안서, 이메일, SNS</td><td>명확성, 설득력</td></tr>
+        </table>
+        <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">도메인 분류 결과 -> 엔진 선택 매트릭스 생성</p>
+      </section>
+
+      <!-- Slide 9: Layer 2 - 7 shared engines -->
+      <section>
+        <h2>Layer 2: 7개 공유 엔진</h2>
+        <table style="font-size: 0.72em; width: 95%; text-align: left;">
+          <tr style="border-bottom: 2px solid #1a7f37;">
+            <th>엔진</th><th>역할</th><th>방식</th>
+          </tr>
+          <tr><td><strong>Tier Generator</strong></td><td>L1(인상)->L2(개요)->L3(상세) 계층화</td><td>룰 기반</td></tr>
+          <tr><td><strong>Tone Adapter</strong></td><td>도메인별 어조·어휘·문체 적응</td><td>룰 기반</td></tr>
+          <tr><td><strong>Analogy Builder</strong></td><td>추상 개념 -> 비유/시각 메타포 변환</td><td>RAG + LLM</td></tr>
+          <tr><td><strong>Template Filler</strong></td><td>도메인별 표준 템플릿 렌더링</td><td>템플릿 엔진</td></tr>
+          <tr><td><strong>Validator</strong></td><td>T1(구문) + T2(의미) 2단계 검증</td><td>Hybrid</td></tr>
+          <tr><td><strong>Model Selector</strong></td><td>의도/타겟별 최적 모델 매핑</td><td>룰 기반</td></tr>
+          <tr><td><strong>Image Prompt Builder</strong></td><td>이미지 생성 프롬프트 최적화</td><td>LLM 기반</td></tr>
+        </table>
+      </section>
+
+      <!-- Slide 10: 5-layer verification gates overview -->
+      <section>
+        <h2>5계층 검증 게이트 (L1~L5)</h2>
+        <pre class="mermaid">graph LR
+  IN["Engine Output\n엔진 출력"] --> G1
+  G1["L1: Syntax\n구문 검사"] --> G2
+  G2["L2: Error Strings\n오류 문자열"] --> G3
+  G3["L3: Anti-Slop\n어조 검증"] --> G4
+  G4["L4: Domain Gates\n도메인 게이트"] --> G5
+  G5["L5: Judge Model\n거시적 심사\n(Blog 전용)"] --> OK
+
+  G1 -- "실패" --> FIX1["↩ 재수정"]
+  G2 -- "실패" --> FIX2["↩ 재수정"]
+  G3 -- "실패" --> FIX3["↩ 재수정"]
+  G4 -- "실패" --> FIX4["↩ 재수정"]
+  G5 -- "실패" --> FIX5["↩ 재수정"]
+
+  style G1 fill:#3498db,stroke:#2980b9,color:#fff
+  style G2 fill:#1abc9c,stroke:#16a085,color:#fff
+  style G3 fill:#2ecc71,stroke:#1e8449,color:#fff
+  style G4 fill:#f39c12,stroke:#d68910,color:#fff
+  style G5 fill:#9b59b6,stroke:#8e44ad,color:#fff
+  style OK fill:#1a7f37,stroke:#145a25,color:#fff
+</pre>
+        <p style="font-size: 0.6em; color: #666;">각 계층은 독립 동작. 이전 계층 통과 시에만 다음 계층으로 전달.</p>
+      </section>
+
+      <!-- Slide 11: L3 Anti-Slop detail (core layer) -->
+      <section>
+        <h2>L3: Anti-Slop 검증 (핵심 계층)</h2>
+        <div class="two-col">
+          <div style="font-size: 0.72em; text-align: left;">
+            <strong>차단 패턴</strong>
+            <table style="font-size: 0.9em;">
+              <tr><th>패턴</th><th>처리</th></tr>
+              <tr><td>부정-대조 ("A는 B가 아니라 C")</td><td>"A는 C다" 재작성</td></tr>
+              <tr><td>AI-isms (delve, Moreover)</td><td>제거/대체</td></tr>
+              <tr><td>불필요한 수식어 ("뛰어난")</td><td>문맥 평가 후 제거</td></tr>
+              <tr><td>전이어구 중복 (또한, 그러나)</td><td>사용 횟수 제한</td></tr>
+            </table>
+          </div>
+          <div style="font-size: 0.7em; text-align: left;">
+            <strong>실제 검증 예시</strong>
+<pre><code class="language-bash" data-trim>
+$ python3 validator.py l3 \
+ "이 시스템은 단순한 도구이며 \
+   지능적인 플랫폼입니다"
+
+# 결과
+{
+ "passed": false,
+ "layer": 3,
+ "reason":"negation-contrast pattern",
+ "suggestion":"이 시스템은 \
+                지능적인 플랫폼입니다"
+}
+</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 12: L5 Judge Model -->
+      <section>
+        <h2>L5: Judge Model (Blog 전용)</h2>
+        <div class="two-col">
+          <div style="font-size: 0.8em; text-align: left;">
+            <p>별도 LLM 호출로 <strong>거시적 품질 심사</strong> 수행. Blog 포스트에만 적용.</p>
+            <p><strong>평가 항목</strong></p>
+            <ul>
+              <li>정보 밀도 (문장당 의미 정보량)</li>
+              <li>논리적 흐름 (섹션 간 연결성)</li>
+              <li>독자 대상 적합도 (D1~D5 톤)</li>
+              <li>반복/중복 (문서 수준 중복)</li>
+              <li>기술적 정확성 (근거 존재)</li>
+            </ul>
+          </div>
+          <div style="font-size: 0.8em; text-align: center;">
+            <div style="margin-top: 1.5em;">
+              <span class="stat">23%</span><br>
+              <span class="stat-label">L5 적용 Blog 독자 만족도 개선</span>
+            </div>
+            <p style="font-size: 0.8em; color: #666; margin-top: 1.5em;">
+              Wiki는 L1~L4로 충분<br>
+              Blog는 L5 추가 시 유의미한 차이
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== SECTION 3: HOW ===== -->
+
+      <!-- Slide 13: Section divider - HOW -->
+      <section class="section-divider">
+        <span class="badge" style="background: #0969da;">HOW</span>
+        <h2>파이프라인은 어떻게 동작하는가?</h2>
+      </section>
+
+      <!-- Slide 14: Pipeline code example -->
+      <section>
+        <h2>파이프라인 코드 예시</h2>
+        <pre><code class="language-bash" data-trim data-line="4-6,12-17">
+# 1. JOB에 content: true 플래그 -> workflow-gate.sh가 자동 감지
+#    content-gate.sh를 호출하여 .content-state 생성
+
+bash content-gate.sh JOB-1658 init investigation
+bash content-gate.sh JOB-1658 route design
+
+# 2. validator.py — 레이어별 검증
+python3 validator.py l3"검증할 텍스트"          # 어조
+python3 validator.py l4"Python 3.11 사용" D1    # 도메인
+python3 validator.py l5"Blog 포스트 본문"       # Judge
+
+# 3. 전체 검증 (Python API)
+def run_all_validators(text, domain):
+    results = [
+        validate_l1_schema(text),
+        validate_l2_error_strings(text),
+        validate_l3_voice_constraint(text),
+        validate_l4_domain_gates(text, domain),
+        validate_l5_judge_model(text),
+    ]
+    return all(r['passed'] for r in results)
+        </code></pre>
+        <p style="font-size: 0.6em; color: #666;">.content-state JSON이 각 단계의 엔진 실행 상태를 추적</p>
+      </section>
+
+      <!--"Slide 15: 실제 적용 사례 "-->
+      <section>
+        <h2>실제 적용 사례</h2>
+        <div class="two-col">
+          <div class="solution-card" style="font-size: 0.78em;">
+            <strong>사례 1: Blog 포스트 확장 (JOB-1657)</strong><br>
+            3,500자 개요 -> <strong>10,000자 Blog</strong> (2.8배)<br>
+            <span style="font-size: 0.85em;">
+            D2 분류 -> Tier + Tone + Analogy 엔진<br>
+            L1->L5 전체 검증 통과
+            </span>
+          </div>
+          <div class="solution-card" style="font-size: 0.78em;">
+            <strong>사례 2: Slides 덱 최적화</strong><br>
+            6장 기본 -> <strong>8-9장 최적화 슬라이드</strong><br>
+            <span style="font-size: 0.85em;">
+            D3 분류 -> Tier + Template + Image Prompt<br>
+            L1->L4 검증 (L5 제외)
+            </span>
+          </div>
+        </div>
+        <table style="font-size: 0.72em; width: 95%; margin-top: 0.5em;">
+          <tr style="border-bottom: 2px solid #1a7f37;">
+            <th>도메인</th><th>검증 항목</th><th>예시</th>
+          </tr>
+          <tr><td>D1 기술</td><td>코드 블록, 버전 명시</td><td>Python 3.11</td></tr>
+          <tr><td>D2 교육</td><td>예시 3개+, 단계별 안내</td><td>1단계 -> 2단계 -> 3단계</td></tr>
+          <tr><td>D3 프레젠테이션</td><td>핵심 메시지 1슬라이드</td><td>Progressive disclosure</td></tr>
+          <tr><td>D4 창작</td><td>감정어, 문체 일관성</td><td>시적 표현</td></tr>
+        </table>
+      </section>
+
+      <!-- ===== SECTION 4: TRADE-OFFS ===== -->
+
+      <!-- Slide 16: Section divider -->
+      <section class="section-divider">
+        <span class="badge" style="background: #bc4c00;">TRADE-OFFS</span>
+        <h2>검증 비용과 한계</h2>
+      </section>
+
+      <!-- Slide 17: Trade-offs -->
+      <section>
+        <h2>콘텐츠 시스템의 트레이드오프</h2>
+        <table style="font-size: 0.78em; width: 90%;">
+          <tr>
+            <th style="width: 40%;">이점</th>
+            <th style="width: 40%;">비용 / 한계</th>
+          </tr>
+          <tr>
+            <td>체계적 품질 보증 (5계층)</td>
+            <td>검증 단계당 처리 지연, 토큰 비용</td>
+          </tr>
+          <tr>
+            <td>L5 Judge로 거시적 심사</td>
+            <td>Judge 모델 자체 품질에 의존 (별도 LLM 호출)</td>
+          </tr>
+          <tr>
+            <td>도메인별 전문성 보장 (D1~D5)</td>
+            <td>도메인 분류 오류 시 잘못된 엔진 조합 적용</td>
+          </tr>
+          <tr>
+            <td>Anti-Slop 자동 차단</td>
+            <td>False Positive — 합리적 표현까지 차단 위험</td>
+          </tr>
+        </table>
+        <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">
+          -> Wiki는 L1~L4로 충분, L5 Judge는 Blog에만 선택적 적용 (비용-효용 균형)
+        </p>
+      </section>
+
+      <!-- ===== SECTION 5: SUMMARY ===== -->
+
+      <!-- Slide 18: Summary -->
+      <section>
+        <h2>핵심 요약</h2>
+        <ol style="font-size: 0.85em;">
+          <li class="fragment"><strong>3-Layer 아키텍처</strong>: 메타 스킬(분류) -> 공유 엔진(처리) -> 도메인 오버레이(렌더링)</li>
+          <li class="fragment"><strong>7개 공유 엔진</strong>: Tier·Tone·Analogy·Template·Validator·Model·Image가 구조와 톤 결정</li>
+          <li class="fragment"><strong>5계층 검증 게이트</strong>: L1 구조 -> L2 에러 -> L3 어조(Anti-Slop 핵심) -> L4 도메인 -> L5 Judge</li>
+          <li class="fragment"><strong>D1~D5 도메인 분류</strong>로 기술·교육·프레젠테이션·창작·비즈니스 각각에 최적화</li>
+          <li class="fragment">L5 Judge는 Blog 전용 — <strong>23% 독자 만족도 개선</strong>, 비용-효용 균형 설계</li>
+        </ol>
+        <p class="fragment" style="font-size: 0.7em; color: #888; margin-top: 1em;">"수동 교정이 아닌, 생성부터 검증까지 자동화하는 파이프라인 공학"</p>
+      </section>
+
+      <!-- Slide 20: Q&A -->
+      <section>
+        <h1 style="font-size: 3em;">Q&A</h1>
+        <p style="font-size: 1em;">질문이 있으시면 편하게 말씀해주세요.</p>
+      </section>
+
+      <!-- 더 알아보기 -->
+      <section>
+        <h2>📌 더 알아보기</h2>
+        <div style="font-size: 0.7em; text-align: left; width: 80%; margin: 0 auto;">
+          <p><strong>참고 자료</strong></p>
+          <ul>
+            <li>📚 <a target="_blank" href="../../wiki/guides/content-system.md">Wiki 가이드</a></li>
+            <li>📝 <a target="_blank" href="../../blog/posts/content-system-design.md">Blog 분석</a></li>
+          </ul>
+          <p style="margin-top: 1em;"><strong>관련 슬라이드</strong></p>
+          <ul>
+                  <li>🎯 <a target="_blank" href="./workflow-pipeline.html">Workflow Pipeline</a></li>
+                  <li>🎯 <a href="./knowledge-system.html">Knowledge System</a></li>
+                  <li>🎯 <a href="./spec-driven-dev.html">Spec-Driven Dev</a></li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="../js/reveal.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: 'c/t',
+      controls: true,
+      progress: true,
+      center: true,
+      transition: 'slide',
+      fragments: true,
+      minScale: 0.15,
+      maxScale: 2.0
+    }).then(() => {
+      mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
+      // Wait for all mermaid renders then attach zoom
+      Promise.allSettled(Array.from(document.querySelectorAll('.mermaid')).map((el, idx) => {
+        const code = el.textContent.trim();
+        return mermaid.render('m' + idx, code).then(({ svg }) => { el.innerHTML = svg; }).catch(e => { console.error('Mermaid render failed', e); });
+      })).then(() => {
+        document.querySelectorAll('.mermaid').forEach(el => {
+          el.setAttribute('data-zoomable', 'true');
+          el.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const overlay = document.getElementById('mermaid-zoom-overlay');
+            overlay.innerHTML = el.innerHTML;
+            overlay.classList.add('active');
+          });
+        });
+        document.getElementById('mermaid-zoom-overlay').addEventListener('click', () => {
+          document.getElementById('mermaid-zoom-overlay').classList.remove('active');
+        });
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          document.getElementById('mermaid-zoom-overlay').classList.remove('active');
+        }
+      });
+    });
+    Reveal.addEventListener('ready', () => {
+      document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightElement(block);
+      });
+    });
+  </script>
+  <div id="mermaid-zoom-overlay" class="mermaid-zoom-overlay"></div>
+</body>
+</html>

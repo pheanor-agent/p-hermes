@@ -1,0 +1,131 @@
+/* ==================================================
+ * SVG 다이어그램 공통 스타일 (JOB-1699)
+ * 16:9 준수 + 한글 폰트 + 마진 개선
+ * ================================================== */
+
+/* --- 16:9 기준 레이아웃 --- */
+:root {
+  --slide-width: 1280px;
+  --slide-height: 720px;
+  --slide-padding: 60px;
+  --content-width: 1160px;
+  --content-height: 600px;
+  --diagram-margin: 40px;
+  --diagram-max-width: 1080px;
+  --diagram-max-height: 520px;
+}
+
+/* --- SVG 다이어그램 --- */
+.diagram-svg {
+  max-width: var(--diagram-max-width);
+  max-height: var(--diagram-max-height);
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: var(--diagram-margin) auto;
+  background: #fafafa;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* --- 한글 폰트 --- */
+.diagram-svg text {
+  font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+}
+
+/* --- 노드 스타일 --- */
+.diagram-svg .node-body {
+  fill: #f0faf0;
+  stroke: #1a7f37;
+  stroke-width: 1.5;
+}
+
+.diagram-svg .node-label {
+  font-size: 13px;
+  fill: #333;
+}
+
+.diagram-svg .node-sublabel {
+  font-size: 10px;
+  fill: #666;
+}
+
+/* --- 계층 박스 --- */
+.diagram-svg .subgraph-body {
+  fill: #fafafa;
+  stroke: #c0c0c0;
+  stroke-width: 1;
+}
+
+.diagram-svg .subgraph-title {
+  font-size: 13px;
+  font-weight: bold;
+  fill: #1a7f37;
+}
+
+/* --- 화살표 --- */
+.diagram-svg .arrow-line {
+  stroke: #666;
+  stroke-width: 1.5;
+}
+
+.diagram-svg .arrow-line-green {
+  stroke: #1a7f37;
+  stroke-width: 1.5;
+}
+
+.diagram-svg .arrow-head {
+  fill: #666;
+}
+
+.diagram-svg .arrow-head-green {
+  fill: #1a7f37;
+}
+
+/* --- 테이블 마진 개선 --- */
+.reveal .slides table {
+  max-width: var(--content-width) !important;
+  margin: 30px auto !important;
+  table-layout: fixed !important;
+  word-break: keep-all !important;
+  font-size: var(--scale-small, 0.75em);
+}
+
+/* --- 문단 마진 개선 --- */
+.reveal .slides p,
+.reveal .slides .problem-card,
+.reveal .slides .solution-card {
+  max-width: var(--content-width) !important;
+  margin: 20px auto !important;
+  padding: 0 40px !important;
+}
+
+/* --- 두 колон布局 --- */
+.two-col {
+  display: flex;
+  gap: 40px !important;
+  max-width: var(--content-width) !important;
+  margin: 0 auto !important;
+  padding: 20px 40px !important;
+}
+
+.two-col > div { flex: 1; }
+
+/* --- 제목 마진 --- */
+.reveal .slides h2 {
+  margin-bottom: 20px !important;
+}
+
+/* --- 다이어그램 캡션 --- */
+.diagram-caption {
+  font-size: var(--scale-caption, 0.65em);
+  color: #666;
+  text-align: center;
+  margin-top: 10px;
+  max-width: var(--content-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 40px;
+}
