@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Workflow Pipeline · Golden Circle</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:#0f1117;color:#e8eaed;overflow:hidden;
+    width:100vw;height:100vh;
+  }
+  .stage{
+    width:100vw;height:100vh;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    position:relative;overflow:hidden;
+  }
+  .slide{
+    display:none;flex-direction:column;justify-content:center;align-items:center;
+    width:86%;max-width:960px;min-height:60vh;
+    animation:fadeIn .45s ease-out;
+    padding:24px 32px;
+  }
+  .slide.active{display:flex}
+
+  h1{font-size:2.6rem;font-weight:700;letter-spacing:-.02em;margin-bottom:20px}
+  h2{font-size:1.9rem;font-weight:600;margin-bottom:16px}
+  h3{font-size:1.4rem;font-weight:500;margin-bottom:12px;color:#9aa0a6}
+  p{font-size:1.2rem;line-height:1.7;max-width:780px;text-align:center}
+  .gc-why h1{color:#fbbc04}
+  .gc-what h1{color:#8ab4f8}
+  .gc-how h1{color:#81c995}
+  .gc-title h1{background:linear-gradient(135deg,#fbbc04,#f28b82);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+  .tag{
+    display:inline-block;font-size:.8rem;font-weight:600;letter-spacing:.08em;
+    padding:4px 14px;border-radius:20px;margin-bottom:14px;text-transform:uppercase;
+  }
+  .tag-why{background:#fbbc0433;color:#fbbc04}
+  .tag-what{background:#8ab4f833;color:#8ab4f8}
+  .tag-how{background:#81c99533;color:#81c995}
+  .tag-pros{background:#34a85333;color:#34a853}
+  .tag-cons{background:#ea433533;color:#ea4335}
+
+  .grid-3{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:20px;width:100%;max-width:860px;margin:12px 0;
+  }
+  .card{
+    background:#1e2029;border-radius:14px;padding:22px 18px;text-align:center;
+    border:1px solid #2d2f3a;transition:border-color .2s;
+  }
+  .card:hover{border-color:#fbbc0466}
+  .card .icon{font-size:2rem;margin-bottom:8px}
+  .card h4{font-size:1.1rem;font-weight:600;margin-bottom:6px}
+  .card p{font-size:.95rem;color:#9aa0a6;line-height:1.5}
+
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:#1e2029;border:1px solid #2d2f3a;
+    padding:6px 16px;border-radius:30px;font-size:.95rem;margin:4px;
+  }
+
+  .stat-row{display:flex;gap:28px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+  .stat{text-align:center}
+  .stat .num{font-size:2.8rem;font-weight:700}
+  .stat .num.gold{color:#fbbc04}
+  .stat .num.blue{color:#8ab4f8}
+  .stat .num.green{color:#81c995}
+  .stat .num.red{color:#f28b82}
+  .stat .lbl{font-size:.9rem;color:#9aa0a6;margin-top:2px}
+
+  .pipeline{
+    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0;
+  }
+  .pipe-step{
+    background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;
+    padding:10px 16px;text-align:center;min-width:90px;
+  }
+  .pipe-step .num{font-size:1rem;font-weight:700;color:#fbbc04}
+  .pipe-step .lbl{font-size:.85rem;color:#9aa0a6}
+
+  .list-compact{text-align:left;max-width:680px;margin:10px auto;list-style:none}
+  .list-compact li{
+    padding:8px 0;font-size:1.1rem;line-height:1.6;
+    display:flex;align-items:flex-start;gap:10px;
+  }
+  .list-compact li::before{content:"▸";color:#fbbc04;font-weight:700}
+
+  .arrow-flow{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .arrow-flow .node{
+    background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;
+    padding:12px 18px;text-align:center;min-width:100px;
+  }
+  .arrow-flow .node .lbl{font-size:.85rem;color:#9aa0a6}
+  .arrow-flow .node .val{font-size:1.1rem;font-weight:600;margin-top:2px}
+  .arrow-flow .arrow{font-size:1.5rem;color:#5f6368}
+
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px;width:100%;max-width:860px;margin:12px 0}
+  .two-col .col{text-align:center}
+
+  .nav-bar{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    display:flex;align-items:center;gap:14px;
+    background:#1e2029;border:1px solid #2d2f3a;
+    padding:8px 20px;border-radius:30px;z-index:100;
+  }
+  .nav-bar button{
+    background:none;border:none;color:#9aa0a6;font-size:1.2rem;
+    cursor:pointer;padding:4px 8px;border-radius:6px;transition:all .2s;
+    line-height:1;
+  }
+  .nav-bar button:hover{color:#e8eaed;background:#2d2f3a}
+  .nav-bar .counter{
+    font-size:.85rem;color:#5f6368;min-width:48px;text-align:center;
+  }
+  .nav-dots{display:flex;gap:5px}
+  .nav-dots .dot{
+    width:8px;height:8px;border-radius:50%;background:#2d2f3a;
+    cursor:pointer;transition:all .25s;
+  }
+  .nav-dots .dot.active{background:#fbbc04;width:20px;border-radius:4px}
+
+  @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+  @media(max-width:700px){
+    h1{font-size:1.8rem}
+    h2{font-size:1.5rem}
+    p{font-size:1rem}
+    .grid-3{grid-template-columns:1fr}
+    .two-col{grid-template-columns:1fr}
+    .slide{width:92%;padding:16px}
+    .nav-bar{gap:8px;padding:6px 14px}
+  }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage"></div>
+<div class="nav-bar" id="navBar">
+  <button id="prevBtn">◀</button>
+  <span class="counter" id="counter">1/1</span>
+  <div class="nav-dots" id="dots"></div>
+  <button id="nextBtn">▶</button>
+</div>
+
+<script>
+const slides = [
+  // ────────────── 1: Title ──────────────
+  {
+    cls:'gc-title',
+    html:`<span class="tag tag-why">GOLDEN CIRCLE</span>
+      <h1>Workflow Pipeline</h1>
+      <h2>9단계 상태머신</h2>
+      <p style="color:#9aa0a6;margin-top:30px;font-size:1rem">
+        WHY &nbsp;·&nbsp; WHAT &nbsp;·&nbsp; HOW &nbsp;·&nbsp; PROS &amp; CONS
+      </p>`
+  },
+  // ────────────── 2: Agenda ──────────────
+  {
+    cls:'',
+    html:`<h1>Agenda</h1>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:20px;text-align:left">
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 20px;background:#1e2029;border-radius:12px;border-left:4px solid #fbbc04">
+          <span style="font-size:1.4rem;font-weight:700;color:#fbbc04">01</span>
+          <div><strong style="color:#fbbc04">WHY</strong><br><span style="font-size:.9rem;color:#9aa0a6">재앙 3가지 + 근본 원인</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 20px;background:#1e2029;border-radius:12px;border-left:4px solid #8ab4f8">
+          <span style="font-size:1.4rem;font-weight:700;color:#8ab4f8">02</span>
+          <div><strong style="color:#8ab4f8">WHAT</strong><br><span style="font-size:.9rem;color:#9aa0a6">9단계 상태머신 · 상태전이 검증 · 산출물 강제</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 20px;background:#1e2029;border-radius:12px;border-left:4px solid #81c995">
+          <span style="font-size:1.4rem;font-weight:700;color:#81c995">03</span>
+          <div><strong style="color:#81c995">HOW</strong><br><span style="font-size:.9rem;color:#9aa0a6">상태 확인 · 전이 실행 · 산출물 검증</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 20px;background:#1e2029;border-radius:12px;border-left:4px solid #34a853">
+          <span style="font-size:1.4rem;font-weight:700;color:#34a853">04</span>
+          <div><strong style="color:#34a853">PROS &amp; CONS</strong><br><span style="font-size:.9rem;color:#9aa0a6">효과와 한계</span></div>
+        </div>
+      </div>`
+  },
+  // ────────────── 3: WHY - 3 Disasters ──────────────
+  {
+    cls:'gc-why',
+    html:`<span class="tag tag-why">WHY · 재앙 3가지</span>
+      <h1>파이프라인 없는 대가</h1>
+      <div class="grid-3">
+        <div class="card">
+          <div class="icon">📐</div>
+          <h4>Context Miss</h4>
+          <p>들여쓰기 한 줄 오류 →<br>전체 부팅 실패</p>
+        </div>
+        <div class="card">
+          <div class="icon">💥</div>
+          <h4>Irreversible</h4>
+          <p>수백 줄 일괄 수정 →<br>예외 증발, 복구 불가</p>
+        </div>
+        <div class="card">
+          <div class="icon">🤖</div>
+          <h4>Agent Rampage</h4>
+          <p>15개 파일 동시 편집 →<br>6시간 복구 지옥</p>
+        </div>
+      </div>`
+  },
+  // ────────────── 4: WHY - Root Cause ──────────────
+  {
+    cls:'gc-why',
+    html:`<span class="tag tag-why">WHY · 근본 원인</span>
+      <h1>관문(Gate)의 부재</h1>
+      <div style="display:flex;gap:20px;margin-top:16px;flex-wrap:wrap;justify-content:center">
+        <div style="background:#1e2029;border:2px solid #fbbc0466;border-radius:14px;padding:24px 28px;max-width:360px;text-align:center">
+          <div style="font-size:2.6rem;margin-bottom:10px">🚧</div>
+          <p style="font-size:1rem;color:#9aa0a6;line-height:1.6">
+            <strong style="color:#fbbc04">상태 전이</strong>에<br>검증 관문이 없었다
+          </p>
+        </div>
+        <div style="background:#1e2029;border:2px solid #fbbc0466;border-radius:14px;padding:24px 28px;max-width:360px;text-align:center">
+          <div style="font-size:2.6rem;margin-bottom:10px">📋</div>
+          <p style="font-size:1rem;color:#9aa0a6;line-height:1.6">
+            <strong style="color:#fbbc04">산출물 요구사항</strong>과<br>검증 절차가 없었다
+          </p>
+        </div>
+      </div>
+      <p style="margin-top:20px;color:#f28b82;font-weight:600;font-size:1.1rem">
+        → 작은 실수가 재앙이 되는 구조
+      </p>`
+  },
+  // ────────────── 5: WHAT - 9단계 개요 ──────────────
+  {
+    cls:'gc-what',
+    html:`<span class="tag tag-what">WHAT · 해결책</span>
+      <h1>9단계 상태머신</h1>
+      <p style="margin-bottom:8px">모든 작업을 9개 상태로 분할,<br>각 단계마다 <strong style="color:#8ab4f8">검증 관문</strong>과 <strong style="color:#8ab4f8">산출물</strong> 강제</p>
+      <div class="pipeline">
+        <div class="pipe-step"><div class="num">1</div><div class="lbl">요청</div></div>
+        <div class="pipe-step"><div class="num">2</div><div class="lbl">분석</div></div>
+        <div class="pipe-step"><div class="num">3</div><div class="lbl">설계</div></div>
+        <div class="pipe-step"><div class="num">4</div><div class="lbl">승인</div></div>
+        <div class="pipe-step"><div class="num">5</div><div class="lbl">구현</div></div>
+        <div class="pipe-step"><div class="num">6</div><div class="lbl">검토</div></div>
+        <div class="pipe-step"><div class="num">7</div><div class="lbl">테스트</div></div>
+        <div class="pipe-step"><div class="num">8</div><div class="lbl">배포</div></div>
+        <div class="pipe-step"><div class="num">9</div><div class="lbl">확인</div></div>
+      </div>
+      <p style="color:#9aa0a6;font-size:1rem;margin-top:8px">
+        각 단계 ← 조건 만족 시에만 → 다음 단계
+      </p>`
+  },
+  // ────────────── 6: WHAT - 9단계 상세 ──────────────
+  {
+    cls:'gc-what',
+    html:`<span class="tag tag-what">WHAT · 9단계 상세</span>
+      <h1>단계별 진입 조건</h1>
+      <div class="two-col" style="gap:12px">
+        <div class="col">
+          <div class="badge" style="color:#8ab4f8;border-color:#8ab4f844">1 요청 → 과제 정의서</div>
+          <div class="badge" style="color:#8ab4f8;border-color:#8ab4f844">2 분석 → 영향도 분석서</div>
+          <div class="badge" style="color:#8ab4f8;border-color:#8ab4f844">3 설계 → 설계 문서</div>
+          <div class="badge" style="color:#8ab4f8;border-color:#8ab4f844">4 승인 → 승인 기록</div>
+          <div class="badge" style="color:#c58af9;border-color:#c58af944">5 구현 → 코드 변경분</div>
+        </div>
+        <div class="col">
+          <div class="badge" style="color:#c58af9;border-color:#c58af944">6 검토 → 리뷰 로그</div>
+          <div class="badge" style="color:#c58af9;border-color:#c58af944">7 테스트 → 테스트 결과</div>
+          <div class="badge" style="color:#34a853;border-color:#34a85344">8 배포 → 배포 내역</div>
+          <div class="badge" style="color:#34a853;border-color:#34a85344">9 확인 → 검증 보고서</div>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem;margin-top:12px">
+        각 단계 통과 시 산출물이 자동 생성·보관됨
+      </p>`
+  },
+  // ────────────── 7: WHAT - 상태전이 검증 ──────────────
+  {
+    cls:'gc-what',
+    html:`<span class="tag tag-what">WHAT · 상태전이 검증</span>
+      <h1>무단 전이 차단</h1>
+      <p>의도하지 않은 상태 점프를 <strong style="color:#8ab4f8">컴파일 타임</strong>에 차단</p>
+      <div class="arrow-flow" style="max-width:540px;margin:20px auto">
+        <div class="node" style="border-color:#8ab4f866">
+          <div class="val">분석</div>
+          <div class="lbl">2단계</div>
+        </div>
+        <div class="arrow" style="color:#f28b82">✗</div>
+        <div class="node" style="border-color:#5f6368;opacity:.5">
+          <div class="val">테스트</div>
+          <div class="lbl">7단계</div>
+        </div>
+      </div>
+      <div class="list-compact" style="margin:8px auto">
+        <li><strong>허용 전이:</strong> n → n, n → n+1, n → n-1 (롤백)</li>
+        <li><strong>금지 전이:</strong> n → n+2 이상 점프</li>
+        <li><strong>강제 조건:</strong> 산출물 완료 → 전이 가능</li>
+      </div>`
+  },
+  // ────────────── 8: WHAT - 산출물 강제 ──────────────
+  {
+    cls:'gc-what',
+    html:`<span class="tag tag-what">WHAT · 산출물 강제</span>
+      <h1>통과 조건 = 산출물</h1>
+      <div class="grid-3" style="grid-template-columns:1fr 1fr;max-width:660px">
+        <div class="card" style="border-color:#8ab4f833">
+          <div class="icon">📄</div>
+          <h4>없음 → 승인 거부</h4>
+          <p>산출물 미제출 시 다음 상태로<br>전이 자체가 불가</p>
+        </div>
+        <div class="card" style="border-color:#8ab4f833">
+          <div class="icon">✅</div>
+          <h4>자동 검증</h4>
+          <p>형식·필수 항목 누락을<br>자동으로 감지</p>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem;margin-top:12px">
+        "산출물이 곧 품질이다"
+      </p>`
+  },
+  // ────────────── 9: HOW - 상태 확인 ──────────────
+  {
+    cls:'gc-how',
+    html:`<span class="tag tag-how">HOW · 1단계</span>
+      <h1>상태 확인</h1>
+      <p>현재 워크플로우의 <strong style="color:#81c995">진행 상태</strong>를 진단</p>
+      <div style="background:#1e2029;border:1px solid #2d2f3a;border-radius:14px;padding:20px 28px;margin:16px 0;max-width:680px;width:100%;font-family:monospace;font-size:1rem;text-align:left;color:#9aa0a6">
+        <span style="color:#81c995">$</span> workflow status<br>
+        <span style="color:#e8eaed">▶ 현재 단계: <strong style="color:#81c995">5. 구현</strong></span><br>
+        &nbsp;&nbsp;이전 단계: 4. 승인 (완료)<br>
+        &nbsp;&nbsp;미완료 산출물: 테스트 코드<br>
+        &nbsp;&nbsp;차단된 전이: 배포 (테스트 미통과)
+      </div>`
+  },
+  // ────────────── 10: HOW - 전이 실행 ──────────────
+  {
+    cls:'gc-how',
+    html:`<span class="tag tag-how">HOW · 2단계</span>
+      <h1>전이 실행</h1>
+      <p>검증된 조건 충족 시 <strong style="color:#81c995">상태 전이</strong> 명령</p>
+      <div style="display:flex;gap:16px;margin:16px 0;flex-wrap:wrap;justify-content:center">
+        <div style="background:#1e2029;border:1px solid #81c99544;border-radius:12px;padding:18px 24px;text-align:center;min-width:180px">
+          <div style="font-size:1.2rem;font-weight:600;color:#81c995">workflow enter</div>
+          <div style="font-size:.9rem;color:#9aa0a6;margin-top:4px">다음 단계 진입</div>
+        </div>
+        <div style="background:#1e2029;border:1px solid #f28b8244;border-radius:12px;padding:18px 24px;text-align:center;min-width:180px">
+          <div style="font-size:1.2rem;font-weight:600;color:#f28b82">workflow rollback</div>
+          <div style="font-size:.9rem;color:#9aa0a6;margin-top:4px">이전 단계 복귀</div>
+        </div>
+        <div style="background:#1e2029;border:1px solid #8ab4f844;border-radius:12px;padding:18px 24px;text-align:center;min-width:180px">
+          <div style="font-size:1.2rem;font-weight:600;color:#8ab4f8">workflow abort</div>
+          <div style="font-size:.9rem;color:#9aa0a6;margin-top:4px">작업 중단</div>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem">
+        전이는 항상 산출물 검증 후에만 실행
+      </p>`
+  },
+  // ────────────── 11: HOW - 산출물 검증 ──────────────
+  {
+    cls:'gc-how',
+    html:`<span class="tag tag-how">HOW · 3단계</span>
+      <h1>산출물 검증</h1>
+      <p>각 단계 통과 전 <strong style="color:#81c995">산출물 체크리스트</strong> 통과 필수</p>
+      <div class="list-compact" style="margin:10px auto">
+        <li>분석 단계 <span style="color:#81c995">✓</span> 영향도 분석서 존재</li>
+        <li>설계 단계 <span style="color:#81c995">✓</span> 설계 문서 승인 완료</li>
+        <li>구현 단계 <span style="color:#81c995">✓</span> 단위 테스트 통과</li>
+        <li>배포 단계 <span style="color:#81c995">✓</span> 배포 스크립트 검증</li>
+        <li>확인 단계 <span style="color:#81c995">✓</span> 모니터링 알람 정상</li>
+      </div>`
+  },
+  // ────────────── 12: HOW - Workflow Flow ──────────────
+  {
+    cls:'gc-how',
+    html:`<span class="tag tag-how">HOW · Workflow 흐름</span>
+      <h1>일상 운영 사이클</h1>
+      <div class="arrow-flow">
+        <div class="node" style="border-color:#81c99566"><div class="val">상태 확인</div><div class="lbl">status</div></div>
+        <div class="arrow">→</div>
+        <div class="node" style="border-color:#81c99566"><div class="val">전이 실행</div><div class="lbl">enter</div></div>
+        <div class="arrow">→</div>
+        <div class="node" style="border-color:#81c99566"><div class="val">산출물 검증</div><div class="lbl">verify</div></div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem;margin-top:12px">
+        매 사이클마다 3단계 반복 · 실패 시 롤백
+      </p>
+      <div style="background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;padding:12px 20px;margin-top:10px;max-width:600px">
+        <p style="font-size:.9rem;color:#9aa0a6">
+          <span style="color:#81c995">TIP</span> CI/CD 파이프라인에<br>자동 상태 전이 훅 연결 가능
+        </p>
+      </div>`
+  },
+  // ────────────── 13: PROS ──────────────
+  {
+    cls:'',
+    html:`<span class="tag tag-pros">PROS</span>
+      <h1>도입 효과</h1>
+      <div class="stat-row">
+        <div class="stat">
+          <div class="num gold">0</div>
+          <div class="lbl">사고 건수<br><span style="font-size:.8rem;color:#5f6368">도입 후 현재까지</span></div>
+        </div>
+        <div class="stat">
+          <div class="num green">⬇78%</div>
+          <div class="lbl">재작업 감소</div>
+        </div>
+        <div class="stat">
+          <div class="num blue">⬇64%</div>
+          <div class="lbl">롤백 감소</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;margin-top:8px;flex-wrap:wrap;justify-content:center">
+        <div class="badge" style="border-color:#34a85344;color:#34a853">✅ 실수 차단</div>
+        <div class="badge" style="border-color:#34a85344;color:#34a853">✅ 히스토리 추적</div>
+        <div class="badge" style="border-color:#34a85344;color:#34a853">✅ 책임 소재 명확</div>
+      </div>`
+  },
+  // ────────────── 14: CONS ──────────────
+  {
+    cls:'',
+    html:`<span class="tag tag-cons">CONS</span>
+      <h1>고려할 점</h1>
+      <div class="grid-3">
+        <div class="card" style="border-color:#ea433533">
+          <div class="icon">📖</div>
+          <h4>학습 기간</h4>
+          <p>9단계 체계에 적응하는<br>데 시간 필요</p>
+        </div>
+        <div class="card" style="border-color:#ea433533">
+          <div class="icon">⚡</div>
+          <h4>오버헤드</h4>
+          <p>단순 작업에도<br>상태 전이 절차 적용</p>
+        </div>
+        <div class="card" style="border-color:#ea433533">
+          <div class="icon">⚠️</div>
+          <h4>과잉</h4>
+          <p>매우 사소한 변경까지<br>파이프라인에 넣을 위험</p>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem;margin-top:8px">
+        <strong style="color:#e8eaed">대책:</strong> 간소화 룰 · 예외 처리 · 단계 스킵 권한
+      </p>`
+  },
+  // ────────────── 15: SUMMARY ──────────────
+  {
+    cls:'',
+    html:`<span class="tag" style="background:#8ab4f833;color:#8ab4f8">SUMMARY</span>
+      <h1>3가지 핵심</h1>
+      <div class="grid-3" style="gap:24px">
+        <div class="card" style="border:2px solid #fbbc0466;padding:28px 18px">
+          <div style="font-size:2.4rem;font-weight:700;color:#fbbc04">01</div>
+          <h4 style="margin-top:10px">관문 설치</h4>
+          <p>무단 상태 전이 차단<br>작은 실수 = 재앙 구조 해체</p>
+        </div>
+        <div class="card" style="border:2px solid #8ab4f866;padding:28px 18px">
+          <div style="font-size:2.4rem;font-weight:700;color:#8ab4f8">02</div>
+          <h4 style="margin-top:10px">산출물 강제</h4>
+          <p>모든 단계에 검증 조건<br>통과 기록 자동 보관</p>
+        </div>
+        <div class="card" style="border:2px solid #81c99566;padding:28px 18px">
+          <div style="font-size:2.4rem;font-weight:700;color:#81c995">03</div>
+          <h4 style="margin-top:10px">3단계 루틴</h4>
+          <p>상태 확인 → 전이 → 검증<br>매일 반복 가능한 리듬</p>
+        </div>
+      </div>
+      <p style="margin-top:20px;color:#9aa0a6;font-size:1rem;font-style:italic">
+        "검증 없는 전이는 재앙의 지름길"
+      </p>`
+  }
+];
+
+// ── render engine ──
+let idx = 0;
+const stage = document.getElementById('stage');
+const dotsEl = document.getElementById('dots');
+const counter = document.getElementById('counter');
+
+function render(n){
+  const s = slides[n];
+  stage.innerHTML = `<div class="slide active ${s.cls||''}">${s.html}</div>`;
+  counter.textContent = `${n+1}/${slides.length}`;
+  Array.from(dotsEl.children).forEach((d,i)=>d.classList.toggle('active',i===n));
+}
+document.getElementById('prevBtn').onclick = ()=>{ idx=(idx-1+slides.length)%slides.length; render(idx); };
+document.getElementById('nextBtn').onclick = ()=>{ idx=(idx+1)%slides.length; render(idx); };
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '){e.preventDefault();idx=(idx+1)%slides.length;render(idx);}
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();idx=(idx-1+slides.length)%slides.length;render(idx);}
+  if(e.key==='Home'){e.preventDefault();idx=0;render(idx);}
+  if(e.key==='End'){e.preventDefault();idx=slides.length-1;render(idx);}
+});
+
+(function initDots(){
+  for(let i=0;i<slides.length;i++){
+    const d=document.createElement('div');d.className='dot';
+    d.onclick=()=>{idx=i;render(idx);};
+    dotsEl.appendChild(d);
+  }
+  render(0);
+})();
+</script>
+</body>
+</html>

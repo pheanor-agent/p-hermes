@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Model Routing · Golden Circle</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:#0f1117;color:#e8eaed;overflow:hidden;
+    width:100vw;height:100vh;
+  }
+  .stage{
+    width:100vw;height:100vh;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    position:relative;overflow:hidden;
+  }
+  .slide{
+    display:none;flex-direction:column;justify-content:center;align-items:center;
+    width:86%;max-width:960px;min-height:60vh;
+    animation:fadeIn .45s ease-out;
+    padding:24px 32px;
+  }
+  .slide.active{display:flex}
+
+  h1{font-size:2.6rem;font-weight:700;letter-spacing:-.02em;margin-bottom:20px}
+  h2{font-size:1.9rem;font-weight:600;margin-bottom:16px}
+  h3{font-size:1.4rem;font-weight:500;margin-bottom:12px;color:#9aa0a6}
+  p{font-size:1.2rem;line-height:1.7;max-width:780px;text-align:center}
+  .gc-why h1{color:#fbbc04}
+  .gc-what h1{color:#8ab4f8}
+  .gc-how h1{color:#81c995}
+  .gc-title h1{background:linear-gradient(135deg,#6366f1,#22d3ee);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .gc-summary h1{background:linear-gradient(135deg,#fbbc04,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+  .tag{
+    display:inline-block;font-size:.8rem;font-weight:600;letter-spacing:.08em;
+    padding:4px 14px;border-radius:20px;margin-bottom:14px;text-transform:uppercase;
+  }
+  .tag-why{background:#fbbc0433;color:#fbbc04}
+  .tag-what{background:#8ab4f833;color:#8ab4f8}
+  .tag-how{background:#81c99533;color:#81c995}
+  .tag-pros{background:#34a85333;color:#34a853}
+  .tag-cons{background:#ea433533;color:#ea4335}
+  .tag-summary{background:#6366f133;color:#a5b4fc}
+
+  .grid-3{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:20px;width:100%;max-width:860px;margin:12px 0;
+  }
+  .grid-2{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:20px;width:100%;max-width:660px;margin:12px 0;
+  }
+  .card{
+    background:#1e2029;border-radius:14px;padding:22px 18px;text-align:center;
+    border:1px solid #2d2f3a;transition:border-color .2s;
+  }
+  .card:hover{border-color:#fbbc0466}
+  .card .icon{font-size:2rem;margin-bottom:8px}
+  .card h4{font-size:1.1rem;font-weight:600;margin-bottom:6px}
+  .card p{font-size:.95rem;color:#9aa0a6;line-height:1.5}
+
+  .card-accent{
+    background:#1e2029;border-radius:14px;padding:22px 18px;text-align:center;
+    border:1px solid #6366f144;
+  }
+  .card-accent h4{font-size:1.1rem;font-weight:600;margin-bottom:6px;color:#a5b4fc}
+  .card-accent p{font-size:.95rem;color:#9aa0a6;line-height:1.5}
+
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:#1e2029;border:1px solid #2d2f3a;
+    padding:6px 16px;border-radius:30px;font-size:.95rem;margin:4px;
+  }
+
+  .stat-row{display:flex;gap:28px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+  .stat{text-align:center}
+  .stat .num{font-size:2.8rem;font-weight:700}
+  .stat .num.gold{color:#fbbc04}
+  .stat .num.blue{color:#8ab4f8}
+  .stat .num.green{color:#81c995}
+  .stat .num.red{color:#f28b82}
+  .stat .num.purple{color:#a5b4fc}
+  .stat .lbl{font-size:.9rem;color:#9aa0a6;margin-top:2px}
+
+  .arrow-flow{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .arrow-flow .node{
+    background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;
+    padding:12px 18px;text-align:center;min-width:100px;
+  }
+  .arrow-flow .node .lbl{font-size:.85rem;color:#9aa0a6}
+  .arrow-flow .node .val{font-size:1.1rem;font-weight:600;margin-top:2px}
+  .arrow-flow .arrow{font-size:1.5rem;color:#5f6368}
+
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px;width:100%;max-width:860px;margin:12px 0}
+  .two-col .col{text-align:center}
+
+  .list-compact{text-align:left;max-width:680px;margin:10px auto;list-style:none}
+  .list-compact li{
+    padding:8px 0;font-size:1.1rem;line-height:1.6;
+    display:flex;align-items:flex-start;gap:10px;
+  }
+  .list-compact li::before{content:"▸";color:#6366f1;font-weight:700}
+
+  .pipeline{
+    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0;
+  }
+  .pipe-step{
+    background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;
+    padding:10px 16px;text-align:center;min-width:90px;
+  }
+  .pipe-step .num{font-size:1rem;font-weight:700;color:#8ab4f8}
+  .pipe-step .lbl{font-size:.85rem;color:#9aa0a6}
+
+  .role-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:800px;margin:12px 0;
+  }
+  .role-item{
+    background:#1e2029;border:1px solid #2d2f3a;border-radius:12px;
+    padding:14px 12px;text-align:center;
+  }
+  .role-item .r-icon{font-size:1.4rem;margin-bottom:4px}
+  .role-item .r-name{font-size:.9rem;font-weight:600;color:#e8eaed}
+  .role-item .r-model{font-size:.8rem;color:#6366f1;margin-top:2px;font-family:'JetBrains Mono',monospace}
+  .role-item.gold{border-color:#fbbc0444}
+  .role-item.gold .r-model{color:#fbbc04}
+  .role-item.green{border-color:#81c99544}
+  .role-item.green .r-model{color:#81c995}
+  .role-item.blue{border-color:#8ab4f844}
+  .role-item.blue .r-model{color:#8ab4f8}
+  .role-item.purple{border-color:#a855f744}
+  .role-item.purple .r-model{color:#a855f7}
+
+  .fallback-chain{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:16px 0}
+  .fb-node{
+    padding:14px 22px;border-radius:12px;text-align:center;min-width:110px;
+    border:2px solid;
+  }
+  .fb-node.primary{border-color:#6366f1;background:#6366f122;color:#a5b4fc}
+  .fb-node.secondary{border-color:#22c55e;background:#22c55e11;color:#22c55e}
+  .fb-node.tertiary{border-color:#22d3ee;background:#22d3ee11;color:#22d3ee}
+  .fb-node .fb-label{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;opacity:.6;margin-bottom:2px}
+  .fb-node .fb-model{font-size:1rem;font-weight:600}
+  .fb-arrow{font-size:1.3rem;color:#5f6368}
+
+  .pros-grid,.cons-grid{
+    display:flex;flex-direction:column;gap:12px;width:100%;max-width:400px;margin:8px;
+  }
+  .pros-item,.cons-item{
+    background:#1e2029;border-radius:12px;padding:16px 20px;
+    display:flex;align-items:center;gap:14px;
+  }
+  .pros-item{border:1px solid #34a85344}
+  .cons-item{border:1px solid #ea433544}
+  .pros-item .check{color:#34a853;font-size:1.4rem;font-weight:700}
+  .cons-item .cross{color:#ea4335;font-size:1.4rem;font-weight:700}
+  .pros-item .txt{font-size:.95rem;color:#e8eaed}
+  .pros-item .txt .hl{color:#34a853;font-weight:600}
+  .cons-item .txt{font-size:.95rem;color:#e8eaed}
+  .cons-item .txt .hl{color:#ea4335;font-weight:600}
+
+  .summary-block{
+    background:#1e2029;border:2px solid #6366f144;border-radius:16px;
+    padding:32px;text-align:center;max-width:720px;width:100%;margin:16px 0;
+  }
+  .summary-block .main-line{font-size:1.8rem;font-weight:700;margin-bottom:12px;line-height:1.4}
+  .summary-block .sub-line{font-size:1rem;color:#9aa0a6;line-height:1.6;margin-bottom:20px}
+
+  .nav-bar{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    display:flex;align-items:center;gap:14px;
+    background:#1e2029;border:1px solid #2d2f3a;
+    padding:8px 20px;border-radius:30px;z-index:100;
+  }
+  .nav-bar button{
+    background:none;border:none;color:#9aa0a6;font-size:1.2rem;
+    cursor:pointer;padding:4px 8px;border-radius:6px;transition:all .2s;
+    line-height:1;
+  }
+  .nav-bar button:hover{color:#e8eaed;background:#2d2f3a}
+  .nav-bar .counter{
+    font-size:.85rem;color:#5f6368;min-width:48px;text-align:center;
+  }
+  .nav-dots{display:flex;gap:5px}
+  .nav-dots .dot{
+    width:8px;height:8px;border-radius:50%;background:#2d2f3a;
+    cursor:pointer;transition:all .25s;
+  }
+  .nav-dots .dot.active{background:#6366f1;width:20px;border-radius:4px}
+
+  @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+  @media(max-width:700px){
+    h1{font-size:1.8rem}
+    h2{font-size:1.5rem}
+    p{font-size:1rem}
+    .grid-3,.grid-2,.role-grid{grid-template-columns:1fr}
+    .two-col{grid-template-columns:1fr}
+    .slide{width:92%;padding:16px}
+    .nav-bar{gap:8px;padding:6px 14px}
+  }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage"></div>
+<div class="nav-bar" id="navBar">
+  <button id="prevBtn">◀</button>
+  <span class="counter" id="counter">1/1</span>
+  <div class="nav-dots" id="dots"></div>
+  <button id="nextBtn">▶</button>
+</div>
+
+<script>
+const slides = [
+  // ────────────── 1: Title ──────────────
+  {
+    cls:'gc-title',
+    html:`<span class="tag tag-why">GOLDEN CIRCLE</span>
+      <h1>Model Routing</h1>
+      <h2 style="color:#9aa0a6;font-weight:400">작업별 최적 모델 자동 선택</h2>
+      <div style="display:flex;gap:20px;margin-top:30px;justify-content:center">
+        <span class="badge" style="border-color:#fbbc0444;color:#fbbc04">WHY</span>
+        <span class="badge" style="border-color:#8ab4f844;color:#8ab4f8">WHAT</span>
+        <span class="badge" style="border-color:#81c99544;color:#81c995">HOW</span>
+        <span class="badge" style="border-color:#9aa0a644">PROS &amp; CONS</span>
+      </div>
+      <p style="color:#5f6368;margin-top:20px;font-size:1rem">
+        Role 기반 라우팅 · 2계층 설정 · 자동 Fallback
+      </p>`
+  },
+  // ────────────── 2: Agenda ──────────────
+  {
+    cls:'',
+    html:`<h1>Agenda</h1>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:20px;text-align:left">
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 20px;background:#1e2029;border-radius:12px;border-left:4px solid #fbbc04">
+          <span style="font-size:1.4rem;font-weight:700;color:#fbbc04">01</span>
+          <div><strong style="color:#fbbc04">WHY</strong><br><span style="font-size:.9rem;color:#9aa0a6">모델별 특화 · 비용 효율 · 가용성 관리 · 근원:수동 라우팅</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 20px;background:#1e2029;border-radius:12px;border-left:4px solid #8ab4f8">
+          <span style="font-size:1.4rem;font-weight:700;color:#8ab4f8">02</span>
+          <div><strong style="color:#8ab4f8">WHAT</strong><br><span style="font-size:.9rem;color:#9aa0a6">Role 기반 라우팅 · 2계층 설정 · 자동 Fallback</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 20px;background:#1e2029;border-radius:12px;border-left:4px solid #81c995">
+          <span style="font-size:1.4rem;font-weight:700;color:#81c995">03</span>
+          <div><strong style="color:#81c995">HOW</strong><br><span style="font-size:.9rem;color:#9aa0a6">역할 정의 · 모델 매핑 · 장애 대응</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 20px;background:#1e2029;border-radius:12px;border-left:4px solid #34a853">
+          <span style="font-size:1.4rem;font-weight:700;color:#34a853">04</span>
+          <div><strong style="color:#34a853">PROS &amp; CONS</strong><br><span style="font-size:.9rem;color:#9aa0a6">최적 성능 · 비용 효율 · 설정 복잡 · 오버헤드</span></div>
+        </div>
+      </div>`
+  },
+  // ────────────── 3: WHY - Problem 1 ──────────────
+  {
+    cls:'gc-why',
+    html:`<span class="tag tag-why">WHY · 문제 1</span>
+      <h1>모델별 특화</h1>
+      <p>하나의 모델로 모든 작업을 <strong style="color:#fbbc04">최적으로 처리할 수 없습니다</strong>.</p>
+      <div class="grid-3" style="margin-top:24px">
+        <div class="card" style="border-color:#f28b8244">
+          <div class="icon">🧠</div>
+          <h4>Coding</h4>
+          <p>코드 생성/리뷰는<br>Claude가 최적</p>
+        </div>
+        <div class="card" style="border-color:#f28b8244">
+          <div class="icon">🔬</div>
+          <h4>Reasoning</h4>
+          <p>수리/논리 추론은<br>DeepSeek이 최적</p>
+        </div>
+        <div class="card" style="border-color:#f28b8244">
+          <div class="icon">🎨</div>
+          <h4>Creative</h4>
+          <p>창작/번역은<br>Qwen이 최적</p>
+        </div>
+      </div>
+      <p style="color:#f28b82;font-size:1rem;margin-top:10px">하나의 모델로 모든 작업 → 최적 불가</p>`
+  },
+  // ────────────── 4: WHY - Problem 2 ──────────────
+  {
+    cls:'gc-why',
+    html:`<span class="tag tag-why">WHY · 문제 2</span>
+      <h1>비용 효율 문제</h1>
+      <p>고성능 모델은 <strong style="color:#fbbc04">비용이 높습니다</strong>. 작업 난이도에 맞는 선택이 필요합니다.</p>
+      <div class="two-col" style="max-width:700px;margin-top:20px">
+        <div class="col">
+          <div style="background:#1e2029;border:1px solid #f28b8244;border-radius:14px;padding:24px">
+            <div style="font-size:2rem;font-weight:700;color:#f28b82">고성능</div>
+            <p style="font-size:.95rem;color:#e8eaed;margin-top:10px">복잡한 추론 · 코드 생성</p>
+            <div style="margin-top:10px;padding:6px 12px;background:#f28b8211;border-radius:6px;display:inline-block;font-size:.85rem;color:#f28b82">비용: 높음</div>
+          </div>
+        </div>
+        <div class="col">
+          <div style="background:#1e2029;border:1px solid #34a85344;border-radius:14px;padding:24px">
+            <div style="font-size:2rem;font-weight:700;color:#34a853">경량</div>
+            <p style="font-size:.95rem;color:#e8eaed;margin-top:10px">단순 QA · 빠른 응답</p>
+            <div style="margin-top:10px;padding:6px 12px;background:#34a85311;border-radius:6px;display:inline-block;font-size:.85rem;color:#34a853">비용: 낮음</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:#1e2029;border:1px solid #2d2f3a;border-radius:12px;padding:18px 24px;margin-top:16px;max-width:600px">
+        <p style="font-size:.95rem;color:#9aa0a6">
+          <strong style="color:#f28b82">문제:</strong> 단순 질문에 고성능 모델 사용 시 불필요한 비용 발생<br>
+          <strong style="color:#34a853">해결:</strong> 작업 유형별 적정 모델 선택으로 <strong style="color:#34a853">최대 70% 비용 절감</strong>
+        </p>
+      </div>`
+  },
+  // ────────────── 5: WHY - Problem 3 + Root Cause ──────────────
+  {
+    cls:'gc-why',
+    html:`<span class="tag tag-why">WHY · 문제 3</span>
+      <h1>가용성 관리</h1>
+      <p>단일 모델 의존은 <strong style="color:#fbbc04">장애 시 전체 마비</strong>로 이어집니다.</p>
+      <div class="grid-3" style="margin-top:20px">
+        <div class="card" style="border-color:#f28b8244">
+          <div class="icon">🔌</div>
+          <h4>제공자 장애</h4>
+          <p>API 서버 다운 시<br>대체 모델 필요</p>
+        </div>
+        <div class="card" style="border-color:#f28b8244">
+          <div class="icon">⏳</div>
+          <h4>Rate Limit</h4>
+          <p>요청 한도 초과 시<br>자동 전환 필요</p>
+        </div>
+        <div class="card" style="border-color:#f28b8244">
+          <div class="icon">🌐</div>
+          <h4>네트워크 장애</h4>
+          <p>지역별 가용성 차이<br>대응 필요</p>
+        </div>
+      </div>
+      <div style="background:#1e2029;border:2px solid #fbbc0444;border-radius:14px;padding:18px 24px;margin-top:16px;max-width:600px;text-align:center">
+        <p style="font-size:1rem;color:#fbbc04;font-weight:600">근원: 수동 라우팅</p>
+        <p style="font-size:.85rem;color:#9aa0a6;margin-top:4px">모든 문제의 근본 원인은 작업별 모델을 수동으로 선택/관리해야 한다는 점</p>
+      </div>`
+  },
+  // ────────────── 6: WHAT - Role 기반 라우팅 ──────────────
+  {
+    cls:'gc-what',
+    html:`<span class="tag tag-what">WHAT · 해결책 1</span>
+      <h1>Role 기반 라우팅</h1>
+      <p>작업 유형별 <strong style="color:#8ab4f8">6개 Role</strong>이 각각 최적 모델에 자동 매핑됩니다.</p>
+      <div class="role-grid" style="margin-top:20px">
+        <div class="role-item gold">
+          <div class="r-icon">⚙</div>
+          <div class="r-name">default</div>
+          <div class="r-model">GPT-4o</div>
+        </div>
+        <div class="role-item blue">
+          <div class="r-icon">💻</div>
+          <div class="r-name">coding</div>
+          <div class="r-model">Claude Sonnet</div>
+        </div>
+        <div class="role-item gold">
+          <div class="r-icon">🧮</div>
+          <div class="r-name">reasoning</div>
+          <div class="r-model">DeepSeek R1</div>
+        </div>
+        <div class="role-item purple">
+          <div class="r-icon">🎨</div>
+          <div class="r-name">creative</div>
+          <div class="r-model">Qwen</div>
+        </div>
+        <div class="role-item green">
+          <div class="r-icon">⚡</div>
+          <div class="r-name">fast</div>
+          <div class="r-model">GPT-4o Mini</div>
+        </div>
+        <div class="role-item blue">
+          <div class="r-icon">👁</div>
+          <div class="r-name">vision</div>
+          <div class="r-model">GPT-4o</div>
+        </div>
+      </div>
+      <p style="color:#8ab4f8;font-size:.95rem;margin-top:8px">작업 유형 감지 → Role 할당 → 최적 모델 자동 선택</p>`
+  },
+  // ────────────── 7: WHAT - 2계층 설정 ──────────────
+  {
+    cls:'gc-what',
+    html:`<span class="tag tag-what">WHAT · 해결책 2</span>
+      <h1>2계층 설정 (SSOT + Override)</h1>
+      <p><strong style="color:#8ab4f8">model-roles.yaml</strong>이 단일 진실 공급원(SSOT)이며,<br><strong style="color:#8ab4f8">config.yaml</strong>에서 프로필별 오버라이드가 가능합니다.</p>
+      <div class="two-col" style="max-width:700px;margin-top:20px">
+        <div class="col">
+          <div style="background:#1e2029;border:1px solid #8ab4f844;border-radius:14px;padding:24px">
+            <div style="font-size:1.4rem;font-weight:700;color:#8ab4f8">SSOT</div>
+            <p style="font-size:.85rem;color:#9aa0a6;margin-top:8px">model-roles.yaml<br>팀 공통 Role-모델 매핑</p>
+            <div style="margin-top:12px;padding:8px 12px;background:#0f1117;border-radius:8px;text-align:left;font-size:.75rem;color:#9aa0a6;font-family:monospace">
+              roles:<br>
+              &nbsp;&nbsp;coding: claude-sonnet<br>
+              &nbsp;&nbsp;reasoning: deepseek-r1<br>
+              &nbsp;&nbsp;fast: gpt-4o-mini
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div style="background:#1e2029;border:1px solid #fbbc0444;border-radius:14px;padding:24px">
+            <div style="font-size:1.4rem;font-weight:700;color:#fbbc04">Override</div>
+            <p style="font-size:.85rem;color:#9aa0a6;margin-top:8px">config.yaml<br>개인/프로필별 설정</p>
+            <div style="margin-top:12px;padding:8px 12px;background:#0f1117;border-radius:8px;text-align:left;font-size:.75rem;color:#9aa0a6;font-family:monospace">
+              model-roles:<br>
+              &nbsp;&nbsp;reasoning: qwen-max
+            </div>
+          </div>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem;margin-top:8px">
+        SSOT가 우선순위 1순위, Override가 2순위 — 계층 구조로 충돌 해소
+      </p>`
+  },
+  // ────────────── 8: WHAT - 자동 Fallback ──────────────
+  {
+    cls:'gc-what',
+    html:`<span class="tag tag-what">WHAT · 해결책 3</span>
+      <h1>자동 Fallback 체인</h1>
+      <p>장애 발생 시 <strong style="color:#8ab4f8">사전 정의된 Fallback 체인</strong>으로 자동 전환됩니다.</p>
+      <div class="fallback-chain" style="margin-top:20px">
+        <div class="fb-node primary">
+          <div class="fb-label">1차</div>
+          <div class="fb-model">DeepSeek</div>
+        </div>
+        <div class="fb-arrow">→</div>
+        <div class="fb-node secondary">
+          <div class="fb-label">Fallback</div>
+          <div class="fb-model">Qwen</div>
+        </div>
+        <div class="fb-arrow">→</div>
+        <div class="fb-node tertiary">
+          <div class="fb-label">Fallback</div>
+          <div class="fb-model">GLM</div>
+        </div>
+      </div>
+      <div class="grid-3" style="margin-top:16px;max-width:700px">
+        <div class="card" style="border-color:#f28b8244;padding:16px">
+          <div class="icon" style="font-size:1.4rem">✕</div>
+          <h4 style="font-size:.95rem">1차 장애</h4>
+          <p style="font-size:.85rem">DeepSeek 장애 시<br>자동으로 Qwen 전환</p>
+        </div>
+        <div class="card" style="border-color:#f9731644;padding:16px">
+          <div class="icon" style="font-size:1.4rem">✕</div>
+          <h4 style="font-size:.95rem">2차 장애</h4>
+          <p style="font-size:.85rem">Qwen까지 장애 시<br>GLM 최종 Fallback</p>
+        </div>
+        <div class="card" style="border-color:#34a85344;padding:16px">
+          <div class="icon" style="font-size:1.4rem">✓</div>
+          <h4 style="font-size:.95rem">복구</h4>
+          <p style="font-size:.85rem">복구 후 자동으로<br>1차 모델 재시도</p>
+        </div>
+      </div>`
+  },
+  // ────────────── 9: HOW - 역할 정의 ──────────────
+  {
+    cls:'gc-how',
+    html:`<span class="tag tag-how">HOW · 1단계</span>
+      <h1>역할 정의</h1>
+      <p style="margin-bottom:8px">JOB 유형별로 필요한 <strong style="color:#81c995">Role</strong>을 정의합니다.</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:16px">
+        <div style="background:#1e2029;border:1px solid #81c99544;border-radius:14px;padding:20px 24px;text-align:center;max-width:300px">
+          <div style="font-size:1.8rem;margin-bottom:6px">📋</div>
+          <h4 style="font-size:1.1rem;font-weight:600;margin-bottom:6px">작업 유형 분류</h4>
+          <p style="font-size:.9rem;color:#9aa0a6;line-height:1.5">coding / reasoning / creative 등<br>시스템이 처리하는 작업 유형 식별</p>
+        </div>
+        <div style="background:#1e2029;border:1px solid #81c99544;border-radius:14px;padding:20px 24px;text-align:center;max-width:300px">
+          <div style="font-size:1.8rem;margin-bottom:6px">📊</div>
+          <h4 style="font-size:1.1rem;font-weight:600;margin-bottom:6px">요구사항 명시</h4>
+          <p style="font-size:.9rem;color:#9aa0a6;line-height:1.5">각 Role에 필요한 성능,<br>속도, 비용 기준 설정</p>
+        </div>
+      </div>
+      <div class="list-compact" style="margin:12px auto">
+        <li>Role은 <strong>작업의 성격</strong>에 따라 분류 — 모델이 아닌 작업 중심</li>
+        <li>각 Role은 <strong>하나의 주 책임</strong>만 가짐 (SRP 원칙)</li>
+      </div>`
+  },
+  // ────────────── 10: HOW - 모델 매핑 ──────────────
+  {
+    cls:'gc-how',
+    html:`<span class="tag tag-how">HOW · 2단계</span>
+      <h1>모델 매핑 (model-roles.yaml)</h1>
+      <p>각 Role에 <strong style="color:#81c995">최적의 모델</strong>을 매핑합니다.</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:16px">
+        <div style="background:#1e2029;border:1px solid #81c99544;border-radius:14px;padding:20px 24px;text-align:center;max-width:280px">
+          <div style="font-size:1.8rem;margin-bottom:6px">🔗</div>
+          <h4 style="font-size:1.1rem;font-weight:600;margin-bottom:6px">SSOT 정의</h4>
+          <p style="font-size:.9rem;color:#9aa0a6;line-height:1.5">model-roles.yaml에<br>Role별 1차/2차/3차 모델 지정</p>
+        </div>
+        <div style="background:#1e2029;border:1px solid #81c99544;border-radius:14px;padding:20px 24px;text-align:center;max-width:280px">
+          <div style="font-size:1.8rem;margin-bottom:6px">⚡</div>
+          <h4 style="font-size:1.1rem;font-weight:600;margin-bottom:6px">Override</h4>
+          <p style="font-size:.9rem;color:#9aa0a6;line-height:1.5">config.yaml로<br>개인 설정 오버라이드</p>
+        </div>
+      </div>
+      <div style="background:#1e2029;border:1px solid #81c99544;border-radius:10px;padding:12px 20px;margin-top:12px;max-width:650px;text-align:left">
+        <p style="font-size:.85rem;color:#9aa0a6;font-family:monospace;line-height:1.7">
+          <span style="color:#81c995">model-roles.yaml</span><br>
+          roles:<br>
+          &nbsp;&nbsp;coding: { primary: claude-sonnet, fallback: [gpt-4o, qwen-max] }<br>
+          &nbsp;&nbsp;reasoning: { primary: deepseek-r1, fallback: [qwen-max, glm-4] }
+        </p>
+      </div>`
+  },
+  // ────────────── 11: HOW - 장애 대응 ──────────────
+  {
+    cls:'gc-how',
+    html:`<span class="tag tag-how">HOW · 3단계</span>
+      <h1>장애 대응 (Fallback 체인)</h1>
+      <p><strong style="color:#81c995">자동 Fallback</strong>으로 서비스 연속성을 보장합니다.</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:16px">
+        <div style="background:#1e2029;border:1px solid #81c99544;border-radius:14px;padding:20px 24px;text-align:center;max-width:260px">
+          <div style="font-size:1.8rem;margin-bottom:6px">🔃</div>
+          <h4 style="font-size:1.1rem;font-weight:600;margin-bottom:6px">우선순위</h4>
+          <p style="font-size:.9rem;color:#9aa0a6;line-height:1.5">1차 실패 시 2차,<br>2차 실패 시 3차</p>
+        </div>
+        <div style="background:#1e2029;border:1px solid #81c99544;border-radius:14px;padding:20px 24px;text-align:center;max-width:260px">
+          <div style="font-size:1.8rem;margin-bottom:6px">🔍</div>
+          <h4 style="font-size:1.1rem;font-weight:600;margin-bottom:6px">장애 탐지</h4>
+          <p style="font-size:.9rem;color:#9aa0a6;line-height:1.5">HTTP 오류 / Timeout /<br>Rate Limit 자동 감지</p>
+        </div>
+        <div style="background:#1e2029;border:1px solid #81c99544;border-radius:14px;padding:20px 24px;text-align:center;max-width:260px">
+          <div style="font-size:1.8rem;margin-bottom:6px">🔄</div>
+          <h4 style="font-size:1.1rem;font-weight:600;margin-bottom:6px">복구 재시도</h4>
+          <p style="font-size:.9rem;color:#9aa0a6;line-height:1.5">주기적으로 1차 모델<br>상태 확인 후 재전환</p>
+        </div>
+      </div>
+      <div class="arrow-flow" style="max-width:550px;margin:10px auto">
+        <div class="node" style="border-color:#6366f166">
+          <div class="val" style="color:#a5b4fc;font-size:.9rem">1차 실패</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="node" style="border-color:#22c55e66">
+          <div class="val" style="color:#22c55e;font-size:.9rem">2차 시도</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="node" style="border-color:#22d3ee66">
+          <div class="val" style="color:#22d3ee;font-size:.9rem">3차 최종</div>
+        </div>
+      </div>`
+  },
+  // ────────────── 12: PROS ──────────────
+  {
+    cls:'',
+    html:`<h1>Pros</h1>
+      <p style="margin-bottom:6px">Model Routing의 <strong style="color:#34a853">핵심 장점</strong>입니다.</p>
+      <div class="two-col" style="max-width:700px;margin-top:16px">
+        <div class="col">
+          <div class="pros-grid">
+            <div class="pros-item">
+              <span class="check">✓</span>
+              <span class="txt"><span class="hl">최적 성능</span><br>작업 유형별 가장 적합한 모델 자동 선택</span>
+            </div>
+            <div class="pros-item">
+              <span class="check">✓</span>
+              <span class="txt"><span class="hl">비용 효율</span><br>경량 작업에는 경량 모델, 복잡 작업에는 고성능 모델</span>
+            </div>
+            <div class="pros-item">
+              <span class="check">✓</span>
+              <span class="txt"><span class="hl">장애 복원력</span><br>Fallback 체인으로 단일 모델 장애 차단</span>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div style="background:#1e2029;border:1px solid #34a85344;border-radius:14px;padding:24px;text-align:center">
+            <div style="font-size:2.4rem;font-weight:700;color:#34a853">3</div>
+            <p style="font-size:.9rem;color:#9aa0a6;margin-top:4px">핵심 장점</p>
+            <p style="font-size:.85rem;color:#5f6368;margin-top:8px">성능 · 비용 · 복원력<br>세 마리 토끼를 동시에</p>
+          </div>
+        </div>
+      </div>`
+  },
+  // ────────────── 13: CONS ──────────────
+  {
+    cls:'',
+    html:`<h1>Cons</h1>
+      <p style="margin-bottom:6px">인지해야 할 <strong style="color:#ea4335">한계와 트레이드오프</strong>입니다.</p>
+      <div class="two-col" style="max-width:700px;margin-top:16px">
+        <div class="col">
+          <div class="cons-grid">
+            <div class="cons-item">
+              <span class="cross">✗</span>
+              <span class="txt"><span class="hl">설정 복잡</span><br>2계층 설정(model-roles.yaml + config.yaml) 이해 필요</span>
+            </div>
+            <div class="cons-item">
+              <span class="cross">✗</span>
+              <span class="txt"><span class="hl">라우팅 오버헤드</span><br>Role 판별 및 Fallback 로직의 미세 지연 (수ms)</span>
+            </div>
+            <div class="cons-item">
+              <span class="cross">✗</span>
+              <span class="txt"><span class="hl">모델 특성 파악</span><br>각 모델의 강점/약점 이해가 최적 매핑의 전제</span>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div style="background:#1e2029;border:1px solid #ea433544;border-radius:14px;padding:24px;text-align:center">
+            <div style="font-size:2.4rem;font-weight:700;color:#ea4335">3</div>
+            <p style="font-size:.9rem;color:#9aa0a6;margin-top:4px">주요 한계</p>
+            <p style="font-size:.85rem;color:#5f6368;margin-top:8px">초기 학습 곡선 존재<br>설정 오버헤드 고려 필요</p>
+          </div>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem;margin-top:8px">
+        단순한 시스템에는 Single Model이 더 적합할 수 있음
+      </p>`
+  },
+  // ────────────── 14: SUMMARY ──────────────
+  {
+    cls:'gc-summary',
+    html:`<span class="tag tag-summary">SUMMARY</span>
+      <div class="summary-block">
+        <div class="main-line">
+          <span style="color:#fbbc04">작업별</span> 최적 모델 <span style="color:#6366f1">자동 선택</span><br>
+          <span style="color:#22c55e">2계층 오버라이드</span> + <span style="color:#22d3ee">자동 Fallback</span>
+        </div>
+        <div class="sub-line">
+          Model Routing은 단순한 모델 전환 도구가 아니라,<br>
+          <strong>작업의 성격에 맞는 최적의 결정</strong>을 자동화하는 인프라입니다.
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat">
+          <div class="num gold">6</div>
+          <div class="lbl">Role (default/coding/reasoning/creative/fast/vision)</div>
+        </div>
+        <div class="stat">
+          <div class="num blue">2계층</div>
+          <div class="lbl">SSOT + Override</div>
+        </div>
+        <div class="stat">
+          <div class="num green">3중</div>
+          <div class="lbl">Fallback Chain</div>
+        </div>
+        <div class="stat">
+          <div class="num purple">✓</div>
+          <div class="lbl">자동 복구</div>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem;font-style:italic;margin-top:10px">
+        "하나의 모델에 의존하지 말고, 작업에 맞는 최적의 모델을 활용하라"
+      </p>`
+  }
+];
+
+// ── render engine ──
+let idx = 0;
+const stage = document.getElementById('stage');
+const dotsEl = document.getElementById('dots');
+const counter = document.getElementById('counter');
+
+function render(n){
+  const s = slides[n];
+  stage.innerHTML = `<div class="slide active ${s.cls||''}">${s.html}</div>`;
+  counter.textContent = `${n+1}/${slides.length}`;
+  Array.from(dotsEl.children).forEach((d,i)=>d.classList.toggle('active',i===n));
+}
+document.getElementById('prevBtn').onclick = ()=>{ idx=(idx-1+slides.length)%slides.length; render(idx); };
+document.getElementById('nextBtn').onclick = ()=>{ idx=(idx+1)%slides.length; render(idx); };
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '){e.preventDefault();idx=(idx+1)%slides.length;render(idx);}
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();idx=(idx-1+slides.length)%slides.length;render(idx);}
+  if(e.key==='Home'){e.preventDefault();idx=0;render(idx);}
+  if(e.key==='End'){e.preventDefault();idx=slides.length-1;render(idx);}
+});
+
+(function initDots(){
+  for(let i=0;i<slides.length;i++){
+    const d=document.createElement('div');d.className='dot';
+    d.onclick=()=>{idx=i;render(idx);};
+    dotsEl.appendChild(d);
+  }
+  render(0);
+})();
+</script>
+</body>
+</html>

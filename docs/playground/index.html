@@ -1,275 +1,289 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🧪 p-hermes Playground</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', Roboto, sans-serif;
-      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-      color: #e0e0e0;
-      min-height: 100vh;
-      padding: 40px 20px;
-    }
-    .container { max-width: 960px; margin: 0 auto; }
-    header { text-align: center; margin-bottom: 50px; }
-    h1 {
-      font-size: 2.8rem;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 12px;
-    }
-    .tagline { color: #a0a0b8; font-size: 1.1rem; }
-    .badge {
-      display: inline-block;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 20px;
-      padding: 4px 14px;
-      font-size: 0.8rem;
-      color: #c0c0d8;
-      margin-top: 16px;
-    }
-    .section-title {
-      font-size: 1.3rem;
-      color: #a0a0d0;
-      margin: 40px 0 20px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .comparison {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-bottom: 40px;
-    }
-    .space-card {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: 20px;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .space-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    }
-    .space-card.playground {
-      border-color: #667eea;
-      background: rgba(102, 126, 234, 0.08);
-    }
-    .space-icon { font-size: 1.8rem; margin-bottom: 8px; }
-    .space-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
-    .space-desc { font-size: 0.85rem; color: #9090b0; margin-bottom: 10px; }
-    .space-meta { font-size: 0.78rem; color: #707090; }
-    .space-meta span { display: inline-block; margin-right: 12px; }
-    .status-active { color: #4ade80; }
-    .status-fixed { color: #94a3b8; }
-    .status-experimental { color: #c084fc; }
-    .experiments {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
-    }
-    .exp-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 10px;
-      padding: 18px;
-      transition: border-color 0.2s;
-    }
-    .exp-card:hover { border-color: rgba(102, 126, 234, 0.4); }
-    .deck-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 12px;
-    }
-    .deck-card {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 8px;
-      padding: 14px;
-      text-align: center;
-      transition: background 0.2s;
-    }
-    .deck-card:hover { background: rgba(102, 126, 234, 0.12); }
-    .deck-card a {
-      color: #a0b4ff;
-      text-decoration: none;
-      font-size: 0.9rem;
-      display: block;
-    }
-    .deck-card a:hover { color: #c0d0ff; }
-    .deck-card p {
-      font-size: 0.78rem;
-      color: #808090;
-      margin-top: 6px;
-    }
-    footer {
-      margin-top: 50px;
-      padding-top: 20px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      text-align: center;
-      color: #606078;
-      font-size: 0.82rem;
-    }
-    footer a { color: #8080a8; }
-    .info-note {
-      background: rgba(192, 132, 252, 0.08);
-      border-left: 3px solid #c084fc;
-      border-radius: 4px;
-      padding: 12px 16px;
-      margin: 20px 0;
-      font-size: 0.88rem;
-      color: #c0c0e0;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header>
-      <h1>🧪 p-hermes Playground</h1>
-      <p class="tagline">슬라이드 실험 공간 — 자유로운 시도와 탐구를 위한 공간</p>
-      <span class="badge">🔬 Experimental · README 미연결 · 자유 수정 가능</span>
-    </header>
-
-    <div class="info-note">
-      💡 이 공간은 운영 슬라이드에 영향을 주지 않고 다양한 레이아웃, 디자인, 시각화 실험을
-      진행하기 위한 Playground입니다. 실험 결과는 운영 슬라이드(<code>slides/</code>)로
-      반영될 수 있습니다.
-    </div>
-
-    <h2 class="section-title">📍 3가지 공간 비교</h2>
-    <div class="comparison">
-      <div class="space-card">
-        <div class="space-icon">📊</div>
-        <div class="space-name">Slides (운영)</div>
-        <div class="space-desc">활성 배포 슬라이드. README에 연결됨.</div>
-        <div class="space-meta"><span class="status-active">● 활성</span><span>README ✅</span></div>
-      </div>
-      <div class="space-card">
-        <div class="space-icon">📦</div>
-        <div class="space-name">Archive (스냅샷)</div>
-        <div class="space-desc">Round 7 고정 스냅샷. 변경 불가.</div>
-        <div class="space-meta"><span class="status-fixed">● 고정</span><span>README ❌</span></div>
-      </div>
-      <div class="space-card playground">
-        <div class="space-icon">🧪</div>
-        <div class="space-name">Playground (실험)</div>
-        <div class="space-desc">자유 실험 공간. 언제든 변경 가능.</div>
-        <div class="space-meta"><span class="status-experimental">● 실험중</span><span>README ❌</span></div>
-      </div>
-    </div>
-
-    <h2 class="section-title">🔬 실험 목록 (exp-001~006)</h2>
-    <div class="experiments">
-      <div class="exp-card">
-        <div class="space-icon">📝</div>
-        <div class="space-name"><a href="experiments/exp-001-gpt-slide-review.md" style="color:#a0b4ff;text-decoration:none;">exp-001: GPT Slide Review</a></div>
-        <div class="space-desc">GPT 피드백 기반 슬라이드 검토</div>
-        <div class="space-meta"><span class="status-active">● input</span></div>
-      </div>
-      <div class="exp-card">
-        <div class="space-icon">🎨</div>
-        <div class="space-name"><a href="experiments/exp-002-gpt-design-review.md" style="color:#a0b4ff;text-decoration:none;">exp-002: GPT Design Review v1</a></div>
-        <div class="space-desc">GPT content-system v2 — 7개 지적</div>
-        <div class="space-meta"><span class="status-active">● input</span></div>
-      </div>
-      <div class="exp-card">
-        <div class="space-icon">🔧</div>
-        <div class="space-name"><a href="experiments/exp-003-gpt-design-review-v2.md" style="color:#a0b4ff;text-decoration:none;">exp-003: GPT Design Review v2</a></div>
-        <div class="space-desc">GPT content-system v3 — 5개 위험</div>
-        <div class="space-meta"><span class="status-active">● input</span></div>
-      </div>
-      <div class="exp-card">
-        <div class="space-icon">🌟</div>
-        <div class="space-name"><a href="slides-v2/exp-004-hero.html" style="color:#a0b4ff;text-decoration:none;" target="_blank">exp-004: Hero 적용</a></div>
-        <div class="space-desc">direction-guide section_flow[0]</div>
-        <div class="space-meta"><span class="status-active">● new</span></div>
-      </div>
-      <div class="exp-card">
-        <div class="space-icon">🤔</div>
-        <div class="space-name"><a href="slides-v2/exp-005-hero-why.html" style="color:#a0b4ff;text-decoration:none;" target="_blank">exp-005: Hero + WHY</a></div>
-        <div class="space-desc">3열 비교 카드 실험</div>
-        <div class="space-meta"><span class="status-active">● new</span></div>
-      </div>
-      <div class="exp-card">
-        <div class="space-icon">📐</div>
-        <div class="space-name"><a href="slides-v2/exp-006-full-flow.html" style="color:#a0b4ff;text-decoration:none;" target="_blank">exp-006: 6단계 전체 흐름</a></div>
-        <div class="space-desc">Golden Circle 6단계 전체 적용</div>
-        <div class="space-meta"><span class="status-active">● new</span></div>
-      </div>
-    </div>
-
-    <h2 class="section-title">🔄 Golden Circle 변환 덱 (gc/)</h2>
-    <p style="color:#9090b0;font-size:0.9rem;margin-bottom:16px;">실제 운영 슬라이드 8개를 Pre-Direction Engine의 direction-guide (golden_circle, D3) 기반 Golden Circle 6단계로 변환</p>
+1|<!DOCTYPE html>
+2|<html lang="ko">
+3|<head>
+4|  <meta charset="UTF-8">
+5|  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+6|  <title>🧪 p-hermes Playground</title>
+7|  <style>
+8|    * { margin: 0; padding: 0; box-sizing: border-box; }
+9|    body {
+10|      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', Roboto, sans-serif;
+11|      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+12|      color: #e0e0e0;
+13|      min-height: 100vh;
+14|      padding: 40px 20px;
+15|    }
+16|    .container { max-width: 960px; margin: 0 auto; }
+17|    header { text-align: center; margin-bottom: 50px; }
+18|    h1 {
+19|      font-size: 2.8rem;
+20|      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+21|      -webkit-background-clip: text;
+22|      -webkit-text-fill-color: transparent;
+23|      background-clip: text;
+24|      margin-bottom: 12px;
+25|    }
+26|    .tagline { color: #a0a0b8; font-size: 1.1rem; }
+27|    .badge {
+28|      display: inline-block;
+29|      background: rgba(255, 255, 255, 0.08);
+30|      border: 1px solid rgba(255, 255, 255, 0.15);
+31|      border-radius: 20px;
+32|      padding: 4px 14px;
+33|      font-size: 0.8rem;
+34|      color: #c0c0d8;
+35|      margin-top: 16px;
+36|    }
+37|    .section-title {
+38|      font-size: 1.3rem;
+39|      color: #a0a0d0;
+40|      margin: 40px 0 20px;
+41|      padding-bottom: 10px;
+42|      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+43|    }
+44|    .comparison {
+45|      display: grid;
+46|      grid-template-columns: repeat(3, 1fr);
+47|      gap: 16px;
+48|      margin-bottom: 40px;
+49|    }
+50|    .space-card {
+51|      background: rgba(255, 255, 255, 0.04);
+52|      border: 1px solid rgba(255, 255, 255, 0.08);
+53|      border-radius: 12px;
+54|      padding: 20px;
+55|      transition: transform 0.2s, box-shadow 0.2s;
+56|    }
+57|    .space-card:hover {
+58|      transform: translateY(-3px);
+59|      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+60|    }
+61|    .space-card.playground {
+62|      border-color: #667eea;
+63|      background: rgba(102, 126, 234, 0.08);
+64|    }
+65|    .space-icon { font-size: 1.8rem; margin-bottom: 8px; }
+66|    .space-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+67|    .space-desc { font-size: 0.85rem; color: #9090b0; margin-bottom: 10px; }
+68|    .space-meta { font-size: 0.78rem; color: #707090; }
+69|    .space-meta span { display: inline-block; margin-right: 12px; }
+70|    .status-active { color: #4ade80; }
+71|    .status-fixed { color: #94a3b8; }
+72|    .status-experimental { color: #c084fc; }
+73|    .experiments {
+74|      display: grid;
+75|      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+76|      gap: 16px;
+77|    }
+78|    .exp-card {
+79|      background: rgba(255, 255, 255, 0.03);
+80|      border: 1px solid rgba(255, 255, 255, 0.06);
+81|      border-radius: 10px;
+82|      padding: 18px;
+83|      transition: border-color 0.2s;
+84|    }
+85|    .exp-card:hover { border-color: rgba(102, 126, 234, 0.4); }
+86|    .deck-grid {
+87|      display: grid;
+88|      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+89|      gap: 12px;
+90|    }
+91|    .deck-card {
+92|      background: rgba(255, 255, 255, 0.04);
+93|      border: 1px solid rgba(255, 255, 255, 0.08);
+94|      border-radius: 8px;
+95|      padding: 14px;
+96|      text-align: center;
+97|      transition: background 0.2s;
+98|    }
+99|    .deck-card:hover { background: rgba(102, 126, 234, 0.12); }
+100|    .deck-card a {
+101|      color: #a0b4ff;
+102|      text-decoration: none;
+103|      font-size: 0.9rem;
+104|      display: block;
+105|    }
+106|    .deck-card a:hover { color: #c0d0ff; }
+107|    .deck-card p {
+108|      font-size: 0.78rem;
+109|      color: #808090;
+110|      margin-top: 6px;
+111|    }
+112|    footer {
+113|      margin-top: 50px;
+114|      padding-top: 20px;
+115|      border-top: 1px solid rgba(255, 255, 255, 0.08);
+116|      text-align: center;
+117|      color: #606078;
+118|      font-size: 0.82rem;
+119|    }
+120|    footer a { color: #8080a8; }
+121|    .info-note {
+122|      background: rgba(192, 132, 252, 0.08);
+123|      border-left: 3px solid #c084fc;
+124|      border-radius: 4px;
+125|      padding: 12px 16px;
+126|      margin: 20px 0;
+127|      font-size: 0.88rem;
+128|      color: #c0c0e0;
+129|    }
+130|  </style>
+131|</head>
+132|<body>
+133|  <div class="container">
+134|    <header>
+135|      <h1>🧪 p-hermes Playground</h1>
+136|      <p class="tagline">슬라이드 실험 공간 — 자유로운 시도와 탐구를 위한 공간</p>
+137|      <span class="badge">🔬 Experimental · README 미연결 · 자유 수정 가능</span>
+138|    </header>
+139|
+140|    <div class="info-note">
+141|      💡 이 공간은 운영 슬라이드에 영향을 주지 않고 다양한 레이아웃, 디자인, 시각화 실험을
+142|      진행하기 위한 Playground입니다. 실험 결과는 운영 슬라이드(<code>slides/</code>)로
+143|      반영될 수 있습니다.
+144|    </div>
+145|
+146|    <h2 class="section-title">📍 3가지 공간 비교</h2>
+147|    <div class="comparison">
+148|      <div class="space-card">
+149|        <div class="space-icon">📊</div>
+150|        <div class="space-name">Slides (운영)</div>
+151|        <div class="space-desc">활성 배포 슬라이드. README에 연결됨.</div>
+152|        <div class="space-meta"><span class="status-active">● 활성</span><span>README ✅</span></div>
+153|      </div>
+154|      <div class="space-card">
+155|        <div class="space-icon">📦</div>
+156|        <div class="space-name">Archive (스냅샷)</div>
+157|        <div class="space-desc">Round 7 고정 스냅샷. 변경 불가.</div>
+158|        <div class="space-meta"><span class="status-fixed">● 고정</span><span>README ❌</span></div>
+159|      </div>
+160|      <div class="space-card playground">
+161|        <div class="space-icon">🧪</div>
+162|        <div class="space-name">Playground (실험)</div>
+163|        <div class="space-desc">자유 실험 공간. 언제든 변경 가능.</div>
+164|        <div class="space-meta"><span class="status-experimental">● 실험중</span><span>README ❌</span></div>
+165|      </div>
+166|    </div>
+167|
+168|    <h2 class="section-title">🔬 실험 목록 (exp-001~006)</h2>
+169|    <div class="experiments">
+170|      <div class="exp-card">
+171|        <div class="space-icon">📝</div>
+172|        <div class="space-name"><a href="experiments/exp-001-gpt-slide-review.md" style="color:#a0b4ff;text-decoration:none;">exp-001: GPT Slide Review</a></div>
+173|        <div class="space-desc">GPT 피드백 기반 슬라이드 검토</div>
+174|        <div class="space-meta"><span class="status-active">● input</span></div>
+175|      </div>
+176|      <div class="exp-card">
+177|        <div class="space-icon">🎨</div>
+178|        <div class="space-name"><a href="experiments/exp-002-gpt-design-review.md" style="color:#a0b4ff;text-decoration:none;">exp-002: GPT Design Review v1</a></div>
+179|        <div class="space-desc">GPT content-system v2 — 7개 지적</div>
+180|        <div class="space-meta"><span class="status-active">● input</span></div>
+181|      </div>
+182|      <div class="exp-card">
+183|        <div class="space-icon">🔧</div>
+184|        <div class="space-name"><a href="experiments/exp-003-gpt-design-review-v2.md" style="color:#a0b4ff;text-decoration:none;">exp-003: GPT Design Review v2</a></div>
+185|        <div class="space-desc">GPT content-system v3 — 5개 위험</div>
+186|        <div class="space-meta"><span class="status-active">● input</span></div>
+187|      </div>
+188|      <div class="exp-card">
+189|        <div class="space-icon">🌟</div>
+190|        <div class="space-name"><a href="slides-v2/exp-004-hero.html" style="color:#a0b4ff;text-decoration:none;" target="_blank">exp-004: Hero 적용</a></div>
+191|        <div class="space-desc">direction-guide section_flow[0]</div>
+192|        <div class="space-meta"><span class="status-active">● new</span></div>
+193|      </div>
+194|      <div class="exp-card">
+195|        <div class="space-icon">🤔</div>
+196|        <div class="space-name"><a href="slides-v2/exp-005-hero-why.html" style="color:#a0b4ff;text-decoration:none;" target="_blank">exp-005: Hero + WHY</a></div>
+197|        <div class="space-desc">3열 비교 카드 실험</div>
+198|        <div class="space-meta"><span class="status-active">● new</span></div>
+199|      </div>
+200|      <div class="exp-card">
+201|        <div class="space-icon">📐</div>
+202|        <div class="space-name"><a href="slides-v2/exp-006-full-flow.html" style="color:#a0b4ff;text-decoration:none;" target="_blank">exp-006: 6단계 전체 흐름</a></div>
+203|        <div class="space-desc">Golden Circle 6단계 전체 적용</div>
+204|        <div class="space-meta"><span class="status-active">● new</span></div>
+205|      </div>
+206|    </div>
+207|
+208|    <h2 class="section-title">🔄 Golden Circle 변환 덱 (gc/)</h2>
+209|    <p style="color:#9090b0;font-size:0.9rem;margin-bottom:16px;">실제 운영 슬라이드 8개를 Pre-Direction Engine의 direction-guide (golden_circle, D3) 기반 Golden Circle 6단계로 변환</p>
+210|    <div class="deck-grid">
+211|      <div class="deck-card">
+212|        <a href="slides-v2/gc/workflow-pipeline.html" target="_blank">⚡ Workflow Pipeline</a>
+213|        <p>9단계 상태머신 GC</p>
+214|      </div>
+215|      <div class="deck-card">
+216|        <a href="slides-v2/gc/knowledge-system.html" target="_blank">📚 Knowledge System</a>
+217|        <p>지식 계층 GC</p>
+218|      </div>
+219|      <div class="deck-card">
+220|        <a href="slides-v2/gc/cron-system.html" target="_blank">⏰ Cron System</a>
+221|        <p>24시간 자동화 GC</p>
+222|      </div>
+223|      <div class="deck-card">
+224|        <a href="slides-v2/gc/architecture-layered.html" target="_blank">🏗️ Architecture</a>
+225|        <p>5-Tier 구조 GC</p>
+226|      </div>
+227|      <div class="deck-card">
+228|        <a href="slides-v2/gc/spec-driven-dev.html" target="_blank">📋 Spec-Driven Dev</a>
+229|        <p>Spec 기반 GC</p>
+230|      </div>
+231|      <div class="deck-card">
+232|        <a href="slides-v2/gc/content-system.html" target="_blank">🎨 Content System</a>
+233|        <p>콘텐츠 품질 GC</p>
+234|      </div>
+235|      <div class="deck-card">
+236|        <a href="slides-v2/gc/model-routing.html" target="_blank">🧭 Model Routing</a>
+237|        <p>모델 라우팅 GC</p>
+238|      </div>
+239|      <div class="deck-card">
+240|        <a href="slides-v2/gc/hermes-overview.html" target="_blank">🤖 Hermes Overview</a>
+241|        <p>시스템 조감도 GC</p>
+242|      </div>
+243|    </div>
+244|
+245|        <h2 class="section-title">🆕 slides-v3 — GC Refined (UI/UX 개선)</h2>
+    <p style="color:#9090b0;font-size:0.9rem;margin-bottom:16px;">슬라이드당 글자 수 축소 + 페이지 분할(12~15슬라이드) · 중앙 정렬 · 컴팩트 내비게이션</p>
     <div class="deck-grid">
-      <div class="deck-card">
-        <a href="slides-v2/gc/workflow-pipeline.html" target="_blank">⚡ Workflow Pipeline</a>
-        <p>9단계 상태머신 GC</p>
-      </div>
-      <div class="deck-card">
-        <a href="slides-v2/gc/knowledge-system.html" target="_blank">📚 Knowledge System</a>
-        <p>지식 계층 GC</p>
-      </div>
-      <div class="deck-card">
-        <a href="slides-v2/gc/cron-system.html" target="_blank">⏰ Cron System</a>
-        <p>24시간 자동화 GC</p>
-      </div>
-      <div class="deck-card">
-        <a href="slides-v2/gc/architecture-layered.html" target="_blank">🏗️ Architecture</a>
-        <p>5-Tier 구조 GC</p>
-      </div>
-      <div class="deck-card">
-        <a href="slides-v2/gc/spec-driven-dev.html" target="_blank">📋 Spec-Driven Dev</a>
-        <p>Spec 기반 GC</p>
-      </div>
-      <div class="deck-card">
-        <a href="slides-v2/gc/content-system.html" target="_blank">🎨 Content System</a>
-        <p>콘텐츠 품질 GC</p>
-      </div>
-      <div class="deck-card">
-        <a href="slides-v2/gc/model-routing.html" target="_blank">🧭 Model Routing</a>
-        <p>모델 라우팅 GC</p>
-      </div>
-      <div class="deck-card">
-        <a href="slides-v2/gc/hermes-overview.html" target="_blank">🤖 Hermes Overview</a>
-        <p>시스템 조감도 GC</p>
-      </div>
+      <div class="deck-card"><a href="slides-v3/gc/workflow-pipeline.html" target="_blank">⚡ Workflow Pipeline</a><p>15슬라이드 v3</p></div>
+      <div class="deck-card"><a href="slides-v3/gc/knowledge-system.html" target="_blank">📚 Knowledge System</a><p>13슬라이드 v3</p></div>
+      <div class="deck-card"><a href="slides-v3/gc/cron-system.html" target="_blank">⏰ Cron System</a><p>14슬라이드 v3</p></div>
+      <div class="deck-card"><a href="slides-v3/gc/architecture-layered.html" target="_blank">🏗️ Architecture</a><p>14슬라이드 v3</p></div>
+      <div class="deck-card"><a href="slides-v3/gc/spec-driven-dev.html" target="_blank">📋 Spec-Driven Dev</a><p>14슬라이드 v3</p></div>
+      <div class="deck-card"><a href="slides-v3/gc/content-system.html" target="_blank">🎨 Content System</a><p>14슬라이드 v3</p></div>
+      <div class="deck-card"><a href="slides-v3/gc/model-routing.html" target="_blank">🧭 Model Routing</a><p>14슬라이드 v3</p></div>
+      <div class="deck-card"><a href="slides-v3/gc/hermes-overview.html" target="_blank">🤖 Hermes Overview</a><p>14슬라이드 v3</p></div>
     </div>
 
     <h2 class="section-title">📂 templates (direction-guide 기반)</h2>
-    <div class="deck-grid">
-      <div class="deck-card">
-        <a href="slides-v2/template/card-grid.css" target="_blank">🎨 card-grid.css</a>
-        <p>design_tokens → CSS</p>
-      </div>
-      <div class="deck-card">
-        <a href="slides-v2/template/golden-circle.html" target="_blank">📄 golden-circle.html</a>
-        <p>section_flow 템플릿</p>
-      </div>
-    </div>
-
-    <h2 class="section-title">🎴 슬라이드 덱 (운영 복사본)</h2>
-    <div class="deck-grid">
-      <div class="deck-card"><a href="./decks/workflow-pipeline.html">⚡ Workflow Pipeline</a><p>9단계 상태머신</p></div>
-      <div class="deck-card"><a href="./decks/knowledge-system.html">📚 Knowledge System</a><p>지식 계층 구조</p></div>
-      <div class="deck-card"><a href="./decks/cron-system.html">⏰ Cron System</a><p>주기 작업 실행</p></div>
-      <div class="deck-card"><a href="./decks/architecture-layered.html">🏗️ Architecture</a><p>레이어드 구조</p></div>
-      <div class="deck-card"><a href="./decks/spec-driven-dev.html">📋 Spec-Driven Dev</a><p>Spec 기반 개발</p></div>
-      <div class="deck-card"><a href="./decks/content-system.html">🎨 Content System</a><p>콘텐츠 검증</p></div>
-      <div class="deck-card"><a href="./decks/model-routing.html">🧭 Model Routing</a><p>모델 라우팅</p></div>
-      <div class="deck-card"><a href="./decks/hermes-overview.html">🤖 Hermes Overview</a><p>시스템 조감도</p></div>
-    </div>
-
-    <footer>
-      <p>🧪 p-hermes Playground · <a href="../slides/index.html">운영 슬라이드</a> · <a href="../archive/">아카이브</a> · <a href="./NOTES.md">실험 일지</a></p>
-      <p style="margin-top:8px;">직접 URL 접근만 가능 · README에 연결되지 않음</p>
-    </footer>
-  </div>
-</body>
-</html>
+246|    <div class="deck-grid">
+247|      <div class="deck-card">
+248|        <a href="slides-v2/template/card-grid.css" target="_blank">🎨 card-grid.css</a>
+249|        <p>design_tokens → CSS</p>
+250|      </div>
+251|      <div class="deck-card">
+252|        <a href="slides-v2/template/golden-circle.html" target="_blank">📄 golden-circle.html</a>
+253|        <p>section_flow 템플릿</p>
+254|      </div>
+255|    </div>
+256|
+257|    <h2 class="section-title">🎴 슬라이드 덱 (운영 복사본)</h2>
+258|    <div class="deck-grid">
+259|      <div class="deck-card"><a href="./decks/workflow-pipeline.html">⚡ Workflow Pipeline</a><p>9단계 상태머신</p></div>
+260|      <div class="deck-card"><a href="./decks/knowledge-system.html">📚 Knowledge System</a><p>지식 계층 구조</p></div>
+261|      <div class="deck-card"><a href="./decks/cron-system.html">⏰ Cron System</a><p>주기 작업 실행</p></div>
+262|      <div class="deck-card"><a href="./decks/architecture-layered.html">🏗️ Architecture</a><p>레이어드 구조</p></div>
+263|      <div class="deck-card"><a href="./decks/spec-driven-dev.html">📋 Spec-Driven Dev</a><p>Spec 기반 개발</p></div>
+264|      <div class="deck-card"><a href="./decks/content-system.html">🎨 Content System</a><p>콘텐츠 검증</p></div>
+265|      <div class="deck-card"><a href="./decks/model-routing.html">🧭 Model Routing</a><p>모델 라우팅</p></div>
+266|      <div class="deck-card"><a href="./decks/hermes-overview.html">🤖 Hermes Overview</a><p>시스템 조감도</p></div>
+267|    </div>
+268|
+269|    <footer>
+270|      <p>🧪 p-hermes Playground · <a href="../slides/index.html">운영 슬라이드</a> · <a href="../archive/">아카이브</a> · <a href="./NOTES.md">실험 일지</a></p>
+271|      <p style="margin-top:8px;">직접 URL 접근만 가능 · README에 연결되지 않음</p>
+272|    </footer>
+273|  </div>
+274|</body>
+275|</html>
+276|
