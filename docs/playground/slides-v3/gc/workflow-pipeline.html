@@ -233,14 +233,14 @@ const slides = [
       <p style="margin-bottom:8px">모든 작업을 9개 상태로 분할,<br>각 단계마다 <strong style="color:#8ab4f8">검증 관문</strong>과 <strong style="color:#8ab4f8">산출물</strong> 강제</p>
       <div class="pipeline">
         <div class="pipe-step"><div class="num">1</div><div class="lbl">요청</div></div>
-        <div class="pipe-step"><div class="num">2</div><div class="lbl">분석</div></div>
+        <div class="pipe-step"><div class="num">2</div><div class="lbl">조사</div></div>
         <div class="pipe-step"><div class="num">3</div><div class="lbl">설계</div></div>
-        <div class="pipe-step"><div class="num">4</div><div class="lbl">승인</div></div>
-        <div class="pipe-step"><div class="num">5</div><div class="lbl">구현</div></div>
-        <div class="pipe-step"><div class="num">6</div><div class="lbl">검토</div></div>
+        <div class="pipe-step"><div class="num">4</div><div class="lbl">검토</div></div>
+        <div class="pipe-step"><div class="num">5</div><div class="lbl">승인</div></div>
+        <div class="pipe-step"><div class="num">6</div><div class="lbl">실행</div></div>
         <div class="pipe-step"><div class="num">7</div><div class="lbl">테스트</div></div>
-        <div class="pipe-step"><div class="num">8</div><div class="lbl">배포</div></div>
-        <div class="pipe-step"><div class="num">9</div><div class="lbl">확인</div></div>
+        <div class="pipe-step"><div class="num">8</div><div class="lbl">실행검토</div></div>
+        <div class="pipe-step"><div class="num">9</div><div class="lbl">완료</div></div>
       </div>
       <p style="color:#9aa0a6;font-size:1rem;margin-top:8px">
         각 단계 ← 조건 만족 시에만 → 다음 단계
@@ -253,17 +253,17 @@ const slides = [
       <h1>단계별 진입 조건</h1>
       <div class="two-col" style="gap:12px">
         <div class="col">
-          <div class="badge" style="color:#8ab4f8;border-color:#8ab4f844">1 요청 → 과제 정의서</div>
-          <div class="badge" style="color:#8ab4f8;border-color:#8ab4f844">2 분석 → 영향도 분석서</div>
-          <div class="badge" style="color:#8ab4f8;border-color:#8ab4f844">3 설계 → 설계 문서</div>
-          <div class="badge" style="color:#8ab4f8;border-color:#8ab4f844">4 승인 → 승인 기록</div>
-          <div class="badge" style="color:#c58af9;border-color:#c58af944">5 구현 → 코드 변경분</div>
+          <div class="badge" style="color:#8ab4f8;border-color:#8ab4f844">1 요청 → request.md</div>
+          <div class="badge" style="color:#8ab4f8;border-color:#8ab4f844">2 조사 → investigation.md</div>
+          <div class="badge" style="color:#8ab4f8;border-color:#8ab4f844">3 설계 → design.md + architecture.md</div>
+          <div class="badge" style="color:#8ab4f8;border-color:#8ab4f844">4 검토 → review-result.md</div>
+          <div class="badge" style="color:#c58af9;border-color:#c58af944">5 승인 → approval.json</div>
         </div>
         <div class="col">
-          <div class="badge" style="color:#c58af9;border-color:#c58af944">6 검토 → 리뷰 로그</div>
+          <div class="badge" style="color:#c58af9;border-color:#c58af944">6 실행 → 파일 변경</div>
           <div class="badge" style="color:#c58af9;border-color:#c58af944">7 테스트 → 테스트 결과</div>
-          <div class="badge" style="color:#34a853;border-color:#34a85344">8 배포 → 배포 내역</div>
-          <div class="badge" style="color:#34a853;border-color:#34a85344">9 확인 → 검증 보고서</div>
+          <div class="badge" style="color:#34a853;border-color:#34a85344">8 실행검토 → execution-review.md</div>
+          <div class="badge" style="color:#34a853;border-color:#34a85344">9 완료 → result.md + lessons.md + execution.md</div>
         </div>
       </div>
       <p style="color:#9aa0a6;font-size:.95rem;margin-top:12px">
@@ -274,23 +274,24 @@ const slides = [
   {
     cls:'gc-what',
     html:`<span class="tag tag-what">WHAT · 상태전이 검증</span>
-      <h1>무단 전이 차단</h1>
-      <p>의도하지 않은 상태 점프를 <strong style="color:#8ab4f8">컴파일 타임</strong>에 차단</p>
-      <div class="arrow-flow" style="max-width:540px;margin:20px auto">
+      <h1>관문 기반 차단</h1>
+      <p>주요 진입 지점마다 <strong style="color:#8ab4f8">필수 산출물</strong> 검증으로 무단 전이 차단</p>
+      <div class="arrow-flow" style="max-width:620px;margin:16px auto">
         <div class="node" style="border-color:#8ab4f866">
-          <div class="val">분석</div>
-          <div class="lbl">2단계</div>
+          <div class="val">설계</div>
+          <div class="lbl">architecture.md</div>
         </div>
-        <div class="arrow" style="color:#f28b82">✗</div>
-        <div class="node" style="border-color:#5f6368;opacity:.5">
-          <div class="val">테스트</div>
-          <div class="lbl">7단계</div>
+        <div class="arrow" style="color:#f28b82">⛔</div>
+        <div class="node" style="border-color:#8ab4f866">
+          <div class="val">실행</div>
+          <div class="lbl">approval.json</div>
         </div>
       </div>
       <div class="list-compact" style="margin:8px auto">
-        <li><strong>허용 전이:</strong> n → n, n → n+1, n → n-1 (롤백)</li>
-        <li><strong>금지 전이:</strong> n → n+2 이상 점프</li>
-        <li><strong>강제 조건:</strong> 산출물 완료 → 전이 가능</li>
+        <li><strong>설계 진입:</strong> architecture.md 없으면 ⛔ 차단</li>
+        <li><strong>실행 진입:</strong> approval.json 필수 (6필드 검증)</li>
+        <li><strong>완료:</strong> result.md + validate-deliverables.sh 검증</li>
+        <li><strong>자동진행:</strong> 조사→설계→검토→승인 4단계 (auto-process)</li>
       </div>`
   },
   // ────────────── 8: WHAT - 산출물 강제 ──────────────
@@ -298,92 +299,99 @@ const slides = [
     cls:'gc-what',
     html:`<span class="tag tag-what">WHAT · 산출물 강제</span>
       <h1>통과 조건 = 산출물</h1>
-      <div class="grid-3" style="grid-template-columns:1fr 1fr;max-width:660px">
+      <div class="grid-3" style="grid-template-columns:1fr 1fr 1fr;max-width:840px">
         <div class="card" style="border-color:#8ab4f833">
-          <div class="icon">📄</div>
-          <h4>없음 → 승인 거부</h4>
-          <p>산출물 미제출 시 다음 상태로<br>전이 자체가 불가</p>
+          <div class="icon">📐</div>
+          <h4>설계 진입 차단</h4>
+          <p>architecture.md 없음 →<br>설계 단계 진입 불가</p>
         </div>
         <div class="card" style="border-color:#8ab4f833">
-          <div class="icon">✅</div>
-          <h4>자동 검증</h4>
-          <p>형식·필수 항목 누락을<br>자동으로 감지</p>
+          <div class="icon">🔐</div>
+          <h4>approval.json 검증</h4>
+          <p>6필드 검증<br>(validate-approval.sh)</p>
+        </div>
+        <div class="card" style="border-color:#8ab4f833">
+          <div class="icon">🔁</div>
+          <h4>재시도 순서 강제</h4>
+          <p>검토→승인 순서<br>(verify_mandatory_steps)</p>
         </div>
       </div>
       <p style="color:#9aa0a6;font-size:.95rem;margin-top:12px">
         "산출물이 곧 품질이다"
       </p>`
   },
-  // ────────────── 9: HOW - 상태 확인 ──────────────
+  // ────────────── 9: HOW - 작업 시작 ──────────────
   {
     cls:'gc-how',
-    html:`<span class="tag tag-how">HOW · 1단계</span>
-      <h1>상태 확인</h1>
-      <p>현재 워크플로우의 <strong style="color:#81c995">진행 상태</strong>를 진단</p>
+    html:`<span class="tag tag-how">HOW · 작업 시작</span>
+      <h1>워크플로우 진입</h1>
+      <p>JOB 작업 시작 시 <strong style="color:#81c995">workflow-gate.sh</strong>로 조사 단계 진입</p>
       <div style="background:#1e2029;border:1px solid #2d2f3a;border-radius:14px;padding:20px 28px;margin:16px 0;max-width:680px;width:100%;font-family:monospace;font-size:1rem;text-align:left;color:#9aa0a6">
-        <span style="color:#81c995">$</span> workflow status<br>
-        <span style="color:#e8eaed">▶ 현재 단계: <strong style="color:#81c995">5. 구현</strong></span><br>
-        &nbsp;&nbsp;이전 단계: 4. 승인 (완료)<br>
-        &nbsp;&nbsp;미완료 산출물: 테스트 코드<br>
-        &nbsp;&nbsp;차단된 전이: 배포 (테스트 미통과)
+        <span style="color:#81c995">$</span> workflow-gate.sh JOB-XXXX start<br>
+        <span style="color:#e8eaed">▶ <strong style="color:#81c995">조사 단계 진입</strong></span><br>
+        &nbsp;&nbsp;지식 파일 자동 로딩 (pre-investigation.sh)
       </div>`
   },
-  // ────────────── 10: HOW - 전이 실행 ──────────────
+  // ────────────── 10: HOW - 단계 전환 ──────────────
   {
     cls:'gc-how',
-    html:`<span class="tag tag-how">HOW · 2단계</span>
-      <h1>전이 실행</h1>
-      <p>검증된 조건 충족 시 <strong style="color:#81c995">상태 전이</strong> 명령</p>
-      <div style="display:flex;gap:16px;margin:16px 0;flex-wrap:wrap;justify-content:center">
-        <div style="background:#1e2029;border:1px solid #81c99544;border-radius:12px;padding:18px 24px;text-align:center;min-width:180px">
-          <div style="font-size:1.2rem;font-weight:600;color:#81c995">workflow enter</div>
-          <div style="font-size:.9rem;color:#9aa0a6;margin-top:4px">다음 단계 진입</div>
+    html:`<span class="tag tag-how">HOW · 단계 전환</span>
+      <h1>전환 명령 4종</h1>
+      <p>검증 통과 시 <strong style="color:#81c995">4가지 명령</strong>으로 단계 전환</p>
+      <div style="display:flex;gap:14px;margin:16px 0;flex-wrap:wrap;justify-content:center">
+        <div style="background:#1e2029;border:1px solid #81c99544;border-radius:12px;padding:16px 20px;text-align:center;min-width:200px">
+          <div style="font-size:1.1rem;font-weight:600;color:#81c995">start</div>
+          <div style="font-size:.85rem;color:#9aa0a6;margin-top:4px">작업 시작, 조사 진입</div>
         </div>
-        <div style="background:#1e2029;border:1px solid #f28b8244;border-radius:12px;padding:18px 24px;text-align:center;min-width:180px">
-          <div style="font-size:1.2rem;font-weight:600;color:#f28b82">workflow rollback</div>
-          <div style="font-size:.9rem;color:#9aa0a6;margin-top:4px">이전 단계 복귀</div>
+        <div style="background:#1e2029;border:1px solid #81c99544;border-radius:12px;padding:16px 20px;text-align:center;min-width:200px">
+          <div style="font-size:1.1rem;font-weight:600;color:#81c995">transition &lt;step&gt;</div>
+          <div style="font-size:.85rem;color:#9aa0a6;margin-top:4px">개별 단계 전환</div>
         </div>
-        <div style="background:#1e2029;border:1px solid #8ab4f844;border-radius:12px;padding:18px 24px;text-align:center;min-width:180px">
-          <div style="font-size:1.2rem;font-weight:600;color:#8ab4f8">workflow abort</div>
-          <div style="font-size:.9rem;color:#9aa0a6;margin-top:4px">작업 중단</div>
+        <div style="background:#1e2029;border:1px solid #fbbc0444;border-radius:12px;padding:16px 20px;text-align:center;min-width:200px">
+          <div style="font-size:1.1rem;font-weight:600;color:#fbbc04">auto-process</div>
+          <div style="font-size:.85rem;color:#9aa0a6;margin-top:4px">조사→설계→검토→승인 자동</div>
+        </div>
+        <div style="background:#1e2029;border:1px solid #8ab4f844;border-radius:12px;padding:16px 20px;text-align:center;min-width:200px">
+          <div style="font-size:1.1rem;font-weight:600;color:#8ab4f8">complete</div>
+          <div style="font-size:.85rem;color:#9aa0a6;margin-top:4px">완료 (산출물 검증 + 모델 리셋)</div>
         </div>
       </div>
-      <p style="color:#9aa0a6;font-size:.95rem">
-        전이는 항상 산출물 검증 후에만 실행
+      <p style="color:#9aa0a6;font-size:.9rem;margin-top:4px">
+        transition: 설계 · 검토 · 승인 · 실행 · 테스트 · 실행검토 · 완료
       </p>`
   },
   // ────────────── 11: HOW - 산출물 검증 ──────────────
   {
     cls:'gc-how',
-    html:`<span class="tag tag-how">HOW · 3단계</span>
-      <h1>산출물 검증</h1>
-      <p>각 단계 통과 전 <strong style="color:#81c995">산출물 체크리스트</strong> 통과 필수</p>
+    html:`<span class="tag tag-how">HOW · 산출물 검증</span>
+      <h1>검증 체크리스트</h1>
+      <p>주요 단계 진입 시 <strong style="color:#81c995">필수 산출물</strong> 존재 여부 검증</p>
       <div class="list-compact" style="margin:10px auto">
-        <li>분석 단계 <span style="color:#81c995">✓</span> 영향도 분석서 존재</li>
-        <li>설계 단계 <span style="color:#81c995">✓</span> 설계 문서 승인 완료</li>
-        <li>구현 단계 <span style="color:#81c995">✓</span> 단위 테스트 통과</li>
-        <li>배포 단계 <span style="color:#81c995">✓</span> 배포 스크립트 검증</li>
-        <li>확인 단계 <span style="color:#81c995">✓</span> 모니터링 알람 정상</li>
+        <li>설계 진입 <span style="color:#81c995">✓</span> architecture.md 존재</li>
+        <li>실행 진입 <span style="color:#81c995">✓</span> approval.json (choice 필수)</li>
+        <li>완료 <span style="color:#81c995">✓</span> result.md + review-result.md</li>
+        <li>완료 <span style="color:#81c995">✓</span> lessons.md + execution.md</li>
+        <li>재시도 <span style="color:#81c995">✓</span> 검토→승인 순서 강제</li>
       </div>`
   },
   // ────────────── 12: HOW - Workflow Flow ──────────────
   {
     cls:'gc-how',
     html:`<span class="tag tag-how">HOW · Workflow 흐름</span>
-      <h1>일상 운영 사이클</h1>
+      <h1>운영 사이클</h1>
       <div class="arrow-flow">
-        <div class="node" style="border-color:#81c99566"><div class="val">상태 확인</div><div class="lbl">status</div></div>
+        <div class="node" style="border-color:#81c99566"><div class="val">작업 시작</div><div class="lbl">start</div></div>
         <div class="arrow">→</div>
-        <div class="node" style="border-color:#81c99566"><div class="val">전이 실행</div><div class="lbl">enter</div></div>
+        <div class="node" style="border-color:#81c99566"><div class="val">단계 전환</div><div class="lbl">transition</div></div>
         <div class="arrow">→</div>
-        <div class="node" style="border-color:#81c99566"><div class="val">산출물 검증</div><div class="lbl">verify</div></div>
+        <div class="node" style="border-color:#81c99566"><div class="val">완료</div><div class="lbl">complete</div></div>
       </div>
       <p style="color:#9aa0a6;font-size:.95rem;margin-top:12px">
-        매 사이클마다 3단계 반복 · 실패 시 롤백
+        auto-process로 조사→설계→검토→승인 4단계 자동 진행
       </p>
       <div style="background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;padding:12px 20px;margin-top:10px;max-width:600px">
         <p style="font-size:.9rem;color:#9aa0a6">
-          <span style="color:#81c995">TIP</span> CI/CD 파이프라인에<br>자동 상태 전이 훅 연결 가능
+          <span style="color:#81c995">TIP</span> complete 시 산출물 검증 +<br>모델 리셋까지 자동 수행
         </p>
       </div>`
   },
@@ -438,7 +446,42 @@ const slides = [
         <strong style="color:#e8eaed">대책:</strong> 간소화 룰 · 예외 처리 · 단계 스킵 권한
       </p>`
   },
-  // ────────────── 15: SUMMARY ──────────────
+  // ────────────── 15: TASK vs JOB ──────────────
+  {
+    cls:'',
+    html:`<span class="tag" style="background:#8ab4f833;color:#8ab4f8">TASK vs JOB</span>
+      <h1>작업 유형 구분</h1>
+      <p style="margin-bottom:8px">워크플로우 경유 여부로 <strong style="color:#8ab4f8">작업 분류</strong></p>
+      <div style="background:#1e2029;border:1px solid #2d2f3a;border-radius:14px;padding:24px 32px;margin:16px auto;max-width:720px;width:100%">
+        <table style="width:100%;border-collapse:collapse;font-size:1.05rem;color:#e8eaed">
+          <thead>
+            <tr style="border-bottom:1px solid #2d2f3a">
+              <th style="padding:12px 16px;text-align:left;color:#9aa0a6;font-weight:600">구분</th>
+              <th style="padding:12px 16px;text-align:center;color:#f28b82;font-weight:700">TASK</th>
+              <th style="padding:12px 16px;text-align:center;color:#81c995;font-weight:700">JOB</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #2d2f3a">
+              <td style="padding:14px 16px;color:#9aa0a6">트리거</td>
+              <td style="padding:14px 16px;text-align:center;font-family:monospace;color:#f28b82">[TASK]</td>
+              <td style="padding:14px 16px;text-align:center;font-family:monospace;color:#81c995">[JOB-XXXX]</td>
+            </tr>
+            <tr style="border-bottom:1px solid #2d2f3a">
+              <td style="padding:14px 16px;color:#9aa0a6">워크플로우</td>
+              <td style="padding:14px 16px;text-align:center;color:#9aa0a6">경유 안 함</td>
+              <td style="padding:14px 16px;text-align:center;color:#e8eaed">9단계 전체</td>
+            </tr>
+            <tr>
+              <td style="padding:14px 16px;color:#9aa0a6">산출물</td>
+              <td style="padding:14px 16px;text-align:center;color:#9aa0a6">불필요</td>
+              <td style="padding:14px 16px;text-align:center;color:#e8eaed">단계별 필수</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>`
+  },
+  // ────────────── 16: SUMMARY ──────────────
   {
     cls:'',
     html:`<span class="tag" style="background:#8ab4f833;color:#8ab4f8">SUMMARY</span>
@@ -456,13 +499,24 @@ const slides = [
         </div>
         <div class="card" style="border:2px solid #81c99566;padding:28px 18px">
           <div style="font-size:2.4rem;font-weight:700;color:#81c995">03</div>
-          <h4 style="margin-top:10px">3단계 루틴</h4>
-          <p>상태 확인 → 전이 → 검증<br>매일 반복 가능한 리듬</p>
+          <h4 style="margin-top:10px">명령 루틴</h4>
+          <p>start → transition → complete<br>auto-process 자동 진행</p>
         </div>
       </div>
       <p style="margin-top:20px;color:#9aa0a6;font-size:1rem;font-style:italic">
         "검증 없는 전이는 재앙의 지름길"
       </p>`
+  },
+  // ────────────── 17: 종료 ──────────────
+  {
+    cls:'gc-summary',
+    html:`<span class="tag tag-summary">🎯 슬라이드 끝</span>
+      <h1>Playground로 돌아가기</h1>
+      <p style="margin-bottom:16px">더 많은 실험과 비교를 Playground에서 확인하세요</p>
+      <div class="summary-item">
+        <div class="num">🔙</div>
+        <p><a href="../playground/" style="color:#8ab4f8">🧪 p-hermes Playground →</a></p>
+      </div>`
   }
 ];
 

@@ -262,17 +262,17 @@ const slides = [
         <div class="card" style="border-color:#f28b8244">
           <div class="icon">🧠</div>
           <h4>Coding</h4>
-          <p>코드 생성/리뷰는<br>Claude가 최적</p>
+          <p>코딩 역할: 전문 코딩 모델이<br>최적</p>
         </div>
         <div class="card" style="border-color:#f28b8244">
           <div class="icon">🔬</div>
           <h4>Reasoning</h4>
-          <p>수리/논리 추론은<br>DeepSeek이 최적</p>
+          <p>추론 역할: 추론 특화 모델이<br>최적</p>
         </div>
         <div class="card" style="border-color:#f28b8244">
           <div class="icon">🎨</div>
           <h4>Creative</h4>
-          <p>창작/번역은<br>Qwen이 최적</p>
+          <p>창작 역할: 창작 특화 모델이<br>최적</p>
         </div>
       </div>
       <p style="color:#f28b82;font-size:1rem;margin-top:10px">하나의 모델로 모든 작업 → 최적 불가</p>`
@@ -344,32 +344,32 @@ const slides = [
         <div class="role-item gold">
           <div class="r-icon">⚙</div>
           <div class="r-name">default</div>
-          <div class="r-model">GPT-4o</div>
+          <div class="r-model">SSOT 모델</div>
         </div>
         <div class="role-item blue">
           <div class="r-icon">💻</div>
           <div class="r-name">coding</div>
-          <div class="r-model">Claude Sonnet</div>
+          <div class="r-model">SSOT 모델</div>
         </div>
         <div class="role-item gold">
           <div class="r-icon">🧮</div>
           <div class="r-name">reasoning</div>
-          <div class="r-model">DeepSeek R1</div>
+          <div class="r-model">SSOT 모델</div>
         </div>
         <div class="role-item purple">
           <div class="r-icon">🎨</div>
           <div class="r-name">creative</div>
-          <div class="r-model">Qwen</div>
+          <div class="r-model">SSOT 모델</div>
         </div>
         <div class="role-item green">
           <div class="r-icon">⚡</div>
           <div class="r-name">fast</div>
-          <div class="r-model">GPT-4o Mini</div>
+          <div class="r-model">SSOT 모델</div>
         </div>
         <div class="role-item blue">
           <div class="r-icon">👁</div>
           <div class="r-name">vision</div>
-          <div class="r-model">GPT-4o</div>
+          <div class="r-model">SSOT 모델</div>
         </div>
       </div>
       <p style="color:#8ab4f8;font-size:.95rem;margin-top:8px">작업 유형 감지 → Role 할당 → 최적 모델 자동 선택</p>`
@@ -387,9 +387,9 @@ const slides = [
             <p style="font-size:.85rem;color:#9aa0a6;margin-top:8px">model-roles.yaml<br>팀 공통 Role-모델 매핑</p>
             <div style="margin-top:12px;padding:8px 12px;background:#0f1117;border-radius:8px;text-align:left;font-size:.75rem;color:#9aa0a6;font-family:monospace">
               roles:<br>
-              &nbsp;&nbsp;coding: claude-sonnet<br>
-              &nbsp;&nbsp;reasoning: deepseek-r1<br>
-              &nbsp;&nbsp;fast: gpt-4o-mini
+              &nbsp;&nbsp;coding: &lt;SSOT 정의 모델&gt;<br>
+              &nbsp;&nbsp;reasoning: &lt;SSOT 정의 모델&gt;<br>
+              &nbsp;&nbsp;fast: &lt;SSOT 정의 모델&gt;
             </div>
           </div>
         </div>
@@ -399,7 +399,7 @@ const slides = [
             <p style="font-size:.85rem;color:#9aa0a6;margin-top:8px">config.yaml<br>개인/프로필별 설정</p>
             <div style="margin-top:12px;padding:8px 12px;background:#0f1117;border-radius:8px;text-align:left;font-size:.75rem;color:#9aa0a6;font-family:monospace">
               model-roles:<br>
-              &nbsp;&nbsp;reasoning: qwen-max
+              &nbsp;&nbsp;reasoning: &lt;SSOT 정의 모델&gt;
             </div>
           </div>
         </div>
@@ -417,29 +417,29 @@ const slides = [
       <div class="fallback-chain" style="margin-top:20px">
         <div class="fb-node primary">
           <div class="fb-label">1차</div>
-          <div class="fb-model">DeepSeek</div>
+          <div class="fb-model">기본 모델</div>
         </div>
         <div class="fb-arrow">→</div>
         <div class="fb-node secondary">
           <div class="fb-label">Fallback</div>
-          <div class="fb-model">Qwen</div>
+          <div class="fb-model">대체 모델 A</div>
         </div>
         <div class="fb-arrow">→</div>
         <div class="fb-node tertiary">
           <div class="fb-label">Fallback</div>
-          <div class="fb-model">GLM</div>
+          <div class="fb-model">대체 모델 B</div>
         </div>
       </div>
       <div class="grid-3" style="margin-top:16px;max-width:700px">
         <div class="card" style="border-color:#f28b8244;padding:16px">
           <div class="icon" style="font-size:1.4rem">✕</div>
           <h4 style="font-size:.95rem">1차 장애</h4>
-          <p style="font-size:.85rem">DeepSeek 장애 시<br>자동으로 Qwen 전환</p>
+          <p style="font-size:.85rem">1차 모델 장애 시<br>자동으로 대체 모델 A 전환</p>
         </div>
         <div class="card" style="border-color:#f9731644;padding:16px">
           <div class="icon" style="font-size:1.4rem">✕</div>
           <h4 style="font-size:.95rem">2차 장애</h4>
-          <p style="font-size:.85rem">Qwen까지 장애 시<br>GLM 최종 Fallback</p>
+          <p style="font-size:.85rem">대체 A까지 장애 시<br>대체 B 최종 Fallback</p>
         </div>
         <div class="card" style="border-color:#34a85344;padding:16px">
           <div class="icon" style="font-size:1.4rem">✓</div>
@@ -493,8 +493,8 @@ const slides = [
         <p style="font-size:.85rem;color:#9aa0a6;font-family:monospace;line-height:1.7">
           <span style="color:#81c995">model-roles.yaml</span><br>
           roles:<br>
-          &nbsp;&nbsp;coding: { primary: claude-sonnet, fallback: [gpt-4o, qwen-max] }<br>
-          &nbsp;&nbsp;reasoning: { primary: deepseek-r1, fallback: [qwen-max, glm-4] }
+          &nbsp;&nbsp;coding: { primary: &lt;SSOT 모델&gt;, fallback: [&lt;SSOT 대체A&gt;, &lt;SSOT 대체B&gt;] }<br>
+          &nbsp;&nbsp;reasoning: { primary: &lt;SSOT 모델&gt;, fallback: [&lt;SSOT 대체A&gt;, &lt;SSOT 대체B&gt;] }
         </p>
       </div>`
   },
@@ -635,6 +635,17 @@ const slides = [
       <p style="color:#9aa0a6;font-size:.95rem;font-style:italic;margin-top:10px">
         "하나의 모델에 의존하지 말고, 작업에 맞는 최적의 모델을 활용하라"
       </p>`
+  },
+  // ────────────── 15: 종료 ──────────────
+  {
+    cls:'gc-summary',
+    html:`<span class="tag tag-summary">🎯 슬라이드 끝</span>
+      <h1>Playground로 돌아가기</h1>
+      <p style="margin-bottom:16px">더 많은 실험과 비교를 Playground에서 확인하세요</p>
+      <div class="summary-item">
+        <div class="num">🔙</div>
+        <p><a href="../playground/" style="color:#8ab4f8">🧪 p-hermes Playground →</a></p>
+      </div>`
   }
 ];
 
