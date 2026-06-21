@@ -13,7 +13,7 @@ tags: [slides, html, css, light-theme, kai-kawasaki]
 # p-hermes Slides(HTML) 디자인 스펙
 
 > **프로젝트**: p-hermes 핵심 시스템 재정의  
-> **작성자**: Hermes Agent (Qwen3.6)  
+> **작성자**: Hermes Agent (고속 코딩 모델)  
 > **작성일**: 2026-06-16  
 > **버전**: 1.0  
 > **대상**: 모든 도메인(A1~A6, B1~B2) Slides 문서  

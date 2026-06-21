@@ -13,7 +13,7 @@ tags: [docs, requirements, 3-track, multi-domain, expression]
 # p-hermes 문서 작성 요구사항 명세서
 
 > **작성일**: 2026-06-16
-> **수정**: GLM-5.2 리뷰 반영 (26개 이슈 해결)
+> **수정**: 고성능 추론 모델 리뷰 반영 (26개 이슈 해결)
 > **목적**: 실제 문서 집필을 위한 상세 요구사항 정의
 > **대상**: 핵심 시스템 6개(A1~A6) + 배경 2개(B1~B2) = 8도메인 × 3매체 = 24개 문서
 
@@ -446,7 +446,7 @@ related_specs: ["SPEC-XXX", "SPEC-YYY"]
 1. **서론** (300자): 모델 라우팅 시스템의 역할과 라우팅 규칙 개요
 2. **model-roles.yaml** (600자): 역할별 모델 매핑 파일 구조, 선언적 문법
 3. **라우팅 규칙** (500자): prefix 무시 규칙, provider 기반 라우팅 (zai/, airouter/)
-4. **역할별 할당** (500자): creative/reasoning → GLM-5.2, coding/default → Qwen3.6, review → Gemma-4
+4. **역할별 할당** (500자): creative/reasoning → 고성능 추론 모델, coding/default → 고속 코딩 모델, review → 리뷰 전용 모델
 5. **catalog.json** (400자): `~/.hermes/core/skills/custom/model-catalog/catalog.json` 갱신 절차
 6. **다중 공급자** (400자): Zai, OpenRouter, NovitaAI, Ollama API 통합 설정
 7. **핫스왑** (200자): `/model <name>` 명령어 사용법
