@@ -54,13 +54,13 @@ else
 fi
 
 # 4. 스킬 배치 (저장소에 core/skills/가 있을 경우에만)
-echo "🧠 스킬 배치..."
-if [[ -d "$SCRIPT_DIR/core/skills" ]]; then
-  mkdir -p "$HERMES_HOME/skills"
-  cp -r "$SCRIPT_DIR/core/skills/"* "$HERMES_HOME/skills/" 2>/dev/null || true
-  echo "  ✅ 스킬 배치 완료"
+echo "🧠 스킬 배치 (사용자 정의 스킬만, Hermes 기본 스킬은 설치 시 자동 포함)..."
+if [[ -d "$SCRIPT_DIR/core/skills/custom" ]]; then
+  mkdir -p "$HERMES_HOME/skills/custom"
+  cp -r "$SCRIPT_DIR/core/skills/custom/"* "$HERMES_HOME/skills/custom/" 2>/dev/null || true
+  echo "  ✅ 사용자 정의 스킬 배치 완료"
 else
-  echo "  ⚠️ core/skills/ 디렉토리가 없어 스킬 배치 건너뜀"
+  echo "  ⚠️ core/skills/custom/ 디렉토리가 없어 스킬 배치 건너뜀"
 fi
 
 # 5. Gateway 훅 배치

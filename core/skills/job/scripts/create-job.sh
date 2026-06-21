@@ -1,1 +1,0 @@
-/home/bot/.hermes/scripts/create-job.sh
