@@ -1,13 +1,13 @@
 ---
 spec_id: SPEC-D03
-version: 1.1.0
+version: 1.2.0
 parent: null
 status: approved
-changed_at: "2026-06-15T00:00:00Z"
+changed_at: "2026-06-21T00:00:00Z"
 type: guideline
 title: "p-hermes 문서 작성 및 표현력 시스템(Expression) 표준"
 domain: expression
-tags: [expression, d1, documentation-standard, multi-level]
+tags: [expression, d1, documentation-standard, multi-level, pre-direction]
 ---
 
 # SPEC-D03: p-hermes 문서 작성 및 표현력 시스템 표준
@@ -15,6 +15,50 @@ tags: [expression, d1, documentation-standard, multi-level]
 ## 1. 정의 및 목적
 
 본 사양서는 p-hermes 프로젝트의 모든 공개 문서(Wiki, Blog, Slides)가 일관된 품질과 톤, 깊이를 유지하도록 강제하는 작성 표준입니다. 단순히 정보를 전달하는 것을 넘어, 기술적 배경이 다른 다양한 독자가 단계적으로 지식을 습득할 수 있는 **'다층적 지식 전달 체계'** 구축을 목적으로 합니다.
+
+### 1.1 품질 관리 방식: Pre-Direction 아키텍처 (JOB-1735)
+
+콘텐츠 품질 관리는 기존 사후 검증(post_validator) 방식에서 **사전 방향성(Pre-Direction)** 방식으로 전환되었습니다. 생성 전에 방향성을 먼저 결정하고, 이 방향성에 따라 생성 및 검증이 진행됩니다.
+
+**Pre-Direction 7단계 모듈**:
+
+| 단계 | 모듈 | 역할 |
+|------|------|------|
+| 1 | `strategy_selector` | 전략 프레임 선택 |
+| 2 | `audience_analyzer` | 청중 3축 분석 (기술수준·관심도·목적) |
+| 3 | `template_selector` | 구조 템플릿 매칭 |
+| 4 | `design_guide_provider` | 디자인 방향성 설정 |
+| 5 | `design_system_loader` | 구체적 디자인 토큰 로드 |
+| 6 | `direction_compiler` | direction-guide.json 생성 |
+| 7 | `guide_validator` | 자체 검증 (방향성 유효성 확인) |
+
+**공유 엔진 7개 모듈**:
+
+| 엔진 | 역할 | 적용 도메인 |
+|------|------|-------------|
+| `persona_generator` | 페르소나 기반 문체 생성 | D4 창작 |
+| `emotion_merger` | 감정어 합성 및 문장 흐름 조절 | D4 창작 |
+| `analogy_builder` | 비유 생성 및 유사성 매핑 | D2 교육, D4 창작 |
+| `tier_generator` | 계층적 구조 생성 (요약→상세→심화) | D1~D5 전체 |
+| `template_filler` | 템플릿 기반 콘텐츠 생성 | D3 프레젠테이션, D5 비즈니스 |
+| `tone_adapter` | 톤 적응 및 문체 일관성 유지 | D1~D5 전체 |
+| `strategy_selector` | 전략 프레임 선택 (Pre-Direction) | D1~D5 전체 |
+
+> Pre-Direction 7개 모듈과 공유 엔진 7개 중 `strategy_selector`가 중복되어, **총 13개 고유 모듈**로 구성됩니다.
+
+### 1.2 검증 파이프라인: 5계층 게이트
+
+Pre-Direction 완료 후, 생성된 콘텐츠는 5계층 검증 게이트를 통과합니다:
+
+| 계층 | 검증 항목 | 설명 |
+|------|----------|------|
+| L1 | 구조 검증 (Struct) | JSON/Markdown 구조 유효성 |
+| L2 | 에러 체크 (Error) | 렌더링 실패 토큰 차단 |
+| L3 | 어조 검증 (Voice) | 금지 어휘, 전환어구 중복 차단 |
+| L4 | 도메인 검증 (Domain) | 도메인별(D1~D5) 품질 기준 확인 |
+| L5 | Judge Model (Blog 전용) | 경량 LLM이 어조·뉘앙스 평가 |
+
+> L3/L4/L5 실패 시 Pre-Direction 단계로 피드백 루프를 형성하여 방향성 재조정 후 재생성합니다.
 
 ---
 

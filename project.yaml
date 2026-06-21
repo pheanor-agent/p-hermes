@@ -4,7 +4,6 @@ slug: p-hermes
 created: "2026-06-14"
 status: active
 description: "Hermes Agent 시스템 문서화 및 GitHub Pages 배포"
-code_path: "~/.hermes/workspace/projects/p-hermes"
 tech_stack: [markdown, github-pages, bash]
 tags:
   - documentation

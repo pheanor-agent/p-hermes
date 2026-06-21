@@ -1,5 +1,5 @@
 #!/bin/bash
-# setup.sh - p-hermes 자동 설치 스크립트
+# setup.sh - p-hermes 문서 프로젝트 설치 스크립트
 # 사용법: bash setup.sh [HERMES_HOME]
 # 예: bash setup.sh ~/.hermes
 set -euo pipefail
@@ -7,7 +7,7 @@ set -euo pipefail
 HERMES_HOME="${1:-$HOME/.hermes}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-echo "🚀 p-hermes 자동 설치 시작 ($HERMES_HOME)"
+echo "🚀 p-hermes 문서 프로젝트 설치 시작 ($HERMES_HOME)"
 
 # 1. 5-Tier 디렉토리 구조 생성
 echo "🏗️ 5-Tier 디렉토리 구조 생성..."
@@ -34,18 +34,34 @@ else
   echo "  ⚠️ AGENTS.md 이미 존재 - 건너뛰기"
 fi
 
-# 3. 스크립트 배치
+# 3. 스크립트 배치 (저장소에 core/scripts/가 있을 경우에만)
 echo "📜 스크립트 배치..."
-cp "$SCRIPT_DIR/core/scripts/"*.sh "$HERMES_HOME/core/scripts/" 2>/dev/null || true
-cp -r "$SCRIPT_DIR/core/lib/"* "$HERMES_HOME/core/lib/" 2>/dev/null || true
-chmod +x "$HERMES_HOME/core/scripts/"*.sh
-echo "  ✅ 스크립트 배치 완료"
+if [[ -d "$SCRIPT_DIR/core/scripts" ]]; then
+  cp "$SCRIPT_DIR/core/scripts/"*.sh "$HERMES_HOME/core/scripts/" 2>/dev/null || true
+  chmod +x "$HERMES_HOME/core/scripts/"*.sh 2>/dev/null || true
+  echo "  ✅ 스크립트 배치 완료"
+else
+  echo "  ⚠️ core/scripts/ 디렉토리가 없어 스크립트 배치 건너뜀"
+fi
 
-# 4. 스킬 배치
+# lib 디렉토리 배치 (저장소에 core/lib/가 있을 경우에만)
+if [[ -d "$SCRIPT_DIR/core/lib" ]]; then
+  mkdir -p "$HERMES_HOME/core/lib"
+  cp -r "$SCRIPT_DIR/core/lib/"* "$HERMES_HOME/core/lib/" 2>/dev/null || true
+  echo "  ✅ 라이브러리 배치 완료"
+else
+  echo "  ⚠️ core/lib/ 디렉토리가 없어 라이브러리 배치 건너뜀"
+fi
+
+# 4. 스킬 배치 (저장소에 core/skills/가 있을 경우에만)
 echo "🧠 스킬 배치..."
-mkdir -p "$HERMES_HOME/skills"
-cp -r "$SCRIPT_DIR/core/skills/"* "$HERMES_HOME/skills/" 2>/dev/null || true
-echo "  ✅ 스킬 배치 완료"
+if [[ -d "$SCRIPT_DIR/core/skills" ]]; then
+  mkdir -p "$HERMES_HOME/skills"
+  cp -r "$SCRIPT_DIR/core/skills/"* "$HERMES_HOME/skills/" 2>/dev/null || true
+  echo "  ✅ 스킬 배치 완료"
+else
+  echo "  ⚠️ core/skills/ 디렉토리가 없어 스킬 배치 건너뜀"
+fi
 
 # 5. Gateway 훅 배치
 echo "🪝 Gateway 훅 배치..."
@@ -55,13 +71,21 @@ echo "  ⚠️ hooks 디렉토리가 없어 건너뜁니다."
 # 6. 크론 레지스트리 초기화
 echo "⏰ 크론 레지스트리 초기화..."
 if [[ ! -f "$HERMES_HOME/infra/cron/registry.yaml" ]]; then
-  cp "$SCRIPT_DIR/infra/cron/registry.yaml.example" "$HERMES_HOME/infra/cron/registry.yaml"
-  echo "  ✅ registry.yaml 생성됨"
+  if [[ -f "$SCRIPT_DIR/infra/cron/registry.yaml.example" ]]; then
+    cp "$SCRIPT_DIR/infra/cron/registry.yaml.example" "$HERMES_HOME/infra/cron/registry.yaml"
+    echo "  ✅ registry.yaml 생성됨"
+  else
+    echo "  ⚠️ registry.yaml.example 파일이 없어 건너뜀"
+  fi
 fi
 
 # 7. 검증 스크립트 실행
 echo "🔍 포팅 검증 실행..."
-bash "$SCRIPT_DIR/verify.sh" "$HERMES_HOME"
+if [[ -f "$SCRIPT_DIR/verify.sh" ]]; then
+  bash "$SCRIPT_DIR/verify.sh" "$HERMES_HOME"
+else
+  echo "  ⚠️ verify.sh가 없어 검증 건너뜀"
+fi
 
 echo ""
 echo "🎉 설치 완료!"

@@ -1,5 +1,10 @@
 # p-hermes 설정 파일 템플릿
 # 사용법: 이 파일을 ~/.hermes/config.yaml로 복사 후 [필수] 필드를 수정하세요
+#
+# 모델명은 절대 하드코딩하지 마세요. your-{role}-model 형식의
+# placeholder를 사용하고, 실제 모델명은 사용자가 변경합니다.
+#
+# 시스템 roles: default, creative, coding, reasoning, fast, review
 
 model:
   # [필수] 실제 API 키로 변경하세요 (환경변수 사용 권장)
@@ -7,23 +12,22 @@ model:
   # [필수] 실제 API 엔드포인트로 변경하세요
   base_url: "YOUR_API_ENDPOINT"
   # [필수] 기본 모델명으로 변경하세요
-  default: "High-Speed-Coding-Model"
+  default: "your-default-model"
   provider: custom
 
 # 모델 라우팅 설정
+# 각 role에 할당할 모델명을 your-{role}-model 형식으로 지정하세요.
+# 지원 roles: default, creative, coding, reasoning, fast, review
 model_routing:
-  coding: "zai-coding-model"
-  reasoning: "openai-o1"
-  creative: "claude-3-5-sonnet"
-  default: "High-Speed-Coding-Model"
+  coding: "your-coding-model"
+  reasoning: "your-reasoning-model"
+  creative: "your-creative-model"
+  fast: "your-fast-model"
+  review: "your-review-model"
+  default: "your-default-model"
 
+# 프로바이더 설정 — custom만 유지 (나머지는 사용자가 필요시 추가)
 providers:
-  zai:
-    base_url: "https://api.zai.ai/v1"
-    api_key: "${ZAI_API_KEY}"
-  airouter:
-    base_url: "https://api.airouter.ai/v1"
-    api_key: "${AIROUTER_API_KEY}"
   custom:
     base_url: "YOUR_API_ENDPOINT"
     api_key: "${HERMES_API_KEY}"
@@ -37,19 +41,32 @@ channel_prompts:
     system: "You are a helpful assistant on Telegram."
     prefix: "[Telegram] "
 
+# 워크플로우 설정
 workflow:
+  enabled: true
   checkpoint_validation: true
   auto_transition: true
-  state_file: ".workflow-state"
+  state_file: ".hermes/workflow-state"
+  max_retries: 3
 
+# 지식 베이스 설정
 knowledge:
   wiki_path: "~/.hermes/knowledge/wiki"
   update_interval: 300
+  max_depth: 3
+  auto_sync: true
 
+# 크론 작업 설정
 cron:
+  enabled: true
   registry: "~/.hermes/infra/cron/registry.yaml"
   history_dir: "~/.hermes/infra/cron/history"
+  max_history_days: 30
 
+# 백업 설정
 backup:
+  enabled: true
   snapshots_dir: "~/.hermes/backups/snapshots"
   jobs_dir: "~/.hermes/backups/jobs"
+  retention_days: 7
+  auto_backup: true

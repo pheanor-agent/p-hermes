@@ -43,6 +43,9 @@ __pycache__/
 dist/
 build/
 
+# Internal state
+session-state-*.md
+
 # Environment
 .env
 .env.local
