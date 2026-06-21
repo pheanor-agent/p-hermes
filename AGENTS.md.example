@@ -16,11 +16,14 @@
 
 ## 모델 라우팅 (예시)
 
-| 단계 | 모델 타입 | 역할 |
+| 역할 | 모델 타입 | 용도 |
 |------|----------|------|
-| Design/Review | High-Reasoning-Model | 추론/검증 |
-| Execution | High-Speed-Coding-Model | 코드 작성 |
-| Investigation | General-Purpose-Model | 조사 |
+| reasoning | your-reasoning-model | 추론/검증/리뷰 |
+| coding | your-coding-model | 코드 작성/실행 |
+| fast | your-fast-model | 조사/빠른 응답 |
+| creative | your-creative-model | 창작 |
+| review | your-review-model | 리뷰 |
+| default | your-default-model | 기본
 
 ## 작업 규칙
 

@@ -1,29 +1,22 @@
 # p-hermes 크론 레지스트리 템플릿
-# 사용법: 이 파일을 ~/.hermes/infra/cron/registry.yaml로 복사하세요
-# 
+# 사용법: 이 파일을 ~/.hermes/cron/registry.yaml로 복사하세요
+#
 # 각 작업은 다음 필드를 가집니다:
-#   - id: 고유 작업 ID
-#   - name: 작업 이름
+#   - name: 작업 이름 (고유 식별자)
 #   - schedule: 실행 스케줄 (cron 형식 또는 '30m', 'every 2h' 등)
-#   - deliver: 결과 전송 채널 (origin, discord:CHANNEL_ID, telegram:GROUP_ID)
-#   - enabled: 활성화 여부 (true/false)
+#   - script: 실행할 스크립트 경로 (\$HERMES_HOME 기준 상대경로)
+#   - type: 작업 유형 (script / prompt)
+#   - description: 작업 설명
 
-# 예시 작업 목록:
-
-- id: job-daily-report
-  name: "일일 시스템 리포트"
+# 예시 작업:
+- name: "daily-report"
   schedule: "0 9 * * *"
-  deliver: "origin"
-  enabled: true
+  script: "core/scripts/daily-report.sh"
+  type: "script"
+  description: "일일 시스템 리포트 자동 생성"
 
-- id: job-weekly-backup
-  name: "주간 백업"
-  schedule: "0 0 * * 0"
-  deliver: "local"
-  enabled: true
-
-- id: job-knowledge-sync
-  name: "지식 시스템 동기화"
+- name: "knowledge-sync"
   schedule: "every 5h"
-  deliver: "local"
-  enabled: true
+  script: "core/scripts/knowledge-sync.sh"
+  type: "script"
+  description: "지식 시스템 동기화"

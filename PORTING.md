@@ -91,11 +91,11 @@ export HERMES_API_KEY=your_actual_api_key_here
 `~/.hermes/infra/cron/registry.yaml`에 다음 형식으로 추가하세요:
 
 ```yaml
-- id: job-your-task
-  name: "작업 이름"
-  schedule: "0 9 * * *"  # 매일 오전 9시
-  deliver: "origin"      # 결과 전송 채널
-  enabled: true
+- name: "your-task"
+  schedule: "0 9 * * *"     # 매일 오전 9시
+  script: "core/scripts/your-script.sh"
+  type: "script"
+  description: "작업 설명"
 ```
 
 ---
