@@ -4,11 +4,11 @@ domain: A4-Knowledge-System
 type: wiki
 title: 지식 시스템 사용 가이드
 date: 2026-06-17
-version: "1.0.0"
+version: "1.1.0"
 compatibility: v0.16.0
 author: p-hermes
 status: draft
-tags: ["knowledge", "wiki", "scoring", "pipeline", "karpathy"]
+tags: ["knowledge", "wiki", "scoring", "_scripts", "karpathy"]
 related_specs: ["SPEC-D04"]
 ---
 
@@ -30,7 +30,7 @@ Raw 원본을 LLM 파이프라인으로 정제하여 계층적 Wiki DB에 저장
 
 ## 기술 설계
 
-지식 시스템은 다음 구성 요소로 구현됩니다. `daily-knowledge-process.sh`가 변경된 원본 파일을 스캔하여 wiki 페이지로 가공하고, `build-metadata.sh`와 `build-graph.sh`가 페이지 간 관계 그래프를 생성하며, `build-scores.sh`가 `score = pw × 0.5 + rs × 0.3 + us × 0.2` 공식으로 점수를 자동 계산합니다. `knowledge-health-report.sh`가 일일 건강도 리포트를 생성하고, `wiki-cleanup.sh`가 T3 지식을 아카이빙합니다. `sources-index.json`이 원본 소스 카탈로그를 관리합니다.
+지식 시스템은 다음 구성 요소로 구현됩니다. `core/scripts/daily-knowledge-process.sh`가 변경된 원본 파일을 스캔하여 wiki 페이지로 가공하고, `_scripts/priority.sh`가 점수를 자동 계산합니다. `_scripts/index.sh`가 `index.md` 카탈로그를 자동 갱신합니다. `_scripts/lint.sh`가 지식 페이지의 무결성을 검증하고, `_scripts/ingest.sh`가 외부 소스 수집을 담당합니다.
 
 ## 구조/흐름도
 
@@ -44,25 +44,20 @@ flowchart TD
     end
 
     subgraph Pipeline["가공 파이프라인"]
-        P1["daily-knowledge-process.sh<br/>스캔 + 가공"]
-        P2["clean-wiki-pages.sh<br/>원본 복사본 정리"]
-        P3["build-metadata.sh<br/>metadata.json"]
-        P4["build-graph.sh<br/>graph_edges.json"]
+        P1["core/scripts/daily-knowledge-process.sh<br/>스캔 + 가공"]
+        P2["_scripts/ingest.sh<br/>외부 소스 수집"]
+        P3["_scripts/index.sh<br/>index.md 갱신"]
+        P4["_scripts/lint.sh<br/>무결성 검증"]
     end
 
     subgraph Priority["점수 계산"]
-        SC["build-scores.sh<br/>T1/T2/T3 분류"]
+        SC["_scripts/priority.sh<br/>T1/T2/T3 분류"]
     end
 
     subgraph Storage["Wiki DB"]
-        W1["pages/"]
-        W2["_data/scores.json"]
-        W3["index.md"]
-    end
-
-    subgraph Health["건강도"]
-        HR["knowledge-health-report.sh"]
-        CL["wiki-cleanup.sh"]
+        W1["wiki/pages/"]
+        W2["wiki/_data/scores.json"]
+        W3["wiki/index.md"]
     end
 
     S1 & S2 & S3 & S4 --> P1
@@ -71,25 +66,27 @@ flowchart TD
     P3 --> P4
     P4 --> SC
     SC --> W1 & W2 & W3
-    SC --> HR
-    HR --> CL
 ```
 
 ## 활용 예시
 
 ### 전체 파이프라인 수동 실행
 ```bash
-bash ~/.hermes/knowledge/pipeline/daily-knowledge-process.sh
-bash ~/.hermes/knowledge/pipeline/build-metadata.sh
-bash ~/.hermes/knowledge/pipeline/build-graph.sh
-bash ~/.hermes/knowledge/pipeline/build-scores.sh
+# 일일 지식 가공
+bash ~/.hermes/core/scripts/daily-knowledge-process.sh
+
+# index.md 갱신
+bash ~/.hermes/knowledge/_scripts/index.sh
+
+# 점수 계산
+bash ~/.hermes/knowledge/_scripts/priority.sh
 ```
 
 ### 점수 결과 확인
 ```bash
 python3 -c "
 import json
-with open('~/.hermes/knowledge/processed/wiki/_data/scores.json') as f:
+with open('$HOME/.hermes/knowledge/processed/wiki/_data/scores.json') as f:
     data = json.load(f)
 print(f'Total: {data[\"summary\"][\"total\"]}, T1 Core: {data[\"summary\"][\"core\"]}')"
 ```
@@ -106,6 +103,7 @@ p-hermes의 지식 시스템은 Karpathy의 3계층 구조(Raw Sources → Wiki 
 
 | 소스 | 위치 | 형식 |
 |------|------|------|
+| OpenClaw Memory | `~/.openclaw/workspace/memory/` | MD |
 | Hermes Sessions | `~/.hermes/sessions/` | JSONL |
 | JOB 기록 | `~/.hermes/workspace/jobs/` | MD |
 | 뉴스 | `~/.hermes/knowledge/news/` | MD |
@@ -118,9 +116,9 @@ p-hermes의 지식 시스템은 Karpathy의 3계층 구조(Raw Sources → Wiki 
 | 폴더 | 역할 |
 |------|------|
 | `~/.hermes/cron/` | 크론 시스템 스크립트 |
-| `~/.hermes/scripts/*backup*` | 백업 스크립트 |
+| `~/.hermes/core/scripts/*backup*` | 백업 스크립트 |
 | `~/.hermes/hermes-agent/.hermes-local/` | Hermes 로컬 코드 변경점 |
-| `~/.hermes/skills/` | 모든 스킬 변경점 (SKILL.md, catalog.json 등) |
+| `~/.hermes/core/skills/` | 모든 스킬 변경점 (SKILL.md, catalog.json 등) |
 
 ### 소스 카운팅 규칙
 
@@ -136,23 +134,46 @@ ls ~/.hermes/workspace/jobs/*/result.md | wc -l
 
 ## Wiki 트리 구조
 
-가공된 지식은 `~/.hermes/knowledge/processed/wiki/`에 계층적으로 저장됩니다. 단일 페이지 폴더에 모든 지식을 보관하고, 도메인·태그 인덱스를 별도로 관리하여 탐색 경로를 최적화합니다.
+가공된 지식은 `~/.hermes/knowledge/wiki/`와 `~/.hermes/knowledge/processed/wiki/`에 계층적으로 저장됩니다.
 
 ### 디렉토리 구조
 
 ```
-~/.hermes/knowledge/processed/wiki/
-├── pages/              # 모든 지식 페이지 (단일 폴더)
-├── _data/              # 메타데이터 (JSON 인덱스)
-│   ├── metadata.json   # 페이지별 메타 정보
-│   ├── graph_edges.json # 페이지 간 관계 그래프
-│   ├── scores.json     # 점수화 결과
-│   └── usage.json      # 사용량 트래킹
-├── index.md            # LLM 카탈로그 (진입점)
-├── domain-*.md         # 도메인별 탐색 인덱스
-├── tag-*.md            # 태그별 탐색 인덱스
-└── SCHEMA.md           # 규칙 정의
+~/.hermes/knowledge/
+├── wiki/                  # 활성 지식 페이지
+│   ├── pages/             # 모든 지식 페이지 (단일 폴더)
+│   ├── _data/             # 메타데이터 (JSON 인덱스)
+│   │   ├── metadata.json  # 페이지별 메타 정보
+│   │   ├── graph_edges.json # 페이지 간 관계 그래프
+│   │   ├── scores.json    # 점수화 결과
+│   │   └── usage.json     # 사용량 트래킹
+│   ├── index.md           # LLM 카탈로그 (진입점)
+│   ├── domain-*.md        # 도메인별 탐색 인덱스
+│   ├── tag-*.md           # 태그별 탐색 인덱스
+│   ├── AGENTS.md          # Wiki 에이전트 가이드
+│   ├── WIKI.md            # Wiki 저장소 설정
+│   └── SCHEMA.md          # 스키마 정의
+├── processed/wiki/        # 가공 데이터
+│   └── _data/             # 점수/그래프 데이터
+├── _scripts/              # 관리 스크립트
+│   ├── index.sh           # index.md 자동 갱신
+│   ├── ingest.sh          # 외부 소스 수집
+│   ├── lint.sh            # 무결성 검증
+│   └── priority.sh        # 점수 계산
+├── index.md               # 공유 지식 진입점
+├── README.md              # 저장소 개요
+├── CHANGELOG.md           # 변경 이력
+├── glossary.md            # 용어집
+├── entities/              # 엔티티 저장소
+├── concepts/              # 개념 저장소
+├── news/                  # 뉴스 소스
+├── references/            # 리퍼런스 소스
+└── sources/               # 소스 인덱스
 ```
+
+### index.md — 98페이지 카탈로그
+
+`wiki/index.md`는 LLM이 지식 시스템을 탐색하기 위한 진입점입니다. Core(T1) / Working(T2) / Reference(T3)로 분류된 페이지 목록을 제공하며, 도메인별·태그별 인덱스 페이지로 연결됩니다.
 
 ### 페이지 생성 조건
 
@@ -178,9 +199,19 @@ priority: P0 | P1 | P2 | reference
 ---
 ```
 
+### 관련 문서 (wiki/ 디렉토리)
+
+| 파일 | 설명 |
+|------|------|
+| `wiki/AGENTS.md` | Wiki 에이전트 운영 가이드 |
+| `wiki/WIKI.md` | Wiki 저장소 설정 및 아키텍처 |
+| `wiki/SCHEMA.md` | 지식 스키마, 소스 현황, 구조 정의 |
+| `README.md` | 공유 지식 저장소 개요 |
+| `CHANGELOG.md` | 지식 시스템 변경 이력 |
+
 ## 점수 체계 (T1 / T2 / T3)
 
-지식 시스템은 `build-scores.sh`를 통해 각 페이지의 중요도를 자동 계산하고, 3개 계층으로 분류합니다. 분류 결과는 `scores.json`에 저장되며, 에이전트는 이 정보를 기반으로 탐색 우선순위를 결정합니다.
+지식 시스템은 `_scripts/priority.sh`를 통해 각 페이지의 중요도를 자동 계산하고, 3개 계층으로 분류합니다. 분류 결과는 `wiki/_data/scores.json`에 저장되며, 에이전트는 이 정보를 기반으로 탐색 우선순위를 결정합니다.
 
 ### 계층별 기준
 
@@ -208,12 +239,12 @@ score = pw × 0.5 + rs × 0.3 + us × 0.2
 
 ```bash
 # 점수 계산 실행
-bash ~/.hermes/knowledge/pipeline/build-scores.sh
+bash ~/.hermes/knowledge/_scripts/priority.sh
 
 # 점수 결과 확인
 python3 -c "
 import json
-with open('~/.hermes/knowledge/processed/wiki/_data/scores.json') as f:
+with open('$HOME/.hermes/knowledge/processed/wiki/_data/scores.json') as f:
     data = json.load(f)
 print(f\"총 페이지: {data['summary']['total']}\")
 print(f\"T1 Core: {data['summary']['core']}\")
@@ -223,41 +254,34 @@ print(f\"평균 점수: {data['summary']['avg_score']:.2f}\")
 
 ## 자동 갱신 파이프라인
 
-지식 가공 파이프라인은 의존성 순서(`process → graph → priority → health`)로 순차 실행됩니다. Cron 스케줄에 따라 매일 자동 실행되며, 필요 시 수동으로도 호출할 수 있습니다.
+지식 가공 파이프라인은 의존성 순서로 순차 실행됩니다. `daily-knowledge-process.sh`가 변경된 원본을 스캔한 후, `_scripts/`의 개별 스크립트가 후속 처리를 담당합니다.
 
 ### 파이프라인 단계
 
 | 단계 | 스크립트 | 역할 |
 |------|----------|------|
-| process | `daily-knowledge-process.sh` | 변경된 원본 파일 스캔 → wiki entities/concepts |
-| process | `clean-wiki-pages.sh` | pages/에서 원본 복사본 정리 |
-| process | `process-job-outputs.py` | 완료 JOB → 구조화 요약 → entities |
-| graph | `build-metadata.sh` → `build-graph.sh` | metadata.json + graph_edges.json 생성 |
-| priority | `build-scores.sh` | scores.json + index.md 생성 |
-| health | `knowledge-health-report.sh` | 일일 건강도 리포트 |
-
-### Cron 스케줄
-
-| 작업 | 스케줄 | 역할 |
-|------|--------|------|
-| 지식 가공 일일 파이프라인 | 03:00 | 원본 스캔 → wiki 가공 |
-| 지식 그래프 동기화 | 03:30 | metadata + graph_edges |
-| 지식 우선순위 계산 | 04:00 | scores + index |
-| 지식 건강도 체크 | 04:30 | health report |
-| 외부 데이터 수집 (fetch) | 06:00, 18:00 | IT 뉴스 등 |
-| 지식 수집 | 06:15 | HN, GeekNews, AI Frontier |
+| scan | `core/scripts/daily-knowledge-process.sh` | 변경된 원본 파일 스캔 → wiki pages 생성/갱신 |
+| ingest | `_scripts/ingest.sh` | 외부 소스(뉴스 등) 수집 |
+| index | `_scripts/index.sh` | wiki/index.md 자동 갱신 |
+| lint | `_scripts/lint.sh` | 지식 페이지 무결성 검증 |
+| priority | `_scripts/priority.sh` | scores.json + T1/T2/T3 분류 |
 
 ### 수동 실행 방법
 
 ```bash
-# 전체 파이프라인 순차 실행
-bash ~/.hermes/knowledge/pipeline/daily-knowledge-process.sh
-bash ~/.hermes/knowledge/pipeline/build-metadata.sh
-bash ~/.hermes/knowledge/pipeline/build-graph.sh
-bash ~/.hermes/knowledge/pipeline/build-scores.sh
+# 일일 지식 가공
+bash ~/.hermes/core/scripts/daily-knowledge-process.sh
 
-# 건강도 리포트만 확인
-bash ~/.hermes/knowledge/pipeline/knowledge-health-report.sh
+# index.md 갱신
+bash ~/.hermes/knowledge/_scripts/index.sh
+
+# 점수 계산
+bash ~/.hermes/knowledge/_scripts/priority.sh
+
+# 전체 파이프라인
+bash ~/.hermes/core/scripts/daily-knowledge-process.sh && \
+bash ~/.hermes/knowledge/_scripts/priority.sh && \
+bash ~/.hermes/knowledge/_scripts/index.sh
 ```
 
 ## 무결성 규칙
@@ -270,31 +294,31 @@ bash ~/.hermes/knowledge/pipeline/knowledge-health-report.sh
 
 ## 예외 처리
 
-- **데이터 가지치기**: `clean-wiki-pages.sh`가 pages/ 폴더에 있는 원본 복사본을 정리합니다. 페이지 수 인플레이션 방지가 목적입니다.
-- **T3 아카이빙**: 오랫동안 참조되지 않은 T3 지식은 `wiki-cleanup.sh`로 아카이빙 또는 삭제합니다.
-- **소스 인덱스 재생성**: `sources-index-update.sh`를 실행하여 누락된 `sources/index.json`을 재생성합니다.
+- **데이터 가지치기**: 가공 과정에서 중복된 정보는 자동 병합됩니다. `_scripts/lint.sh`가 중복 및 오류를 검출합니다.
+- **T3 아카이빙**: 오랫동안 참조되지 않은 T3 지식은 수동 아카이빙 대상입니다. 현재 자동 아카이빙 스크립트는 없으며, `scores.json`의 점수 하락을 기준으로 판단합니다.
+- **소스 인덱스 재생성**: `sources/` 디렉토리의 소스 인덱스는 `daily-knowledge-process.sh` 실행 시 자동 갱신됩니다.
 
 ## FAQ
 
 **Q: 새로운 지식 소스를 추가하려면 어떻게 하나요?**
-`sources-index.json`에 소스 정보를 명시적으로 등록합니다. 형식: `{"name": "소스명", "title": "표제", "path": "경로", "type": "소stype", "ingested_at": "ISO8601"}`.
+`daily-knowledge-process.sh`의 `find` 명령어에 새 소스 경로를 추가합니다. 또는 `_scripts/ingest.sh`를 통해 외부 소스를 수집합니다.
 
 **Q: 특정 지식 페이지의 점수를 수동으로 조정할 수 있나요?**
-페이지의 `priority` 필드를 변경하면 `build-scores.sh` 실행 시 점수가 자동 재계산됩니다. `core`로 승격하면 T1 진입이 보장됩니다.
+페이지의 `priority` 필드를 변경하면 `_scripts/priority.sh` 실행 시 점수가 자동 재계산됩니다. `core`로 승격하면 T1 진입이 보장됩니다.
 
-**Q: 건강도 리포트에서 ❌ 표시가 나왔을 때 어떻게 해결하나요?**
-`sources/index.json` 또는 `.usage.db`가 누락된 상태입니다. `sources-index-update.sh`를 실행하여 재생성하거나, 스크립트로 SQLite DB를 초기화합니다.
+**Q: index.md가 오래된 정보를 보여줄 때 어떻게 해결하나요?**
+`bash ~/.hermes/knowledge/_scripts/index.sh`를 실행하여 index.md를 즉시 재생성합니다.
 
 ## 지식 생명주기 흐름도
 
 ```mermaid
 graph TD
     A[원본 소스 변경] --> B[daily-knowledge-process.sh: 스캔 + 가공]
-    B --> C[pages/: 지식 페이지 생성/갱신]
-    C --> D[build-metadata.sh + build-graph.sh: 관계 그래프]
-    D --> E[build-scores.sh: 점수 계산]
+    B --> C[wiki/pages/: 지식 페이지 생성/갱신]
+    C --> D[_scripts/index.sh: index.md 갱신]
+    D --> E[_scripts/priority.sh: 점수 계산]
     E --> F{T3 등급인가?}
-    F -- Yes --> G[wiki-cleanup.sh: 아카이빙/삭제]
+    F -- Yes --> G[수동 아카이빙 검토]
     F -- No --> H[에이전트가 index.md를 통해 탐색]
     G --> I[synthesis/: 주기적 요약]
     H --> I
@@ -302,6 +326,8 @@ graph TD
 
 ## 관련 문서
 
+- [Wiki Schema (SCHEMA.md)](~/.hermes/knowledge/wiki/SCHEMA.md) — 지식 스키마 상세
+- [Wiki Agent Guide (AGENTS.md)](~/.hermes/knowledge/wiki/AGENTS.md) — 에이전트 운영 가이드
 - [자동화(Cron) 시스템 가이드](./automation.md) (Wiki) — 지식 가공 파이프라인이 크론 스케줄에 의해 자동화됩니다.
 - [작업 요청 및 워크플로우 가이드](./request-task.md) (Wiki) — JOB 완료 시 지식 시스템으로의 동기화 과정을 확인합니다.
 

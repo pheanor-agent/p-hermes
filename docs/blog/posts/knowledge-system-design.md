@@ -60,7 +60,7 @@ sessions/2026-03-18.json  # "모델링을 해보면..." (데이터 모델링)
 # → 검색어가 '모델'이지만 의미상 3가지 다른 맥락
 
 # Wiki DB에서 검색 — 도메인/태그 기반 정밀 검색
-$ sqlite3 ~/.hermes/infra/knowledge/wiki.db \
+$ sqlite3 ~/.hermes/knowledge/wiki.db \
   "SELECT title, domain FROM wiki WHERE tags LIKE '%llm%' AND tags LIKE '%benchmark%'"
 결과: "모델 벤치마크 비교" | domain: system
 # → 1개 정확한 결과
@@ -76,13 +76,13 @@ $ sqlite3 ~/.hermes/infra/knowledge/wiki.db \
 
 ```bash
 # 1. Source Layer: 원본 데이터 수집
-$ cat ~/.hermes/infra/knowledge/references/2026-05/gemma4-announcement.md
+$ cat ~/.hermes/knowledge/references/2026-05/gemma4-announcement.md
 > Gemma-4 발표. MMLU: 88.2%, GPQA: 72.1%, 비용: $0.5/M tokens
 
-$ cat ~/.hermes/infra/knowledge/references/2026-05/qwen3-release.md
+$ cat ~/.hermes/knowledge/references/2026-05/qwen3-release.md
 > Qwen3 공개. HumanEval: 92.5%, 코드 생성 성능 강화
 
-$ cat ~/.hermes/infra/knowledge/references/2026-05/glm4-technical.md
+$ cat ~/.hermes/knowledge/references/2026-05/glm4-technical.md
 > GLM-4 기술 보고서. Latency: 12ms avg, 컨텍스트 1M tokens 지원
 ```
 
@@ -90,7 +90,7 @@ $ cat ~/.hermes/infra/knowledge/references/2026-05/glm4-technical.md
 
 ```bash
 # 파이프라인 스크립트 실행
-$ bash core/scripts/wiki-process-filings.sh --sources references/2026-05/
+$ bash ~/.hermes/scripts/wiki-process.sh --sources references/2026-05/
 
 [INFO] Processing 3 source files...
 [INFO] LLM fact extraction: gemma4-announcement.md
@@ -117,7 +117,7 @@ $ bash core/scripts/wiki-process-filings.sh --sources references/2026-05/
 ### 3. Storage Layer: Wiki DB에 기록
 
 ```bash
-$ cat ~/.hermes/infra/knowledge/wiki/system/models.md
+$ cat ~/.hermes/knowledge/wiki/system/models.md
 | Model | MMLU | HumanEval | Latency | Cost | Tags |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | Gemma-4 | 88.2% | - | - | $0.5/M | model,gemma,benchmark |
@@ -145,11 +145,11 @@ Hermes는 지식을 무조건 저장하지 않습니다. 데이터가 '사실(Fa
 - **주요 소스**:
     - `~/.hermes/runtime/state/sessions.db`: 모든 세션 대화 이력 (SQLite).
     - `~/.hermes/workspace/jobs/`: 각 JOB의 최종 산출물.
-    - `~/.hermes/infra/knowledge/references/`: 외부 공식 문서, GitHub Wiki.
-    - `~/.hermes/infra/knowledge/news/`: RSS/Atom 피드를 통한 최신 기술 뉴스.
+    - `~/.hermes/knowledge/references/`: 외부 공식 문서, GitHub Wiki.
+    - `~/.hermes/knowledge/news/`: RSS/Atom 피드를 통한 최신 기술 뉴스.
 
 ### 2. 가공 파이프라인 (Processing Layer)
-`wiki-process-filings.sh`라는 스크립트가 5분 간격으로 동작하며 원본 데이터를 '지식'으로 변환합니다. 이 과정에서 LLM이 **'사실 추출기(Fact Extractor)'** 역할을 수행합니다.
+`wiki-process.sh`라는 스크립트가 5분 간격으로 동작하며 원본 데이터를 '지식'으로 변환합니다. 이 과정에서 LLM이 **'사실 추출기(Fact Extractor)'** 역할을 수행합니다.
 
 **가공 프로세스**:
 1. **중복 제거**: 동일한 정보가 여러 소스에 있을 경우 하나로 통합.
@@ -162,7 +162,7 @@ Hermes는 지식을 무조건 저장하지 않습니다. 데이터가 '사실(Fa
 - *출력*: `{\"fact\": \"Flux.2 Pro가 기본 이미지 모델로 선정됨\", \"domain\": \"system\", \"tags\": [\"image\", \"flux\", \"default\"], \"confidence\": 0.98}`
 
 ### 3. Wiki DB 저장 및 검색 (Storage & Retrieval)
-가공된 데이터는 `~/.hermes/infra/knowledge/wiki/` 하위에 도메인별 Markdown 파일로 저장되며, 빠른 검색을 위해 **SQLite FTS5 (Full-Text Search)** 인덱스를 사용합니다.
+가공된 데이터는 `~/.hermes/knowledge/wiki/` 하위에 도메인별 Markdown 파일로 저장되며, 빠른 검색을 위해 **SQLite FTS5 (Full-Text Search)** 인덱스를 사용합니다.
 
 **도메인 구조**:
 - `system/`: 아키텍처, 설정, 모델 카탈로그 등 시스템의 뼈대 정보.
@@ -284,29 +284,9 @@ real    0m1.247s
 
 ### 파이프라인 처리 통계
 
-```bash
-$ cat ~/.hermes/infra/knowledge/pipeline-stats.json
-{
-  "total_sources_processed": 2847,
-  "facts_extracted": 1203,
-  "opinions_discarded": 1644,
-  "duplicates_merged": 89,
-  "domain_distribution": {
-    "system": 412,
-    "dev": 387,
-    "custom": 215,
-    "knowledge": 189
-  },
-  "avg_extraction_latency_ms": 820,
-  "confidence_distribution": {
-    "0.95+": 621,
-    "0.85-0.95": 442,
-    "below_0.85": 140
-  }
-}
-```
+지식 파이프라인은 지속적으로 데이터를 처리합니다. 각 실행마다 소스 파일 수, 추출된 사실 수, 필터링된 의견 수 등의 메트릭이 로그에 기록됩니다. 이 데이터를 기반으로 파이프라인의 효율성과 정확도를 주기적으로 평가합니다.
 
-2,847개 소스 파일 중 1,203개의 사실만 추출되었습니다. 나머지 1,644건은 의견이나 비사실로 필터링되었습니다.
+소스 파일 중 일부만 사실로 추출됩니다. 나머지는 의견이나 비사실로 필터링되어 지식 DB에 포함되지 않습니다.
 
 ---
 
@@ -324,12 +304,11 @@ $ cat ~/.hermes/infra/knowledge/pipeline-stats.json
 
 ```yaml
 # infra/cron/registry.yaml
-- id: job-knowledge-sync
+- name: knowledge-sync
   schedule: "*/5 * * * *"  # 5분마다
-  model: glm-4
-  script: core/scripts/wiki-process-filings.sh
-  args: ["--auto-scan"]
-  notification: none  # 내부 작업이므로 알림 불필요
+  script: ~/.hermes/scripts/wiki-process.sh
+  type: script
+  description: "지식 동기화"
 ```
 
 ### 데이터 유효성 검증: 어떻게 신뢰하는가?
@@ -338,7 +317,7 @@ Wiki DB에 저장된 지식도 시간이 지나면 노후화됩니다. Hermes는
 
 ```bash
 # 신뢰도 점수가 낮은 지식 필터링
-$ sqlite3 ~/.hermes/infra/knowledge/wiki.db \
+$ sqlite3 ~/.hermes/knowledge/wiki.db \
   "SELECT title, confidence, updated_at FROM wiki WHERE confidence < 0.85"
 
 결과:
@@ -346,7 +325,7 @@ $ sqlite3 ~/.hermes/infra/knowledge/wiki.db \
 # → 6개월 전 지식. 신뢰도 하락 — 갱신 필요
 
 # 갱신된 지식과 비교
-$ sqlite3 ~/.hermes/infra/knowledge/wiki.db \
+$ sqlite3 ~/.hermes/knowledge/wiki.db \
   "SELECT title, confidence, updated_at FROM wiki WHERE domain='system' AND tags LIKE '%model%' ORDER BY updated_at DESC"
 
 결과:

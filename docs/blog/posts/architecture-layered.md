@@ -14,7 +14,7 @@ related_specs: ["SPEC-D04"]
 
 # 레이어드 아키텍처: 왜 모듈화가 에이전트 시스템의 생존 조건인가
 
-> **💡 한 줄 요약**: Hermes의 레이어드 아키텍처는 Core, Config, Workflow, Script, Release로 수직 분리를 통해 수평 확장을 가능하게 하며, event.sh 단일 진입점과 JSONL 감사 추적을 통해 시스템 신뢰성을 확보합니다.
+> **💡 한 줄 요약**: Hermes의 레이어드 아키텍처는 Core, Runtime, Interfaces, Infra, Release로 수직 분리를 통해 수평 확장을 가능하게 하며, event.sh 단일 진입점과 JSONL 감사 추적을 통해 시스템 신뢰성을 확보합니다.
 
 ---
 
@@ -30,7 +30,7 @@ AI 에이전트 시스템은 점점 더 많은 기능을 통합합니다. 코드
 
 공학적 시스템에서 **'단단한 결합(Tight Coupling)'**은 변화에 대한 저항력을 약화시킵니다. 하나의 스크립트가 파일 조작, 상태 관리, 외부 통신을 모두 수행할 경우, 각 책임 영역이 서로 의존하게 됩니다. Config 파일 형식이 변경되면 파일 처리 스크립트를 수정해야 하고, 상태 관리 로직이 바뀌면 통신 함수를 함께 고쳐야 합니다. 이러한 연쇄 수정은 변경 범위를 통제 불능 상태로 키웁니다.
 
-Hermes는 이 문제를 구조적 분리로 해결합니다. **레이어드 아키텍처** — Core, Config, Workflow, Script, Release — 는 각 계층이 단일 책임을 가지도록 강제합니다. 설계 철학은 명확합니다: **'수직 분리가 수평 확장을 가능하게 한다'**.
+Hermes는 이 문제를 구조적 분리로 해결합니다. **레이어드 아키텍처** — Core, Runtime, Interfaces, Infra, Release — 는 각 계층이 단일 책임을 가지도록 강제합니다. 설계 철학은 명확합니다: **'수직 분리가 수평 확장을 가능하게 한다'**.
 
 ---
 
@@ -114,7 +114,7 @@ event.sh는 Hermes 시스템의 신경 중추입니다. 모든 스크립트, Job
 
 ### 상태 파일 기반 통신 (State File Messaging)
 
-event.sh는 이벤트 큐를 파일 시스템에 유지합니다. 각 이벤트는 JSON 객체로 직렬화되어 `runtime/events/` 디렉토리에 기록됩니다.
+event.sh는 이벤트 큐를 파일 시스템에 유지합니다. 각 이벤트는 JSON 객체로 직렬화되어 `core/skills/shared/system-common/lib/` 디렉토리에 기록됩니다.
 
 ```
 ~/.hermes/runtime/events/

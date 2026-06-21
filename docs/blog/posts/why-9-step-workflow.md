@@ -95,7 +95,7 @@ $ cat jobs/JOB-2047/design.md
 **사건 2 (Review 단계에서 차단)**: `workflow-gate.sh`가 Review 없이 Execution으로 점프하려는 시도를 감지했습니다.
 
 ```bash
-$ bash core/scripts/workflow-gate.sh --next execution --job JOB-2047
+$ bash ~/.hermes/scripts/workflow-gate.sh --next execution --job JOB-2047
 [ERROR] Cannot transition from Design to Execution.
 [ERROR] Missing required artifact: jobs/JOB-2047/review.md
 [ERROR] Please complete Review step first.
@@ -340,17 +340,17 @@ graph LR
 9단계 워크플로우의 각 단계마다 사용되는 토큰 양이 다릅니다. 이를 분석하면 모델 선택과 컨텍스트 관리에 통찰을 얻습니다.
 
 ```bash
-$ cat ~/.hermes/runtime/state/jobs/JOB-1626/token-distribution.json
+$ cat ~/.hermes/workspace/jobs/JOB-1626/token-distribution.json
 {
-  \"investigation\": {\"input_tokens\": 45000, \"output_tokens\": 3200, \"model\": \"glm-4\", \"cost\": 0.15},
-  \"design\": {\"input_tokens\": 52000, \"output_tokens\": 8500, \"model\": \"gemma-4\", \"cost\": 0.95},
-  \"review\": {\"input_tokens\": 48000, \"output_tokens\": 4200, \"model\": \"claude-3-5\", \"cost\": 4.20},
-  \"execution\": {\"input_tokens\": 38000, \"output_tokens\": 6800, \"model\": \"qwen-2.5\", \"cost\": 0.45},
-  \"test\": {\"input_tokens\": 22000, \"output_tokens\": 1800, \"model\": \"glm-4\", \"cost\": 0.08}
+  \"investigation\": {\"input_tokens\": 45000, \"output_tokens\": 3200, \"role\": \"fast\", \"cost\": 0.15},
+  \"design\": {\"input_tokens\": 52000, \"output_tokens\": 8500, \"role\": \"reasoning\", \"cost\": 0.95},
+  \"review\": {\"input_tokens\": 48000, \"output_tokens\": 4200, \"role\": \"review\", \"cost\": 4.20},
+  \"execution\": {\"input_tokens\": 38000, \"output_tokens\": 6800, \"role\": \"coding\", \"cost\": 0.45},
+  \"test\": {\"input_tokens\": 22000, \"output_tokens\": 1800, \"role\": \"fast\", \"cost\": 0.08}
 }
 ```
 
-**분석**: Investigation과 Test 단계는 GLM-4로 처리되어 토큰 비용이 최소입니다. Review 단계는 Claude 3.5를 사용하지만, 설계서를 검토하는 짧은 세션이기 때문에 총 토큰 수는 Design 단계보다 적습니다. 이 패턴은 역할 기반 라우팅이 비용 최적화에 어떻게 기여하는지 보여줍니다.
+**분석**: Investigation과 Test 단계는 fast 역할로 처리되어 토큰 비용이 최소입니다. Review 단계는 review 역할을 사용하지만, 설계서를 검토하는 짧은 세션이기 때문에 총 토큰 수는 Design 단계보다 적습니다. 이 패턴은 역할 기반 라우팅이 비용 최적화에 어떻게 기여하는지 보여줍니다.
 
 ---
 
@@ -391,7 +391,7 @@ Agent: [JOB] 9단계 프로세스 적용 → 완료 (45분)
 
 ```bash
 # 현재 상태 확인
-$ bash core/scripts/workflow-gate.sh --status --job JOB-1626
+$ bash ~/.hermes/scripts/workflow-gate.sh --status --job JOB-1626
 {
   \"job_id\": \"JOB-1626\",
   \"current_step\": \"design\",
@@ -400,7 +400,7 @@ $ bash core/scripts/workflow-gate.sh --status --job JOB-1626
 }
 
 # 다음 단계로 전환
-$ bash core/scripts/workflow-gate.sh --next review --job JOB-1626
+$ bash ~/.hermes/scripts/workflow-gate.sh --next review --job JOB-1626
 [OK] Transition: design → review
 [OK] State saved to .workflow-state
 ```

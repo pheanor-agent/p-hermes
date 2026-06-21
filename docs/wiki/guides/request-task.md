@@ -61,13 +61,13 @@ stateDiagram-v2
 
 ### 시스템 통합 흐름
 
-워크플로우는 시스템 아키텍처의 Core 계층(`workflow.sh`)에서 동작하며, 상태 파일(`.workflow-state`)과 이벤트 버스(`event.sh`)를 통해 Runtime·Interface 계층과 연동합니다.
+워크플로우는 시스템 아키텍처의 Core 계층(`workflow-gate.sh`)에서 동작하며, 상태 파일(`.workflow-state`)과 이벤트 버스(`event.sh`)를 통해 Runtime·Interface 계층과 연동합니다.
 
 ```mermaid
 sequenceDiagram
     participant U as User
     participant IF as Interface<br/>(Discord/CLI)
-    participant WF as workflow.sh<br/>(Core)
+    participant WF as workflow-gate.sh<br/>(Core)
     participant WS as .workflow-state
     participant EV as event.sh
     participant K as knowledge/<br/>(Runtime)

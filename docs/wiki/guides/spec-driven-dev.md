@@ -85,7 +85,7 @@ cat specs/_matrix.json | python3 -m json.tool
 | `specs/_index.yaml` | 인간 판독형 Spec 카탈로그 (id, title, status, parent, path) |
 | `specs/_matrix.json` | 기계 판독형 의존성 그래프 + 충돌 주석 |
 | `specs/active/SPEC-*.md` | 활성 사양서 |
-| `specs/reviews/*.md` | 리뷰 산출물 (GLM-5.2/Gemma-4 출력) |
+| `specs/reviews/*.md` | 리뷰 산출물 (역할 기반 출력) |
 
 ---
 

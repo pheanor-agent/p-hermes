@@ -278,8 +278,9 @@ hermes cron create \
 ### 이벤트 발행
 
 ```bash
-# 이벤트 발생
-event.sh publish system.job.completed "{job_id: 'JOB-1234'}"
+# 이벤트 발생 — event.sh의 라이브러리 함수 사용
+source "${HERMES_ROOT}/core/skills/shared/system-common/lib/event.sh"
+emit_event system.job.completed '{"job_id": "JOB-1234"}'
 ```
 
 **이벤트 스키마**
@@ -311,8 +312,9 @@ event.sh publish system.job.completed "{job_id: 'JOB-1234'}"
 ### 이벤트 수신
 
 ```bash
-# 이벤트 수신
-event.sh subscribe system.job.completed
+# 이벤트 수신 — event.sh 라이브러리 활용
+source "${HERMES_ROOT}/core/skills/shared/system-common/lib/event.sh"
+# Listener 등록 (내부적으로 emit_event로 수신)
 ```
 
 **Listener 패턴**
@@ -338,8 +340,8 @@ class JobListener:
 ### 이벤트 히스토리
 
 ```bash
-# 이벤트 히스토리 조회
-event.sh history system.*
+# 이벤트 히스토리 조회 — audit.jsonl 직접 조회
+grep "system\." ~/.hermes/audit.jsonl | head -20
 ```
 
 **히스토리 분석**
@@ -407,16 +409,16 @@ delivery:
 
 ```yaml
 jobs:
-  - id: JOB-1234
-    name: daily-briefing
+  - name: daily-briefing
     schedule: "0 9 * * *"
-    delivery: telegram
-    status: active
-  - id: JOB-1235
-    name: wiki-sync
+    script: ~/.hermes/scripts/daily-briefing.sh
+    type: llm
+    description: "일일 브리핑 생성"
+  - name: wiki-sync
     schedule: "every 5m"
-    script: scripts/wiki-sync.sh
-    status: active
+    script: ~/.hermes/scripts/wiki-sync.sh
+    type: script
+    description: "Wiki 동기화"
 ```
 
 ### Registry 관리
@@ -446,7 +448,7 @@ jobs:
 |------|------|------|
 | Job 실행 안됨 | 스케줄러 비활성화 | `hermes cron list` 확인 |
 | 결과 미배송 | delivery 설정 누락 | `--deliver` 옵션 확인 |
-| 이벤트 미수신 | subscribe 누락 | `event.sh subscribe` 실행 |
+| 이벤트 미수신 | subscribe 누락 | `emit_event` 사용 및 audit 로그 확인 |
 | 재시도 과다 | timeout 설정 | `--timeout` 옵션 확인 |
 
 **상세 해결 가이드**
