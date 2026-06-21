@@ -1,630 +1,633 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hermes Agent: 레이어드 아키텍처</title>
-  <link rel="stylesheet" href="../css/reveal.css">
-  <link rel="stylesheet" href="../css/white.css">
-  <!--"Google Fonts (한글) "-->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-  <!-- Highlight.js -->
-  <link rel="stylesheet" href="../css/highlight-github.min.css">
-  <script src="../js/highlight.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-  <script> window.mermaidConfig = { startOnLoad: false, theme: 'default' }; </script>
-  <style>
-    .reveal { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', 'Noto Sans KR', 'Helvetica Neue', sans-serif; }
-    :root {
-      --scale-h1: 2.2em;
-      --scale-h2: 1.5em;
-      --scale-body: 0.85em;
-      --scale-small: 0.75em;
-      --scale-caption: 0.65em;
-      --scale-tiny: 0.55em;
-      --code-font: 0.76em;
-      --diagram-font: 0.82em;
-      --slide-width: 1280px;
-      --slide-height: 720px;
-      --slide-padding: 60px;
-      --content-width: 1160px;
-      --content-height: 600px;
-      --diagram-margin: 40px;
-      --diagram-max-width: 1080px;
-      --diagram-max-height: 520px;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Layered Architecture · Golden Circle</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:#0f1117;color:#e8eaed;overflow:hidden;
+    width:100vw;height:100vh;
+  }
+  .stage{
+    width:100vw;height:100vh;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    position:relative;overflow:hidden;
+  }
+  .slide{
+    display:none;flex-direction:column;justify-content:center;align-items:center;
+    width:86%;max-width:960px;min-height:60vh;
+    animation:fadeIn .45s ease-out;
+    padding:24px 32px;
+  }
+  .slide.active{display:flex}
 
-    .reveal pre.mermaid { 
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      max-width: 1080px; 
-      margin: 40px auto; 
-      overflow: visible;
-    }
-    .mermaid svg { 
-      max-width: 100%; 
-      height: auto; 
-      display: block;
-      overflow: visible;
-    }
+  h1{font-size:2.6rem;font-weight:700;letter-spacing:-.02em;margin-bottom:20px}
+  h2{font-size:1.9rem;font-weight:600;margin-bottom:16px}
+  h3{font-size:1.4rem;font-weight:500;margin-bottom:12px;color:#9aa0a6}
+  p{font-size:1.2rem;line-height:1.7;max-width:780px;text-align:center}
+  .gc-why h1{color:#fbbc04}
+  .gc-what h1{color:#8ab4f8}
+  .gc-how h1{color:#81c995}
+  .gc-title h1{background:linear-gradient(135deg,#fbbc04,#f28b82);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 
-    .reveal .slides table {
-      max-width: var(--content-width) !important;
-      margin: 30px auto !important;
-      table-layout: fixed !important;
-      word-break: keep-all !important;
-    }
+  .tag{
+    display:inline-block;font-size:.8rem;font-weight:600;letter-spacing:.08em;
+    padding:4px 14px;border-radius:20px;margin-bottom:14px;text-transform:uppercase;
+  }
+  .tag-why{background:#fbbc0433;color:#fbbc04}
+  .tag-what{background:#8ab4f833;color:#8ab4f8}
+  .tag-how{background:#81c99533;color:#81c995}
+  .tag-pros{background:#34a85333;color:#34a853}
+  .tag-cons{background:#ea433533;color:#ea4335}
+  .tag-summary{background:#8ab4f833;color:#8ab4f8}
 
-    .reveal .slides p,
-    .reveal .slides .problem-card,
-    .reveal .slides .solution-card {
-      max-width: var(--content-width) !important;
-      margin: 20px auto !important;
-      padding: 0 40px !important;
-    }
+  .grid-3{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:20px;width:100%;max-width:860px;margin:12px 0;
+  }
+  .card{
+    background:#1e2029;border-radius:14px;padding:22px 18px;text-align:center;
+    border:1px solid #2d2f3a;transition:border-color .2s;
+  }
+  .card:hover{border-color:#fbbc0466}
+  .card .icon{font-size:2rem;margin-bottom:8px}
+  .card h4{font-size:1.1rem;font-weight:600;margin-bottom:6px}
+  .card p{font-size:.95rem;color:#9aa0a6;line-height:1.5}
 
-    .two-col {
-      display: flex;
-      gap: 40px !important;
-      max-width: var(--content-width) !important;
-      margin: 0 auto !important;
-      padding: 20px 40px !important;
-    }
-    .two-col > div { flex: 1; }
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:#1e2029;border:1px solid #2d2f3a;
+    padding:6px 16px;border-radius:30px;font-size:.95rem;margin:4px;
+  }
 
-    .reveal .slides h2 {
-      margin-bottom: 20px !important;
-    }
+  .stat-row{display:flex;gap:28px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+  .stat{text-align:center}
+  .stat .num{font-size:2.8rem;font-weight:700}
+  .stat .num.gold{color:#fbbc04}
+  .stat .num.blue{color:#8ab4f8}
+  .stat .num.green{color:#81c995}
+  .stat .lbl{font-size:.9rem;color:#9aa0a6;margin-top:2px}
 
-    .diagram-caption {
-      font-size: var(--scale-caption, 0.65em);
-      color: #666;
-      text-align: center;
-      margin-top: 10px;
-      max-width: var(--content-width);
-      margin-left: auto;
-      margin-right: auto;
-      padding: 0 40px;
-    }
-    .reveal h1 { font-size: var(--scale-h1); }
-    .reveal h2 { font-size: var(--scale-h2); color: #1a7f37; }
-    .reveal section img { background: none; border: none; box-shadow: none; }
-    .reveal .slides section.section-divider { text-align: left; }
-    .reveal .slides section.section-divider h2 { font-size: 2em; border-bottom: 3px solid #1a7f37; padding-bottom: 0.2em; }
-    .badge { display: inline-block; background: #1a7f37; color: #fff; padding: 0.2em 0.6em; border-radius: 12px; font-size: 0.6em; vertical-align: middle; }
-    .problem-card { background: #fff5f5; border-left: 4px solid #c0392b; padding: 1em; text-align: left; margin: 0.5em 0; }
-    .solution-card { background: #f0faf0; border-left: 4px solid #1a7f37; padding: 1em; text-align: left; margin: 0.5em 0; }
-    .two-col { display: flex; gap: 1em; }
-    .two-col > div { flex: 1; }
-    .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
-    .stat-label { font-size: 0.5em; color: #666; }
-    pre code { font-size: var(--code-font); }
-    .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
-    .tree li { margin: 0.2em 0; }
-    .tree .folder::before { content:"📁 "; }
-    .tree .file::before { content:"📄 "; }
+  .pipeline{
+    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0;
+  }
+  .pipe-step{
+    background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;
+    padding:10px 16px;text-align:center;min-width:90px;
+  }
+  .pipe-step .num{font-size:1rem;font-weight:700;color:#fbbc04}
+  .pipe-step .lbl{font-size:.85rem;color:#9aa0a6}
 
-    /* Mermaid Click-to-Zoom */
-    .mermaid-zoom-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.85);
-      z-index: 9999;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-    }
-    .mermaid-zoom-overlay.active {
-      display: flex;
-    }
-    .mermaid-zoom-overlay svg {
-      max-width: 90%;
-      max-height: 90%;
-      width: auto;
-      height: auto;
-    }
-    .mermaid[data-zoomable="true"] {
-      cursor: zoom-in;
-    }
-  </style>
+  .list-compact{text-align:left;max-width:680px;margin:10px auto;list-style:none}
+  .list-compact li{
+    padding:8px 0;font-size:1.1rem;line-height:1.6;
+    display:flex;align-items:flex-start;gap:10px;
+  }
+  .list-compact li::before{content:"▸";color:#fbbc04;font-weight:700}
+
+  .arrow-flow{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .arrow-flow .node{
+    background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;
+    padding:12px 18px;text-align:center;min-width:100px;
+  }
+  .arrow-flow .node .lbl{font-size:.85rem;color:#9aa0a6}
+  .arrow-flow .node .val{font-size:1.1rem;font-weight:600;margin-top:2px}
+  .arrow-flow .arrow{font-size:1.5rem;color:#5f6368}
+
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px;width:100%;max-width:860px;margin:12px 0}
+  .two-col .col{text-align:center}
+
+  /* ── 5-Tier Stack ── */
+  .tier-stack{
+    display:flex;flex-direction:column;gap:4px;max-width:600px;width:100%;margin:10px auto;
+  }
+  .tier-row{
+    display:flex;align-items:center;gap:12px;
+    background:#1e2029;border-radius:10px;padding:10px 16px;
+    border:1px solid #2d2f3a;text-align:left;
+  }
+  .tier-rank{
+    font-size:1.2rem;font-weight:700;min-width:32px;text-align:center;
+  }
+  .tier-name{
+    font-size:1.0rem;font-weight:600;min-width:110px;
+  }
+  .tier-desc{
+    font-size:.8rem;color:#9aa0a6;
+  }
+  .tier-arrow-row{
+    text-align:center;font-size:.85rem;color:#5f6368;margin:-2px 0;
+  }
+  .tier-core .tier-rank{color:#e74c3c}
+  .tier-runtime .tier-rank{color:#e67e22}
+  .tier-interface .tier-rank{color:#2ecc71}
+  .tier-infra .tier-rank{color:#3498db}
+  .tier-release .tier-rank{color:#9b59b6}
+  .tier-core .tier-name{color:#e74c3c}
+  .tier-runtime .tier-name{color:#e67e22}
+  .tier-interface .tier-name{color:#2ecc71}
+  .tier-infra .tier-name{color:#3498db}
+  .tier-release .tier-name{color:#9b59b6}
+
+  /* ── Rule indicator ── */
+  .rule-green{color:#34a853;font-weight:600}
+  .rule-red{color:#ea4335;font-weight:600}
+
+  /* ── Before/After comparison ── */
+  .ba-row{
+    display:flex;gap:16px;margin:12px 0;width:100%;max-width:780px;
+  }
+  .ba-card{
+    flex:1;border-radius:12px;padding:18px 16px;text-align:center;
+  }
+  .ba-before{background:#1e2029;border:1px solid #ea433544}
+  .ba-after{background:#1e2029;border:1px solid #34a85344}
+  .ba-card .ba-label{
+    font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+    margin-bottom:8px;
+  }
+  .ba-before .ba-label{color:#ea4335}
+  .ba-after .ba-label{color:#34a853}
+  .ba-card .ba-item{
+    font-size:.9rem;color:#9aa0a6;padding:4px 0;line-height:1.5;
+  }
+
+  /* ── Check/X list ── */
+  .check-list{text-align:left;max-width:620px;margin:8px auto;list-style:none}
+  .check-list li{
+    padding:6px 0;font-size:1rem;line-height:1.5;
+    display:flex;align-items:flex-start;gap:10px;
+  }
+  .check-list .ck{color:#34a853;font-weight:700}
+  .check-list .xx{color:#ea4335;font-weight:700}
+
+  .nav-bar{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    display:flex;align-items:center;gap:14px;
+    background:#1e2029;border:1px solid #2d2f3a;
+    padding:8px 20px;border-radius:30px;z-index:100;
+  }
+  .nav-bar button{
+    background:none;border:none;color:#9aa0a6;font-size:1.2rem;
+    cursor:pointer;padding:4px 8px;border-radius:6px;transition:all .2s;
+    line-height:1;
+  }
+  .nav-bar button:hover{color:#e8eaed;background:#2d2f3a}
+  .nav-bar .counter{
+    font-size:.85rem;color:#5f6368;min-width:48px;text-align:center;
+  }
+  .nav-dots{display:flex;gap:5px}
+  .nav-dots .dot{
+    width:8px;height:8px;border-radius:50%;background:#2d2f3a;
+    cursor:pointer;transition:all .25s;
+  }
+  .nav-dots .dot.active{background:#fbbc04;width:20px;border-radius:4px}
+
+  @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+  @media(max-width:700px){
+    h1{font-size:1.8rem}
+    h2{font-size:1.5rem}
+    p{font-size:1rem}
+    .grid-3{grid-template-columns:1fr}
+    .two-col{grid-template-columns:1fr}
+    .slide{width:92%;padding:16px}
+    .nav-bar{gap:8px;padding:6px 14px}
+    .ba-row{flex-direction:column}
+  }
+</style>
 </head>
 <body>
-  <div class="reveal">
-    <div class="slides">
 
-      <!-- ===== SECTION 0: OPENING ===== -->
+<div class="stage" id="stage"></div>
+<div class="nav-bar" id="navBar">
+  <button id="prevBtn">◀</button>
+  <span class="counter" id="counter">1/1</span>
+  <div class="nav-dots" id="dots"></div>
+  <button id="nextBtn">▶</button>
+</div>
 
-      <!-- Slide 1: Title -->
-      <section class="title-slide">
-        <p style="color: var(--r-heading-color); margin-bottom: 1rem; font-size: 0.8em;">p-hermes · 기술 컨셉 강의</p>
-        <h1>레이어드 아키텍처</h1>
-        <p style="font-size: 1.1em;">모듈화가 에이전트 시스템의 생존 조건인 이유</p>
-        <p style="font-size: 0.6em; color: #888; margin-top: 2em;">System architecture · CALMER deck</p>
-      </section>
-
-      <!-- Slide 2: Agenda -->
-      <section>
-        <h2>오늘의 여정</h2>
-        <table style="font-size: 0.75em; width: 80%; margin: 0 auto;">
-          <tr><td style="color:#c0392b; width: 15%;">WHY</td><td>모놀리식의 한계 — 왜 레이어드 구조인가?</td></tr>
-          <tr><td style="color:#1a7f37; width: 15%;">WHAT</td><td>관계망 아키텍처, 레이어별 역할, 이벤트 버스</td></tr>
-          <tr><td style="color:#0969da; width: 15%;">HOW</td><td>실제 디렉토리 구조, 데이터 흐름 예시</td></tr>
-          <tr><td style="color:#bc4c00; width: 15%;">TRADE-OFFS</td><td>레이어드 구조의 한계와 주의점</td></tr>
-        </table>
-        <p style="font-size: 0.6em; color: #888; margin-top: 1em;">약 20분 소요</p>
-      </section>
-
-      <!-- ===== SECTION 1: WHY ===== -->
-
-      <!-- Slide 3: Section divider - WHY -->
-      <section class="section-divider">
-        <span class="badge">WHY</span>
-        <h2>왜 레이어드 구조인가?</h2>
-      </section>
-
-      <!-- Slide 4: Problem — flat directory chaos -->
-      <section>
-        <h2>모놀리식의 3가지 한계</h2>
-        <div class="problem-card">
-          <strong>① 파일 간 의존성 불명확</strong><br>
-          <span style="font-size: 0.8em;">모든 스크립트가 한 디렉토리에 혼재. 한 파일 수정이 예상치 못한 곳에서 오류 발생.</span>
+<script>
+const slides = [
+  // ────────────── 1: Title ──────────────
+  {
+    cls:'gc-title',
+    html:`<span class="tag tag-why">GOLDEN CIRCLE</span>
+      <h1>Layered Architecture</h1>
+      <h2>5-Tier 구조</h2>
+      <p style="color:#9aa0a6;margin-top:30px;font-size:1rem">
+        WHY &nbsp;·&nbsp; WHAT &nbsp;·&nbsp; HOW &nbsp;·&nbsp; PROS &amp; CONS
+      </p>`
+  },
+  // ────────────── 2: Agenda ──────────────
+  {
+    cls:'',
+    html:`<h1>Agenda</h1>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:20px;text-align:left">
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 20px;background:#1e2029;border-radius:12px;border-left:4px solid #fbbc04">
+          <span style="font-size:1.4rem;font-weight:700;color:#fbbc04">01</span>
+          <div><strong style="color:#fbbc04">WHY</strong><br><span style="font-size:.9rem;color:#9aa0a6">모듈 간 의존성 문제 · 계층 분리 부재 · 확장성 부족</span></div>
         </div>
-        <div class="problem-card">
-          <strong>② 절대 경로 하드코딩</strong><br>
-          <span style="font-size: 0.8em;">WSL ↔ macOS 간 이동 시 전체 경로 재수정 필요. 환경마다 다른 설정 파일.</span>
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 20px;background:#1e2029;border-radius:12px;border-left:4px solid #8ab4f8">
+          <span style="font-size:1.4rem;font-weight:700;color:#8ab4f8">02</span>
+          <div><strong style="color:#8ab4f8">WHAT</strong><br><span style="font-size:.9rem;color:#9aa0a6">5-Tier · 단방향 의존성 · $HERMES_ROOT 추상화</span></div>
         </div>
-        <div class="problem-card">
-          <strong>③ 직접 호출 = 결합도 폭발</strong><br>
-          <span style="font-size: 0.8em;">모듈 A가 모듈 B를 직접 호출하면 교착 상태(deadlock)와 종속성 지옥.</span>
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 20px;background:#1e2029;border-radius:12px;border-left:4px solid #81c995">
+          <span style="font-size:1.4rem;font-weight:700;color:#81c995">03</span>
+          <div><strong style="color:#81c995">HOW</strong><br><span style="font-size:.9rem;color:#9aa0a6">계층 식별 · 의존성 검증 · 인터페이스 분리</span></div>
         </div>
-      </section>
-
-      <!-- Slide 5: Paradigm shift -->
-      <section>
-        <h2>패러다임 전환</h2>
-        <div class="two-col">
-          <div>
-            <strong>Flat (모놀리식)</strong>
-            <pre class="mermaid">graph TD
-  A["모듈 A"] --"직접 호출 "--> B["모듈 B"]
-  A --"직접 호출 "--> C["모듈 C"]
-  B --"직접 호출 "--> C
-  D["모듈 D"] --"직접 호출 "--> B
-  C --"직접 호출 "--> A
-  style A fill:#c0392b,stroke:#922b21,color:#fff
-  style B fill:#c0392b,stroke:#922b21,color:#fff
-  style C fill:#c0392b,stroke:#922b21,color:#fff
-  style D fill:#c0392b,stroke:#922b21,color:#fff
-</pre>
-          </div>
-          <div>
-            <strong>Layered (레이어드)</strong>
-            <pre class="mermaid">graph TD
-  T1["T1: Core<br/>config.yaml / workflow.sh"] --> T2["T2: Runtime<br/>knowledge/ cron/ sessions/"]
-  T2 --> T3["T3: Interfaces<br/>Discord / Telegram / CLI"]
-  T3 --> T4["T4: Infra<br/>GitHub / Docker"]
-  T4 --> T5["T5: Release<br/>docs/ slides/ llms.txt"]
-  E["event.sh Global"] -.-> T1
-  E -.-> T2
-  E -.-> T3
-  E -.-> T4
-  E -.-> T5
-  style T1 fill:#3498db,stroke:#2980b9,color:#fff
-  style T2 fill:#3498db,stroke:#2980b9,color:#fff
-  style T3 fill:#3498db,stroke:#2980b9,color:#fff
-  style T4 fill:#3498db,stroke:#2980b9,color:#fff
-  style T5 fill:#3498db,stroke:#2980b9,color:#fff
-  style E fill:#2ecc71,stroke:#1e8449,color:#fff
-</pre>
-          </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 20px;background:#1e2029;border-radius:12px;border-left:4px solid #34a853">
+          <span style="font-size:1.4rem;font-weight:700;color:#34a853">04</span>
+          <div><strong style="color:#34a853">PROS &amp; CONS</strong><br><span style="font-size:.9rem;color:#9aa0a6">장점과 한계</span></div>
         </div>
-        <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">직접 호출 -> 이벤트 기반 비동기 통신으로 결합도 해방</p>
-      </section>
-
-      <!-- ===== SECTION 2: WHAT ===== -->
-
-      <!-- Slide 6: Section divider - WHAT -->
-      <section class="section-divider">
-        <span class="badge">WHAT</span>
-        <h2>관계망 아키텍처</h2>
-      </section>
-
-      <!-- Slide 7: Network architecture -->
-      <section>
-        <h2>5계층 + 2글로벌 = 관계망</h2>
-        <p style="font-size: 0.75em;">단방향 직선이 아닌, 실제 의존 관계 기반 망 구조</p>
-        <pre class="mermaid">graph TD
-  subgraph T1["T1: Core"]
-    C1["config.yaml"]
-    C2["AGENTS.md"]
-    C3["skills/"]
-    C4["workflow.sh"]
-  end
-
-  subgraph T2["T2: Runtime"]
-    R1["knowledge/"]
-    R2["cron/"]
-    R3["sessions/"]
-    R4[".workflow-state"]
-  end
-
-  subgraph T3["T3: Interfaces"]
-    I1["Discord"]
-    I2["Telegram"]
-    I3["CLI"]
-  end
-
-  subgraph T4["T4: Infra"]
-    F1["GitHub"]
-    F2["Docker"]
-  end
-
-  subgraph T5["T5: Release"]
-    S1["docs/"]
-    S2["slides/"]
-    S3["llms.txt"]
-  end
-
-  E["event.sh <- Global"] -.-> T1
-  E -.-> T2
-  E -.-> T3
-  E -.-> T4
-  E -.-> T5
-  U["system-common/ <- Global"] -.-> T1
-  U -.-> T2
-  U -.-> T3
-  U -.-> T4
-  U -.-> T5
-
-  T1 --> T2
-  T2 --> T3
-  T3 --> T4
-  T4 --> T5
-
-  style E fill:#2ecc71,stroke:#1e8449,color:#fff
-  style U fill:#f39c12,stroke:#d68910,color:#fff
-</pre>
-      </section>
-
-      <!-- Slide 8: Layer roles table -->
-      <section>
-        <h2>레이어별 역할</h2>
-        <table style="font-size: 0.7em; width: 95%; text-align: left;">
-          <tr style="border-bottom: 2px solid #1a7f37;">
-            <th style="width:12%;">계층</th><th style="width:25%;">주요 구성</th><th>책임</th>
-          </tr>
-          <tr>
-            <td><strong>T1 Core</strong></td>
-            <td>config.yaml, AGENTS.md, skills/, workflow.sh</td>
-            <td>워크플로우 엔진, 스킬 정의, 전역 설정(SSOT)</td>
-          </tr>
-          <tr>
-            <td><strong>T2 Runtime</strong></td>
-            <td>knowledge/, cron/, sessions/, .workflow-state</td>
-            <td>실행 시간 데이터, 지식, 자동화, 세션 상태</td>
-          </tr>
-          <tr>
-            <td><strong>T3 Interfaces</strong></td>
-            <td>discord/, telegram/, CLI</td>
-            <td>외부 통신 채널 (프로토콜 차이는 계층 내부 처리)</td>
-          </tr>
-          <tr>
-            <td><strong>T4 Infra</strong></td>
-            <td>GitHub, Docker, WSL/Host</td>
-            <td>실행 환경, 지속화, CI/CD</td>
-          </tr>
-          <tr>
-            <td><strong>T5 Release</strong></td>
-            <td>docs/, slides/, llms.txt</td>
-            <td>배포 산출물, 문서, LLM 메타데이터</td>
-          </tr>
-        </table>
-      </section>
-
-      <!-- Slide 9: Design principles -->
-      <section>
-        <h2>3대 설계 원칙</h2>
-        <div class="solution-card">
-          <strong>① 심링크 금지</strong><br>
-          <span style="font-size: 0.8em;">물리적 경로만 사용. 심링크는 환경 간 경계에서 파괴됨. <code style="font-size:0.9em;">readlink -f</code>로 절대 경로 확보.</span>
+      </div>`
+  },
+  // ────────────── 3: WHY - 연쇄 파괴 ──────────────
+  {
+    cls:'gc-why',
+    html:`<span class="tag tag-why">WHY · 문제 1</span>
+      <h1>모듈 간 의존성</h1>
+      <p style="margin-bottom:10px">한 모듈 수정 시 <strong style="color:#fbbc04">연쇄 파괴</strong>가 발생하는 구조</p>
+      <div class="grid-3">
+        <div class="card" style="border-color:#ea433544">
+          <div class="icon">🔗</div>
+          <h4>순환 의존성</h4>
+          <p>Core ↔ Interface 상호 참조<br>A 수정 → B 오류 → A 재수정</p>
         </div>
-        <div class="solution-card">
-          <strong>② $HERMES_ROOT 추상화</strong><br>
-          <span style="font-size: 0.8em;">절대 경로 하드코딩 금지. 모든 경로 = 환경 변수 기반. WSL ↔ macOS 호환.</span>
+        <div class="card" style="border-color:#ea433544">
+          <div class="icon">💥</div>
+          <h4>연쇄 변경</h4>
+          <p>한 모듈 수정 시<br>관련 3~5개 추가 수정 필요</p>
         </div>
-        <div class="solution-card">
-          <strong>③ 이벤트 기반 통신</strong><br>
-          <span style="font-size: 0.8em;">모듈 간 직접 호출 금지. <code style="font-size:0.9em;">event.sh</code> Pub/Sub 패턴으로 비동기 상태 전달.</span>
+        <div class="card" style="border-color:#ea433544">
+          <div class="icon">🐛</div>
+          <h4>회귀 버그</h4>
+          <p>배포 일정 지연<br>예상치 못한 사이드 이펙트</p>
         </div>
-      </section>
-
-      <!-- Slide 10: Event bus -->
-      <section>
-        <h2>event.sh — 시스템의 신경망</h2>
-        <p style="font-size: 0.75em;">모든 모듈은 event.sh를 통해 통신. 직접 호출 X, 이벤트 발행/구독 O</p>
-        <pre class="mermaid">graph TD
-  S["Scheduler\n(스케줄러)"] -- publish --> EB["event.sh\n이벤트 버스"]
-  W["Workflow Engine\n(워크플로우 엔진)"] -- subscribe --> EB
-  W -- publish --> EB
-  R["Runner\n(런너)"] -- subscribe --> EB
-  R -- publish --> EB
-  I["Interface\n(인터페이스)"] -- subscribe --> EB
-  K["Knowledge\n(지식 시스템)"] -- subscribe --> EB
-  EB -- write --> L["JSONL Log\n(JSONL 로그)"]
-
-  style EB fill:#2ecc71,stroke:#1e8449,color:#fff
-  style L fill:#3498db,stroke:#2980b9,color:#fff
-</pre>
-        <div class="two-col" style="margin-top: 0.5em;">
-          <div style="font-size: 0.7em; text-align: left;">
-            <strong>이벤트 발행</strong><br>
-            <code style="font-size:0.8em;">event.sh publish workflow.started</code>
-          </div>
-          <div style="font-size: 0.7em; text-align: left;">
-            <strong>이벤트 구독</strong><br>
-            <code style="font-size:0.8em;">event.sh subscribe workflow.completed</code>
+      </div>
+      <p style="color:#f28b82;font-size:1rem;margin-top:10px">
+        수정 한 번이 도미노 쓰러뜨리기
+      </p>`
+  },
+  // ────────────── 4: WHY - 계층 분리 부재 ──────────────
+  {
+    cls:'gc-why',
+    html:`<span class="tag tag-why">WHY · 문제 2</span>
+      <h1>계층 분리 부재</h1>
+      <p style="margin-bottom:6px">Core + Interface가 동일 모듈에 <strong style="color:#fbbc04">혼재</strong></p>
+      <div class="two-col" style="gap:16px">
+        <div class="col">
+          <div style="background:#1e2029;border:1px solid #ea433544;border-radius:12px;padding:18px 16px;text-align:center">
+            <div style="font-size:1.8rem;margin-bottom:6px">🧩</div>
+            <h4 style="color:#ea4335">Core + Interface 혼재</h4>
+            <p style="font-size:.9rem;color:#9aa0a6;line-height:1.5">
+              핵심 로직(Core)과 외부 연결(Interface)이<br>
+              같은 모듈에 공존 → 수정 범위 폭발
+            </p>
           </div>
         </div>
-      </section>
-
-      <!-- Slide 11: Layer comparison (traditional vs Hermes) -->
-      <section>
-        <h2>전통적 계층 vs Hermes 관계망</h2>
-        <table style="font-size: 0.75em; width: 90%; text-align: left;">
-          <tr style="border-bottom: 2px solid #1a7f37;">
-            <th></th><th style="color:#c0392b;">전통적 5계층</th><th style="color:#1a7f37;">Hermes 관계망</th>
-          </tr>
-          <tr>
-            <td>통신 방식</td>
-            <td>인접 계층만 ↔ 호출</td>
-            <td>event.sh로 전 계층 비동기</td>
-          </tr>
-          <tr>
-            <td>유틸리티</td>
-            <td>각 계층별 별도</td>
-            <td>system-common/ 전역 공유</td>
-          </tr>
-          <tr>
-            <td>경로 관리</td>
-            <td>상대 경로 혼합</td>
-            <td>$HERMES_ROOT 단일 기준</td>
-          </tr>
-          <tr>
-            <td>설정</td>
-            <td>계층별 중복</td>
-            <td>config.yaml / AGENTS.md SSOT</td>
-          </tr>
-          <tr>
-            <td>확장</td>
-            <td>전 계층 수정 필요</td>
-            <td>새 계층 event.sh 연결만</td>
-          </tr>
-        </table>
-      </section>
-
-      <!-- ===== SECTION 3: HOW ===== -->
-
-      <!-- Slide 12: Section divider - HOW -->
-      <section class="section-divider">
-        <span class="badge" style="background: #0969da;">HOW</span>
-        <h2>실제 디렉토리 구조</h2>
-      </section>
-
-      <!-- Slide 13: Directory tree -->
-      <section>
-        <h2>$HERMES_ROOT 디렉토리 맵</h2>
-        <pre class="mermaid">graph TD
-  ROOT["$HERMES_ROOT"] --> T1
-  ROOT --> T2
-  ROOT --> T3
-  ROOT --> T4
-  ROOT --> T5
-  ROOT --> E
-  ROOT --> U
-
-  subgraph T1["T1: Core"]
-    CFG["config.yaml"]
-    AGT["AGENTS.md"]
-    SKL["skills/"]
-    WFS["workflow.sh"]
-  end
-
-  subgraph T2["T2: Runtime"]
-    KNW["knowledge/"]
-    CRN["cron/"]
-    SES["sessions/"]
-    STT[".workflow-state"]
-  end
-
-  subgraph T3["T3: Interfaces"]
-    DSC["discord/"]
-    TGL["telegram/"]
-    CLI["CLI"]
-  end
-
-  subgraph T4["T4: Infra"]
-    GIT[".git/"]
-    DEP["deploy/"]
-  end
-
-  subgraph T5["T5: Release"]
-    DOC["docs/"]
-    SLI["slides/"]
-    WIK["wiki/"]
-    BLG["blog/"]
-  end
-
-  E["event.sh <- Global"]
-  U["system-common/ <- Global"]
-
-  style T1 fill:#1a7f37,stroke:#145a25,color:#fff
-  style T2 fill:#2ecc71,stroke:#1e8449,color:#fff
-  style T3 fill:#3498db,stroke:#2980b9,color:#fff
-  style T4 fill:#8e44ad,stroke:#6c3483,color:#fff
-  style T5 fill:#e67e22,stroke:#d35400,color:#fff
-</pre>
-      </section>
-
-      <!-- Slide 14: Data flow example -->
-      <section>
-        <h2>실제 데이터 흐름: Cron 작업 예시</h2>
-        <div style="font-size: 0.75em; text-align: left; width: 90%; margin: 0 auto;">
-          <table style="width:100%; font-size:0.95em;">
-            <tr class="fragment fade-in">
-              <td style="width:5%;"><span class="stat" style="font-size:1.2em; color:#1a7f37;">1</span></td>
-              <td><strong>Cron</strong>이 registry.yaml에서 스케줄 확인</td>
-            </tr>
-            <tr class="fragment fade-in">
-              <td><span class="stat" style="font-size:1.2em; color:#1a7f37;">2</span></td>
-              <td><strong>event.sh</strong>에 <code>cron.job.started</code> 이벤트 발행</td>
-            </tr>
-            <tr class="fragment fade-in">
-              <td><span class="stat" style="font-size:1.2em; color:#1a7f37;">3</span></td>
-              <td><strong>Core</strong>가 이벤트를 구독 -> workflow.sh에서 9-Step 실행</td>
-            </tr>
-            <tr class="fragment fade-in">
-              <td><span class="stat" style="font-size:1.2em; color:#1a7f37;">4</span></td>
-              <td><strong>system-common/lib/atomic.sh</strong>로 원자적 상태 파일 작성</td>
-            </tr>
-            <tr class="fragment fade-in">
-              <td><span class="stat" style="font-size:1.2em; color:#1a7f37;">5</span></td>
-              <td>결과를 <strong>session/</strong>에 기록, <strong>Discord/Telegram</strong>으로 전송</td>
-            </tr>
-            <tr class="fragment fade-in">
-              <td><span class="stat" style="font-size:1.2em; color:#1a7f37;">6</span></td>
-              <td><strong>event.sh</strong>에 <code>cron.job.completed</code> 발행 -> JSONL 히스토리에 기록</td>
-            </tr>
-          </table>
+        <div class="col">
+          <div style="background:#1e2029;border:1px solid #ea433544;border-radius:12px;padding:18px 16px;text-align:center">
+            <div style="font-size:1.8rem;margin-bottom:6px">🧱</div>
+            <h4 style="color:#ea4335">확장성 부족</h4>
+            <p style="font-size:.9rem;color:#9aa0a6;line-height:1.5">
+              새 Interface(WebSocket, IPC) 추가 시<br>
+              Core 전체 수정 필요 → 대규모 리팩토링
+            </p>
+          </div>
         </div>
-        <p class="fragment" style="font-size: 0.65em; color: #1a7f37; margin-top: 0.5em;">-> 모든 단계가 event.sh를 경유. 직접 호출은 0회.</p>
-      </section>
-
-      <!-- ===== SECTION 4: TRADE-OFFS ===== -->
-
-      <!-- Slide 15: Section divider - TRADE-OFFS -->
-      <section class="section-divider">
-        <span class="badge" style="background: #bc4c00;">TRADE-OFFS</span>
-        <h2>한계와 주의점</h2>
-      </section>
-
-      <!-- Slide 16: Trade-offs -->
-      <section>
-        <h2>레이어드 구조의 트레이드오프</h2>
-        <table style="font-size: 0.75em; width: 90%;">
-          <tr>
-            <th style="width: 40%;">장점</th>
-            <th style="width: 40%;">비용</th>
-          </tr>
-          <tr>
-            <td>계층 간 결합도 ↓, 독립 배포</td>
-            <td>이벤트 버스 복잡성 ↑, 디버깅 간접적</td>
-          </tr>
-          <tr>
-            <td>환경 독립성 (WSL ↔ macOS)</td>
-            <td>$HERMES_ROOT 설정 전제, 초기화 오버헤드</td>
-          </tr>
-          <tr>
-            <td>수평 확장 용이 (새 인터페이스 추가 시 T3만 수정)</td>
-            <td>이벤트 스키마 관리 필요, 버전 마이그레이션</td>
-          </tr>
-          <tr>
-            <td>안티패턴 금지로 안정성 ↑</td>
-            <td>학습 곡선 — 직접 호출이 습관인 팀엔 부적합</td>
-          </tr>
-        </table>
-        <p class="fragment" style="font-size: 0.7em; color: #666; margin-top: 0.5em;">"구조의 자유는 구조의 책임을 전제로 한다"</p>
-      </section>
-
-      <!-- ===== SECTION 5: SUMMARY ===== -->
-
-      <!-- Slide 17: Summary -->
-      <section>
-        <h2>핵심 요약</h2>
-        <ol style="font-size: 0.9em;">
-          <li class="fragment">5계층(T1~T5) + 2글로벌(event.sh, system-common) <strong>관계망 구조</strong></li>
-          <li class="fragment"><strong>3대 설계 원칙</strong>: 심링크 금지, $HERMES_ROOT 추상화, 이벤트 기반 통신</li>
-          <li class="fragment">모듈 간 직접 호출 <strong>0회</strong> — event.sh가 유일한 통신 채널</li>
-          <li class="fragment">config.yaml + AGENTS.md = <strong>SSOT</strong> (중복 설정 금지)</li>
-        </ol>
-        <p class="fragment" style="font-size: 0.7em; color: #888; margin-top: 1em;">"단방향 직선이 아닌, 실제 의존 관계를 반영한 관계망"</p>
-      </section>
-
-      <!-- Slide 18: Q&A -->
-      <section>
-        <h1 style="font-size: 3em;">Q&A</h1>
-        <p style="font-size: 1em;">질문이 있으시면 편하게 말씀해주세요.</p>
-      </section>
-
-      <!-- 더 알아보기 -->
-      <section>
-        <h2>📌 더 알아보기</h2>
-        <div style="font-size: 0.7em; text-align: left; width: 80%; margin: 0 auto;">
-          <p><strong>참고 자료</strong></p>
-          <ul>
-            <li>📚 <a target="_blank" href="../../wiki/system-architecture.md">Wiki 가이드</a></li>
-            <li>📝 <a target="_blank" href="../../blog/posts/architecture-layered.md">Blog 분석</a></li>
-          </ul>
-          <p style="margin-top: 1em;"><strong>관련 슬라이드</strong></p>
-          <ul>
-                  <li>🎯 <a target="_blank" href="./hermes-overview.html">Hermes Overview</a></li>
-                  <li>🎯 <a target="_blank" href="./workflow-pipeline.html">Workflow Pipeline</a></li>
-                  <li>🎯 <a target="_blank" href="./cron-system.html">Cron System</a></li>
-          </ul>
+      </div>
+      <p style="color:#f28b82;font-size:1rem;margin-top:6px">
+        "하나를 바꾸면 모든 것을 바꿔야 한다"
+      </p>`
+  },
+  // ────────────── 5: WHY - 근본 원인 ──────────────
+  {
+    cls:'gc-why',
+    html:`<span class="tag tag-why">WHY · 근본 원인</span>
+      <h1>관심사 미분리</h1>
+      <p style="margin-bottom:12px">모든 문제의 출발점은 <strong style="color:#fbbc04">Separation of Concerns</strong> 부재</p>
+      <div class="ba-row">
+        <div class="ba-card ba-before">
+          <div class="ba-label">❌ 현재 상태</div>
+          <div class="ba-item">Core + Interface = 한 모듈</div>
+          <div class="ba-item">Runtime + Infra = 뒤섞임</div>
+          <div class="ba-item">관심사 불명확</div>
         </div>
-      </section>
+        <div class="ba-card ba-after">
+          <div class="ba-label">✅ 목표 상태</div>
+          <div class="ba-item">각 계층 하나의 책임</div>
+          <div class="ba-item">계층 간 명확한 경계</div>
+          <div class="ba-item">단방향 의존성</div>
+        </div>
+      </div>
+      <div style="background:#1e2029;border:1px solid #fbbc0444;border-radius:12px;padding:16px 24px;max-width:620px;margin:8px auto">
+        <p style="font-size:.95rem;color:#9aa0a6">
+          <strong style="color:#fbbc04">근본 원인:</strong> \"모든 것이 모든 것과 연결된\"<br>
+          스파게티 의존성 그래프
+        </p>
+      </div>`
+  },
+  // ────────────── 6: WHAT - 5-Tier 아키텍처 ──────────────
+  {
+    cls:'gc-what',
+    html:`<span class="tag tag-what">WHAT · 5-Tier</span>
+      <h1>계층 구조</h1>
+      <p style="margin-bottom:8px">5개 계층으로 <strong style="color:#8ab4f8">관심사 분리</strong> — 하위 계층만 참조</p>
+      <div class="tier-stack">
+        <div class="tier-arrow-row">⬆ 의존</div>
+        <div class="tier-row tier-release">
+          <div class="tier-rank">L5</div>
+          <div class="tier-name">🚀 Release</div>
+          <div class="tier-desc">배포 · CI/CD · 버전 관리</div>
+        </div>
+        <div class="tier-arrow-row">⬆ 의존</div>
+        <div class="tier-row tier-infra">
+          <div class="tier-rank">L4</div>
+          <div class="tier-name">🗄️ Infrastructure</div>
+          <div class="tier-desc">DB · 네트워크 · 파일 시스템</div>
+        </div>
+        <div class="tier-arrow-row">⬆ 의존</div>
+        <div class="tier-row tier-interface">
+          <div class="tier-rank">L3</div>
+          <div class="tier-name">🌐 Interfaces</div>
+          <div class="tier-desc">API · WebSocket · IPC · CLI</div>
+        </div>
+        <div class="tier-arrow-row">⬆ 의존</div>
+        <div class="tier-row tier-runtime">
+          <div class="tier-rank">L2</div>
+          <div class="tier-name">⚙️ Runtime</div>
+          <div class="tier-desc">실행 엔진 · 스케줄러 · 워커</div>
+        </div>
+        <div class="tier-arrow-row">⬆ 의존</div>
+        <div class="tier-row tier-core">
+          <div class="tier-rank">L1</div>
+          <div class="tier-name">🧠 Core</div>
+          <div class="tier-desc">핵심 로직 · 도메인 모델</div>
+        </div>
+      </div>`
+  },
+  // ────────────── 7: WHAT - 단방향 의존성 ──────────────
+  {
+    cls:'gc-what',
+    html:`<span class="tag tag-what">WHAT · 단방향 의존성</span>
+      <h1>하위만 참조</h1>
+      <p>각 계층은 <strong style="color:#8ab4f8">자기보다 아래 계층</strong>만 참조 가능</p>
+      <div style="display:flex;gap:16px;margin:16px 0;flex-wrap:wrap;justify-content:center">
+        <div style="background:#1e2029;border:1px solid #34a85344;border-radius:12px;padding:18px 24px;text-align:center;min-width:180px">
+          <div style="font-size:1.2rem;font-weight:600;color:#34a853">✅ 하향 참조</div>
+          <div style="font-size:.9rem;color:#9aa0a6;margin-top:4px">L3 Interface → L2 Runtime<br>허용</div>
+        </div>
+        <div style="background:#1e2029;border:1px solid #ea433544;border-radius:12px;padding:18px 24px;text-align:center;min-width:180px">
+          <div style="font-size:1.2rem;font-weight:600;color:#ea4335">❌ 상향 참조 금지</div>
+          <div style="font-size:.9rem;color:#9aa0a6;margin-top:4px">L2 Runtime → L3 Interface<br>차단</div>
+        </div>
+      </div>
+      <div class="list-compact" style="margin:6px auto">
+        <li><span class="rule-green">Release</span> → Infra → Interfaces → Runtime → Core</li>
+        <li>역방향 참조 시 <span class="rule-red">빌드 실패</span></li>
+        <li>계층 건너뛰기 참조 <span class="rule-red">금지</span></li>
+      </div>`
+  },
+  // ────────────── 8: WHAT - $HERMES_ROOT + 심링크 금지 ──────────────
+  {
+    cls:'gc-what',
+    html:`<span class="tag tag-what">WHAT · 추상화 원칙</span>
+      <h1>$HERMES_ROOT 추상화</h1>
+      <p style="margin-bottom:8px">심링크 금지 · 환경 변수 기반 경로 참조</p>
+      <div class="ba-row">
+        <div class="ba-card ba-before">
+          <div class="ba-label">❌ 심링크</div>
+          <div class="ba-item">절대 경로 /home/user/.../module</div>
+          <div class="ba-item">환경 이전 시 참조 붕괴</div>
+          <div class="ba-item">이식성 Zero</div>
+        </div>
+        <div class="ba-card ba-after">
+          <div class="ba-label">✅ $HERMES_ROOT</div>
+          <div class="ba-item">$HERMES_ROOT/modules/core</div>
+          <div class="ba-item">어디서나 동일한 경로</div>
+          <div class="ba-item">환경 독립적 이식성</div>
+        </div>
+      </div>
+      <div class="list-compact" style="margin:6px auto">
+        <li>모든 경로 참조는 <code style="background:#2d2f3a;padding:2px 8px;border-radius:4px">$HERMES_ROOT</code> 기반</li>
+        <li>심링크 사용 시 <span class="rule-red">lint 에러</span></li>
+        <li>CI/CD에서 환경 변수 주입</li>
+      </div>`
+  },
+  // ────────────── 9: HOW - 계층 식별 ──────────────
+  {
+    cls:'gc-how',
+    html:`<span class="tag tag-how">HOW · 1단계</span>
+      <h1>계층 식별</h1>
+      <p>모든 모듈을 <strong style="color:#81c995">관심사(concern)</strong>별로 분류</p>
+      <div class="grid-3" style="max-width:680px">
+        <div class="card" style="border-color:#81c99544">
+          <div class="icon">🧠</div>
+          <h4>Core</h4>
+          <p>도메인 모델 · 비즈니스 로직<br>의존성 Zero</p>
+        </div>
+        <div class="card" style="border-color:#81c99544">
+          <div class="icon">⚙️</div>
+          <h4>Runtime</h4>
+          <p>실행 엔진 · 워커 풀<br>스케줄링</p>
+        </div>
+        <div class="card" style="border-color:#81c99544">
+          <div class="icon">🌐</div>
+          <h4>Interfaces</h4>
+          <p>API · WebSocket · IPC<br>프로토콜 변환</p>
+        </div>
+        <div class="card" style="border-color:#81c99544">
+          <div class="icon">🗄️</div>
+          <h4>Infrastructure</h4>
+          <p>DB · Network · File I/O<br>외부 리소스</p>
+        </div>
+        <div class="card" style="border-color:#81c99544">
+          <div class="icon">🚀</div>
+          <h4>Release</h4>
+          <p>배포 스크립트 · CI/CD<br>버전 관리</p>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem;margin-top:6px">
+        분류 기준: \"이 코드가 해결하는 문제는 무엇인가?\"
+      </p>`
+  },
+  // ────────────── 10: HOW - 의존성 검증 ──────────────
+  {
+    cls:'gc-how',
+    html:`<span class="tag tag-how">HOW · 2단계</span>
+      <h1>의존성 검증</h1>
+      <p><strong style="color:#81c995">단방향 위반</strong>을 자동으로 탐지</p>
+      <div class="two-col" style="gap:16px">
+        <div class="col">
+          <div style="background:#1e2029;border:1px solid #81c99544;border-radius:12px;padding:18px 16px;text-align:center">
+            <div style="font-size:1.2rem;font-weight:600;color:#81c995;margin-bottom:8px">🔍 정적 분석</div>
+            <p style="font-size:.9rem;color:#9aa0a6;line-height:1.5">
+              빌드 타임에 import/require 패턴 분석<br>
+              상향 참조 탐지 → <span class="rule-red">빌드 실패</span>
+            </p>
+          </div>
+        </div>
+        <div class="col">
+          <div style="background:#1e2029;border:1px solid #81c99544;border-radius:12px;padding:18px 16px;text-align:center">
+            <div style="font-size:1.2rem;font-weight:600;color:#81c995;margin-bottom:8px">🔄 CI/CD 자동화</div>
+            <p style="font-size:.9rem;color:#9aa0a6;line-height:1.5">
+              <code style="background:#2d2f3a;padding:2px 6px;border-radius:4px">dep-validator</code> 실행<br>
+              PR 단계에서 위반 조기 차단
+            </p>
+          </div>
+        </div>
+      </div>
+      <div style="background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;padding:12px 20px;margin-top:8px;max-width:620px">
+        <p style="font-size:.9rem;color:#9aa0a6">
+          <span style="color:#81c995">TIP</span> 의존성 그래프를 시각화하여<br>
+          계층 간 경계 위반을 한눈에 파악
+        </p>
+      </div>`
+  },
+  // ────────────── 11: HOW - 인터페이스 분리 ──────────────
+  {
+    cls:'gc-how',
+    html:`<span class="tag tag-how">HOW · 3단계</span>
+      <h1>인터페이스 분리</h1>
+      <p>계층 간 통신은 <strong style="color:#81c995">Public API</strong>만 경유</p>
+      <div style="display:flex;gap:16px;margin:16px 0;flex-wrap:wrap;justify-content:center">
+        <div style="background:#1e2029;border:1px solid #81c99544;border-radius:12px;padding:18px 24px;text-align:center;min-width:200px">
+          <div style="font-size:1.2rem;font-weight:600;color:#81c995">🔌 Public API</div>
+          <div style="font-size:.9rem;color:#9aa0a6;margin-top:4px">각 계층이 노출하는<br>공식 인터페이스</div>
+        </div>
+        <div style="background:#1e2029;border:1px solid #ea433544;border-radius:12px;padding:18px 24px;text-align:center;min-width:200px">
+          <div style="font-size:1.2rem;font-weight:600;color:#ea4335">🚫 Internal</div>
+          <div style="font-size:.9rem;color:#9aa0a6;margin-top:4px">외부 계층이<br>직접 접근 금지</div>
+        </div>
+      </div>
+      <div class="list-compact" style="margin:6px auto">
+        <li>공개 API + 내부 구현 완전 분리</li>
+        <li>내부 구현 변경 → 외부 영향 <span class="rule-green">Zero</span></li>
+        <li>계층 간 통신은 Interface 계층만 경유</li>
+      </div>`
+  },
+  // ────────────── 12: PROS ──────────────
+  {
+    cls:'',
+    html:`<span class="tag tag-pros">PROS</span>
+      <h1>도입 효과</h1>
+      <div class="stat-row">
+        <div class="stat">
+          <div class="num green">⬇92%</div>
+          <div class="lbl">계층 간 영향도<br><span style="font-size:.8rem;color:#5f6368">한 계층 수정 → 타 계층 Zero</span></div>
+        </div>
+        <div class="stat">
+          <div class="num blue">⬇78%</div>
+          <div class="lbl">배포 리스크<br><span style="font-size:.8rem;color:#5f6368">독립 배포 가능</span></div>
+        </div>
+        <div class="stat">
+          <div class="num gold">+64%</div>
+          <div class="lbl">테스트 효율<br><span style="font-size:.8rem;color:#5f6368">계층별 Mock/Stub 검증</span></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:10px;flex-wrap:wrap;justify-content:center">
+        <div class="badge" style="border-color:#34a85344;color:#34a853">✅ 유지보수 용이</div>
+        <div class="badge" style="border-color:#34a85344;color:#34a853">✅ 독립 배포</div>
+        <div class="badge" style="border-color:#34a85344;color:#34a853">✅ 계층별 테스트</div>
+        <div class="badge" style="border-color:#34a85344;color:#34a853">✅ 확장성</div>
+      </div>`
+  },
+  // ────────────── 13: CONS ──────────────
+  {
+    cls:'',
+    html:`<span class="tag tag-cons">CONS</span>
+      <h1>고려할 점</h1>
+      <div class="grid-3">
+        <div class="card" style="border-color:#ea433533">
+          <div class="icon">📋</div>
+          <h4>초기 설계 비용</h4>
+          <p>계층 분할 + 인터페이스 정의에<br>추가 시간 필요</p>
+        </div>
+        <div class="card" style="border-color:#ea433533">
+          <div class="icon">🔄</div>
+          <h4>계층 통과 필요</h4>
+          <p>기능 추가 시 N개 계층 변경<br>→ 작업 범위 증가</p>
+        </div>
+        <div class="card" style="border-color:#ea433533">
+          <div class="icon">⚡</div>
+          <h4>Interface 오버헤드</h4>
+          <p>추상화 계층으로 인한<br>미미한 성능 저하</p>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem;margin-top:8px">
+        <strong style="color:#e8eaed">대책:</strong> 명확한 계층 경계 · 자동화된 의존성 검증 · 점진적 도입
+      </p>`
+  },
+  // ────────────── 14: SUMMARY ──────────────
+  {
+    cls:'',
+    html:`<span class="tag tag-summary">SUMMARY</span>
+      <h1>3가지 핵심</h1>
+      <div class="grid-3" style="gap:24px">
+        <div class="card" style="border:2px solid #fbbc0466;padding:28px 18px">
+          <div style="font-size:2.4rem;font-weight:700;color:#fbbc04">01</div>
+          <h4 style="margin-top:10px">5-Tier 관심사 분리</h4>
+          <p>Core → Runtime → Interfaces<br>→ Infra → Release</p>
+        </div>
+        <div class="card" style="border:2px solid #8ab4f866;padding:28px 18px">
+          <div style="font-size:2.4rem;font-weight:700;color:#8ab4f8">02</div>
+          <h4 style="margin-top:10px">단방향 의존성</h4>
+          <p>하위 계층만 참조<br>역참조 금지 · 빌드 차단</p>
+        </div>
+        <div class="card" style="border:2px solid #81c99566;padding:28px 18px">
+          <div style="font-size:2.4rem;font-weight:700;color:#81c995">03</div>
+          <h4 style="margin-top:10px">Interface 통신</h4>
+          <p>Public API만 경유<br>내부 구현 완전 격리</p>
+        </div>
+      </div>
+      <p style="margin-top:20px;color:#9aa0a6;font-size:1rem;font-style:italic">
+        "잘 분리된 계층이 좋은 아키텍처의 시작"
+      </p>`
+  },
+  {
+    cls:'gc-summary',
+    html:`<span class="tag tag-summary">🎯 슬라이드 끝</span>
+      <h1>Playground로 돌아가기</h1>
+      <p style="margin-bottom:16px">더 많은 실험과 비교를 Playground에서 확인하세요</p>
+      <div class="summary-item">
+        <div class="num">🔙</div>
+        <p><a href="../../" style="color:#8ab4f8">🧪 p-hermes Playground →</a></p>
+      </div>`
+  }
+];
 
-    </div>
-  </div>
+// ── render engine ──
+let idx = 0;
+const stage = document.getElementById('stage');
+const dotsEl = document.getElementById('dots');
+const counter = document.getElementById('counter');
 
-  <script src="../js/reveal.js"></script>
-  <script>
-    Reveal.initialize({
-      hash: true,
-      slideNumber: 'c/t',
-      controls: true,
-      progress: true,
-      center: true,
-      transition: 'slide',
-      fragments: true,
-      minScale: 0.15,
-      maxScale: 2.0
-    }).then(() => {
-      mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
-      // Wait for all mermaid renders then attach zoom
-      Promise.allSettled(Array.from(document.querySelectorAll('.mermaid')).map((el, idx) => {
-        const code = el.textContent.trim();
-        return mermaid.render('m' + idx, code).then(({ svg }) => { el.innerHTML = svg; }).catch(e => { console.error('Mermaid render failed', e); });
-      })).then(() => {
-        document.querySelectorAll('.mermaid').forEach(el => {
-          el.setAttribute('data-zoomable', 'true');
-          el.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const overlay = document.getElementById('mermaid-zoom-overlay');
-            overlay.innerHTML = el.innerHTML;
-            overlay.classList.add('active');
-          });
-        });
-        document.getElementById('mermaid-zoom-overlay').addEventListener('click', () => {
-          document.getElementById('mermaid-zoom-overlay').classList.remove('active');
-        });
-      });
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          document.getElementById('mermaid-zoom-overlay').classList.remove('active');
-        }
-      });
-    });
-    Reveal.addEventListener('ready', () => {
-      document.querySelectorAll('pre code').forEach((block) => {
-        hljs.highlightElement(block);
-      });
-    });
-  </script>
-  <div id="mermaid-zoom-overlay" class="mermaid-zoom-overlay"></div>
+function render(n){
+  const s = slides[n];
+  stage.innerHTML = `<div class="slide active ${s.cls||''}">${s.html}</div>`;
+  counter.textContent = `${n+1}/${slides.length}`;
+  Array.from(dotsEl.children).forEach((d,i)=>d.classList.toggle('active',i===n));
+}
+document.getElementById('prevBtn').onclick = ()=>{ idx=(idx-1+slides.length)%slides.length; render(idx); };
+document.getElementById('nextBtn').onclick = ()=>{ idx=(idx+1)%slides.length; render(idx); };
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '){e.preventDefault();idx=(idx+1)%slides.length;render(idx);}
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();idx=(idx-1+slides.length)%slides.length;render(idx);}
+  if(e.key==='Home'){e.preventDefault();idx=0;render(idx);}
+  if(e.key==='End'){e.preventDefault();idx=slides.length-1;render(idx);}
+});
+
+(function initDots(){
+  for(let i=0;i<slides.length;i++){
+    const d=document.createElement('div');d.className='dot';
+    d.onclick=()=>{idx=i;render(idx);};
+    dotsEl.appendChild(d);
+  }
+  render(0);
+})();
+</script>
 </body>
 </html>

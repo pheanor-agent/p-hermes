@@ -11,19 +11,6 @@
 - **docs/blog/posts/model-routing-design.md** (384 lines): 한 줄 요약
 - **docs/blog/posts/spec-driven-dev-design.md** (275 lines): Spec-Driven Development: 명세서가 코드보다 빠른 이유
 - **docs/blog/posts/why-9-step-workflow.md** (455 lines): 왜 9단계 상태머신인가? AI의 파괴적 실행을 막는 안전장치
-- **docs/playground/NOTES.md** (28 lines): 🧪 Playground 실험 일지
+- **docs/playground/NOTES.md** (49 lines): 🧪 Playground 실험 일지
 - **docs/playground/experiments/README.md** (27 lines): 🧪 Playground Experiments
-- **docs/playground/experiments/exp-template.md** (23 lines): exp-NNN: [실험 제목]
-- **docs/playground/index.md** (28 lines): 🖼️ p-hermes Slides
-- **docs/slides/index.md** (28 lines): 🖼️ p-hermes Slides
-- **docs/wiki/getting-started/install.md** (186 lines): 설치 및 환경 설정
-- **docs/wiki/getting-started/overview.md** (133 lines): 에르메스 에이전트 개요
-- **docs/wiki/guides/automation.md** (394 lines): Cron/자동화 시스템 가이드
-- **docs/wiki/guides/content-system.md** (371 lines): Content System (콘텐츠 시스템)
-- **docs/wiki/guides/knowledge-system.md** (310 lines): 지식 시스템 사용 가이드
-- **docs/wiki/guides/model-routing.md** (327 lines): 모델 라우팅 (Model Routing)
-- **docs/wiki/guides/request-task.md** (128 lines): 작업 요청 및 워크플로우 상세 가이드
-- **docs/wiki/guides/spec-driven-dev.md** (231 lines): Spec-Driven Development (명세서 기반 개발)
-- **docs/wiki/index.md** (32 lines): 📖 p-hermes Guide Wiki
-- **docs/wiki/references/calmer-google-io-framework.md** (111 lines): CALMER + Google I/O 하이브리드 프레임워크
-- **docs/wiki/system-architecture.md** (310 lines): 시스템 아키텍처 레퍼런스
+- **docs/playground/experiments/exp-001-gpt-slide-review.md** (1043 lines): 2563EB
