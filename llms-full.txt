@@ -2,29 +2,28 @@
 
 ## Files
 - **docs/archive/slides-v1/index.md** (28 lines): 🖼️ p-hermes Slides
-- **docs/blog/index.md** (49 lines): ✍️ Dev Blog
-- **docs/blog/posts/architecture-layered.md** (368 lines): 레이어드 아키텍처: 왜 모듈화가 에이전트 시스템의 생존 조건인가
-- **docs/blog/posts/content-system-design.md** (452 lines): Anti-Slop 파이프라인: AI 텍스트의 품질을 보증하는 5계층 검증
-- **docs/blog/posts/cron-automation-design.md** (553 lines): AI 에이전트의 자동화: 크론을 통해 24시간 작동하는 디지털 동료
+- **docs/blog/index.md** (29 lines): ✍️ p-hermes Dev Blog
+- **docs/blog/posts/architecture-layered.md** (412 lines): 레이어드 아키텍처: 왜 모듈화가 에이전트 시스템의 생존 조건인가
+- **docs/blog/posts/content-system-design.md** (448 lines): Anti-Slop 파이프라인: AI 텍스트의 품질을 보증하는 5계층 검증
+- **docs/blog/posts/cron-automation-design.md** (549 lines): AI 에이전트의 자동화: 크론을 통해 24시간 작동하는 디지털 동료
 - **docs/blog/posts/hermes-agent-intro.md** (441 lines): 에르메스 에이전트: 자율적 AI 플랫폼이 개척하는 패러다임
 - **docs/blog/posts/job-based-agent-design.md** (243 lines): Job 기반 에이전트 설계
-- **docs/blog/posts/knowledge-system-design.md** (328 lines): 지식 분류 시스템 설계: AI의 기억을 구조화하는 법
+- **docs/blog/posts/knowledge-system-design.md** (355 lines): 지식 분류 시스템 설계: AI의 기억을 구조화하는 법
 - **docs/blog/posts/knowledge-system-philosophy.md** (120 lines): Knowledge System 설계 철학: 왜 에이전트는 구조화된 기억이 필요한가
-- **docs/blog/posts/model-routing-design.md** (353 lines): 한 줄 요약
-- **docs/blog/posts/spec-driven-dev-design.md** (279 lines): Spec-Driven Development: 명세서가 코드보다 빠른 이유
-- **docs/blog/posts/why-9-step-workflow.md** (427 lines): 왜 9단계 상태머신인가? AI의 파괴적 실행을 막는 안전장치
+- **docs/blog/posts/model-routing-design.md** (368 lines): 한 줄 요약
+- **docs/blog/posts/spec-driven-dev-design.md** (275 lines): Spec-Driven Development: 명세서가 코드보다 빠른 이유
+- **docs/blog/posts/why-9-step-workflow.md** (455 lines): 왜 9단계 상태머신인가? AI의 파괴적 실행을 막는 안전장치
 - **docs/blog/posts/why-agents-need-process.md** (174 lines): 왜 에이전트는 프로세스가 필요한가
 - **docs/blog/posts/why-ai-has-no-memory.md** (139 lines): 왜 AI는 기억하지 못하는가
 - **docs/blog/posts/why-we-built-hermes.md** (154 lines): Hermes를 만든 이유
 - **docs/blog/posts/workflow-gate-philosophy.md** (194 lines): Workflow Gate 설계 철학
-- **docs/slides/index.md** (28 lines): 🖼️ p-hermes Slides
 - **docs/wiki/core-concepts.md** (211 lines): 🧠 Core Concepts — Hermes 핵심 개념
 - **docs/wiki/faq.md** (124 lines): 자주 묻는 질문 (FAQ)
 - **docs/wiki/getting-started/configuration.md** (80 lines): 기본 설정 가이드
 - **docs/wiki/getting-started/first-content.md** (150 lines): 📝 첫 콘텐츠 생성하기
 - **docs/wiki/getting-started/first-job.md** (54 lines): 첫 번째 작업 요청하기
 - **docs/wiki/getting-started/first-knowledge.md** (165 lines): 🧠 첫 Knowledge 저장하기
-- **docs/wiki/getting-started/install.md** (177 lines): 설치 및 환경 설정
+- **docs/wiki/getting-started/install.md** (186 lines): 설치 및 환경 설정
 - **docs/wiki/getting-started/overview.md** (133 lines): 에르메스 에이전트 개요
 - **docs/wiki/guides/automation.md** (399 lines): Cron/자동화 시스템 가이드
 - **docs/wiki/guides/backup-restore.md** (91 lines): 백업 및 복구 가이드
@@ -40,12 +39,12 @@
 - **docs/wiki/guides/model-routing.md** (296 lines): 모델 라우팅 (Model Routing)
 - **docs/wiki/guides/multi-agent.md** (169 lines): 🤝 멀티 에이전트 — 위임과 협업
 - **docs/wiki/guides/project-management.md** (97 lines): 개인 프로젝트 생성 및 관리 가이드
-- **docs/wiki/guides/request-task.md** (129 lines): 작업 요청 및 워크플로우 상세 가이드
+- **docs/wiki/guides/request-task.md** (128 lines): 작업 요청 및 워크플로우 상세 가이드
 - **docs/wiki/guides/session-management.md** (146 lines): 🔄 세션 관리
 - **docs/wiki/guides/spec-driven-dev.md** (231 lines): Spec-Driven Development (명세서 기반 개발)
 - **docs/wiki/guides/tool-usage.md** (208 lines): 🛠️ 도구 사용법 — 25개 도구 개요
 - **docs/wiki/guides/use-skills.md** (93 lines): 스킬 시스템 활용하기
-- **docs/wiki/index.md** (90 lines): 📖 Guide Wiki
+- **docs/wiki/index.md** (32 lines): 📖 p-hermes Guide Wiki
 - **docs/wiki/mental-model.md** (156 lines): 🧭 Hermes Mental Model
 - **docs/wiki/references/calmer-google-io-framework.md** (111 lines): CALMER + Google I/O 하이브리드 프레임워크
 - **docs/wiki/references/commands.md** (122 lines): 📋 명령어 레퍼런스
