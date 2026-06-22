@@ -8,6 +8,22 @@ title: "Hermes를 만든 이유"
 
 ---
 
+
+## 한 줄 요약
+
+
+
+## 기본 개념
+
+
+
+## 기술 설계
+
+
+
+## 구조/흐름도
+
+
 ## 문제의 시작
 
 2024년, AI 에이전트가 폭발적으로 성장하던 시기. 수많은 AI 도구와 프레임워크가 등장했지만, 모두 **근본적인 문제**를 안고 있었습니다.
@@ -136,4 +152,4 @@ p-hermes는 Hermes Agent 시스템의 **공식 문서화 프로젝트**입니다
 
 > Hermes는 계속 성장하고 있습니다. 당신의 기여를 기다립니다.
 >
-> **🔗 더 알아보기**: [Wiki 시작하기](../wiki/mental-model.md) — Hermes Mental Model 이해하기
+> **🔗 더 알아보기**: [Wiki 시작하기](../../wiki/mental-model.md) — Hermes Mental Model 이해하기

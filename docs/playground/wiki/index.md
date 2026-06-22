@@ -1,9 +1,17 @@
 # 📖 Guide Wiki
 
-> **How** — Hermes的使用법을 단계별로 익힙니다.
+> **How** — Hermes의 사용법을 단계별로 익힙니다.
 > 모든 문서는 GitHub 소스뷰어에서 `.md`로 읽을 수 있습니다.
 
 ---
+
+
+## 한 줄 요약
+
+
+
+## 기본 개념
+
 
 ## 🚀 Getting Started
 

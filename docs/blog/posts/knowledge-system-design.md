@@ -4,6 +4,7 @@ title: "지식 분류 시스템 설계: AI의 기억을 구조화하는 법"
 
 # 지식 분류 시스템 설계: AI의 기억을 구조화하는 법
 
+
 ## 한 줄 요약
 
 원본 → 가공 → 계층적 Wiki로 이어지는 파이프라인을 통해 AI의 환각을 줄이고 정확한 사실만을 제공하는 시스템 설계입니다.
@@ -33,108 +34,6 @@ Extracted:     {"fact": "Flux.2 Pro가 기본 이미지 모델로 선정됨",
                 "domain": "system", "tags": ["image", "flux", "default"],
                 "confidence": 0.98, "source": "JOB-1001",
                 "extracted_at": "2026-04-15T09:00:00Z"}
-```
-
----
-
-## 🔍 문제 상황: \"기억의 과부하와 오염\"
-
-초기 Hermes 시스템은 사용자와의 모든 대화, JOB 산출물, 외부 뉴스 등을 가공 없이 그대로 에이전트에게 제공했습니다. 그 결과 두 가지 치명적인 공학적 문제가 발생했습니다.
-
-### 1. 컨텍스트 오버플로우 (Context Overflow)
-방대한 데이터가 컨텍스트 윈도우를 가득 채우면서, 정작 현재 사용자가 요청한 핵심 지시사항이 뒤로 밀려나는 현상이 발생했습니다.
-- **현상**: 50개의 세션 이력과 100개의 뉴스 요약을 읽느라, 정작 \"지금 이 코드를 수정해줘\"라는 명령을 무시하거나 잊어버림.
-- **결과**: 에이전트의 반응 속도 저하 및 지시 이행률 하락.
-
-### 2. 추론 오염 (Inference Contamination)
-AI가 과거의 잘못된 판단이나, 시간이 지나 더 이상 유효하지 않은 정보를 '사실'로 착각하여 현재의 결정에 반영하는 문제입니다.
-- **현상**: 6개월 전 세션에서 \"A 모델이 최고다\"라고 말한 기록을 읽고, 최신 벤치마크 결과가 나왔음에도 불구하고 계속 A 모델을 추천함.
-- **결과**: 데이터 노후화(Stale Data Problem)로 인한 잘못된 기술적 의사결정.
-
-### 3. 검색 정확도 저하
-
-Raw Data에서 키워드 검색 시, 관련 없는 노이즈가 너무 많아 정확한 결과를 찾지 못하는 문제입니다.
-
-```bash
-# Raw Data에서 검색 — 관련 없는 결과 다수 포함
-$ grep -rl "모델" ~/.hermes/state/sessions/*.json
-sessions/2026-01-12.json  # "모델은 이렇게 설계해야 해" (소프트웨어 설계)
-sessions/2026-02-05.json  # "이 모델의 성능이..." (LLM 모델)
-sessions/2026-03-18.json  # "모델링을 해보면..." (데이터 모델링)
-# → 검색어가 '모델'이지만 의미상 3가지 다른 맥락
-
-# Wiki DB에서 검색 — 도메인/태그 기반 정밀 검색
-$ sqlite3 ~/.hermes/knowledge/wiki.db \
-  "SELECT title, domain FROM wiki WHERE tags LIKE '%llm%' AND tags LIKE '%benchmark%'"
-결과: "모델 벤치마크 비교" | domain: system
-# → 1개 정확한 결과
-```
-
----
-
-## 🔬 실제 사례: JOB-1355 \"모델 카탈로그 자동화\"
-
-실제 지식 시스템이 어떻게 동작하는지 JOB-1355 작업을 추적합니다.
-
-### 상황: 3개 신규 모델 출시 정보 수집 필요
-
-```bash
-# 1. Source Layer: 원본 데이터 수집
-$ cat ~/.hermes/knowledge/references/2026-05/gemma4-announcement.md
-> Gemma-4 발표. MMLU: 88.2%, GPQA: 72.1%, 비용: $0.5/M tokens
-
-$ cat ~/.hermes/knowledge/references/2026-05/qwen3-release.md
-> Qwen3 공개. HumanEval: 92.5%, 코드 생성 성능 강화
-
-$ cat ~/.hermes/knowledge/references/2026-05/glm4-technical.md
-> GLM-4 기술 보고서. Latency: 12ms avg, 컨텍스트 1M tokens 지원
-```
-
-### 2. Processing Layer: LLM 가공 파이프라인 실행
-
-```bash
-# 파이프라인 스크립트 실행
-$ bash ~/.hermes/scripts/wiki-process.sh --sources references/2026-05/
-
-[INFO] Processing 3 source files...
-[INFO] LLM fact extraction: gemma4-announcement.md
-[LLM OUTPUT] {"fact": "Gemma-4 MMLU 88.2%, GPQA 72.1%, $0.5/M tokens",
-              "domain": "system", "tags": ["model", "gemma", "benchmark"],
-              "confidence": 0.96}
-
-[INFO] LLM fact extraction: qwen3-release.md
-[LLM OUTPUT] {"fact": "Qwen3 HumanEval 92.5%, 코드 생성 특화",
-              "domain": "system", "tags": ["model", "qwen", "code"],
-              "confidence": 0.94}
-
-[INFO] LLM fact extraction: glm4-technical.md
-[LLM OUTPUT] {"fact": "GLM-4 latency 12ms avg, 1M context window",
-              "domain": "system", "tags": ["model", "glm", "latency"],
-              "confidence": 0.92}
-
-[INFO] Domain mapping: all → system/models.md
-[INFO] Deduplication: no conflicts
-[INFO] SQLite FTS5 index updated
-[INFO] Wiki DB updated: 3 facts added, 0 conflicts
-```
-
-### 3. Storage Layer: Wiki DB에 기록
-
-```bash
-$ cat ~/.hermes/knowledge/wiki/system/models.md
-| Model | MMLU | HumanEval | Latency | Cost | Tags |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| Gemma-4 | 88.2% | - | - | $0.5/M | model,gemma,benchmark |
-| Qwen3 | - | 92.5% | - | - | model,qwen,code |
-| GLM-4 | - | - | 12ms | - | model,glm,latency |
-```
-
-### 4. AI 활용: 에이전트가 지식 시스템 조회
-
-```
-User: "지금 가장 추론 능력이 좋은 모델이 뭐야?"
-Agent: (FTS5 검색 → wiki/system/models.md → Gemma-4 MMLU 88.2%)
-Agent: "Gemma-4가 MMLU 88.2%로 현재 가장 높은 추론 성능을 보입니다."
 ```
 
 ---
@@ -291,6 +190,76 @@ real    0m1.247s
 지식 파이프라인은 지속적으로 데이터를 처리합니다. 각 실행마다 소스 파일 수, 추출된 사실 수, 필터링된 의견 수 등의 메트릭이 로그에 기록됩니다. 이 데이터를 기반으로 파이프라인의 효율성과 정확도를 주기적으로 평가합니다.
 
 소스 파일 중 일부만 사실로 추출됩니다. 나머지는 의견이나 비사실로 필터링되어 지식 DB에 포함되지 않습니다.
+
+---
+
+## 구조/흐름도
+
+
+## 🔬 실제 사례: JOB-1355 \"모델 카탈로그 자동화\"
+
+실제 지식 시스템이 어떻게 동작하는지 JOB-1355 작업을 추적합니다.
+
+### 상황: 3개 신규 모델 출시 정보 수집 필요
+
+```bash
+# 1. Source Layer: 원본 데이터 수집
+$ cat ~/.hermes/knowledge/references/2026-05/gemma4-announcement.md
+> Gemma-4 발표. MMLU: 88.2%, GPQA: 72.1%, 비용: $0.5/M tokens
+
+$ cat ~/.hermes/knowledge/references/2026-05/qwen3-release.md
+> Qwen3 공개. HumanEval: 92.5%, 코드 생성 성능 강화
+
+$ cat ~/.hermes/knowledge/references/2026-05/glm4-technical.md
+> GLM-4 기술 보고서. Latency: 12ms avg, 컨텍스트 1M tokens 지원
+```
+
+### 2. Processing Layer: LLM 가공 파이프라인 실행
+
+```bash
+# 파이프라인 스크립트 실행
+$ bash ~/.hermes/scripts/wiki-process.sh --sources references/2026-05/
+
+[INFO] Processing 3 source files...
+[INFO] LLM fact extraction: gemma4-announcement.md
+[LLM OUTPUT] {"fact": "Gemma-4 MMLU 88.2%, GPQA 72.1%, $0.5/M tokens",
+              "domain": "system", "tags": ["model", "gemma", "benchmark"],
+              "confidence": 0.96}
+
+[INFO] LLM fact extraction: qwen3-release.md
+[LLM OUTPUT] {"fact": "Qwen3 HumanEval 92.5%, 코드 생성 특화",
+              "domain": "system", "tags": ["model", "qwen", "code"],
+              "confidence": 0.94}
+
+[INFO] LLM fact extraction: glm4-technical.md
+[LLM OUTPUT] {"fact": "GLM-4 latency 12ms avg, 1M context window",
+              "domain": "system", "tags": ["model", "glm", "latency"],
+              "confidence": 0.92}
+
+[INFO] Domain mapping: all → system/models.md
+[INFO] Deduplication: no conflicts
+[INFO] SQLite FTS5 index updated
+[INFO] Wiki DB updated: 3 facts added, 0 conflicts
+```
+
+### 3. Storage Layer: Wiki DB에 기록
+
+```bash
+$ cat ~/.hermes/knowledge/wiki/system/models.md
+| Model | MMLU | HumanEval | Latency | Cost | Tags |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Gemma-4 | 88.2% | - | - | $0.5/M | model,gemma,benchmark |
+| Qwen3 | - | 92.5% | - | - | model,qwen,code |
+| GLM-4 | - | - | 12ms | - | model,glm,latency |
+```
+
+### 4. AI 활용: 에이전트가 지식 시스템 조회
+
+```
+User: "지금 가장 추론 능력이 좋은 모델이 뭐야?"
+Agent: (FTS5 검색 → wiki/system/models.md → Gemma-4 MMLU 88.2%)
+Agent: "Gemma-4가 MMLU 88.2%로 현재 가장 높은 추론 성능을 보입니다."
+```
 
 ---
 

@@ -14,6 +14,7 @@ related_specs: ["SPEC-D04"]
 
 # 왜 9단계 상태머신인가? AI의 파괴적 실행을 막는 안전장치
 
+
 ## 한 줄 요약
 
 AI에게 \"빨리 해줘\"라고 하는 것은 \"빠르게 망가뜨려 줘\"라고 하는 것과 같습니다. 9단계 상태머신은 에이전트의 무분별한 실행을 차단하고, 인간의 통제권을 확보하며, 단계별 검증을 통해 품질을 보장하는 프로세스입니다.
@@ -30,104 +31,6 @@ AI에게 \"빨리 해줘\"라고 하는 것은 \"빠르게 망가뜨려 줘\"라
 - **AI 에이전트에게는?**: `조사` → `설계` → `검토` → `승인` → `실행`이라는 정해진 관문을 하나씩 통과하게 만드는 것입니다.
 
 상태머신의 핵심은 **'무효 전이(Invalid Transition)의 금지'**입니다. `Investigation`을 건너뛰고 `Design`으로 바로 가는 것을 허용하면, 에이전트는 현재 시스템을 충분히 파악하지 않은 상태에서 '기존 지식'만으로 설계를 시작합니다. 이는 공학적으로 '측정 없는 설계'와 동일한 위험도를 가집니다.
-
----
-
-## 🔍 문제 상황: \"실행의 함정과 에이전트 폭주\"
-
-초기 Hermes 에이전트는 사용자의 요청을 받으면 즉시 최적의 해결책을 찾아 코드를 수정했습니다. 하지만 이 '효율적인' 방식은 세 가지 치명적인 사고로 이어졌습니다.
-
-### 1. 컨텍스트 미스 (Context Miss)
-
-에이전트가 파일의 전체 구조를 파악하기 전에, 일부만 수정하여 시스템 전체를 교란하는 현상입니다.
-
-- **사례**: `config.yaml`에서 특정 값 하나만 변경하려다가 YAML의 들여쓰기 구조를 파괴하여 시스템 전체가 부팅되지 않음.
-- **결과**: 단순 수정 요청이 시스템 전체 장애로 확산.
-
-### 2. 롤백 불가 (Irreversible Change)
-
-파일을 덮어씌운 후, \"아차, 이게 아니었네\"라고 깨달았을 때 원본으로 돌아갈 방법이 없는 상황입니다.
-
-- **사례**: 수백 줄의 파이썬 스크립트를 한 번에 재작성했는데, 기존에 구현되어 있던 중요한 예외 처리 로직이 누락됨.
-- **결과**: 수 시간의 작업물이 증발하고 복구에 더 많은 시간 소요.
-
-### 3. 에이전트 폭주 (Agent Rampage)
-
-복잡한 지시를 받았을 때, AI가 과잉 의욕을 부려 수십 개의 파일을 동시에 수정하며 시스템을 파괴하는 사고입니다.
-
-- **사례**: \"아키텍처를 좀 더 효율적으로 바꿔줘\"라는 요청에, 15개 파일의 폴더 구조를 동시에 변경하려다 경로 참조 오류로 전체 시스템 마비.
-- **결과**: 복구 작업에만 6시간 소요.
-
-**\\\\\\\"더 똑똑한 모델을 사용하면 해결될까요? 아닙니다. 문제는 '프로세스'의 부재였습니다.\\\\\\\"**
-
----
-
-## 🔬 실제 사례: JOB-2047 \\\"세션 DB 마이그레이션\\\"
-
-실제 9단계 워크플로우가 어떻게 사고를 예방하는지, JOB-2047 작업의 전체 과정을 추적해봅니다.
-
-### 단계별 산출물과 사건
-
-```bash
-# 1. Request: 명확한 범위 설정
-$ cat jobs/JOB-2047/request.md
-> \"세션 DB를 SQLite에서 JSON 파일 기반 스토리지로 마이그레이션\"
-> 범위: sessions.db → state/sessions/*.json
-> 제약: 에이전트 재시작 없이 실시간 전환
-
-# 2. Investigation: 현재 구조 파악
-$ cat jobs/JOB-2047/investigation.md
-> - sessions.db 구조: 3개 테이블 (sessions, messages, metadata)
-> - 총 세션 수: 1,247개, 전체 크기: 48MB
-> - 의존성: healthcheck.sh, knowledge-sync.sh, cron-wrapper.sh가 DB 직접 조회
-> - 위험: 마이그레이션 중 세션 생성이 동시에 발생할 가능성 있음
-
-# 3. Design: 상세 계획
-$ cat jobs/JOB-2047/design.md
-> Phase 1: 읽기 전용 레이어 추가 (이중 쓰기 방지)
-> Phase 2: DB → JSON 배치 변환 (1,247 세션)
-> Phase 3: 의존 스크립트 3개 수정
-> Phase 4: healthcheck 검증 → Phase 5: sessions.db 아카이브
-```
-
-**사건 1 (Design 단계에서 발견)**: 설계서를 작성하던 에이전트가 `healthcheck.sh`가 `sessions.db`에 `PRAGMA integrity_check`를 실행한다는 사실을 발견했습니다. JSON 기반이 되면 이 검증 로직도 함께 수정해야 한다는 것을 미리 확인했습니다. 단순 실행했다면 이 의존성을 놓쳤을 것입니다.
-
-**사건 2 (Review 단계에서 차단)**: `workflow-gate.sh`가 Review 없이 Execution으로 점프하려는 시도를 감지했습니다.
-
-```bash
-$ bash ~/.hermes/scripts/workflow-gate.sh --next execution --job JOB-2047
-[ERROR] Cannot transition from Design to Execution.
-[ERROR] Missing required artifact: jobs/JOB-2047/review.md
-[ERROR] Please complete Review step first.
-exit 1
-```
-
-### 실제 실행 로그
-
-```bash
-# 6. Execution: 설계서에 기반한 실행
-$ bash jobs/JOB-2047/scripts/migrate.sh
-[INFO] Phase 1: 이중 쓰기 레이어 활성화 완료
-[INFO] Phase 2: 1247/1247 세션 변환 완료 (23초)
-[INFO] Phase 3: healthcheck.sh 수정 완료
-[INFO] Phase 3: knowledge-sync.sh 수정 완료
-[INFO] Phase 3: cron-wrapper.sh 수정 완료
-
-# 7. Test: 기능 검증
-$ bash jobs/JOB-2047/scripts/test.sh
-PASS: 세션 생성/조회 (100회 반복)
-PASS: healthcheck 실행
-PASS: knowledge-sync 실행
-PASS: cron-wrapper 실행
-PASS: 결과: 4/4 테스트 통과
-
-# 8. Execution Review: 설계 vs 결과 비교
-$ diff <(jq . jobs/JOB-2047/design.md | grep \"수정 대상\") \\
-      <(cat jobs/JOB-2047/execution.log | grep \"수정 완료\")
-[OK] 모든 수정 대상이 실행 결과와 일치
-```
-
-**결과**: 1,247개 세션 마이그레이션을 설계서 기반의 통제된 프로세스로 성공적으로 완료. 재작업 0회, 롤백 0회.
 
 ---
 
@@ -351,6 +254,75 @@ $ cat ~/.hermes/workspace/jobs/JOB-1626/token-distribution.json
 ```
 
 **분석**: Investigation과 Test 단계는 fast 역할로 처리되어 토큰 비용이 최소입니다. Review 단계는 review 역할을 사용하지만, 설계서를 검토하는 짧은 세션이기 때문에 총 토큰 수는 Design 단계보다 적습니다. 이 패턴은 역할 기반 라우팅이 비용 최적화에 어떻게 기여하는지 보여줍니다.
+
+---
+
+## 🔬 실제 사례: JOB-2047 \\\"세션 DB 마이그레이션\\\"
+
+실제 9단계 워크플로우가 어떻게 사고를 예방하는지, JOB-2047 작업의 전체 과정을 추적해봅니다.
+
+### 단계별 산출물과 사건
+
+```bash
+# 1. Request: 명확한 범위 설정
+$ cat jobs/JOB-2047/request.md
+> \"세션 DB를 SQLite에서 JSON 파일 기반 스토리지로 마이그레이션\"
+> 범위: sessions.db → state/sessions/*.json
+> 제약: 에이전트 재시작 없이 실시간 전환
+
+# 2. Investigation: 현재 구조 파악
+$ cat jobs/JOB-2047/investigation.md
+> - sessions.db 구조: 3개 테이블 (sessions, messages, metadata)
+> - 총 세션 수: 1,247개, 전체 크기: 48MB
+> - 의존성: healthcheck.sh, knowledge-sync.sh, cron-wrapper.sh가 DB 직접 조회
+> - 위험: 마이그레이션 중 세션 생성이 동시에 발생할 가능성 있음
+
+# 3. Design: 상세 계획
+$ cat jobs/JOB-2047/design.md
+> Phase 1: 읽기 전용 레이어 추가 (이중 쓰기 방지)
+> Phase 2: DB → JSON 배치 변환 (1,247 세션)
+> Phase 3: 의존 스크립트 3개 수정
+> Phase 4: healthcheck 검증 → Phase 5: sessions.db 아카이브
+```
+
+**사건 1 (Design 단계에서 발견)**: 설계서를 작성하던 에이전트가 `healthcheck.sh`가 `sessions.db`에 `PRAGMA integrity_check`를 실행한다는 사실을 발견했습니다. JSON 기반이 되면 이 검증 로직도 함께 수정해야 한다는 것을 미리 확인했습니다. 단순 실행했다면 이 의존성을 놓쳤을 것입니다.
+
+**사건 2 (Review 단계에서 차단)**: `workflow-gate.sh`가 Review 없이 Execution으로 점프하려는 시도를 감지했습니다.
+
+```bash
+$ bash ~/.hermes/scripts/workflow-gate.sh --next execution --job JOB-2047
+[ERROR] Cannot transition from Design to Execution.
+[ERROR] Missing required artifact: jobs/JOB-2047/review.md
+[ERROR] Please complete Review step first.
+exit 1
+```
+
+### 실제 실행 로그
+
+```bash
+# 6. Execution: 설계서에 기반한 실행
+$ bash jobs/JOB-2047/scripts/migrate.sh
+[INFO] Phase 1: 이중 쓰기 레이어 활성화 완료
+[INFO] Phase 2: 1247/1247 세션 변환 완료 (23초)
+[INFO] Phase 3: healthcheck.sh 수정 완료
+[INFO] Phase 3: knowledge-sync.sh 수정 완료
+[INFO] Phase 3: cron-wrapper.sh 수정 완료
+
+# 7. Test: 기능 검증
+$ bash jobs/JOB-2047/scripts/test.sh
+PASS: 세션 생성/조회 (100회 반복)
+PASS: healthcheck 실행
+PASS: knowledge-sync 실행
+PASS: cron-wrapper 실행
+PASS: 결과: 4/4 테스트 통과
+
+# 8. Execution Review: 설계 vs 결과 비교
+$ diff <(jq . jobs/JOB-2047/design.md | grep \"수정 대상\") \\
+      <(cat jobs/JOB-2047/execution.log | grep \"수정 완료\")
+[OK] 모든 수정 대상이 실행 결과와 일치
+```
+
+**결과**: 1,247개 세션 마이그레이션을 설계서 기반의 통제된 프로세스로 성공적으로 완료. 재작업 0회, 롤백 0회.
 
 ---
 

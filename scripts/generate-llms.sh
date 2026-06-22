@@ -19,7 +19,7 @@ Hermes Agent system documentation, published via GitHub Pages.
 ## 3-Track Structure
 - docs/wiki/ — Guide Wiki (How-to) — 14 files
 - docs/blog/ — Dev Blog (Why) — 8 posts
-- docs/slides/ — Concept Slides (What) — 6 HTML decks
+- docs/slides/ — Concept Slides (What) — 8 HTML decks
 
 ## Deploy
 bash src/deploy.sh
@@ -30,10 +30,10 @@ EOF
   echo "# p-hermes Full Documentation Index"
   echo ""
   echo "## Files"
-  find "$DOCS_DIR" -name "*.md" | sort | while read -r f; do
+  find "$DOCS_DIR" -name "*.md" -not -path "*/playground/*" | sort | while read -r f; do
     rel=$(echo "$f" | sed "s|$PROJECT_DIR/||")
     lines=$(wc -l < "$f")
-    title=$(grep -m1 '^#' "$f" | sed 's/^#\{1,3\} *//')
+    title=$(grep -m1 '^#' "$f" 2>/dev/null | sed 's/^#\{1,3\} *//' || echo "(no heading)")
     echo "- **$rel** ($lines lines): $title"
   done
 } > "$PROJECT_DIR/llms-full.txt"

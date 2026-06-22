@@ -4,6 +4,30 @@
 
 ---
 
+
+## 한 줄 요약
+
+
+
+## 기본 개념
+
+
+
+## 문제 상황
+
+
+
+## 기술 설계
+
+
+
+## 구조/흐름도
+
+
+
+## 활용 예시
+
+
 ## 개요
 
 Content System은 Hermes Agent의 표현 품질 관리 시스템입니다. 작성한 콘텐츠의 도메인을 자동 감지하고, 도메인에 맞는 검증 기준과 템플릿을 적용하여 품질을 보장합니다.
@@ -74,4 +98,4 @@ Content System은 도메인별 템플릿을 제공합니다.
 
 ---
 
-> **🔗 다음 읽을거리**: [Knowledge 관리 가이드](knowledge-management.md) · [Blog Why 시리즈](/docs/blog/index.md)
+> - **🔗 다음 읽을거리**: [Knowledge 관리 가이드](knowledge-management.md) · [Blog Why 시리즈](../../blog/index.md)
