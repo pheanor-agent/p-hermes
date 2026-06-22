@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3-Tier Diagram Strategy · Playground v3</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  /* ── CSS Custom Properties (Token System) ── */
+  :root {
+    /* Surface */
+    --bg-canvas:       #0d1117;
+    --bg-surface:      #161b22;
+    --bg-elevated:     #1c2128;
+    --bg-node:         #1e2029;
+    --bg-node-hover:   #262833;
+
+    /* Border */
+    --border-default:  #30363d;
+    --border-subtle:   rgba(255,255,255,0.06);
+    --border-accent:   #58a6ff;
+
+    /* Text */
+    --text-primary:    #e6edf3;
+    --text-secondary:  #8b949e;
+    --text-tertiary:   #6e7681;
+    --text-muted:      #484f58;
+
+    /* Accent */
+    --accent-blue:     #58a6ff;
+    --accent-green:    #3fb950;
+    --accent-gold:     #d29922;
+    --accent-purple:   #bc8cff;
+    --accent-red:      #f85149;
+    --accent-orange:   #f28b82;
+
+    /* Edge */
+    --edge-color:      #30363d;
+    --edge-width:      2.5px;
+    --edge-active:     #58a6ff;
+
+    /* Spacing (4px base) */
+    --space-xs:  4px;
+    --space-sm:  8px;
+    --space-md:  16px;
+    --space-lg:  24px;
+    --space-xl:  32px;
+
+    /* Radius */
+    --radius-sm:  6px;
+    --radius-md:  10px;
+    --radius-lg:  14px;
+    --radius-pill: 9999px;
+
+    /* Shadow */
+    --shadow-node:     0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+    --shadow-node-hvr: 0 4px 12px rgba(0,0,0,0.4), 0 0 0 1px rgba(88,166,255,0.15);
+    --shadow-elevated: 0 8px 24px rgba(0,0,0,0.4);
+
+    /* Transition */
+    --transition-fast: 150ms ease;
+    --transition-norm: 250ms ease;
+    --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:var(--bg-canvas);color:var(--text-primary);overflow-x:hidden;
+  }
+  .container{max-width:1000px;margin:0 auto;padding:var(--space-xl) var(--space-lg) 100px}
+
+  /* Header */
+  .header{text-align:center;padding:32px 0 24px}
+  .header h1{
+    font-size:1.5rem;font-weight:700;letter-spacing:-0.025em;line-height:1.2;
+    background:linear-gradient(135deg,#58a6ff,#3fb950,#bc8cff);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  }
+  .header p{color:var(--text-secondary);font-size:.9rem;margin-top:8px}
+
+  /* Tier Navigation */
+  .tier-nav{display:flex;gap:10px;justify-content:center;margin:20px 0}
+  .tier-btn{
+    padding:10px 22px;border-radius:var(--radius-md);border:1px solid var(--border-default);
+    background:var(--bg-surface);color:var(--text-secondary);cursor:pointer;
+    font-size:.9rem;font-weight:600;
+    transition:border-color var(--transition-fast),color var(--transition-fast),background var(--transition-fast),box-shadow var(--transition-fast);
+  }
+  .tier-btn:hover{border-color:var(--accent-blue);color:var(--text-primary)}
+  .tier-btn:focus-visible{outline:2px solid var(--accent-blue);outline-offset:2px}
+  .tier-btn.active{
+    background:rgba(26,35,51,0.8);border-color:var(--accent-blue);color:var(--accent-blue);
+    box-shadow:0 0 12px rgba(88,166,255,0.15);
+  }
+  .tier-desc{text-align:center;padding:6px 0 16px;font-size:.85rem;color:var(--text-tertiary)}
+
+  /* Diagram Canvas */
+  .diagram-canvas{
+    position:relative;width:100%;min-height:380px;
+    background:var(--bg-surface);border:1px solid var(--border-default);border-radius:var(--radius-lg);
+    padding:28px 20px;overflow:hidden;margin:0 auto;
+    transition:opacity var(--transition-norm);
+  }
+
+  /* ===== Tier 1: Pipeline ===== */
+  .pipeline{
+    display:flex;gap:16px;justify-content:center;flex-wrap:wrap;
+    margin:10px 0 16px;align-items:stretch;
+  }
+  .phase-wrapper{
+    background:rgba(255,255,255,0.02);
+    border:1px solid var(--border-subtle);
+    border-radius:var(--radius-lg);
+    padding:var(--space-md);
+    display:flex;flex-direction:column;gap:var(--space-sm);
+    min-width:160px;position:relative;
+    transition:background var(--transition-fast);
+  }
+  .phase-wrapper:hover{background:rgba(255,255,255,0.035)}
+  .phase-wrapper.p1{border-top:2px solid var(--accent-orange)}
+  .phase-wrapper.p2{border-top:2px solid var(--accent-gold)}
+  .phase-wrapper.p3{border-top:2px solid var(--accent-blue)}
+  .phase-wrapper.p4{border-top:2px solid var(--accent-green)}
+  .phase-wrapper .phase-tag{
+    display:inline-block;font-size:10px;font-weight:700;letter-spacing:0.08em;
+    padding:3px 12px;border-radius:var(--radius-pill);text-transform:uppercase;
+    margin-bottom:2px;align-self:flex-start;
+  }
+  .phase-wrapper.p1 .phase-tag{background:rgba(242,139,130,0.2);color:var(--accent-orange)}
+  .phase-wrapper.p2 .phase-tag{background:rgba(210,153,34,0.2);color:var(--accent-gold)}
+  .phase-wrapper.p3 .phase-tag{background:rgba(88,166,255,0.2);color:var(--accent-blue)}
+  .phase-wrapper.p4 .phase-tag{background:rgba(63,185,80,0.2);color:var(--accent-green)}
+  .phase-wrapper .phase-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+
+  .phase-arrow{
+    display:flex;align-items:center;color:var(--text-muted);
+    font-size:1.2rem;font-weight:300;align-self:center;
+  }
+
+  .pipe-step{
+    background:var(--bg-node);border:1px solid var(--border-default);
+    border-radius:var(--radius-md);padding:12px 18px;text-align:center;
+    min-width:90px;position:relative;overflow:hidden;
+    transition:border-color var(--transition-fast),background var(--transition-fast),
+               box-shadow var(--transition-fast),transform var(--transition-fast);
+    cursor:default;
+  }
+  .pipe-step::before{
+    content:'';position:absolute;top:0;left:0;right:0;
+    height:2px;background:transparent;
+    transition:background var(--transition-fast);
+  }
+  .pipe-step:hover{
+    border-color:var(--accent-blue);background:var(--bg-node-hover);
+    transform:translateY(-1px);
+  }
+  .pipe-step .num{font-size:13px;font-weight:700;color:var(--text-primary)}
+  .pipe-step .lbl{font-size:11px;font-weight:500;color:var(--text-secondary);margin-top:3px}
+  .pipe-step.done{border-color:var(--accent-green);box-shadow:inset 0 0 0 1px rgba(63,185,80,0.15)}
+  .pipe-step.done::before{background:var(--accent-green)}
+  .pipe-step.done .num{color:var(--accent-green)}
+  .pipe-step.active{
+    border-color:var(--accent-blue);
+    background:rgba(88,166,255,0.06);
+    box-shadow:0 0 0 1px rgba(88,166,255,0.15),0 4px 12px rgba(0,0,0,0.3);
+    transform:translateY(-1px);
+  }
+  .pipe-step.active::before{background:var(--accent-blue)}
+  .pipe-step.active .num{color:var(--accent-blue)}
+
+  .pipeline-label{text-align:center;font-size:.85rem;color:var(--text-secondary);margin:4px 0 2px}
+  .pipeline-label strong{color:var(--text-primary)}
+
+  .progress-strip{
+    display:flex;width:100%;max-width:600px;margin:14px auto 8px;
+    border-radius:var(--radius-sm);overflow:hidden;height:8px;background:var(--bg-node);
+  }
+  .progress-fill{height:100%;border-radius:var(--radius-sm);transition:width var(--transition-slow)}
+  .progress-fill.blue{background:linear-gradient(90deg,var(--accent-blue),#79b8ff)}
+  .progress-fill.green{background:var(--accent-green)}
+  .progress-fill.gold{background:var(--accent-gold)}
+
+  .tier-tag{
+    display:inline-block;font-size:10px;font-weight:700;letter-spacing:0.08em;
+    padding:3px 12px;border-radius:var(--radius-pill);text-transform:uppercase;margin-bottom:10px;
+  }
+  .tier-tag.t1{background:rgba(242,139,130,0.2);color:var(--accent-orange)}
+  .tier-tag.t2{background:rgba(210,153,34,0.2);color:var(--accent-gold)}
+  .tier-tag.t3{background:rgba(88,166,255,0.2);color:var(--accent-blue)}
+  .tier-title{text-align:center;font-size:1.1rem;font-weight:600;letter-spacing:-0.015em;margin-bottom:var(--space-xs)}
+  .tier-sub{text-align:center;font-size:.85rem;color:var(--text-secondary);margin-bottom:var(--space-md)}
+
+  /* ===== Tier 2: HTML Nodes + SVG Edges ===== */
+  .t2-container{position:relative;width:100%;height:360px}
+  .diagram-node{
+    position:absolute;
+    background:var(--bg-node);border:1px solid var(--border-default);
+    border-radius:var(--radius-md);padding:16px 20px;text-align:center;
+    min-width:140px;cursor:default;z-index:2;
+    box-shadow:var(--shadow-node);
+    transition:border-color var(--transition-fast),box-shadow var(--transition-fast),
+               transform var(--transition-fast),background var(--transition-fast);
+  }
+  .diagram-node:hover{
+    border-color:var(--accent-blue);box-shadow:var(--shadow-node-hvr);
+    transform:translateY(-2px);background:var(--bg-node-hover);
+  }
+  .diagram-node:focus-visible{outline:2px solid var(--accent-blue);outline-offset:2px}
+  .diagram-node .node-icon{font-size:1.4rem;margin-bottom:6px;line-height:1.2}
+  .diagram-node .node-label{font-size:13px;font-weight:600;color:var(--text-primary)}
+  .diagram-node .node-sub{font-size:11px;color:var(--text-secondary);margin-top:2px}
+
+  .diagram-node.accent-blue{
+    box-shadow:var(--shadow-node),inset 2px 0 0 0 var(--accent-blue);
+  }
+  .diagram-node.accent-green{
+    box-shadow:var(--shadow-node),inset 2px 0 0 0 var(--accent-green);
+  }
+  .diagram-node.accent-gold{
+    box-shadow:var(--shadow-node),inset 2px 0 0 0 var(--accent-gold);
+  }
+  .diagram-node.accent-purple{
+    box-shadow:var(--shadow-node),inset 2px 0 0 0 var(--accent-purple);
+  }
+  .diagram-node.accent-red{
+    box-shadow:var(--shadow-node),inset 2px 0 0 0 var(--accent-red);
+  }
+
+  .diagram-edge-layer{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
+  .diagram-edge{
+    fill:none;stroke:var(--edge-color);stroke-width:2.5;stroke-linecap:round;
+    transition:stroke var(--transition-fast),stroke-width var(--transition-fast);
+  }
+  .diagram-edge.arrow{marker-end:url(#arrowhead)}
+  .diagram-edge:hover{stroke-width:3.5}
+  .diagram-edge.animated{
+    stroke-dasharray:6 4;
+    animation:edgeFlow 1s linear infinite;
+  }
+  .diagram-edge.accent-blue{stroke:var(--accent-blue)}
+  .diagram-edge.accent-green{stroke:var(--accent-green)}
+  .diagram-edge.accent-gold{stroke:var(--accent-gold)}
+  .diagram-edge.accent-purple{stroke:var(--accent-purple)}
+
+  .diagram-group{
+    position:absolute;border:1px dashed var(--border-subtle);
+    border-radius:var(--radius-lg);background:rgba(255,255,255,0.01);z-index:0;
+    transition:background var(--transition-fast);
+  }
+  .diagram-group:hover{background:rgba(255,255,255,0.025)}
+  .diagram-group .group-label{
+    position:absolute;top:-9px;left:16px;
+    font-size:10px;font-weight:600;color:var(--text-tertiary);
+    background:var(--bg-surface);padding:0 10px;
+    letter-spacing:0.05em;text-transform:uppercase;
+  }
+
+  .diagram-edge-label{
+    fill:var(--text-tertiary);font-size:10px;text-anchor:middle;
+    dominant-baseline:central;
+    paint-order:stroke fill;
+    stroke:var(--bg-canvas);stroke-width:4;
+    stroke-linecap:round;stroke-linejoin:round;
+  }
+
+  /* ===== Tier 3: SVG Overlay ===== */
+  .t3-container{
+    position:relative;width:100%;height:400px;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .t3-container svg{width:100%;height:100%;cursor:grab}
+  .t3-container svg:active{cursor:grabbing}
+
+  .t3-controls{
+    position:absolute;bottom:16px;right:16px;
+    display:flex;gap:6px;z-index:5;
+    background:rgba(22,27,34,0.9);padding:8px;
+    border-radius:var(--radius-md);border:1px solid var(--border-subtle);
+    backdrop-filter:blur(8px);
+  }
+  .t3-controls button{
+    width:34px;height:34px;border-radius:var(--radius-sm);
+    border:1px solid var(--border-default);
+    background:var(--bg-node);color:var(--text-primary);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1rem;transition:all var(--transition-fast);
+  }
+  .t3-controls button:hover{background:var(--bg-node-hover);border-color:var(--accent-blue)}
+  .t3-controls button:focus-visible{outline:2px solid var(--accent-blue);outline-offset:2px}
+  .t3-info{
+    position:absolute;bottom:16px;left:16px;
+    font-size:11px;color:var(--text-tertiary);
+    background:rgba(30,32,41,0.85);padding:5px 12px;
+    border-radius:var(--radius-sm);z-index:5;
+    backdrop-filter:blur(4px);
+  }
+
+  /* SVG Node styling */
+  .svg-node{
+    fill:var(--bg-node);stroke:var(--border-default);stroke-width:1.5;
+    rx:10;ry:10;
+    transition:fill var(--transition-fast),stroke var(--transition-fast),filter var(--transition-fast);
+  }
+  .svg-node:hover{
+    fill:var(--bg-node-hover);stroke:var(--accent-blue);
+    filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+  }
+  .svg-node.bl{stroke:var(--accent-blue)}
+  .svg-node.gr{stroke:var(--accent-green)}
+  .svg-node.gd{stroke:var(--accent-gold)}
+  .svg-node.pr{stroke:var(--accent-purple)}
+  .svg-node.rd{stroke:var(--accent-red)}
+  .svg-node.layer-input{stroke:var(--accent-orange)}
+  .svg-node.layer-core{stroke:var(--accent-green)}
+  .svg-node.layer-proc{stroke:var(--accent-gold)}
+  .svg-node.layer-store{stroke:var(--accent-purple)}
+
+  .svg-label{
+    fill:var(--text-primary);font-size:14px;font-weight:600;
+    font-family:'JetBrains Mono','Segoe UI',system-ui,sans-serif;
+    text-anchor:middle;dominant-baseline:central;
+    paint-order:stroke fill;stroke:var(--bg-node);stroke-width:3;
+    stroke-linecap:round;stroke-linejoin:round;
+  }
+  .svg-sub{
+    fill:var(--text-secondary);font-size:10px;text-anchor:middle;dominant-baseline:central;
+  }
+  .svg-edge{
+    fill:none;stroke:var(--border-default);stroke-width:2.5;stroke-linecap:round;
+    transition:stroke var(--transition-fast),stroke-width var(--transition-fast);
+  }
+  .svg-edge:hover{stroke-width:4;stroke:var(--accent-blue)}
+  .svg-edge.animated{
+    stroke-dasharray:6 4;
+    animation:edgeFlow 1s linear infinite;
+  }
+  .svg-edge.bl{stroke:var(--accent-blue)}
+  .svg-edge.gr{stroke:var(--accent-green)}
+  .svg-edge.gd{stroke:var(--accent-gold)}
+
+  /* Edge flow animation */
+  @keyframes edgeFlow{
+    0%  {stroke-dashoffset:20}
+    100%{stroke-dashoffset:0}
+  }
+
+  /* Tier fade transition */
+  @keyframes tierFadeIn{
+    from{opacity:0;transform:translateY(6px)}
+    to  {opacity:1;transform:translateY(0)}
+  }
+  .tier-enter{animation:tierFadeIn var(--transition-norm) ease forwards}
+
+  /* ===== Utility ===== */
+  .hide{display:none}
+
+  /* prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:0.01ms !important;transition-duration:0.01ms !important}
+    .diagram-edge.animated{animation:none;stroke-dasharray:none}
+    .svg-edge.animated{animation:none;stroke-dasharray:none}
+    .pipe-step{transition:none}
+    .pipe-step:hover{transform:none}
+    .diagram-node{transition:none}
+    .diagram-node:hover{transform:none}
+    .svg-node:hover{filter:none}
+  }
+
+  /* Responsive */
+  @media (max-width: 700px){
+    .container{padding:var(--space-md) var(--space-sm) 80px}
+    .header h1{font-size:1.3rem}
+    .tier-btn{padding:8px 14px;font-size:.82rem}
+    .diagram-canvas{min-height:320px;padding:16px 10px}
+    .pipe-step{padding:10px 12px;min-width:75px}
+    .pipe-step .num{font-size:12px}
+    .pipe-step .lbl{font-size:10px}
+    .phase-wrapper{padding:10px;min-width:130px}
+    .phase-arrow{font-size:1rem}
+    .diagram-node{padding:12px 14px;min-width:100px}
+    .diagram-node .node-label{font-size:11px}
+    .diagram-node .node-sub{font-size:9px}
+    .diagram-node .node-icon{font-size:1.2rem}
+    .t2-container{height:320px}
+    .t3-container{height:340px}
+    .svg-label{font-size:12px}
+    .svg-sub{font-size:9px}
+    .svg-node{rx:8;ry:8}
+    .t3-controls{bottom:10px;right:10px;padding:6px}
+    .t3-controls button{width:30px;height:30px}
+    .t3-info{font-size:10px;bottom:10px;left:10px}
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>3-Tier Diagram Strategy</h1>
+    <p>Playground v3 — 디자인 시스템 개선: CSS 변수 · Phase 그룹화 · Bezier 곡선 · 엣지 애니메이션</p>
+  </div>
+
+  <!-- Tier Navigation -->
+  <div class="tier-nav">
+    <button class="tier-btn active" onclick="showTier(1)">🏗️ Tier 1 · HTML Pipeline</button>
+    <button class="tier-btn" onclick="showTier(2)">🔗 Tier 2 · HTML + SVG Edges</button>
+    <button class="tier-btn" onclick="showTier(3)">🗺️ Tier 3 · SVG Overlay</button>
+  </div>
+
+  <!-- Tier Description -->
+  <div class="tier-desc" id="tierDesc">HTML-only Flexbox/Grid · JOB Lifecycle 프로세스 파이프라인 (4개 Phase 그룹)</div>
+
+  <!-- Diagram Canvas -->
+  <div class="diagram-canvas">
+
+    <!-- ==================== TIER 1 ==================== -->
+    <div id="tier1">
+      <div style="text-align:center">
+        <span class="tier-tag t1">TIER 1 · HTML ONLY</span>
+        <div class="tier-title">JOB Lifecycle Pipeline</div>
+        <div class="tier-sub">4개 Phase 그룹 · 9단계 프로세스 흐름</div>
+      </div>
+
+      <!-- Pipeline with Phase groups -->
+      <div class="pipeline">
+        <!-- Phase 1 -->
+        <div class="phase-wrapper p1">
+          <span class="phase-tag">접수/조사</span>
+          <div class="phase-row">
+            <div class="pipe-step done">
+              <div class="num">01</div><div class="lbl">접수</div>
+            </div>
+            <div class="pipe-step done">
+              <div class="num">02</div><div class="lbl">조사</div>
+            </div>
+          </div>
+        </div>
+        <div class="phase-arrow">→</div>
+
+        <!-- Phase 2 -->
+        <div class="phase-wrapper p2">
+          <span class="phase-tag">설계/리뷰/승인</span>
+          <div class="phase-row">
+            <div class="pipe-step active">
+              <div class="num">03</div><div class="lbl">설계</div>
+            </div>
+            <div class="pipe-step">
+              <div class="num">04</div><div class="lbl">리뷰</div>
+            </div>
+            <div class="pipe-step">
+              <div class="num">05</div><div class="lbl">승인</div>
+            </div>
+          </div>
+        </div>
+        <div class="phase-arrow">→</div>
+
+        <!-- Phase 3 -->
+        <div class="phase-wrapper p3">
+          <span class="phase-tag">실행/테스트</span>
+          <div class="phase-row">
+            <div class="pipe-step">
+              <div class="num">06</div><div class="lbl">실행</div>
+            </div>
+            <div class="pipe-step">
+              <div class="num">07</div><div class="lbl">테스트</div>
+            </div>
+          </div>
+        </div>
+        <div class="phase-arrow">→</div>
+
+        <!-- Phase 4 -->
+        <div class="phase-wrapper p4">
+          <span class="phase-tag">실행리뷰/교훈</span>
+          <div class="phase-row">
+            <div class="pipe-step">
+              <div class="num">08</div><div class="lbl">실행리뷰</div>
+            </div>
+            <div class="pipe-step">
+              <div class="num">09</div><div class="lbl">교훈</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress bar -->
+      <div style="max-width:600px;margin:14px auto 8px">
+        <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--text-tertiary);margin-bottom:4px">
+          <span>진행: 2/9 단계 완료</span>
+          <span>22%</span>
+        </div>
+        <div class="progress-strip">
+          <div class="progress-fill green" style="width:15%"></div>
+          <div class="progress-fill blue" style="width:7%"></div>
+        </div>
+      </div>
+
+      <div class="pipeline-label">
+        <strong>phase-wrapper</strong> + <strong>pipe-step</strong> · 상단 border accent · Phase별 컬러 시스템
+      </div>
+    </div>
+
+    <!-- ==================== TIER 2 ==================== -->
+    <div id="tier2" class="hide">
+      <div style="text-align:center">
+        <span class="tier-tag t2">TIER 2 · HTML + SVG EDGES</span>
+        <div class="tier-title">3-Layer Architecture</div>
+        <div class="tier-sub">position:absolute 노드 + SVG Bezier 엣지 · Layer 그룹 컨테이너</div>
+      </div>
+
+      <div class="t2-container">
+        <!-- SVG Edge Layer -->
+        <svg class="diagram-edge-layer">
+          <defs>
+            <marker id="arrowhead" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="var(--edge-color)"/>
+            </marker>
+            <marker id="arrowBlue" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="var(--accent-blue)"/>
+            </marker>
+            <marker id="arrowGreen" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="var(--accent-green)"/>
+            </marker>
+            <marker id="arrowGold" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="var(--accent-gold)"/>
+            </marker>
+          </defs>
+
+          <!-- Layer 1 → Layer 2: Optimized Bezier curves -->
+          <!-- Left: Agent Layer (20%,55) → Session Manager (20%,190) -->
+          <path d="M 18% 55 C 18% 90, 18% 115, 18% 165" class="diagram-edge arrow accent-blue"/>
+          <!-- Center: Knowledge Layer (42%,55) → Knowledge DB (42%,190) -->
+          <path d="M 42% 55 C 42% 90, 42% 115, 42% 165" class="diagram-edge arrow accent-green"/>
+          <!-- Right: Deploy Layer (70%,55) → Pipeline Runner (70%,190) -->
+          <path d="M 70% 55 C 70% 90, 70% 115, 70% 165" class="diagram-edge arrow accent-gold"/>
+
+          <!-- Layer 2 → Layer 3: Converging Bezier curves -->
+          <!-- Left: Session Manager (18%,190) → Storage (50%,300) -->
+          <path d="M 18% 195 C 18% 230, 30% 245, 40% 285" class="diagram-edge arrow accent-purple"/>
+          <!-- Center: Knowledge DB (42%,195) → Storage (50%,300) -->
+          <path d="M 42% 195 C 42% 230, 44% 245, 40% 285" class="diagram-edge animated accent-purple" stroke-dasharray="5,3"/>
+          <!-- Right: Pipeline Runner (70%,195) → Storage (50%,300) -->
+          <path d="M 70% 195 C 70% 230, 55% 245, 40% 285" class="diagram-edge arrow accent-purple"/>
+
+          <!-- Edge labels with background (paint-order stroke) -->
+          <text x="28%" y="110" class="diagram-edge-label">orchestrates</text>
+          <text x="60%" y="110" class="diagram-edge-label">triggers</text>
+          <text x="28%" y="260" class="diagram-edge-label">persist</text>
+          <text x="47%" y="260" class="diagram-edge-label">query (read)</text>
+          <text x="62%" y="260" class="diagram-edge-label">collect</text>
+        </svg>
+
+        <!-- Group: Layer 1 (Runtime) -->
+        <div class="diagram-group" style="top:10px;left:5%;width:90%;height:80px">
+          <span class="group-label">Layer 1: Runtime — Agent</span>
+        </div>
+
+        <!-- Group: Layer 2 (Middleware) -->
+        <div class="diagram-group" style="top:140px;left:5%;width:90%;height:80px">
+          <span class="group-label">Layer 2: Middleware — Service</span>
+        </div>
+
+        <!-- Group: Layer 3 (Storage) -->
+        <div class="diagram-group" style="top:280px;left:15%;width:70%;height:70px">
+          <span class="group-label">Layer 3: Storage — Data</span>
+        </div>
+
+        <!-- Top row: Layer 1 -->
+        <div class="diagram-node accent-blue" style="left:10%;top:24px;width:16%">
+          <div class="node-icon">🤖</div>
+          <div class="node-label">Agent Layer</div>
+          <div class="node-sub">LLM Orchestration</div>
+        </div>
+        <div class="diagram-node accent-green" style="left:38%;top:24px;width:16%">
+          <div class="node-icon">🧠</div>
+          <div class="node-label">Knowledge Layer</div>
+          <div class="node-sub">FTS5 · Skills</div>
+        </div>
+        <div class="diagram-node accent-gold" style="left:66%;top:24px;width:16%">
+          <div class="node-icon">🚀</div>
+          <div class="node-label">Deploy Layer</div>
+          <div class="node-sub">CI/CD · Containers</div>
+        </div>
+
+        <!-- Middle row: Layer 2 -->
+        <div class="diagram-node" style="left:10%;top:152px;width:16%">
+          <div class="node-icon">⚡</div>
+          <div class="node-label">Session Manager</div>
+          <div class="node-sub">Context Window</div>
+        </div>
+        <div class="diagram-node" style="left:38%;top:152px;width:16%">
+          <div class="node-icon">📚</div>
+          <div class="node-label">Knowledge DB</div>
+          <div class="node-sub">Vector + FTS5</div>
+        </div>
+        <div class="diagram-node" style="left:66%;top:152px;width:16%">
+          <div class="node-icon">⚙️</div>
+          <div class="node-label">Pipeline Runner</div>
+          <div class="node-sub">Job Lifecycle</div>
+        </div>
+
+        <!-- Bottom row: Layer 3 -->
+        <div class="diagram-node accent-purple" style="left:30%;top:292px;width:40%">
+          <div class="node-icon">💾</div>
+          <div class="node-label">Persistent Storage</div>
+          <div class="node-sub">SQLite · Filesystem · Git</div>
+        </div>
+      </div>
+
+      <div class="tier-sub" style="margin-top:8px;font-size:.82rem">
+        <strong>diagram-node</strong> (position:absolute) + <strong>diagram-edge</strong> (SVG Bezier) · 
+        Layer group containers · Edge flow animation
+      </div>
+    </div>
+
+    <!-- ==================== TIER 3 ==================== -->
+    <div id="tier3" class="hide">
+      <div style="text-align:center">
+        <span class="tier-tag t3">TIER 3 · SVG OVERLAY</span>
+        <div class="tier-title">Zoomable SVG Architecture</div>
+        <div class="tier-sub">viewBox="0 0 900 400" · Bezier 곡선 · 엣지 flow 애니메이션</div>
+      </div>
+
+      <div class="t3-container" id="svgContainer">
+        <svg id="svgDiagram" viewBox="0 0 900 400" style="transform-origin:center center;transition:transform var(--transition-norm)">
+          <defs>
+            <marker id="arrowSvg" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="var(--edge-color)"/>
+            </marker>
+            <marker id="arrowSvgB" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="var(--accent-blue)"/>
+            </marker>
+            <marker id="arrowSvgG" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="var(--accent-green)"/>
+            </marker>
+            <marker id="arrowSvgR" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="var(--accent-gold)"/>
+            </marker>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="1.5" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- Background: enhanced grid pattern -->
+          <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+            <path d="M 30 0 L 0 0 0 30" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="0.8"/>
+          </pattern>
+          <rect width="900" height="400" fill="url(#grid)" rx="12"/>
+
+          <!-- Layer backgrounds -->
+          <rect x="15" y="15" width="870" height="105" fill="rgba(88,166,255,0.02)" rx="10"/>
+          <rect x="15" y="135" width="870" height="120" fill="rgba(210,153,34,0.02)" rx="10"/>
+          <rect x="15" y="270" width="870" height="115" fill="rgba(188,140,255,0.02)" rx="10"/>
+
+          <!-- Layer labels -->
+          <text x="30" y="35" fill="var(--text-tertiary)" font-size="10" font-weight="600" letter-spacing="0.08em" text-transform="uppercase" stroke="var(--bg-canvas)" stroke-width="3" paint-order="stroke fill">LAYER 1: INPUT</text>
+          <text x="30" y="155" fill="var(--text-tertiary)" font-size="10" font-weight="600" letter-spacing="0.08em" text-transform="uppercase" stroke="var(--bg-canvas)" stroke-width="3" paint-order="stroke fill">LAYER 2: PROCESSING</text>
+          <text x="30" y="290" fill="var(--text-tertiary)" font-size="10" font-weight="600" letter-spacing="0.08em" text-transform="uppercase" stroke="var(--bg-canvas)" stroke-width="3" paint-order="stroke fill">LAYER 3: STORAGE &amp; OUTPUT</text>
+
+          <!-- Edges: Bezier curves with flow animation -->
+          <!-- User Input → Hermes Agent -->
+          <path d="M 140 65 C 200 65, 250 55, 300 60" class="svg-edge animated bl"/>
+          <!-- Hermes Agent → Session Manager + Context Router -->
+          <path d="M 450 75 C 450 120, 250 130, 230 195" class="svg-edge bl"/>
+          <path d="M 450 75 C 450 120, 600 130, 620 195" class="svg-edge bl"/>
+          <!-- Session Manager → Workflow Gate -->
+          <path d="M 230 205 C 230 235, 340 240, 340 265" class="svg-edge gr"/>
+          <!-- Context Router → Pipeline Executor -->
+          <path d="M 620 205 C 620 235, 510 240, 510 265" class="svg-edge gr"/>
+          <!-- Workflow Gate → Knowledge DB -->
+          <path d="M 340 275 C 340 310, 260 315, 260 340" class="svg-edge animated"/>
+          <!-- Pipeline Executor → Skills -->
+          <path d="M 510 275 C 510 310, 590 315, 590 340" class="svg-edge animated"/>
+          <!-- Knowledge DB + Skills → Deliverable -->
+          <path d="M 260 350 C 260 370, 360 375, 400 368" class="svg-edge gd"/>
+          <path d="M 590 350 C 590 370, 490 375, 450 368" class="svg-edge gd"/>
+
+          <!-- Nodes: Layer 1 -->
+          <!-- User Input -->
+          <rect x="30" y="40" width="120" height="50" class="svg-node layer-input" rx="10" ry="10"/>
+          <text x="90" y="64" class="svg-label" fill="var(--accent-orange)">📝 User Input</text>
+          <text x="90" y="80" class="svg-sub">CLI · API · Chat</text>
+
+          <!-- Hermes Agent -->
+          <rect x="300" y="40" width="160" height="55" class="svg-node layer-core" rx="10" ry="10" filter="url(#glow)"/>
+          <text x="380" y="64" class="svg-label" fill="var(--accent-green)">⚡ Hermes Agent</text>
+          <text x="380" y="82" class="svg-sub">Core Orchestrator</text>
+
+          <!-- Nodes: Layer 2 -->
+          <!-- Session Manager -->
+          <rect x="130" y="185" width="200" height="50" class="svg-node layer-proc" rx="10" ry="10"/>
+          <text x="230" y="208" class="svg-label">Session Manager</text>
+          <text x="230" y="224" class="svg-sub">Context · History</text>
+
+          <!-- Context Router -->
+          <rect x="560" y="185" width="120" height="50" class="svg-node layer-proc" rx="10" ry="10"/>
+          <text x="620" y="208" class="svg-label">Context Router</text>
+          <text x="620" y="224" class="svg-sub">Intent Classification</text>
+
+          <!-- Workflow Gate -->
+          <rect x="240" y="260" width="200" height="50" class="svg-node bl" rx="10" ry="10"/>
+          <text x="340" y="283" class="svg-label">Workflow Gate</text>
+          <text x="340" y="299" class="svg-sub">9-Step Pipeline</text>
+
+          <!-- Pipeline Executor -->
+          <rect x="410" y="260" width="200" height="50" class="svg-node bl" rx="10" ry="10"/>
+          <text x="510" y="283" class="svg-label">Pipeline Executor</text>
+          <text x="510" y="299" class="svg-sub">Step Runner · Hooks</text>
+
+          <!-- Nodes: Layer 3 -->
+          <!-- Knowledge DB -->
+          <rect x="160" y="335" width="200" height="50" class="svg-node gr" rx="10" ry="10"/>
+          <text x="260" y="358" class="svg-label" fill="var(--accent-green)">📖 Knowledge DB</text>
+          <text x="260" y="374" class="svg-sub">FTS5 · Vector</text>
+
+          <!-- Skills -->
+          <rect x="490" y="335" width="200" height="50" class="svg-node gr" rx="10" ry="10"/>
+          <text x="590" y="358" class="svg-label" fill="var(--accent-green)">🛠️ Skills</text>
+          <text x="590" y="374" class="svg-sub">Procedures</text>
+
+          <!-- Deliverable (bottom center) -->
+          <rect x="360" y="355" width="180" height="40" class="svg-node gd" rx="10" ry="10" filter="url(#glow)"/>
+          <text x="450" y="375" class="svg-label" fill="var(--accent-gold)">📦 Deliverable</text>
+        </svg>
+
+        <div class="t3-controls">
+          <button onclick="zoomSvg(0.2)" title="Zoom In" aria-label="Zoom in">➕</button>
+          <button onclick="zoomSvg(-0.2)" title="Zoom Out" aria-label="Zoom out">➖</button>
+          <button onclick="resetSvg()" title="Reset" aria-label="Reset zoom">↺</button>
+        </div>
+        <div class="t3-info" id="t3Info">100% · Click +/− to zoom · Drag to pan</div>
+      </div>
+
+      <div class="tier-sub" style="margin-top:8px;font-size:.82rem">
+        Full SVG with <strong>viewBox</strong> (900×400) · Bezier 엣지 · 엣지 flow 애니메이션 · Glow 효과
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Summary -->
+  <div style="margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+    <div style="background:var(--bg-node);border:1px solid var(--border-default);border-radius:var(--radius-md);padding:14px;text-align:center">
+      <div style="font-size:1.3rem;font-weight:700;color:var(--accent-orange)">T1</div>
+      <div style="font-size:.85rem;color:var(--text-secondary);margin-top:4px">HTML-only<br>pipeline · phase-wrapper</div>
+    </div>
+    <div style="background:var(--bg-node);border:1px solid var(--border-default);border-radius:var(--radius-md);padding:14px;text-align:center">
+      <div style="font-size:1.3rem;font-weight:700;color:var(--accent-gold)">T2</div>
+      <div style="font-size:.85rem;color:var(--text-secondary);margin-top:4px">HTML+SVG<br>diagram-node · Bezier edge</div>
+    </div>
+    <div style="background:var(--bg-node);border:1px solid var(--border-default);border-radius:var(--radius-md);padding:14px;text-align:center">
+      <div style="font-size:1.3rem;font-weight:700;color:var(--accent-blue)">T3</div>
+      <div style="font-size:.85rem;color:var(--text-secondary);margin-top:4px">Full SVG<br>viewBox 900×400 · zoom</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Tier switching with fade animation ──
+function showTier(n){
+  document.querySelectorAll('.tier-btn').forEach((b,i)=>b.classList.toggle('active',i===n-1));
+
+  const tiers = ['tier1','tier2','tier3'];
+  tiers.forEach((id,i)=>{
+    const el = document.getElementById(id);
+    if(i===n-1){
+      el.classList.remove('hide');
+      el.classList.remove('tier-enter');
+      // Force reflow then add animation class
+      void el.offsetWidth;
+      el.classList.add('tier-enter');
+    } else {
+      el.classList.add('hide');
+      el.classList.remove('tier-enter');
+    }
+  });
+
+  const descs = [
+    'HTML-only Flexbox/Grid · JOB Lifecycle 프로세스 파이프라인 (4개 Phase 그룹)',
+    'position:absolute HTML 노드 + SVG Bezier 엣지 · Layer 그룹 컨테이너',
+    'viewBox="0 0 900 400" · Bezier 곡선 · 엣지 flow 애니메이션 · Glow 효과'
+  ];
+  document.getElementById('tierDesc').textContent = descs[n-1];
+}
+
+// ── SVG Zoom ──
+let svgZoom = 1;
+let offsetX = 0, offsetY = 0;
+const svgEl = document.getElementById('svgDiagram');
+const t3Info = document.getElementById('t3Info');
+const MIN_ZOOM = 0.25, MAX_ZOOM = 4;
+
+function zoomSvg(delta){
+  svgZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, svgZoom + delta));
+  applyZoom();
+}
+function resetSvg(){
+  svgZoom = 1; offsetX = 0; offsetY = 0;
+  svgEl.style.transform = 'scale(1) translate(0,0)';
+  t3Info.textContent = '100% · Click +/− to zoom · Drag to pan';
+}
+function applyZoom(){
+  svgEl.style.transform = `scale(${svgZoom}) translate(${offsetX}px,${offsetY}px)`;
+  t3Info.textContent = `${Math.round(svgZoom*100)}% · Click +/− to zoom · Drag to pan`;
+}
+
+// ── SVG Drag Pan ──
+let isDragging = false, startX, startY;
+const svgContainer = document.getElementById('svgContainer');
+
+svgContainer.addEventListener('mousedown',e=>{
+  if(e.target.closest('.t3-controls')) return;
+  isDragging = true;
+  startX = e.clientX - offsetX;
+  startY = e.clientY - offsetY;
+  svgEl.style.cursor = 'grabbing';
+});
+document.addEventListener('mousemove',e=>{
+  if(!isDragging) return;
+  offsetX = e.clientX - startX;
+  offsetY = e.clientY - startY;
+  applyZoom();
+});
+document.addEventListener('mouseup',()=>{
+  isDragging = false;
+  svgEl.style.cursor = 'grab';
+});
+
+// ── Wheel Zoom ──
+svgContainer.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const delta = e.deltaY > 0 ? -0.15 : 0.15;
+  zoomSvg(delta);
+},{passive:false});
+
+// ── Touch support for mobile pan ──
+let touchStartX, touchStartY, touchOffsetX, touchOffsetY, isTouching = false;
+
+svgContainer.addEventListener('touchstart',e=>{
+  if(e.target.closest('.t3-controls')) return;
+  const touch = e.touches[0];
+  touchStartX = touch.clientX - offsetX;
+  touchStartY = touch.clientY - offsetY;
+  isTouching = true;
+},{passive:true});
+
+svgContainer.addEventListener('touchmove',e=>{
+  if(!isTouching) return;
+  const touch = e.touches[0];
+  offsetX = touch.clientX - touchStartX;
+  offsetY = touch.clientY - touchStartY;
+  applyZoom();
+},{passive:true});
+
+svgContainer.addEventListener('touchend',()=>{
+  isTouching = false;
+});
+
+// ── Init ──
+showTier(1);
+</script>
+
+</body>
+</html>

@@ -15,7 +15,7 @@
 [![Quick Start](https://img.shields.io/badge/⚡_Quick_Start-2EA043?style=for-the-badge)](#-quick-start)
 [![Wiki](https://img.shields.io/badge/📘_Guide_Wiki-58A6FF?style=for-the-badge)](https://github.com/pheanor-agent/p-hermes/blob/main/docs/wiki/index.md)
 [![Blog](https://img.shields.io/badge/✍️_Dev_Blog-D2A8FF?style=for-the-badge)](https://github.com/pheanor-agent/p-hermes/blob/main/docs/blog/index.md)
-[![Slides](https://img.shields.io/badge/🖼️_Slides-3FB950?style=for-the-badge)](https://github.com/pheanor-agent/p-hermes/blob/main/docs/slides/index.md)
+[![Slides](https://img.shields.io/badge/🖼️_Slides-3FB950?style=for-the-badge)](https://pheanor-agent.github.io/p-hermes/slides/index.md)
 
 </div>
 
@@ -57,7 +57,7 @@ p-hermes 문서는 **3-Track 구조**로 구성되어 있습니다.
 |------|:----:|
 | 📘 Guide Wiki | [전체 목록](https://github.com/pheanor-agent/p-hermes/blob/main/docs/wiki/index.md) |
 | ✍️ Dev Blog | [전체 목록](https://github.com/pheanor-agent/p-hermes/blob/main/docs/blog/index.md) |
-| 🖼️ **Slides** | [전체 목록](https://github.com/pheanor-agent/p-hermes/blob/main/docs/slides/index.md) |
+| 🖼️ **Slides** | [전체 목록](https://pheanor-agent.github.io/p-hermes/slides/index.md) |
 
 ---
 
@@ -118,7 +118,7 @@ p-hermes/
   ·
   <a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/blog/index.md">✍️ Blog</a>
   ·
-  <a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/slides/index.md">🖼️ Slides</a>
+  <a href="https://pheanor-agent.github.io/p-hermes/slides/index.md">🖼️ Slides</a>
   <br><br>
   Built with Hermes Agent
 </div>
