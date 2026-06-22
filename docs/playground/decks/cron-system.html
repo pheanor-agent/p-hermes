@@ -83,6 +83,8 @@
     .mermaid[data-zoomable="true"] {
       cursor: zoom-in;
     }
+    .v5-diagram-iframe{width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)}
+@media(max-width:700px){.v5-diagram-iframe{height:260px}}
   </style>
 </head>
 <body>
@@ -147,35 +149,11 @@
       <!-- Slide 6: 3-layer architecture -->
       <section>
         <h2>Registry -> Wrapper -> Runner 3층 아키텍처</h2>
-        <pre class="mermaid">graph TD
-  subgraph L1["Layer 1: Scheduler\n스케줄러"]
-    SC["Cron 스케줄러"]
-    RG["registry.yaml\nSSOT"]
-    EB1["event.sh"]
-  end
-
-  subgraph L2["Layer 2: Wrapper\n래퍼"]
-    WR["wrapper.sh\nJob 래퍼 스크립트"]
-    DL["Deliver\n전달 핸들러"]
-  end
-
-  subgraph L3["Layer 3: Runner\n런너"]
-    RU["Runner"]
-    SH["Shell Script\n스크립트 실행"]
-    LM["LLM API\n추론 호출"]
-  end
-
-  SC --> WR
-  WR --> RU
-  RU --> SH
-  RU --> LM
-  EB1 -.-> WR
-  DL --> EB1
-
-  style L1 fill:#3498db,stroke:#2980b9,color:#fff
-  style L2 fill:#2ecc71,stroke:#1e8449,color:#fff
-  style L3 fill:#e67e22,stroke:#d35400,color:#fff
-</pre>
+        <iframe src="../experiments/diagram-v5.html?template=layered" 
+        class="v5-diagram-iframe" 
+        loading="lazy"
+        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
+</iframe>
       </section>
 
       <!-- Slide 7: SSOT — registry.yaml -->
@@ -317,27 +295,11 @@ hermes cron create \
       <!--"Slide 13: 이벤트 흐름 (event.sh) "-->
       <section>
         <h2>실행 시 이벤트 흐름 — end-to-end</h2>
-        <pre class="mermaid">graph TD
-  SC["Schedule Check\n스케줄 확인"] --> WR["wrapper.sh\nJob 래퍼"]
-  WR --> RU["Runner\n작업 실행"]
-  WR --> EB1["event.sh publish\nstarted"]
-
-  RU --> SH["Shell Script\n스크립트 실행"]
-  RU --> LM["LLM API\n추론 호출"]
-
-  SH --> DL["Deliver\n결과 전송"]
-  LM --> DL
-
-  DL --> EB2["event.sh publish\ncompleted"]
-  DL --> OR["Origin Channel\n원본 채널"]
-  DL --> DS["Dest Channel\n지정 채널"]
-
-  EB2 --> LG["JSONL Log\n히스토리 기록"]
-
-  style EB1 fill:#2ecc71,stroke:#1e8449,color:#fff
-  style EB2 fill:#2ecc71,stroke:#1e8449,color:#fff
-  style LG fill:#3498db,stroke:#2980b9,color:#fff
-</pre>
+        <iframe src="../experiments/diagram-v5.html?template=hubSpoke" 
+        class="v5-diagram-iframe" 
+        loading="lazy"
+        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
+</iframe>
         <p style="font-size: 0.6em; color: #666;">모든 단계가 event.sh에 JSONL로 기록 -> event.sh history로 전체 추적 가능</p>
       </section>
 

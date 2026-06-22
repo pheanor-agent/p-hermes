@@ -83,6 +83,8 @@
     .mermaid[data-zoomable="true"] {
       cursor: zoom-in;
     }
+    .v5-diagram-iframe{width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)}
+@media(max-width:700px){.v5-diagram-iframe{height:260px}}
   </style>
 </head>
 <body>
@@ -166,30 +168,11 @@
       <!-- Slide 7: State machine diagram -->
       <section>
         <h2>9단계 상태 전이도</h2>
-        <pre class="mermaid">graph TD
-  REQ["1. Request"] --> INV["2. Investigation"]
-  INV --> DES["3. Design"]
-  DES --> REV["4. Review"]
-  REV --> APP["5. Approval"]
-  APP --> EXE["6. Execution"]
-  EXE --> TST["7. Test"]
-  TST --> EREV["8. Exec Review"]
-  EREV --> DON["9. Done"]
-
-  EXE -.->|"실행 오류"| DES
-  TST -.->|"테스트 실패"| REV
-  REV -.->|"설계 결함"| DES
-
-  style REQ fill:#3498db,stroke:#2980b9,color:#fff
-  style INV fill:#3498db,stroke:#2980b9,color:#fff
-  style DES fill:#f39c12,stroke:#d68910,color:#fff
-  style REV fill:#e74c3c,stroke:#c0392b,color:#fff
-  style APP fill:#9b59b6,stroke:#8e44ad,color:#fff
-  style EXE fill:#1a7f37,stroke:#145a25,color:#fff
-  style TST fill:#2ecc71,stroke:#1e8449,color:#fff
-  style EREV fill:#16a34a,stroke:#15803d,color:#fff
-  style DON fill:#2563eb,stroke:#1d4ed8,color:#fff
-</pre>
+        <iframe src="../experiments/diagram-v5.html?template=pipeline" 
+        class="v5-diagram-iframe" 
+        loading="lazy"
+        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
+</iframe>
         <p style="font-size: 0.65em; color: #666;">점선(피드백 루프): 설계 결함·테스트 실패 시 이전 단계로 되돌아감</p>
       </section>
 

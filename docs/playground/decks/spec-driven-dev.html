@@ -83,6 +83,8 @@
     .mermaid[data-zoomable="true"] {
       cursor: zoom-in;
     }
+    .v5-diagram-iframe{width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)}
+@media(max-width:700px){.v5-diagram-iframe{height:260px}}
   </style>
 </head>
 <body>
@@ -193,17 +195,11 @@
       <!--"Slide 8: 의존성 그래프 "-->
       <section>
         <h2>의존성 그래프 예시</h2>
-        <pre class="mermaid">graph TD
-  P["SPEC-PARENT\n(부모 Spec)"] -->|"extends"| C1["SPEC-CHILD-1\n(자식 1)"]
-  P -->|"extends"| C2["SPEC-CHILD-2\n(자식 2)"]
-  P -->|"raises"| C3["SPEC-CHILD-3\n(자식 3)"]
-  C1 -->|"conflicts"| C2
-
-  style P fill:#1a7f37,stroke:#145a25,color:#fff
-  style C1 fill:#2ecc71,stroke:#1e8449,color:#fff
-  style C2 fill:#3498db,stroke:#2980b9,color:#fff
-  style C3 fill:#f39c12,stroke:#d68910,color:#fff
-</pre>
+        <iframe src="../experiments/diagram-v5.html?template=tree" 
+        class="v5-diagram-iframe" 
+        loading="lazy"
+        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
+</iframe>
         <p style="font-size: 0.65em; color: #666;">부모는 구조/권위, 자식은 부분집합 상세화 — 계층 구조 유지</p>
       </section>
 
@@ -230,19 +226,11 @@
       <!--"Slide 10: Conflict Detection 흐름도 "-->
       <section>
         <h2>검증 흐름도</h2>
-        <pre class="mermaid">graph TD
-  NEW["New Spec\n신규 명세서"] --> Q["Step 1: Quantitative\n수치 비교"]
-  Q -->|"일치"| S["Step 2: Structural\n구조 검증"]
-  Q -->|"모순"| REJ["❌ Rejected\nconflicts"]
-  S -->|"일치"| D["Step 3: Domain Overlap\n도메인 중복 확인"]
-  S -->|"모순"| REJ
-  D -->|"일치"| OK["✅ Approved\n승인"]
-  D -->|"중복"| REJ
-
-  style NEW fill:#3498db,stroke:#2980b9,color:#fff
-  style OK fill:#1a7f37,stroke:#145a25,color:#fff
-  style REJ fill:#c0392b,stroke:#922b21,color:#fff
-</pre>
+        <iframe src="../experiments/diagram-v5.html?template=pipeline" 
+        class="v5-diagram-iframe" 
+        loading="lazy"
+        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
+</iframe>
       </section>
 
       <!-- ===== SECTION 3: HOW ===== -->
@@ -257,22 +245,11 @@
       <section>
         <h2>Batch Modification: 병렬 수정</h2>
         <p style="font-size: 0.8em;">리뷰에서 여러 Spec 수정 사항이 발견되면 서브에이전트에게 병렬로 위임</p>
-        <pre class="mermaid">graph TD
-  REV["Review\n리뷰 단계"] -->|"수정 사항 N개"| SPC["Spec Coordinator\n조정자"]
-  SPC --> SA1["Sub-Agent 1\nSpec A 수정"]
-  SPC --> SA2["Sub-Agent 2\nSpec B 수정"]
-  SPC --> SA3["Sub-Agent N\nSpec N 수정"]
-  SA1 --> VG["Validation\n검증"]
-  SA2 --> VG
-  SA3 --> VG
-  VG -->|"PASS"| MER["Merge\n병합"]
-  VG -->|"FAIL"| FIX["↩ 재수정"]
-
-  style REV fill:#f39c12,stroke:#d68910,color:#fff
-  style SPC fill:#1a7f37,stroke:#145a25,color:#fff
-  style MER fill:#2ecc71,stroke:#1e8449,color:#fff
-  style FIX fill:#c0392b,stroke:#922b21,color:#fff
-</pre>
+        <iframe src="../experiments/diagram-v5.html?template=hubSpoke" 
+        class="v5-diagram-iframe" 
+        loading="lazy"
+        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
+</iframe>
         <p style="font-size: 0.65em; color: #666;">핵심 규칙: 전체 컨텍스트 공유 · <code>patch</code> 도구 사용(전체 재작성 금지) · 수정 후 반드시 검증</p>
       </section>
 

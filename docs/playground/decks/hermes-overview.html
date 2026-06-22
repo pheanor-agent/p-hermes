@@ -131,6 +131,8 @@
     .mermaid[data-zoomable="true"] {
       cursor: zoom-in;
     }
+    .v5-diagram-iframe{width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)}
+@media(max-width:700px){.v5-diagram-iframe{height:260px}}
   </style>
 </head>
 <body>
@@ -190,27 +192,19 @@
         <div class="two-col" style="align-items:flex-start;">
           <div style="flex:0.4;">
             <strong>챗봇 시대</strong>
-            <pre class="mermaid">graph TD
-  U["사용자"] -- "요청" --> CB["Chatbot"]
-  CB -- "응답" --> U
-  style CB fill:#c0392b,stroke:#922b21,color:#fff
-</pre>
+            <iframe src="../experiments/diagram-v5.html?template=comparison" 
+        class="v5-diagram-iframe" 
+        loading="lazy"
+        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
+</iframe>
           </div>
           <div style="flex:0.6;">
             <strong>자율 에이전트 시대</strong>
-            <pre class="mermaid">graph LR
-  U["사용자"] -- "요청" --> AG["Agent"]
-  AG -- "실행" --> T["Tools"]
-  AG -- "학습" --> GE["GEPA Loop"]
-  AG -- "메모리" --> PM["Persistent Memory"]
-  AG -- "다중 API" --> M1["Model 1"]
-  AG -- "다중 API" --> M2["Model 2"]
-  AG -- "다중 API" --> M3["Model 3"]
-  AG -. "응답" .-> U
-  style AG fill:#2ecc71,stroke:#1e8449,color:#fff
-  style GE fill:#f39c12,stroke:#d68910,color:#fff
-  style PM fill:#3498db,stroke:#2980b9,color:#fff
-</pre>
+            <iframe src="../experiments/diagram-v5.html?template=comparison" 
+        class="v5-diagram-iframe" 
+        loading="lazy"
+        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
+</iframe>
           </div>
         </div>
         <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;">단순한 도구 -> 작업을 실행하는 파트너</p>
@@ -252,36 +246,11 @@
       <!-- Slide 8: Architecture overview -->
       <section>
         <h2>시스템 전체 구조</h2>
-        <pre class="mermaid">graph TD
-  AG["Hermes Agent\nCore"]
-
-  subgraph SYS["Core Systems"]
-    WF["🔧 Workflow\n9단계 상태머신"]
-    SP["📋 Spec-Driven Dev\n명세서 기반 개발"]
-    CO["🎨 Content System\nAI 텍스트 품질 관리"]
-    KS["📚 Knowledge System\n지식 기반 통합"]
-    CR["⏰ Cron\n24시간 자동화"]
-    MR["🧭 Model Routing\n작업별 모델 선택"]
-  end
-
-  subgraph EXT["External"]
-    US["사용자"]
-    PL["Messaging Platforms"]
-    AP["LLM Providers\n20+"]
-  end
-
-  US -- "요청" --> AG
-  PL -- "메시지" --> AG
-  AG -- "호출" --> AP
-  AG --> WF
-  AG --> SP
-  AG --> CO
-  AG --> KS
-  AG --> CR
-  AG --> MR
-
-  style AG fill:#1a7f37,stroke:#145a25,color:#fff
-</pre>
+        <iframe src="../experiments/diagram-v5.html?template=hubSpoke" 
+        class="v5-diagram-iframe" 
+        loading="lazy"
+        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
+</iframe>
       </section>
 
       <!-- Slide 9: 6 core systems -->
@@ -330,17 +299,11 @@
       <section>
         <h2>GEPA 학습 루프</h2>
         <p style="font-size: 0.8em;">에이전트가 경험을 재사용 가능한 지식으로 변환하는 사이클</p>
-        <pre class="mermaid">graph LR
-  G["Gather\n실행 기록 수집"] --> E["Evaluate\n재사용성 평가"]
-  E --> P["Produce\nSKILL.md 생성"]
-  P --> A["Apply\n다음 세션 자동 로드"]
-  A --> G
-
-  style G fill:#3498db,stroke:#2980b9,color:#fff
-  style E fill:#f39c12,stroke:#d68910,color:#fff
-  style P fill:#2ecc71,stroke:#1e8449,color:#fff
-  style A fill:#9b59b6,stroke:#8e44ad,color:#fff
-</pre>
+        <iframe src="../experiments/diagram-v5.html?template=pipeline" 
+        class="v5-diagram-iframe" 
+        loading="lazy"
+        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
+</iframe>
         <p style="font-size: 0.65em; color: #666;">복잡한 작업을 해결한 후 자동으로 SKILL.md 생성 -> 다음 세션에서 자동 로드</p>
       </section>
 

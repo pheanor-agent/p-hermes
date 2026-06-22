@@ -131,6 +131,8 @@
     .mermaid[data-zoomable="true"] {
       cursor: zoom-in;
     }
+    .v5-diagram-iframe{width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)}
+@media(max-width:700px){.v5-diagram-iframe{height:260px}}
   </style>
 </head>
 <body>
@@ -230,29 +232,11 @@
       <!-- Slide 7: 3-tier architecture -->
       <section>
         <h2>Karpathy 3계층 구조</h2>
-        <pre class="mermaid">graph TD
-  subgraph T3["T3: Reference\n(참고 / 읽기 전용)"]
-    T3D["sessions/\n세션 히스토리"]
-    T3N["inbox/\n원본 뉴스"]
-  end
-
-  subgraph T2["T2: Working\n(작업용 / 읽기 전용)"]
-    T2E["wiki/entities/\n엔티티 페이지"]
-    T2C["wiki/concepts/\n개념 페이지"]
-  end
-
-  subgraph T1["T1: Core\n(핵심 / 읽기-쓰기)"]
-    T1I["wiki/index.md\n정렬된 지식 인덱스"]
-    T1S["scores.json\n점수 데이터"]
-  end
-
-  T3 -- "LLM 파이프라인" --> T2
-  T2 -- "점수 계산" --> T1
-
-  style T1 fill:#1a7f37,stroke:#145a25,color:#fff
-  style T2 fill:#2ecc71,stroke:#1e8449,color:#fff
-  style T3 fill:#95a5a6,stroke:#7f8c8d,color:#fff
-</pre>
+        <iframe src="../experiments/diagram-v5.html?template=tree" 
+        class="v5-diagram-iframe" 
+        loading="lazy"
+        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
+</iframe>
         <p style="font-size: 0.6em; color: #666;">하나는 읽기, 하나는 쓰기 — 원본은 만지지 않고 Wiki만 가공</p>
       </section>
 
@@ -407,25 +391,11 @@
       <!-- Slide 13: Knowledge lifecycle walk-through -->
       <section>
         <h2>inbox.md -> 필링 -> T1 승격</h2>
-        <pre class="mermaid">graph TD
-  IN["inbox.md\n신규 지식 입력"] --> PP["Processing Pipeline\n가공 파이프라인"]
-  PP --> SC["Score Calculation\n점수 계산"]
-  SC --> D["Score ≥ 0.70?"]
-  D -- "예" --> T1["T1 Core 승격\n항상 노출"]
-  D -- "아니오" --> T2["T2 Working\n조건부 노출"]
-
-  T1 --> AG["Agent Reads\n에이전트 읽기"]
-  T2 --> AG
-
-  T2 -- "점수 하락" --> AR["Archive\n아카이빙"]
-
-  style IN fill:#95a5a6,stroke:#7f8c8d,color:#fff
-  style PP fill:#3498db,stroke:#2980b9,color:#fff
-  style SC fill:#f39c12,stroke:#d68910,color:#fff
-  style T1 fill:#1a7f37,stroke:#145a25,color:#fff
-  style T2 fill:#2ecc71,stroke:#1e8449,color:#fff
-  style AR fill:#c0392b,stroke:#922b21,color:#fff
-</pre>
+        <iframe src="../experiments/diagram-v5.html?template=pipeline" 
+        class="v5-diagram-iframe" 
+        loading="lazy"
+        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
+</iframe>
       </section>
 
       <!-- Slide 14: Cron automation -->

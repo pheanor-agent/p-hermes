@@ -88,6 +88,8 @@
     .mermaid[data-zoomable="true"] {
       cursor: zoom-in;
     }
+    .v5-diagram-iframe{width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)}
+@media(max-width:700px){.v5-diagram-iframe{height:260px}}
   </style>
 </head>
 <body>
@@ -185,21 +187,11 @@
           설정 파일 <code>model-roles.yaml</code>에서 역할->모델 매핑을 정의하고,<br>
           라우팅 엔진이 실행 시점에 작업 단계별로 최적 모델을 선택합니다.
         </p>
-        <pre class="mermaid">graph TD
-  REQ["사용자 요청"] --> ANA["의도 분석\nIntent Analysis"]
-  ANA --> RT["Model Router\n모델 라우터"]
-  RT --> R["추론형\nReasoning"]
-  RT --> E["수행형\nExecution"]
-  RT --> V["검증형\nReview"]
-  RT --> G["범용형\nGeneral"]
-
-  style REQ fill:#ecf0f1,stroke:#bdc3c7,color:#2c3e50
-  style RT fill:#1a7f37,stroke:#145a25,color:#fff
-  style R fill:#2563eb,stroke:#1d4ed8,color:#fff
-  style E fill:#16a34a,stroke:#15803d,color:#fff
-  style V fill:#dc2626,stroke:#b91c1c,color:#fff
-  style G fill:#7c3aed,stroke:#6d28d9,color:#fff
-</pre>
+        <iframe src="../experiments/diagram-v5.html?template=pipeline" 
+        class="v5-diagram-iframe" 
+        loading="lazy"
+        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
+</iframe>
       </section>
 
       <!-- Slide 8: 4 domain roles -->
@@ -280,22 +272,11 @@
             </div>
           </div>
         </div>
-        <pre class="mermaid">graph LR
-  subgraph SG1["Design 단계"]
-    DM["추론형 모델\n(설계)"]
-  end
-  subgraph SG2["Review 단계"]
-    RM["검증형 모델\n(검증)"]
-  end
-
-  DM -->|설계서| RM
-  RM -->|"결함 발견율 78%"| OK["✅ 검증 완료"]
-  RM -->|"결함 발견" --> FIX["↩ 재설계"]
-  FIX --> DM
-
-  style DM fill:#2563eb,stroke:#1d4ed8,color:#fff
-  style RM fill:#dc2626,stroke:#b91c1c,color:#fff
-</pre>
+        <iframe src="../experiments/diagram-v5.html?template=comparison" 
+        class="v5-diagram-iframe" 
+        loading="lazy"
+        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
+</iframe>
         <p style="font-size: 0.65em; color: #666;">검증형 API 장애 시 추론형으로 대체 (Fallback)</p>
       </section>
 
@@ -344,22 +325,11 @@ model:
       <!-- Slide 13: Routing flow diagram -->
       <section>
         <h2>전체 라우팅 파이프라인</h2>
-        <pre class="mermaid">graph TD
-  U["User Request\n사용자 요청"] --> RA["Request Analysis\n요청 분석"]
-  RA --> MR["Model Router\n라우팅 엔진"]
-  MR --> MS["model-roles.yaml\n역할 매핑 조회"]
-  MR --> DM["Design Model\n추론형"]
-  MR --> RM["Review Model\n검증형"]
-  MR --> EM["Execution Model\n수행형"]
-  MR --> GM["General Model\n범용형"]
-
-  DM -->|실패 시| FB["Fallback\n대체 모델"]
-  FB --> RM
-
-  style MR fill:#1a7f37,stroke:#145a25,color:#fff
-  style MS fill:#f39c12,stroke:#d68910,color:#fff
-  style FB fill:#c0392b,stroke:#922b21,color:#fff
-</pre>
+        <iframe src="../experiments/diagram-v5.html?template=hubSpoke" 
+        class="v5-diagram-iframe" 
+        loading="lazy"
+        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
+</iframe>
       </section>
 
       <!-- Slide 14: Workflow stage example -->

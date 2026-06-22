@@ -83,6 +83,8 @@
     .mermaid[data-zoomable="true"] {
       cursor: zoom-in;
     }
+    .v5-diagram-iframe{width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)}
+@media(max-width:700px){.v5-diagram-iframe{height:260px}}
   </style>
 </head>
 <body>
@@ -177,40 +179,11 @@
       <!-- Slide 7: 3-Layer Architecture -->
       <section>
         <h2>3-Layer 아키텍처 전체 구조</h2>
-        <pre class="mermaid">graph TD
-  subgraph L1["Layer 1: Domain Classification\n도메인 분류"]
-    D1["D1: 기술 문서"]
-    D2["D2: 교육 콘텐츠"]
-    D3["D3: 프레젠테이션"]
-    D4["D4: 창작물"]
-    D5["D5: 비즈니스"]
-  end
-
-  subgraph L2["Layer 2: Shared Engines\n7개 공유 엔진"]
-    SG["Tier Generator"]
-    TA["Tone Adapter"]
-    AB["Analogy Builder"]
-    TF["Template Filler"]
-    VA["Validator"]
-    MS["Model Selector"]
-    IP["Image Prompt Builder"]
-  end
-
-  subgraph L3["Layer 3: Domain Overlay\n도메인 오버레이"]
-    DO1["D1 Overlay"]
-    DO2["D2 Overlay"]
-    DO3["D3 Overlay"]
-    DO4["D4 Overlay"]
-    DO5["D5 Overlay"]
-  end
-
-  L1 --> L2
-  L2 --> L3
-
-  style L1 fill:#3498db,stroke:#2980b9,color:#fff
-  style L2 fill:#2ecc71,stroke:#1e8449,color:#fff
-  style L3 fill:#e67e22,stroke:#d35400,color:#fff
-</pre>
+        <iframe src="../experiments/diagram-v5.html?template=layered" 
+        class="v5-diagram-iframe" 
+        loading="lazy"
+        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
+</iframe>
         <p style="font-size: 0.6em; color: #666;">데이터는 단일 방향으로 흐름. 각 레이어는 명확한 책임 분리.</p>
       </section>
 
@@ -251,27 +224,11 @@
       <!-- Slide 10: 5-layer verification gates overview -->
       <section>
         <h2>5계층 검증 게이트 (L1~L5)</h2>
-        <pre class="mermaid">graph LR
-  IN["Engine Output\n엔진 출력"] --> G1
-  G1["L1: Syntax\n구문 검사"] --> G2
-  G2["L2: Error Strings\n오류 문자열"] --> G3
-  G3["L3: Anti-Slop\n어조 검증"] --> G4
-  G4["L4: Domain Gates\n도메인 게이트"] --> G5
-  G5["L5: Judge Model\n거시적 심사\n(Blog 전용)"] --> OK
-
-  G1 -- "실패" --> FIX1["↩ 재수정"]
-  G2 -- "실패" --> FIX2["↩ 재수정"]
-  G3 -- "실패" --> FIX3["↩ 재수정"]
-  G4 -- "실패" --> FIX4["↩ 재수정"]
-  G5 -- "실패" --> FIX5["↩ 재수정"]
-
-  style G1 fill:#3498db,stroke:#2980b9,color:#fff
-  style G2 fill:#1abc9c,stroke:#16a085,color:#fff
-  style G3 fill:#2ecc71,stroke:#1e8449,color:#fff
-  style G4 fill:#f39c12,stroke:#d68910,color:#fff
-  style G5 fill:#9b59b6,stroke:#8e44ad,color:#fff
-  style OK fill:#1a7f37,stroke:#145a25,color:#fff
-</pre>
+        <iframe src="../experiments/diagram-v5.html?template=pipeline" 
+        class="v5-diagram-iframe" 
+        loading="lazy"
+        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
+</iframe>
         <p style="font-size: 0.6em; color: #666;">각 계층은 독립 동작. 이전 계층 통과 시에만 다음 계층으로 전달.</p>
       </section>
 
