@@ -18,42 +18,42 @@
     {
       "name": "architecture-layered",
       "size": 29370,
-      "path": "slides-v3/gc/architecture-layered.html"
+      "path": "v3/gc/architecture-layered.html"
     },
     {
       "name": "content-system",
       "size": 41448,
-      "path": "slides-v3/gc/content-system.html"
+      "path": "v3/gc/content-system.html"
     },
     {
       "name": "cron-system",
       "size": 27481,
-      "path": "slides-v3/gc/cron-system.html"
+      "path": "v3/gc/cron-system.html"
     },
     {
       "name": "hermes-overview",
       "size": 29159,
-      "path": "slides-v3/gc/hermes-overview.html"
+      "path": "v3/gc/hermes-overview.html"
     },
     {
       "name": "knowledge-system",
       "size": 26559,
-      "path": "slides-v3/gc/knowledge-system.html"
+      "path": "v3/gc/knowledge-system.html"
     },
     {
       "name": "model-routing",
       "size": 34751,
-      "path": "slides-v3/gc/model-routing.html"
+      "path": "v3/gc/model-routing.html"
     },
     {
       "name": "spec-driven-dev",
       "size": 29975,
-      "path": "slides-v3/gc/spec-driven-dev.html"
+      "path": "v3/gc/spec-driven-dev.html"
     },
     {
       "name": "workflow-pipeline",
       "size": 27847,
-      "path": "slides-v3/gc/workflow-pipeline.html"
+      "path": "v3/gc/workflow-pipeline.html"
     }
   ]
 }

@@ -4,7 +4,7 @@
     {
       "id": "v3",
       "label": "v3 — GC Refined",
-      "path": "slides-v3/gc/",
+      "path": "v3/gc/",
       "commit": "5850a13",
       "job": "JOB-1736 + JOB-1737",
       "releasedAt": "2026-06-20T22:15:00+09:00",
@@ -22,7 +22,7 @@
     {
       "id": "v2",
       "label": "v2 — Golden Circle",
-      "path": "slides-v2/gc/",
+      "path": "v2/gc/",
       "commit": "ba127e4",
       "job": "JOB-1734",
       "releasedAt": "2026-06-20T18:16:00+09:00",
@@ -62,7 +62,7 @@
     {
       "id": "exp-004",
       "name": "Hero Slide direction-guide 적용",
-      "file": "slides-v2/exp-004-hero.html",
+      "file": "v2/exp-004-hero.html",
       "appliedIn": "v2",
       "createdAt": "2026-06-20T17:40:00+09:00",
       "summary": "direction-guide golden_circle section_flow[0] Hero 적용"
@@ -70,7 +70,7 @@
     {
       "id": "exp-005",
       "name": "Golden Circle Hero + WHY",
-      "file": "slides-v2/exp-005-hero-why.html",
+      "file": "v2/exp-005-hero-why.html",
       "appliedIn": "v2",
       "createdAt": "2026-06-20T17:42:00+09:00",
       "summary": "section_flow[0]+[1] 3열 비교 카드 실험"
@@ -78,7 +78,7 @@
     {
       "id": "exp-006",
       "name": "Golden Circle 전체 6단계 흐름",
-      "file": "slides-v2/exp-006-full-flow.html",
+      "file": "v2/exp-006-full-flow.html",
       "appliedIn": "v2",
       "createdAt": "2026-06-20T17:45:00+09:00",
       "summary": "direction-guide section_flow 6단계 전체 적용"
