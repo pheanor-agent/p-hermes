@@ -826,8 +826,8 @@ function drawEdges(templateName) {
 
     // Orthogonal (staircase) routing for Tree template
     if (templateName === "tree") {
-      const sx = x1, sy = y1;
-      const ex = x2, ey = y2;
+      const sx = cx_f, sy = f.bottom - gridRect.top;
+      const ex = cx_t, ey = t.top - gridRect.top;
       if (Math.abs(dx) > 10) {  // not same column
         const midY = (sy + ey) / 2;
         path.setAttribute('d', `M ${sx} ${sy} L ${sx} ${midY} L ${ex} ${midY} L ${ex} ${ey}`);
