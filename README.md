@@ -15,7 +15,7 @@
 [![Quick Start](https://img.shields.io/badge/⚡_Quick_Start-2EA043?style=for-the-badge)](#-quick-start)
 [![Wiki](https://img.shields.io/badge/📘_Guide_Wiki-58A6FF?style=for-the-badge)](https://github.com/pheanor-agent/p-hermes/blob/main/docs/wiki/index.md)
 [![Blog](https://img.shields.io/badge/✍️_Dev_Blog-D2A8FF?style=for-the-badge)](https://github.com/pheanor-agent/p-hermes/blob/main/docs/blog/index.md)
-[![Slides](https://img.shields.io/badge/🖼️_Slides-3FB950?style=for-the-badge)](https://pheanor-agent.github.io/p-hermes/slides/decks/hermes-overview.html)
+[![Slides](https://img.shields.io/badge/🖼️_Slides-3FB950?style=for-the-badge)](https://github.com/pheanor-agent/p-hermes/blob/main/docs/slides/index.md)
 
 </div>
 
