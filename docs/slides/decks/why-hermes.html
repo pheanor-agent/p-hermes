@@ -601,7 +601,7 @@ const counter = document.getElementById('counter');
 
 function render(n){
   const s = slides[n];
-  stage.innerHTML = `<div class="slide active ${s.cls||''}">${s.html}</div>`;
+  stage.innerHTML = `<section class="slide active ${s.cls||''}" id="slide-${n+1}">${s.html}</section>`;
   counter.textContent = `${n+1}/${slides.length}`;
   Array.from(dotsEl.children).forEach((d,i)=>d.classList.toggle('active',i===n));
 }

@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3-Tier Diagram Strategy · Playground v2</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:#0d1117;color:#e6edf3;overflow-x:hidden;
+  }
+  .container{max-width:1000px;margin:0 auto;padding:32px 24px 100px}
+
+  /* Header */
+  .header{text-align:center;padding:32px 0 24px}
+  .header h1{font-size:2rem;font-weight:700;background:linear-gradient(135deg,#58a6ff,#3fb950,#d2a8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .header p{color:#8b949e;font-size:.95rem;margin-top:8px}
+
+  /* Tier Navigation */
+  .tier-nav{display:flex;gap:10px;justify-content:center;margin:20px 0}
+  .tier-btn{
+    padding:10px 22px;border-radius:10px;border:1px solid #30363d;
+    background:#161b22;color:#8b949e;cursor:pointer;font-size:.9rem;font-weight:600;
+    transition:all .25s;
+  }
+  .tier-btn:hover{border-color:#58a6ff;color:#e6edf3}
+  .tier-btn.active{background:#1a2333;border-color:#58a6ff;color:#58a6ff;box-shadow:0 0 12px rgba(88,166,255,.15)}
+  .tier-desc{text-align:center;padding:6px 0 16px;font-size:.85rem;color:#6e7681}
+
+  /* ===== Diagram Canvas ===== */
+  .diagram-canvas{
+    position:relative;width:100%;min-height:380px;
+    background:#161b22;border:1px solid #30363d;border-radius:14px;
+    padding:28px 20px;overflow:hidden;margin:0 auto;
+  }
+
+  /* ===== Tier 1: Pipeline ===== */
+  .pipeline{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0 16px}
+  .pipe-step{
+    background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;
+    padding:10px 14px;text-align:center;min-width:82px;transition:border-color .2s;
+  }
+  .pipe-step:hover{border-color:#58a6ff}
+  .pipe-step .num{font-size:.95rem;font-weight:700;color:#d29922}
+  .pipe-step .lbl{font-size:.8rem;color:#9aa0a6;margin-top:2px}
+  .pipe-step.done{border-color:#3fb950}
+  .pipe-step.done .num{color:#3fb950}
+  .pipe-step.active{border-color:#58a6ff;background:#1a2333}
+  .pipe-step.active .num{color:#58a6ff}
+  .pipe-arrow{display:flex;align-items:center;color:#30363d;font-size:1.1rem}
+
+  .pipeline-row{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px}
+  .progress-strip{
+    display:flex;width:100%;max-width:680px;margin:16px auto;border-radius:8px;overflow:hidden;height:8px;background:#1e2029;
+  }
+  .progress-fill{height:100%;border-radius:8px;transition:width .6s ease}
+  .progress-fill.blue{background:#58a6ff}
+  .progress-fill.green{background:#3fb950}
+  .progress-fill.gold{background:#d29922}
+
+  .pipeline-label{text-align:center;font-size:.85rem;color:#8b949e;margin:4px 0 2px}
+  .pipeline-label strong{color:#e6edf3}
+  .t1-steps{display:flex;flex-direction:column;gap:8px;align-items:center}
+  .phase-row{display:flex;align-items:center;gap:4px;flex-wrap:wrap;justify-content:center}
+  .phase-tag{
+    display:inline-block;font-size:.72rem;font-weight:600;letter-spacing:.06em;
+    padding:3px 12px;border-radius:12px;text-transform:uppercase;
+  }
+  .phase-tag.p1{background:#f28b8233;color:#f28b82}
+  .phase-tag.p2{background:#d2992233;color:#d29922}
+  .phase-tag.p3{background:#58a6ff33;color:#58a6ff}
+  .phase-tag.p4{background:#3fb95033;color:#3fb950}
+
+  /* ===== Tier 2: HTML Nodes + SVG Edges ===== */
+  .t2-container{position:relative;width:100%;height:340px}
+  .diagram-node{
+    position:absolute;
+    background:#1e2029;border:1px solid #2d2f3a;border-radius:12px;
+    padding:14px 20px;text-align:center;min-width:140px;
+    cursor:default;transition:border-color .2s,box-shadow .2s;z-index:2;
+  }
+  .diagram-node:hover{border-color:#58a6ff;box-shadow:0 0 12px rgba(88,166,255,.15)}
+  .diagram-node .node-icon{font-size:1.6rem;margin-bottom:4px}
+  .diagram-node .node-label{font-size:.9rem;font-weight:600;color:#e6edf3}
+  .diagram-node .node-sub{font-size:.78rem;color:#8b949e;margin-top:2px}
+
+  .diagram-node.accent-blue{border-color:#58a6ff}
+  .diagram-node.accent-green{border-color:#3fb950}
+  .diagram-node.accent-gold{border-color:#d29922}
+  .diagram-node.accent-purple{border-color:#bc8cff}
+  .diagram-node.accent-red{border-color:#f85149}
+
+  .diagram-edge-layer{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
+  .diagram-edge{fill:none;stroke:#30363d;stroke-width:2}
+  .diagram-edge.arrow{marker-end:url(#arrowhead)}
+  .diagram-edge.accent-blue{stroke:#58a6ff}
+  .diagram-edge.accent-green{stroke:#3fb950}
+  .diagram-edge.accent-gold{stroke:#d29922}
+  .diagram-edge.accent-purple{stroke:#bc8cff}
+
+  .diagram-group{
+    position:absolute;border:1px dashed #30363d;border-radius:14px;
+    background:rgba(255,255,255,.02);z-index:0;
+  }
+  .diagram-group .group-label{
+    position:absolute;top:-10px;left:14px;font-size:.78rem;
+    color:#6e7681;background:#161b22;padding:0 8px;
+  }
+
+  /* ===== Tier 3: SVG Overlay ===== */
+  .t3-container{
+    position:relative;width:100%;height:380px;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .t3-container svg{width:100%;height:100%;cursor:grab}
+  .t3-container svg:active{cursor:grabbing}
+
+  .t3-controls{
+    position:absolute;bottom:12px;right:12px;
+    display:flex;gap:6px;z-index:5;
+  }
+  .t3-controls button{
+    width:32px;height:32px;border-radius:8px;border:1px solid #30363d;
+    background:#1e2029;color:#e6edf3;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1rem;transition:all .2s;
+  }
+  .t3-controls button:hover{background:#2d2f3a;border-color:#58a6ff}
+  .t3-info{
+    position:absolute;bottom:12px;left:12px;
+    font-size:.75rem;color:#6e7681;background:#1e2029cc;
+    padding:4px 10px;border-radius:6px;z-index:5;
+  }
+
+  .svgn{fill:#1e2029;stroke:#2d2f3a;stroke-width:1.5;rx:10;ry:10;transition:fill .2s,stroke .2s}
+  .svgn:hover{fill:#1a2333;stroke:#58a6ff}
+  .svgn.bl{stroke:#58a6ff}
+  .svgn.gr{stroke:#3fb950}
+  .svgn.gd{stroke:#d29922}
+  .svgn.pr{stroke:#bc8cff}
+  .svgl{fill:#e6edf3;font-size:14px;font-weight:600;text-anchor:middle;dominant-baseline:central}
+  .svgs{fill:#8b949e;font-size:11px;text-anchor:middle;dominant-baseline:central}
+  .svge{fill:none;stroke:#30363d;stroke-width:2;marker-end:url(#arrowSvg)}
+  .svge.bl{stroke:#58a6ff}
+  .svge.gr{stroke:#3fb950}
+  .svge.gd{stroke:#d29922}
+
+  /* ===== Utility ===== */
+  .hide{display:none}
+  .tier-tag{
+    display:inline-block;font-size:.72rem;font-weight:600;letter-spacing:.06em;
+    padding:3px 12px;border-radius:12px;text-transform:uppercase;margin-bottom:10px;
+  }
+  .tier-tag.t1{background:#f28b8233;color:#f28b82}
+  .tier-tag.t2{background:#d2992233;color:#d29922}
+  .tier-tag.t3{background:#58a6ff33;color:#58a6ff}
+  .tier-title{text-align:center;font-size:1.1rem;font-weight:600;margin-bottom:4px}
+  .tier-sub{text-align:center;font-size:.85rem;color:#8b949e;margin-bottom:16px}
+
+  @media(max-width:700px){
+    .container{padding:20px 12px 80px}
+    .header h1{font-size:1.5rem}
+    .tier-btn{padding:8px 14px;font-size:.82rem}
+    .diagram-canvas{min-height:320px;padding:16px 10px}
+    .pipe-step{min-width:70px;padding:8px 10px}
+    .pipe-step .num{font-size:.82rem}
+    .pipe-step .lbl{font-size:.72rem}
+    .diagram-node{padding:10px 14px;min-width:100px}
+    .diagram-node .node-label{font-size:.8rem}
+    .t2-container{height:300px}
+    .t3-container{height:320px}
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>3-Tier Diagram Strategy</h1>
+    <p>Playground v2 — HTML / HTML+SVG / Full SVG 다이어그램 실험</p>
+  </div>
+
+  <!-- Tier Navigation -->
+  <div class="tier-nav">
+    <button class="tier-btn active" onclick="showTier(1)">🏗️ Tier 1 · HTML Pipeline</button>
+    <button class="tier-btn" onclick="showTier(2)">🔗 Tier 2 · HTML + SVG Edges</button>
+    <button class="tier-btn" onclick="showTier(3)">🗺️ Tier 3 · SVG Overlay</button>
+  </div>
+
+  <!-- Tier Description -->
+  <div class="tier-desc" id="tierDesc">HTML-only Flexbox/Grid — JOB Lifecycle 프로세스 파이프라인</div>
+
+  <!-- Diagram Canvas -->
+  <div class="diagram-canvas">
+
+    <!-- ==================== TIER 1 ==================== -->
+    <div id="tier1">
+      <div style="text-align:center">
+        <span class="tier-tag t1">TIER 1 · HTML ONLY</span>
+        <div class="tier-title">JOB Lifecycle Pipeline</div>
+        <div class="tier-sub">Flexbox + card/pipeline — 9단계 프로세스 흐름</div>
+      </div>
+
+      <!-- Phase labels -->
+      <div style="display:flex;gap:6px;justify-content:center;margin-bottom:12px;flex-wrap:wrap">
+        <span class="phase-tag p1">접수/조사</span>
+        <span class="phase-tag p2">설계/리뷰/승인</span>
+        <span class="phase-tag p3">실행/테스트</span>
+        <span class="phase-tag p4">실행리뷰/교훈</span>
+      </div>
+
+      <!-- Pipeline steps -->
+      <div class="pipeline">
+        <div class="pipe-step done">
+          <div class="num">01</div><div class="lbl">접수</div>
+        </div>
+        <div class="pipe-step done">
+          <div class="num">02</div><div class="lbl">조사</div>
+        </div>
+        <div class="pipe-step active">
+          <div class="num">03</div><div class="lbl">설계</div>
+        </div>
+        <div class="pipe-step">
+          <div class="num">04</div><div class="lbl">리뷰</div>
+        </div>
+        <div class="pipe-step">
+          <div class="num">05</div><div class="lbl">승인</div>
+        </div>
+        <div class="pipe-step">
+          <div class="num">06</div><div class="lbl">실행</div>
+        </div>
+        <div class="pipe-step">
+          <div class="num">07</div><div class="lbl">테스트</div>
+        </div>
+        <div class="pipe-step">
+          <div class="num">08</div><div class="lbl">실행리뷰</div>
+        </div>
+        <div class="pipe-step">
+          <div class="num">09</div><div class="lbl">교훈</div>
+        </div>
+      </div>
+
+      <!-- Progress bar -->
+      <div style="max-width:600px;margin:14px auto 8px">
+        <div style="display:flex;justify-content:space-between;font-size:.75rem;color:#6e7681;margin-bottom:4px">
+          <span>진행: 2/9 단계 완료</span>
+          <span>22%</span>
+        </div>
+        <div class="progress-strip">
+          <div class="progress-fill blue" style="width:22%"></div>
+        </div>
+      </div>
+
+      <div class="pipeline-label">
+        <strong>pipeline</strong> + <strong>pipe-step</strong> 클래스로 구성 · hover 시 강조 · 상태 표시 (done/active)
+      </div>
+    </div>
+
+    <!-- ==================== TIER 2 ==================== -->
+    <div id="tier2" class="hide">
+      <div style="text-align:center">
+        <span class="tier-tag t2">TIER 2 · HTML + SVG EDGES</span>
+        <div class="tier-title">3-Layer Architecture</div>
+        <div class="tier-sub">position:absolute 노드 + SVG 화살표(edge)로 연결</div>
+      </div>
+
+      <div class="t2-container">
+        <!-- SVG Edge Layer -->
+        <svg class="diagram-edge-layer" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1">
+          <defs>
+            <marker id="arrowhead" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#30363d"/>
+            </marker>
+            <marker id="arrowBlue" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#58a6ff"/>
+            </marker>
+            <marker id="arrowGreen" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#3fb950"/>
+            </marker>
+            <marker id="arrowGold" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#d29922"/>
+            </marker>
+          </defs>
+
+          <!-- Edges: top layer → middle layer -->
+          <line x1="22%" y1="90" x2="22%" y2="170" class="diagram-edge arrow accent-blue"/>
+          <line x1="50%" y1="90" x2="50%" y2="170" class="diagram-edge arrow accent-green"/>
+          <line x1="78%" y1="90" x2="78%" y2="170" class="diagram-edge arrow accent-gold"/>
+
+          <!-- Edges: middle layer → bottom -->
+          <line x1="22%" y1="230" x2="22%" y2="310" class="diagram-edge arrow accent-purple"/>
+          <line x1="50%" y1="230" x2="50%" y2="310" class="diagram-edge arrow accent-purple"/>
+          <line x1="78%" y1="230" x2="78%" y2="310" class="diagram-edge arrow accent-purple"/>
+
+          <!-- Edge labels -->
+          <text x="35%" y="135" fill="#6e7681" font-size="10" text-anchor="middle">orchestrates</text>
+          <text x="35%" y="275" fill="#6e7681" font-size="10" text-anchor="middle">persists to</text>
+        </svg>
+
+        <!-- Top row: 3 architecture layers -->
+        <div class="diagram-node accent-blue" style="left:14%;top:20px;width:16%">
+          <div class="node-icon">🤖</div>
+          <div class="node-label">Agent Layer</div>
+          <div class="node-sub">LLM Orchestration</div>
+        </div>
+        <div class="diagram-node accent-green" style="left:42%;top:20px;width:16%">
+          <div class="node-icon">🧠</div>
+          <div class="node-label">Knowledge Layer</div>
+          <div class="node-sub">FTS5 · Skills</div>
+        </div>
+        <div class="diagram-node accent-gold" style="left:70%;top:20px;width:16%">
+          <div class="node-icon">🚀</div>
+          <div class="node-label">Deploy Layer</div>
+          <div class="node-sub">CI/CD · Containers</div>
+        </div>
+
+        <!-- Middle row: subsystems -->
+        <div class="diagram-node" style="left:14%;top:160px;width:16%">
+          <div class="node-icon">⚡</div>
+          <div class="node-label">Session Manager</div>
+          <div class="node-sub">Context Window</div>
+        </div>
+        <div class="diagram-node" style="left:42%;top:160px;width:16%">
+          <div class="node-icon">📚</div>
+          <div class="node-label">Knowledge DB</div>
+          <div class="node-sub">Vector + FTS5</div>
+        </div>
+        <div class="diagram-node" style="left:70%;top:160px;width:16%">
+          <div class="node-icon">⚙️</div>
+          <div class="node-label">Pipeline Runner</div>
+          <div class="node-sub">Job Lifecycle</div>
+        </div>
+
+        <!-- Bottom row: storage/output -->
+        <div class="diagram-node accent-purple" style="left:35%;top:300px;width:30%">
+          <div class="node-icon">💾</div>
+          <div class="node-label">Persistent Storage</div>
+          <div class="node-sub">SQLite · Filesystem · Git</div>
+        </div>
+      </div>
+
+      <div class="tier-sub" style="margin-top:8px;font-size:.82rem">
+        <strong>diagram-node</strong> (position:absolute) + <strong>diagram-edge</strong> (SVG line + marker) · hover 강조
+      </div>
+    </div>
+
+    <!-- ==================== TIER 3 ==================== -->
+    <div id="tier3" class="hide">
+      <div style="text-align:center">
+        <span class="tier-tag t3">TIER 3 · SVG OVERLAY</span>
+        <div class="tier-title">Zoomable SVG Architecture</div>
+        <div class="tier-sub">transform:scale()으로 확대/축소 가능한 SVG 기반 다이어그램</div>
+      </div>
+
+      <div class="t3-container" id="svgContainer">
+        <svg id="svgDiagram" viewBox="0 0 800 360" style="transform-origin:center center;transition:transform .3s">
+          <defs>
+            <marker id="arrowSvg" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#30363d"/>
+            </marker>
+            <marker id="arrowSvgB" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#58a6ff"/>
+            </marker>
+            <marker id="arrowSvgG" viewBox="0 0 10 7" refX="10" refY="3.5" markerWidth="8" markerHeight="6" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#3fb950"/>
+            </marker>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="2" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- Background grid -->
+          <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1e2029" stroke-width="0.5"/>
+          </pattern>
+          <rect width="800" height="360" fill="url(#grid)" rx="12"/>
+
+          <!-- Edge arrows -->
+          <line x1="400" y1="55" x2="400" y2="130" class="svge bl"/>
+          <line x1="400" y1="130" x2="240" y2="210" class="svge"/>
+          <line x1="400" y1="130" x2="560" y2="210" class="svge"/>
+          <line x1="240" y1="210" x2="240" y2="282" class="svge gr"/>
+          <line x1="560" y1="210" x2="560" y2="282" class="svge gr"/>
+          <line x1="240" y1="282" x2="400" y2="325" class="svge gd"/>
+          <line x1="560" y1="282" x2="400" y2="325" class="svge gd"/>
+
+          <!-- Group: User Input -->
+          <rect x="20" y="20" width="140" height="48" class="svgn bl" filter="url(#glow)"/>
+          <text x="90" y="44" class="svgl" fill="#58a6ff">📝 User Input</text>
+
+          <!-- Main: Hermes Agent -->
+          <rect x="300" y="20" width="200" height="55" class="svgn gr" filter="url(#glow)"/>
+          <text x="400" y="46" class="svgl" fill="#3fb950">⚡ Hermes Agent</text>
+
+          <!-- Sub: Session Manager -->
+          <rect x="150" y="200" width="180" height="48" class="svgn"/>
+          <text x="240" y="224" class="svgl">Session Manager</text>
+          <text x="240" y="240" class="svgs">Context · History</text>
+
+          <!-- Sub: Workflow Gate -->
+          <rect x="470" y="200" width="180" height="48" class="svgn"/>
+          <text x="560" y="224" class="svgl">Workflow Gate</text>
+          <text x="560" y="240" class="svgs">9-Step Pipeline</text>
+
+          <!-- Bottom: Knowledge -->
+          <rect x="150" y="275" width="180" height="48" class="svgn gr"/>
+          <text x="240" y="299" class="svgl" fill="#3fb950">📖 Knowledge DB</text>
+          <text x="240" y="315" class="svgs">FTS5 · Vector</text>
+
+          <!-- Bottom: Skills -->
+          <rect x="470" y="275" width="180" height="48" class="svgn gr"/>
+          <text x="560" y="299" class="svgl" fill="#3fb950">🛠️ Skills</text>
+          <text x="560" y="315" class="svgs">Procedures</text>
+
+          <!-- Bottom center: Output -->
+          <rect x="320" y="320" width="160" height="36" class="svgn gd" filter="url(#glow)"/>
+          <text x="400" y="338" class="svgl" fill="#d29922">📦 Deliverable</text>
+        </svg>
+
+        <div class="t3-controls">
+          <button onclick="zoomSvg(0.2)" title="Zoom In">➕</button>
+          <button onclick="zoomSvg(-0.2)" title="Zoom Out">➖</button>
+          <button onclick="resetSvg()" title="Reset">↺</button>
+        </div>
+        <div class="t3-info" id="t3Info">100% · Click + / - to zoom · Drag to pan</div>
+      </div>
+
+      <div class="tier-sub" style="margin-top:8px;font-size:.82rem">
+        Full SVG with <strong>viewBox</strong> + <strong>transform:scale()</strong> · Zoom controls · Drag pan
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Summary -->
+  <div style="margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+    <div style="background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;padding:14px;text-align:center">
+      <div style="font-size:1.3rem;font-weight:700;color:#f28b82">T1</div>
+      <div style="font-size:.85rem;color:#8b949e;margin-top:4px">HTML-only<br>pipeline / pipe-step</div>
+    </div>
+    <div style="background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;padding:14px;text-align:center">
+      <div style="font-size:1.3rem;font-weight:700;color:#d29922">T2</div>
+      <div style="font-size:.85rem;color:#8b949e;margin-top:4px">HTML+SVG<br>diagram-node / edge</div>
+    </div>
+    <div style="background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;padding:14px;text-align:center">
+      <div style="font-size:1.3rem;font-weight:700;color:#58a6ff">T3</div>
+      <div style="font-size:.85rem;color:#8b949e;margin-top:4px">Full SVG<br>transform / scale</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Tier switching ──
+function showTier(n){
+  document.querySelectorAll('.tier-btn').forEach((b,i)=>b.classList.toggle('active',i===n-1));
+  ['tier1','tier2','tier3'].forEach((id,i)=>document.getElementById(id).classList.toggle('hide',i!==n-1));
+  const descs = [
+    'HTML-only Flexbox/Grid — JOB Lifecycle 프로세스 파이프라인',
+    'position:absolute HTML 노드 + SVG 화살표(edge)로 연결하는 아키텍처 다이어그램',
+    'transform:scale()으로 확대/축소 가능한 SVG 기반 다이어그램'
+  ];
+  document.getElementById('tierDesc').textContent = descs[n-1];
+}
+
+// ── SVG Zoom ──
+let svgZoom = 1;
+const svgEl = document.getElementById('svgDiagram');
+const t3Info = document.getElementById('t3Info');
+
+function zoomSvg(delta){
+  svgZoom = Math.max(0.5, Math.min(3, svgZoom + delta));
+  applyZoom();
+}
+function resetSvg(){
+  svgZoom = 1; offsetX = 0; offsetY = 0; applyZoom();
+  svgEl.style.transform = 'scale(1) translate(0,0)';
+  t3Info.textContent = '100% · Click + / - to zoom · Drag to pan';
+}
+function applyZoom(){
+  svgEl.style.transform = `scale(${svgZoom}) translate(${offsetX}px,${offsetY}px)`;
+  t3Info.textContent = `${Math.round(svgZoom*100)}% · Click + / - to zoom · Drag to pan`;
+}
+
+// ── SVG Drag Pan ──
+let isDragging = false, startX, startY, offsetX = 0, offsetY = 0;
+const svgContainer = document.getElementById('svgContainer');
+
+svgContainer.addEventListener('mousedown',e=>{
+  if(e.target.closest('.t3-controls')) return;
+  isDragging = true;
+  startX = e.clientX - offsetX;
+  startY = e.clientY - offsetY;
+  svgEl.style.cursor = 'grabbing';
+});
+document.addEventListener('mousemove',e=>{
+  if(!isDragging) return;
+  offsetX = e.clientX - startX;
+  offsetY = e.clientY - startY;
+  applyZoom();
+});
+document.addEventListener('mouseup',()=>{
+  isDragging = false;
+  svgEl.style.cursor = 'grab';
+});
+
+// ── Wheel Zoom ──
+svgContainer.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const delta = e.deltaY > 0 ? -0.1 : 0.1;
+  zoomSvg(delta);
+},{passive:false});
+
+// ── Init ──
+showTier(1);
+</script>
+
+</body>
+</html>
