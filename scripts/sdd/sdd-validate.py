@@ -12,7 +12,8 @@ VALID_DIRS = [
     PROJECT_ROOT / 'archive/docs',
 ]
 
-# Playground 디렉토리는 실험 공간 - 링크 검증 제외
+# Playground 디렉토리는 실험 공간 + 상대 경로 구조가 GitHub Pages 환경과 다름
+# HTML 링크 검증은 validate-links.sh에서 담당 (JOB-1789)
 EXCLUDE_DIRS = [
     'docs/playground',
 ]
@@ -58,6 +59,9 @@ def extract_links(file_path):
     internal_links = []
     for text, link in links:
         if not link.startswith(('http', 'https', 'mailto', '#')):
+            # 로컬 시스템 경로(~/.hermes/)는 검증 제외 (GitHub Pages에 존재하지 않음)
+            if link.startswith('~'):
+                continue
             if not re.search(r'\{|\}', link) and link not in ['url', 'link', 'path']:
                 internal_links.append(link)
 

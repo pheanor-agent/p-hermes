@@ -37,6 +37,8 @@ for target in "${TARGETS[@]}"; do
       [[ "$link" == http* ]] && continue
       # 링크가 앵커(#)만 있는 경우 제외
       [[ "$link" == \#* ]] && continue
+      # 로컬 시스템 경로(~/.hermes/)는 검증 제외
+      [[ "$link" == \~* ]] && continue
       
       base=$(dirname "$f")
       # 경로 계산 및 실존 확인
@@ -53,6 +55,36 @@ done
 if [[ $ERRORS -gt 0 ]]; then
   echo "❌ 총 $ERRORS개 broken link 발견"
   exit 1
+fi
+
+# ====== playground 링크 검증 (HTML + markdown) ======
+PLAYGROUND_DIR="$PROJECT_DIR/docs/playground"
+if [[ -d "$PLAYGROUND_DIR" ]]; then
+  while IFS= read -r f; do
+    [[ -z "$f" ]] && continue
+    # HTML href="./..." 링크 검증
+    while IFS= read -r link; do
+      [[ -z "$link" ]] && continue
+      target="${link#href=\"}"
+      full="$(dirname "$f")/$target"
+      [[ -e "$full" ]] || { echo "BROKEN: $f -> $target"; ERRORS=$((ERRORS+1)); }
+    done < <(grep -oP 'href="\./[^"]+' "$f" 2>/dev/null || true)
+    # markdown [](./...) 링크 검증
+    while IFS= read -r link; do
+      [[ -z "$link" ]] && continue
+      [[ "$link" == http* ]] && continue
+      [[ "$link" == \#* ]] && continue
+      [[ "$link" == \~* ]] && continue
+      full="$(dirname "$f")/$link"
+      [[ -e "$full" ]] || [[ -d "$full" ]] || { echo "BROKEN: $f -> $link"; ERRORS=$((ERRORS+1)); }
+    done < <(grep -oP '\]\(\K\./[^)]+' "$f" 2>/dev/null || true)
+  done < <(find "$PLAYGROUND_DIR" -name "*.html" -o -name "*.md" | sort)
+
+  if [[ $ERRORS -gt 0 ]]; then
+    echo "❌ 총 $ERRORS개 broken link 발견 (playground 포함)"
+    exit 1
+  fi
+  echo "✅ playground 링크 유효"
 fi
 
 echo "✅ 모든 링크 유효"

@@ -23,6 +23,10 @@ if [[ -d "$SDD_DIR" ]]; then
   # 3. [SDD 2.0] Full-Graph Validator (링크 무결성 검증)
   echo "  🔗 링크 무결성 검증 (Full-Graph Validator)..."
   python3 "$SDD_DIR/sdd-validate.py" || { echo "❌ 링크 검증 실패"; exit 1; }
+
+  # 3a. Playground 링크 검증 (HTML + markdown, validate-links.sh 확장판)
+  echo "  🎪 Playground 링크 검증..."
+  bash tests/validate-links.sh || { echo "❌ playground 링크 검증 실패"; exit 1; }
 else
   echo "  ⚠️ SDD 스크립트 디렉토리($SDD_DIR)가 없어 SDD 단계를 건너뜁니다."
 fi
