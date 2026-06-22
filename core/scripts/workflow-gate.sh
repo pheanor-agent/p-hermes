@@ -387,7 +387,7 @@ case "$ACTION" in
         # ✅ JOB-1528/1530/1636/1642: 단계별 모델 동적 변경 (config.yaml model.default + model.provider)
         # JOB-1642 수정: model.default만 변경 시 provider 불일치로 라우팅 오류 발생.
         # model.provider를 model hint의 prefix에 맞춰 함께 변경.
-        source ~/.hermes/core/scripts/model-roles.sh 2>/dev/null
+        source ${HERMES_ROOT:-$HOME/.hermes}/core/scripts/model-roles.sh 2>/dev/null
         MODEL_HINT=$(get_workflow_model "$STEP" 2>/dev/null || echo "Qwen3.6")
 
         # provider 추출: zai/glm-5.2 → zai, airouter/Qwen3.6 → airouter
@@ -581,7 +581,7 @@ LESSONSEOF
         
         # ✅ JOB-1645: JOB 완료 시 model.default 리셋
         DEFAULT_MODEL_ROLE=$(python3 -c "
-import yaml, sys, os; c_path=os.path.expanduser('~/.hermes/config.yaml')
+import yaml, sys, os; c_path=os.path.expanduser('${HERMES_ROOT:-$HOME/.hermes}/config.yaml')
 with open(c_path) as f: c=yaml.safe_load(f)
 print((c.get('roles',{}).get('default','')) or '')
 " 2>/dev/null || echo "")
@@ -590,7 +590,7 @@ print((c.get('roles',{}).get('default','')) or '')
         fi
         RESET_MODEL=$(get_model_for_role "$DEFAULT_MODEL_ROLE" 2>/dev/null || echo "$DEFAULT_MODEL_ROLE")
         CURRENT_MODEL_AFTER=$(python3 -c "
-import yaml, os; c_path=os.path.expanduser('~/.hermes/config.yaml')
+import yaml, os; c_path=os.path.expanduser('${HERMES_ROOT:-$HOME/.hermes}/config.yaml')
 with open(c_path) as f: c=yaml.safe_load(f)
 print((c.get('model',{}).get('default','')) or '')
 " 2>/dev/null || echo "")
@@ -601,7 +601,7 @@ print((c.get('model',{}).get('default','')) or '')
                 hermes config set "model.default" "$RESET_MODEL" >> "$HERMES_ROOT/logs/job1645-model-reset.log" 2>&1 || {
                     echo "[WARN] hermes config set 실패 — 직접 수정 폴백"
                     python3 -c "
-import yaml,os;c_path=os.path.expanduser('~/.hermes/config.yaml')
+import yaml,os;c_path=os.path.expanduser('${HERMES_ROOT:-$HOME/.hermes}/config.yaml')
 with open(c_path) as f:c=yaml.safe_load(f)
 c.setdefault('model',{});c['model']['default']='$RESET_MODEL'
 with open(c_path,'w') as f:yaml.dump(c,f,default_flow_style=False)
@@ -610,7 +610,7 @@ with open(c_path,'w') as f:yaml.dump(c,f,default_flow_style=False)
             else
                 echo "[WARN] hermes CLI 없음 — 직접 수정 폴백"
                 python3 -c "
-import yaml,os;c_path=os.path.expanduser('~/.hermes/config.yaml')
+import yaml,os;c_path=os.path.expanduser('${HERMES_ROOT:-$HOME/.hermes}/config.yaml')
 with open(c_path) as f:c=yaml.safe_load(f)
 c.setdefault('model',{});c['model']['default']='$RESET_MODEL'
 with open(c_path,'w') as f:yaml.dump(c,f,default_flow_style=False)

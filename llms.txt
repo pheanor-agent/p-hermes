@@ -9,7 +9,7 @@ Hermes Agent system documentation, published via GitHub Pages.
 ## 3-Track Structure
 - docs/wiki/ — Guide Wiki (How-to) — 14 files
 - docs/blog/ — Dev Blog (Why) — 8 posts
-- docs/slides/ — Concept Slides (What) — 6 HTML decks
+- docs/slides/ — Concept Slides (What) — 8 HTML decks
 
 ## Deploy
 bash src/deploy.sh

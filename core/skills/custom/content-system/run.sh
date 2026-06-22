@@ -5,7 +5,8 @@
 set -euo pipefail
 
 SKILL_DIR="$(cd "$(dirname "$0")" && pwd)"
-OUTPUT_DIR="$HOME/.hermes/workspace/expression-system/output"
+HERMES_ROOT="${HERMES_ROOT:-$HOME/.hermes}"
+OUTPUT_DIR="$HERMES_ROOT/runtime/state/expression"
 
 mkdir -p "$OUTPUT_DIR"
 

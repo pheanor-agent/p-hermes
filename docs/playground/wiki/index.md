@@ -46,7 +46,6 @@ Hermes의 핵심 개념을 5~10분 안에 이해합니다.
 | [백업 및 복구](guides/backup-restore.md) | 시스템 복원 |
 | [메시징 플랫폼](guides/messaging.md) | Discord/Telegram 연동 |
 | [이미지 생성](guides/generate-images.md) | ComfyUI 활용 |
-| [프로젝트 관리](guides/project-management.md) | 프로젝트 생성/관리 |
 
 ## ⚡ Advanced
 

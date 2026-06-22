@@ -8,12 +8,12 @@
 
 model:
   # [필수] 실제 API 키로 변경하세요 (환경변수 사용 권장)
-  api_key: "${HERMES_API_KEY}"
-  # [필수] 실제 API 엔드포인트로 변경하세요
-  base_url: "YOUR_API_ENDPOINT"
-  # [필수] 기본 모델명으로 변경하세요
-  default: "your-default-model"
-  provider: custom
+  api_key: "${OPENROUTER_API_KEY}"
+  # [예시] OpenRouter 엔드포인트 (다른 제공자로 변경 가능)
+  base_url: "https://openrouter.ai/api/v1"
+  # [예시] 실제 작동하는 모델 예시 (필요시 변경)
+  default: "deepseek/deepseek-chat"
+  provider: openrouter
 
 # 모델 라우팅 설정
 # 각 role에 할당할 모델명을 your-{role}-model 형식으로 지정하세요.

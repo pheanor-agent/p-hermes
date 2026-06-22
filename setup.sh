@@ -79,12 +79,24 @@ if [[ ! -f "$HERMES_HOME/infra/cron/registry.yaml" ]]; then
   fi
 fi
 
-# 7. 검증 스크립트 실행
+# 7. 의존성 설치
+echo "📦 의존성 설치..."
+if command -v pip3 &>/dev/null; then
+  pip3 install pyyaml 2>/dev/null || echo "  ⚠️ PyYAML 설치 실패 — 수동: pip3 install pyyaml"
+fi
+
+# 8. 검증 스크립트 실행
 echo "🔍 포팅 검증 실행..."
 if [[ -f "$SCRIPT_DIR/verify.sh" ]]; then
   bash "$SCRIPT_DIR/verify.sh" "$HERMES_HOME"
 else
   echo "  ⚠️ verify.sh가 없어 검증 건너뜀"
+fi
+
+# 9. Smoke Test
+if [[ -f "$SCRIPT_DIR/tests/smoke-test.sh" ]]; then
+  echo "🧪 설치 검증 (Smoke Test)..."
+  bash "$SCRIPT_DIR/tests/smoke-test.sh" "$HERMES_HOME" 2>/dev/null || echo "  ⚠️ 일부 검증 실패"
 fi
 
 echo ""

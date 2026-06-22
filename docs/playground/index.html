@@ -1,352 +1,190 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🧪 p-hermes Playground</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', Roboto, sans-serif;
-      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-      color: #e0e0e0;
-      min-height: 100vh;
-      padding: 40px 20px;
-    }
-    .container { max-width: 960px; margin: 0 auto; }
-    header { text-align: center; margin-bottom: 50px; }
-    h1 {
-      font-size: 2.8rem;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 12px;
-    }
-    .tagline { color: #a0a0b8; font-size: 1.1rem; }
-    .badge {
-      display: inline-block;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 20px;
-      padding: 4px 14px;
-      font-size: 0.8rem;
-      color: #c0c0d8;
-      margin-top: 16px;
-    }
-    .section-title {
-      font-size: 1.3rem;
-      color: #a0a0d0;
-      margin: 40px 0 20px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .comparison {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-bottom: 40px;
-    }
-    .space-card {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: 20px;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .space-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    }
-    .space-card.playground {
-      border-color: #667eea;
-      background: rgba(102, 126, 234, 0.08);
-    }
-    .space-icon { font-size: 1.8rem; margin-bottom: 8px; }
-    .space-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
-    .space-desc { font-size: 0.85rem; color: #9090b0; margin-bottom: 10px; }
-    .space-meta { font-size: 0.78rem; color: #707090; }
-    .space-meta span { display: inline-block; margin-right: 12px; }
-    .status-active { color: #4ade80; }
-    .status-fixed { color: #94a3b8; }
-    .status-experimental { color: #c084fc; }
-    .experiments {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 16px;
-    }
-    .exp-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 10px;
-      padding: 18px;
-      transition: border-color 0.2s;
-    }
-    .exp-card:hover { border-color: rgba(102, 126, 234, 0.4); }
-    .deck-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 12px;
-    }
-    .deck-card {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 8px;
-      padding: 14px;
-      text-align: center;
-      transition: background 0.2s;
-    }
-    .deck-card:hover { background: rgba(102, 126, 234, 0.12); }
-    .deck-card a {
-      color: #a0b4ff;
-      text-decoration: none;
-      font-size: 0.9rem;
-      display: block;
-    }
-    .deck-card a:hover { color: #c0d0ff; }
-    .deck-card p {
-      font-size: 0.78rem;
-      color: #808090;
-      margin-top: 6px;
-    }
-    .version-badge {
-      display: inline-block;
-      font-size: 0.72rem;
-      padding: 2px 10px;
-      border-radius: 12px;
-      margin-left: 10px;
-      vertical-align: middle;
-      font-weight: 600;
-    }
-    .version-badge.version-latest {
-      background: rgba(74, 222, 128, 0.15);
-      color: #4ade80;
-      border: 1px solid rgba(74, 222, 128, 0.3);
-    }
-    .version-badge.version-legacy {
-      background: rgba(148, 163, 184, 0.12);
-      color: #94a3b8;
-      border: 1px solid rgba(148, 163, 184, 0.25);
-    }
-    .version-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 14px;
-      margin-bottom: 16px;
-      font-size: 0.8rem;
-      color: #8080a0;
-    }
-    .version-meta .meta-item code {
-      background: rgba(255, 255, 255, 0.06);
-      padding: 1px 6px;
-      border-radius: 4px;
-      font-size: 0.76rem;
-      color: #c0c0d8;
-    }
-    .compare-link {
-      display: inline-block;
-      margin: 16px 0 24px;
-      padding: 8px 18px;
-      background: rgba(102, 126, 234, 0.15);
-      border: 1px solid rgba(102, 126, 234, 0.4);
-      border-radius: 8px;
-      color: #a0b4ff;
-      text-decoration: none;
-      font-size: 0.88rem;
-      transition: background 0.2s;
-    }
-    .compare-link:hover {
-      background: rgba(102, 126, 234, 0.25);
-      color: #c0d0ff;
-    }
-    footer {
-      margin-top: 50px;
-      padding-top: 20px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      text-align: center;
-      color: #606078;
-      font-size: 0.82rem;
-    }
-    footer a { color: #8080a8; }
-    .info-note {
-      background: rgba(192, 132, 252, 0.08);
-      border-left: 3px solid #c084fc;
-      border-radius: 4px;
-      padding: 12px 16px;
-      margin: 20px 0;
-      font-size: 0.88rem;
-      color: #c0c0e0;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>p-hermes — Persistent AI Agent Framework</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans KR',sans-serif;background:#0d1117;color:#e6edf3;line-height:1.6}
+  a{color:#58a6ff;text-decoration:none}
+  a:hover{text-decoration:underline}
+  .container{max-width:960px;margin:0 auto;padding:2rem 1.5rem}
+
+  /* Hero */
+  .hero{text-align:center;padding:4rem 0 3rem}
+  .hero h1{font-size:2.8rem;font-weight:700;background:linear-gradient(135deg,#58a6ff,#3fb950,#d2a8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.5rem}
+  .hero .tagline{font-size:1.2rem;color:#8b949e;margin-bottom:.3rem}
+  .hero .sub{font-size:0.95rem;color:#6e7681;max-width:600px;margin:1rem auto 0;line-height:1.7}
+  .hero .badges{display:flex;justify-content:center;gap:.5rem;margin-top:1.5rem;flex-wrap:wrap}
+  .badge{display:inline-flex;align-items:center;gap:4px;font-size:.8rem;padding:4px 12px;border-radius:20px;background:#21262d;color:#8b949e;border:1px solid #30363d}
+  .badge svg{width:14px;height:14px;fill:#8b949e}
+
+  /* 3-Track */
+  .section-title{font-size:1.4rem;margin:2.5rem 0 1.2rem;padding-bottom:.5rem;border-bottom:1px solid #21262d}
+  .tracks{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+  @media(max-width:720px){.tracks{grid-template-columns:1fr}}
+  .track{border:1px solid #30363d;border-radius:10px;padding:1.5rem;background:#161b22;transition:border-color .2s}
+  .track:hover{border-color:#58a6ff}
+  .track-icon{font-size:1.8rem;margin-bottom:.6rem}
+  .track h3{font-size:1.1rem;margin-bottom:.3rem}
+  .track .track-desc{font-size:.85rem;color:#8b949e;margin-bottom:.8rem}
+  .track .track-detail{font-size:.82rem;color:#6e7681;margin-bottom:.8rem}
+  .track-links{list-style:none;padding:0}
+  .track-links li{padding:.2rem 0}
+  .track-links a{font-size:.88rem;color:#58a6ff;display:flex;align-items:center;gap:6px}
+  .track-links a::before{content:"→";color:#6e7681;font-size:.8rem}
+  .track-links a .platform{font-size:.7rem;color:#6e7681;font-weight:400;margin-left:auto}
+  .track-links a .platform{background:#21262d;padding:1px 6px;border-radius:4px}
+
+  /* Scenario */
+  .scenario-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:1rem}
+  @media(max-width:600px){.scenario-grid{grid-template-columns:1fr}}
+  .scenario{border:1px solid #30363d;border-radius:10px;padding:1.2rem;background:#161b22}
+  .scenario .prompt{font-size:.88rem;color:#e6edf3;margin-bottom:.5rem;padding:.5rem;background:#21262d;border-radius:6px;font-family:SFMono-Regular,Consolas,'Courier New',monospace}
+  .scenario .flow{font-size:.8rem;color:#8b949e;line-height:1.8;padding-left:.5rem}
+  .scenario .flow span{color:#3fb950}
+  .scenario .arrow{color:#6e7681}
+
+  /* Quick Start */
+  .quickstart{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:1.5rem;margin-bottom:1.5rem}
+  .quickstart code{background:#21262d;padding:2px 6px;border-radius:4px;font-size:.85rem;color:#e6edf3}
+  .quickstart .cmd{display:block;background:#0d1117;padding:.8rem 1rem;border-radius:6px;margin:.5rem 0;font-family:SFMono-Regular,Consolas,'Courier New',monospace;font-size:.9rem;color:#7ee787;border:1px solid #21262d}
+  .quickstart .cmd .prompt-sign{color:#6e7681}
+
+  /* CTA */
+  .cta{text-align:center;margin:2.5rem 0 1rem}
+  .cta a{display:inline-block;padding:.6rem 1.8rem;border-radius:8px;font-size:.95rem;font-weight:500;background:#238636;color:#fff;transition:background .2s}
+  .cta a:hover{background:#2ea043;text-decoration:none}
+
+  /* Footer */
+  .footer{text-align:center;padding:2rem 0;color:#6e7681;font-size:.8rem;border-top:1px solid #21262d;margin-top:2rem}
+  .footer a{color:#58a6ff}
+</style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>🧪 p-hermes Playground</h1>
-      <p class="tagline">슬라이드 실험 공간 — 자유로운 시도와 탐구를 위한 공간</p>
-      <span class="badge">🔬 Experimental · README 미연결 · 자유 수정 가능</span>
-    </header>
+<div class="container">
 
-    <div class="info-note">
-      💡 이 공간은 운영 슬라이드에 영향을 주지 않고 다양한 레이아웃, 디자인, 시각화 실험을
-      진행하기 위한 Playground입니다. 실험 결과는 운영 슬라이드(<code>slides/</code>)로
-      반영될 수 있습니다.
+  <!-- Hero -->
+  <div class="hero">
+    <h1>⚡ p-hermes</h1>
+    <p class="tagline">Persistent AI Agent Framework</p>
+    <p class="sub">Memory · Workflow · Knowledge · Projects · Content</p>
+    <div class="badges">
+      <span class="badge">🧠 Memory</span>
+      <span class="badge">⚙️ Workflow</span>
+      <span class="badge">📚 Knowledge</span>
+      <span class="badge">📋 Jobs</span>
+      <span class="badge">🔧 Content</span>
     </div>
-
-    <h2 class="section-title">📍 3가지 공간 비교</h2>
-    <div class="comparison">
-      <div class="space-card">
-        <div class="space-icon">📊</div>
-        <div class="space-name">Slides (운영)</div>
-        <div class="space-desc">활성 배포 슬라이드. README에 연결됨.</div>
-        <div class="space-meta"><span class="status-active">● 활성</span><span>README ✅</span></div>
-      </div>
-      <div class="space-card">
-        <div class="space-icon">📦</div>
-        <div class="space-name">Archive (스냅샷)</div>
-        <div class="space-desc">Round 7 고정 스냅샷. 변경 불가.</div>
-        <div class="space-meta"><span class="status-fixed">● 고정</span><span>README ❌</span></div>
-      </div>
-      <div class="space-card playground">
-        <div class="space-icon">🧪</div>
-        <div class="space-name">Playground (실험)</div>
-        <div class="space-desc">자유 실험 공간. 언제든 변경 가능.</div>
-        <div class="space-meta"><span class="status-experimental">● 실험중</span><span>README ❌</span></div>
-      </div>
-    </div>
-
-    <h2 class="section-title">🔬 실험 목록 (exp-001~006)</h2>
-    <div class="experiments">
-      <div class="exp-card">
-        <div class="space-icon">📝</div>
-        <div class="space-name"><a href="experiments/exp-001-gpt-slide-review.md" style="color:#a0b4ff;text-decoration:none;">exp-001: GPT Slide Review</a></div>
-        <div class="space-desc">GPT 피드백 기반 슬라이드 검토</div>
-        <div class="space-meta"><span class="status-active">● input</span></div>
-      </div>
-      <div class="exp-card">
-        <div class="space-icon">🎨</div>
-        <div class="space-name"><a href="experiments/exp-002-gpt-design-review.md" style="color:#a0b4ff;text-decoration:none;">exp-002: GPT Design Review v1</a></div>
-        <div class="space-desc">GPT content-system v2 — 7개 지적</div>
-        <div class="space-meta"><span class="status-active">● input</span></div>
-      </div>
-      <div class="exp-card">
-        <div class="space-icon">🔧</div>
-        <div class="space-name"><a href="experiments/exp-003-gpt-design-review-v2.md" style="color:#a0b4ff;text-decoration:none;">exp-003: GPT Design Review v2</a></div>
-        <div class="space-desc">GPT content-system v3 — 5개 위험</div>
-        <div class="space-meta"><span class="status-active">● input</span></div>
-      </div>
-      <div class="exp-card">
-        <div class="space-icon">🌟</div>
-        <div class="space-name"><a href="slides-v2/exp-004-hero.html" style="color:#a0b4ff;text-decoration:none;" target="_blank">exp-004: Hero 적용</a></div>
-        <div class="space-desc">direction-guide section_flow[0]</div>
-        <div class="space-meta"><span class="status-active">● new</span></div>
-      </div>
-      <div class="exp-card">
-        <div class="space-icon">🤔</div>
-        <div class="space-name"><a href="slides-v2/exp-005-hero-why.html" style="color:#a0b4ff;text-decoration:none;" target="_blank">exp-005: Hero + WHY</a></div>
-        <div class="space-desc">3열 비교 카드 실험</div>
-        <div class="space-meta"><span class="status-active">● new</span></div>
-      </div>
-      <div class="exp-card">
-        <div class="space-icon">📐</div>
-        <div class="space-name"><a href="slides-v2/exp-006-full-flow.html" style="color:#a0b4ff;text-decoration:none;" target="_blank">exp-006: 6단계 전체 흐름</a></div>
-        <div class="space-desc">Golden Circle 6단계 전체 적용</div>
-        <div class="space-meta"><span class="status-active">● new</span></div>
-      </div>
-    </div>
-
-    <h2 class="section-title">🔄 Golden Circle 변환 덱 (gc/)<span class="version-badge version-legacy">v2 · 구버전</span></h2>
-    <div class="version-meta">
-      <span class="meta-item">📦 <code>ba127e4</code></span>
-      <span class="meta-item">🔧 JOB-1734</span>
-      <span class="meta-item">📅 2026-06-20 18:16</span>
-      <span class="meta-item">📊 8덱 · 177KB</span>
-    </div>
-    <p style="color:#9090b0;font-size:0.9rem;margin-bottom:16px;">실제 운영 슬라이드 8개를 Pre-Direction Engine의 direction-guide (golden_circle, D3) 기반 Golden Circle 6단계로 변환</p>
-    <div class="deck-grid">
-      <div class="deck-card">
-        <a href="slides-v2/gc/hermes-overview.html" target="_blank">🤖 Hermes Overview</a>
-        <p>시스템 조감도 GC · 개요</p>
-      </div>
-      <div class="deck-card">
-        <a href="slides-v2/gc/architecture-layered.html" target="_blank">🏗️ Architecture</a>
-        <p>5-Tier 구조 GC · 기반</p>
-      </div>
-      <div class="deck-card">
-        <a href="slides-v2/gc/workflow-pipeline.html" target="_blank">⚡ Workflow Pipeline</a>
-        <p>9단계 상태머신 GC · 기반</p>
-      </div>
-      <div class="deck-card">
-        <a href="slides-v2/gc/model-routing.html" target="_blank">🧭 Model Routing</a>
-        <p>모델 라우팅 GC · 기반</p>
-      </div>
-      <div class="deck-card">
-        <a href="slides-v2/gc/spec-driven-dev.html" target="_blank">📋 Spec-Driven Dev</a>
-        <p>Spec 기반 GC · 방법론</p>
-      </div>
-      <div class="deck-card">
-        <a href="slides-v2/gc/content-system.html" target="_blank">🎨 Content System</a>
-        <p>콘텐츠 품질 GC · 방법론</p>
-      </div>
-      <div class="deck-card">
-        <a href="slides-v2/gc/knowledge-system.html" target="_blank">📚 Knowledge System</a>
-        <p>지식 계층 GC · 운영</p>
-      </div>
-      <div class="deck-card">
-        <a href="slides-v2/gc/cron-system.html" target="_blank">⏰ Cron System</a>
-        <p>24시간 자동화 GC · 운영</p>
-      </div>
-    </div>
-
-        <h2 class="section-title">🆕 slides-v3 — GC Refined (UI/UX 개선)<span class="version-badge version-latest">v3 · 최신</span></h2>
-    <div class="version-meta">
-      <span class="meta-item">📦 <code>5850a13</code></span>
-      <span class="meta-item">🔧 JOB-1736 + JOB-1737</span>
-      <span class="meta-item">📅 2026-06-20 22:15</span>
-      <span class="meta-item">📊 8덱 · 246KB (+38.9%)</span>
-      <span class="meta-item">✨ 7개 변경사항</span>
-    </div>
-    <a href="compare.html" class="compare-link" target="_blank">📊 버전 비교 (v2 vs v3 side-by-side) →</a>
-    <p style="color:#9090b0;font-size:0.9rem;margin-bottom:16px;">슬라이드당 글자 수 축소 + 페이지 분할(12~15슬라이드) · 중앙 정렬 · 컴팩트 내비게이션</p>
-    <div class="deck-grid">
-      <div class="deck-card"><a href="slides-v3/gc/hermes-overview.html" target="_blank">🤖 Hermes Overview</a><p>14슬라이드 · 개요</p></div>
-      <div class="deck-card"><a href="slides-v3/gc/architecture-layered.html" target="_blank">🏗️ Architecture</a><p>14슬라이드 · 기반</p></div>
-      <div class="deck-card"><a href="slides-v3/gc/workflow-pipeline.html" target="_blank">⚡ Workflow Pipeline</a><p>15슬라이드 · 기반</p></div>
-      <div class="deck-card"><a href="slides-v3/gc/model-routing.html" target="_blank">🧭 Model Routing</a><p>14슬라이드 · 기반</p></div>
-      <div class="deck-card"><a href="slides-v3/gc/spec-driven-dev.html" target="_blank">📋 Spec-Driven Dev</a><p>14슬라이드 · 방법론</p></div>
-      <div class="deck-card"><a href="slides-v3/gc/content-system.html" target="_blank">🎨 Content System</a><p>14슬라이드 · 방법론</p></div>
-      <div class="deck-card"><a href="slides-v3/gc/knowledge-system.html" target="_blank">📚 Knowledge System</a><p>13슬라이드 · 운영</p></div>
-      <div class="deck-card"><a href="slides-v3/gc/cron-system.html" target="_blank">⏰ Cron System</a><p>14슬라이드 · 운영</p></div>
-    </div>
-
-    <h2 class="section-title">📂 templates (direction-guide 기반)</h2>
-    <div class="deck-grid">
-      <div class="deck-card">
-        <a href="slides-v2/template/card-grid.css" target="_blank">🎨 card-grid.css</a>
-        <p>design_tokens → CSS</p>
-      </div>
-      <div class="deck-card">
-        <a href="slides-v2/template/golden-circle.html" target="_blank">📄 golden-circle.html</a>
-        <p>section_flow 템플릿</p>
-      </div>
-    </div>
-
-    <h2 class="section-title">🎴 슬라이드 덱 (운영 복사본)</h2>
-    <div class="deck-grid">
-      <div class="deck-card"><a href="./decks/workflow-pipeline.html">⚡ Workflow Pipeline</a><p>9단계 상태머신</p></div>
-      <div class="deck-card"><a href="./decks/knowledge-system.html">📚 Knowledge System</a><p>지식 계층 구조</p></div>
-      <div class="deck-card"><a href="./decks/cron-system.html">⏰ Cron System</a><p>주기 작업 실행</p></div>
-      <div class="deck-card"><a href="./decks/architecture-layered.html">🏗️ Architecture</a><p>레이어드 구조</p></div>
-      <div class="deck-card"><a href="./decks/spec-driven-dev.html">📋 Spec-Driven Dev</a><p>Spec 기반 개발</p></div>
-      <div class="deck-card"><a href="./decks/content-system.html">🎨 Content System</a><p>콘텐츠 검증</p></div>
-      <div class="deck-card"><a href="./decks/model-routing.html">🧭 Model Routing</a><p>모델 라우팅</p></div>
-      <div class="deck-card"><a href="./decks/hermes-overview.html">🤖 Hermes Overview</a><p>시스템 조감도</p></div>
-    </div>
-
-    <footer>
-      <p>🧪 p-hermes Playground · <a href="../slides/index.html">운영 슬라이드</a> · <a href="../archive/">아카이브</a> · <a href="./NOTES.md">실험 일지</a></p>
-      <p style="margin-top:8px;">직접 URL 접근만 가능 · README에 연결되지 않음</p>
-    </footer>
+    <p class="sub">설치하면 대화가 끝나도 잊지 않고, 작업 단위로 관리하며, 지식을 축적하는 AI 에이전트를 쓸 수 있습니다.</p>
   </div>
+
+  <!-- Quick Start -->
+  <h2 class="section-title">⚡ Quick Start</h2>
+  <div class="quickstart">
+    <code>git clone</code> 후 한 줄이면 준비 완료:
+    <span class="cmd"><span class="prompt-sign">$</span> git clone https://github.com/pheanor-agent/p-hermes.git</span>
+    <span class="cmd"><span class="prompt-sign">$</span> cd p-hermes && bash setup.sh</span>
+    <div style="margin-top:.8rem;font-size:.85rem;color:#8b949e">
+      자세한 설치는 <a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/wiki/getting-started/install.md">📘 설치 가이드</a> 참고
+    </div>
+  </div>
+
+  <!-- Real Scenarios -->
+  <h2 class="section-title">🎯 실제 이렇게 씁니다</h2>
+  <div class="scenario-grid">
+    <div class="scenario">
+      <div class="prompt">"이 설계 문서를 리뷰해줘"</div>
+      <div class="flow">
+        <span>JOB 생성</span> <span class="arrow">→</span> <span>Investigation</span> <span class="arrow">→</span>
+        <span>Architecture</span> <span class="arrow">→</span> <span>Review</span> <span class="arrow">→</span>
+        <span>Knowledge 저장</span> <span class="arrow">→</span> <span>Result</span>
+      </div>
+    </div>
+    <div class="scenario">
+      <div class="prompt">"이 문서를 슬라이드로 만들어줘"</div>
+      <div class="flow">
+        <span>Content System</span> <span class="arrow">→</span> <span>슬라이드 생성</span>
+        <span class="arrow">→</span> <span>검증</span> <span class="arrow">→</span> <span>Knowledge 축적</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3-Track Documentation -->
+  <h2 class="section-title">📖 문서 탐색</h2>
+  <div class="tracks">
+    <!-- Wiki -->
+    <div class="track">
+      <div class="track-icon">📘</div>
+      <h3>Guide Wiki</h3>
+      <p class="track-desc">How — 사용법을 익히는 문서</p>
+      <p class="track-detail">설치부터 고급 기능까지 단계별 가이드</p>
+      <ul class="track-links">
+        <li><a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/wiki/getting-started/overview.md">Hermes 개요 <span class="platform">GitHub</span></a></li>
+        <li><a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/wiki/getting-started/install.md">설치 가이드 <span class="platform">GitHub</span></a></li>
+        <li><a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/wiki/getting-started/first-job.md">첫 작업 요청 <span class="platform">GitHub</span></a></li>
+        <li><a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/wiki/index.md">📂 전체 목록 <span class="platform">GitHub</span></a></li>
+      </ul>
+    </div>
+    <!-- Blog -->
+    <div class="track">
+      <div class="track-icon">✍️</div>
+      <h3>Dev Blog</h3>
+      <p class="track-desc">Why — 설계 철학과 결정 이유</p>
+      <p class="track-detail">왜 이런 시스템이 필요한지 깊이 이해</p>
+      <ul class="track-links">
+        <li><a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/blog/posts/why-ai-has-no-memory.md">왜 AI는 기억하지 못하는가 <span class="platform">GitHub</span></a></li>
+        <li><a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/blog/posts/why-agents-need-process.md">왜 에이전트는 프로세스가 필요한가 <span class="platform">GitHub</span></a></li>
+        <li><a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/blog/posts/hermes-agent-intro.md">Hermes Agent 소개 <span class="platform">GitHub</span></a></li>
+        <li><a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/blog/index.md">📂 전체 목록 <span class="platform">GitHub</span></a></li>
+      </ul>
+    </div>
+    <!-- Slides -->
+    <div class="track">
+      <div class="track-icon">🖼️</div>
+      <h3>Slides</h3>
+      <p class="track-desc">What — 시스템 구조 시각화</p>
+      <p class="track-detail">발표용 HTML 슬라이드로 핵심 개념을 한눈에</p>
+      <ul class="track-links">
+        <li><a href="./slides/decks/hermes-overview.html">Hermes Overview <span class="platform">Live</span></a></li>
+        <li><a href="./slides/decks/workflow-pipeline.html">Workflow Pipeline <span class="platform">Live</span></a></li>
+        <li><a href="./slides/decks/why-hermes.html">Why Hermes? <span class="platform">Live</span></a></li>
+        <li><a href="./slides/decks/architecture-layered.html">Architecture <span class="platform">Live</span></a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Examples -->
+  <h2 class="section-title">📋 실제 작업 사례 (Examples)</h2>
+  <div class="tracks" style="grid-template-columns:repeat(3,1fr)">
+    <div class="track">
+      <div class="track-icon">🔍</div>
+      <h3>설계 리뷰</h3>
+      <p class="track-detail">설계 문서를 요청 → 검토 → 결과까지</p>
+    </div>
+    <div class="track">
+      <div class="track-icon">🎨</div>
+      <h3>슬라이드 생성</h3>
+      <p class="track-detail">Content System으로 슬라이드 자동 생성</p>
+    </div>
+    <div class="track">
+      <div class="track-icon">📝</div>
+      <h3>블로그 작성</h3>
+      <p class="track-detail">아이디어에서 블로그 포스트까지</p>
+    </div>
+  </div>
+
+  <div class="cta">
+    <a href="https://github.com/pheanor-agent/p-hermes">GitHub에서 전체 문서 보기 →</a>
+  </div>
+
+  <div class="footer">
+    <a href="https://github.com/pheanor-agent/p-hermes">pheanor-agent/p-hermes</a> ·
+    MIT License ·
+    Built with Hermes Agent
+  </div>
+
+</div>
 </body>
 </html>

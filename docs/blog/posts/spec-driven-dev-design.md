@@ -1,3 +1,7 @@
+---
+title: "Spec-Driven Development: 명세서가 코드보다 빠른 이유"
+---
+
 # Spec-Driven Development: 명세서가 코드보다 빠른 이유
 
 > **주제**: #spec-driven-dev #dependencies #conflict-detection

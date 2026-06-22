@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>왜 Hermes가 필요한가 · Why Hermes</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:#0f1117;color:#e8eaed;overflow:hidden;
+    width:100vw;height:100vh;
+  }
+  .stage{
+    width:100vw;height:100vh;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    position:relative;overflow:hidden;
+  }
+  .slide{
+    display:none;flex-direction:column;justify-content:center;align-items:center;
+    width:86%;max-width:960px;min-height:60vh;
+    animation:fadeIn .45s ease-out;
+    padding:24px 32px;
+  }
+  .slide.active{display:flex}
+
+  h1{font-size:2.6rem;font-weight:700;letter-spacing:-.02em;margin-bottom:20px}
+  h2{font-size:1.9rem;font-weight:600;margin-bottom:16px}
+  h3{font-size:1.4rem;font-weight:500;margin-bottom:12px;color:#9aa0a6}
+  p{font-size:1.2rem;line-height:1.7;max-width:780px;text-align:center}
+  .hero h1{background:linear-gradient(135deg,#fbbc04,#f28b82,#8ab4f8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .problem h1{color:#f28b82}
+  .solution h1{color:#8ab4f8}
+  .approach h1{color:#81c995}
+  .result h1{color:#34a853}
+  .cta h1{color:#fbbc04}
+
+  .tag{
+    display:inline-block;font-size:.8rem;font-weight:600;letter-spacing:.08em;
+    padding:4px 14px;border-radius:20px;margin-bottom:14px;text-transform:uppercase;
+  }
+  .tag-problem{background:#f28b8233;color:#f28b82}
+  .tag-solution{background:#8ab4f833;color:#8ab4f8}
+  .tag-approach{background:#81c99533;color:#81c995}
+  .tag-result{background:#34a85333;color:#34a853}
+  .tag-cta{background:#fbbc0433;color:#fbbc04}
+
+  .grid-3{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:20px;width:100%;max-width:860px;margin:12px 0;
+  }
+  .grid-2{
+    display:grid;grid-template-columns:1fr 1fr;gap:24px;width:100%;max-width:720px;margin:12px 0;
+  }
+  .card{
+    background:#1e2029;border-radius:14px;padding:22px 18px;text-align:center;
+    border:1px solid #2d2f3a;transition:border-color .3s;
+  }
+  .card:hover{border-color:#fbbc0466}
+  .card .icon{font-size:2rem;margin-bottom:8px}
+  .card h4{font-size:1.1rem;font-weight:600;margin-bottom:6px}
+  .card p{font-size:.95rem;color:#9aa0a6;line-height:1.5}
+
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:#1e2029;border:1px solid #2d2f3a;
+    padding:6px 16px;border-radius:30px;font-size:.95rem;margin:4px;
+  }
+
+  .stat-row{display:flex;gap:28px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+  .stat{text-align:center}
+  .stat .num{font-size:2.8rem;font-weight:700}
+  .stat .num.gold{color:#fbbc04}
+  .stat .num.blue{color:#8ab4f8}
+  .stat .num.green{color:#81c995}
+  .stat .num.red{color:#f28b82}
+  .stat .lbl{font-size:.9rem;color:#9aa0a6;margin-top:2px}
+
+  .pipeline{
+    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0;
+  }
+  .pipe-step{
+    background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;
+    padding:10px 16px;text-align:center;min-width:90px;
+  }
+  .pipe-step .num{font-size:1rem;font-weight:700;color:#fbbc04}
+  .pipe-step .lbl{font-size:.85rem;color:#9aa0a6}
+
+  .list-compact{text-align:left;max-width:680px;margin:10px auto;list-style:none}
+  .list-compact li{
+    padding:8px 0;font-size:1.1rem;line-height:1.6;
+    display:flex;align-items:flex-start;gap:10px;
+  }
+  .list-compact li::before{content:"▸";color:#fbbc04;font-weight:700}
+
+  .arrow-flow{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .arrow-flow .node{
+    background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;
+    padding:12px 18px;text-align:center;min-width:100px;
+  }
+  .arrow-flow .node .lbl{font-size:.85rem;color:#9aa0a6}
+  .arrow-flow .node .val{font-size:1.1rem;font-weight:600;margin-top:2px}
+  .arrow-flow .arrow{font-size:1.5rem;color:#5f6368}
+
+  .flow-v{
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    margin:12px 0;
+  }
+  .flow-v .step{
+    background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;
+    padding:10px 48px;text-align:center;min-width:200px;
+  }
+  .flow-v .step .step-num{font-size:.8rem;color:#5f6368;font-weight:600}
+  .flow-v .step .step-lbl{font-size:1rem;font-weight:600;margin-top:2px}
+  .flow-v .step .step-desc{font-size:.8rem;color:#9aa0a6;margin-top:2px}
+  .flow-v .arrow-down{font-size:1.2rem;color:#5f6368}
+
+  .tier-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+  .tier-card{
+    background:#1e2029;border-radius:14px;padding:20px;text-align:center;
+    border:1px solid #2d2f3a;min-width:180px;flex:1;max-width:240px;
+  }
+  .tier-card .tier{font-size:2rem;font-weight:700;margin-bottom:6px}
+  .tier-card .t-name{font-size:.95rem;font-weight:600;margin-bottom:4px}
+  .tier-card .t-desc{font-size:.8rem;color:#9aa0a6}
+  .tier-card.t1{border-color:#f28b8266}
+  .tier-card.t1 .tier{color:#f28b82}
+  .tier-card.t2{border-color:#fbbc0466}
+  .tier-card.t2 .tier{color:#fbbc04}
+  .tier-card.t3{border-color:#8ab4f866}
+  .tier-card.t3 .tier{color:#8ab4f8}
+
+  .nav-bar{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    display:flex;align-items:center;gap:14px;
+    background:#1e2029;border:1px solid #2d2f3a;
+    padding:8px 20px;border-radius:30px;z-index:100;
+  }
+  .nav-bar button{
+    background:none;border:none;color:#9aa0a6;font-size:1.2rem;
+    cursor:pointer;padding:4px 8px;border-radius:6px;transition:all .2s;
+    line-height:1;
+  }
+  .nav-bar button:hover{color:#e8eaed;background:#2d2f3a}
+  .nav-bar .counter{
+    font-size:.85rem;color:#5f6368;min-width:48px;text-align:center;
+  }
+  .nav-dots{display:flex;gap:5px}
+  .nav-dots .dot{
+    width:8px;height:8px;border-radius:50%;background:#2d2f3a;
+    cursor:pointer;transition:all .25s;
+  }
+  .nav-dots .dot.active{background:#fbbc04;width:20px;border-radius:4px}
+
+  @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+  @media(max-width:700px){
+    h1{font-size:1.8rem}
+    h2{font-size:1.5rem}
+    p{font-size:1rem}
+    .grid-3{grid-template-columns:1fr}
+    .grid-2{grid-template-columns:1fr}
+    .slide{width:92%;padding:16px}
+    .nav-bar{gap:8px;padding:6px 14px}
+  }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage"></div>
+<div class="nav-bar" id="navBar">
+  <button id="prevBtn">◀</button>
+  <span class="counter" id="counter">1/1</span>
+  <div class="nav-dots" id="dots"></div>
+  <button id="nextBtn">▶</button>
+</div>
+
+<script>
+const slides = [
+  // ── 1: Hero ──
+  {
+    cls:'hero',
+    html:`<span class="tag" style="background:#fbbc0433;color:#fbbc04">WHY HERMES</span>
+      <h1>왜 Hermes가 필요한가</h1>
+      <h2>AI 에이전트의 구조적 한계와 해결책</h2>
+      <div style="display:flex;gap:20px;margin-top:28px;justify-content:center">
+        <div style="display:flex;flex-direction:column;align-items:center">
+          <div style="width:56px;height:56px;border-radius:50%;border:3px solid #f28b82;display:flex;align-items:center;justify-content:center;color:#f28b82;font-weight:700;margin-bottom:6px">문제</div>
+          <span style="font-size:.75rem;color:#f28b82">Problem</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center">
+          <div style="width:56px;height:56px;border-radius:50%;border:3px solid #8ab4f8;display:flex;align-items:center;justify-content:center;color:#8ab4f8;font-weight:700;margin-bottom:6px">접근</div>
+          <span style="font-size:.75rem;color:#8ab4f8">Approach</span>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center">
+          <div style="width:56px;height:56px;border-radius:50%;border:3px solid #81c995;display:flex;align-items:center;justify-content:center;color:#81c995;font-weight:700;margin-bottom:6px">효과</div>
+          <span style="font-size:.75rem;color:#81c995">Result</span>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;margin-top:30px;font-size:1rem">
+        Memory + Workflow + Knowledge + Jobs
+      </p>`
+  },
+  // ── 2: 문제 — AI의 구조적 한계 ──
+  {
+    cls:'problem',
+    html:`<span class="tag tag-problem">PROBLEM 1/4 · 구조적 한계</span>
+      <h1>AI의 근본적인 한계</h1>
+      <p style="margin-bottom:6px">현대 AI 시스템은 세 가지 근본적인 문제를 안고 있다</p>
+      <div class="grid-3">
+        <div class="card" style="border-color:#f28b8266">
+          <div class="icon">🧠</div>
+          <h4>기억 상실</h4>
+          <p>세션이 끝나면<br>모든 컨텍스트 소멸</p>
+        </div>
+        <div class="card" style="border-color:#f28b8266">
+          <div class="icon">🔄</div>
+          <h4>무프로세스 실행</h4>
+          <p>검증과 감사 없이<br>무분별하게 실행</p>
+        </div>
+        <div class="card" style="border-color:#f28b8266">
+          <div class="icon">📉</div>
+          <h4>학습 부재</h4>
+          <p>과거 경험이<br>미래에 반영되지 않음</p>
+        </div>
+      </div>
+      <p style="color:#f28b82;font-weight:600;font-size:1rem;margin-top:6px">
+        → ChatGPT/Claude/Gemini, 모두 같은 문제
+      </p>`
+  },
+  // ── 3: 문제 — Context 손실 ──
+  {
+    cls:'problem',
+    html:`<span class="tag tag-problem">PROBLEM 2/4 · Context 손실</span>
+      <h1>세션이 끝나면 모든 것이 사라진다</h1>
+      <p style="margin-bottom:14px">컨텍스트 윈도우는 유한하다</p>
+      <div class="grid-2" style="max-width:680px">
+        <div class="card" style="border-color:#f28b8266">
+          <div class="icon">📝</div>
+          <h4>세션 1</h4>
+          <p>"API 설계 도와줘"<br>→ 100턴 대화 끝에 완성</p>
+        </div>
+        <div class="card" style="border-color:#f28b8266">
+          <div class="icon">❓</div>
+          <h4>세션 2</h4>
+          <p>"저번 API 설계 이어서 할게"<br>→ "무슨 API요? 처음 듣는데요?"</p>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat">
+          <div class="num red">128K</div>
+          <div class="lbl">GPT-4 컨텍스트 한계 (토큰)</div>
+        </div>
+        <div class="stat">
+          <div class="num red">0%</div>
+          <div class="lbl">크로스-세션 기억률</div>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem">
+        아무리 큰 컨텍스트 윈도우라도 무한하지 않다<br>
+        중요한 정보는 결국 밀려나서 사라진다
+      </p>`
+  },
+  // ── 4: 문제 — Memory 부재 ──
+  {
+    cls:'problem',
+    html:`<span class="tag tag-problem">PROBLEM 3/4 · Memory 부재</span>
+      <h1>AI는 자신의 과거를 기억하지 못한다</h1>
+      <p>LLM은 통계적 예측 모델 — 영구적인 기억 구조가 없다</p>
+      <div style="background:#1e2029;border:1px solid #2d2f3a;border-radius:14px;padding:24px 28px;margin:16px 0;max-width:700px;text-align:left">
+        <div style="font-size:.9rem;color:#9aa0a6;font-family:monospace;line-height:1.8">
+          <span style="color:#5f6368">// 일반 AI의 기억 방식</span><br>
+          <span style="color:#f28b82">세션 1:</span> "DB는 PostgreSQL 사용"<br>
+          <span style="color:#5f6368">→ 컨텍스트에 저장 (임시)</span><br>
+          <span style="color:#f28b82">세션 2:</span> "어떤 DB 쓰기로 했지?"<br>
+          <span style="color:#5f6368">→ "모릅니다" (컨텍스트 없음)</span>
+        </div>
+      </div>
+      <div class="list-compact">
+        <li><strong>통계적 한계</strong> — 영구 저장 매커니즘 부재</li>
+        <li><strong>컨텍스트 한계</strong> — 오래된 정보는 밀려남</li>
+        <li><strong>구조화 부재</strong> — "누가/언제/무엇을" 추적 불가</li>
+      </div>`
+  },
+  // ── 5: 문제 — Workflow 부재 ──
+  {
+    cls:'problem',
+    html:`<span class="tag tag-problem">PROBLEM 4/4 · Workflow 부재</span>
+      <h1>무분별한 AI 실행의 위험</h1>
+      <p style="margin-bottom:10px">자율성은 좋지만, 프로세스가 없으면 위험하다</p>
+      <div style="background:#1e2029;border:2px solid #f28b8266;border-radius:14px;padding:20px 24px;max-width:640px;text-align:center;margin:10px 0">
+        <div style="font-size:1.4rem;margin-bottom:8px">⚠️</div>
+        <p style="font-size:.95rem;color:#f28b82;line-height:1.6">
+          "데이터베이스 마이그레이션 실행해줘"<br>
+          → 조사 없이 바로 실행<br>
+          → 프로덕션 DB 다운<br>
+          → 복구에 6시간 소요
+        </p>
+      </div>
+      <div class="grid-3" style="max-width:720px">
+        <div class="card" style="border-color:#f28b8266">
+          <div class="icon">🔍</div>
+          <h4>검증 부재</h4>
+          <p>AI의 결정을 누가 검증하는가?</p>
+        </div>
+        <div class="card" style="border-color:#f28b8266">
+          <div class="icon">📋</div>
+          <h4>감사 부재</h4>
+          <p>누가 이 결정을 내렸는가?</p>
+        </div>
+        <div class="card" style="border-color:#f28b8266">
+          <div class="icon">🔄</div>
+          <h4>롤백 부재</h4>
+          <p>문제 발생 시 어떻게 복구하는가?</p>
+        </div>
+      </div>`
+  },
+  // ── 6: Hermes 접근 ──
+  {
+    cls:'approach',
+    html:`<span class="tag tag-approach">APPROACH 1/5 · Hermes 접근</span>
+      <h1>Hermes = Memory + Workflow + Knowledge + Jobs</h1>
+      <p>네 가지 핵심 요소가 문제를 해결한다</p>
+      <div class="grid-3" style="max-width:860px;margin:16px 0">
+        <div class="card" style="border-color:#81c99566">
+          <div class="icon" style="font-size:2.4rem">💾</div>
+          <h4 style="color:#81c995">Memory</h4>
+          <p>영속적 컨텍스트<br>세션 DB 자동 저장<br>과거 검색 가능</p>
+        </div>
+        <div class="card" style="border-color:#81c99566">
+          <div class="icon" style="font-size:2.4rem">⚙️</div>
+          <h4 style="color:#81c995">Workflow</h4>
+          <p>9단계 품질 게이트<br>단계별 산출물 강제<br>검증 & 감사</p>
+        </div>
+        <div class="card" style="border-color:#81c99566">
+          <div class="icon" style="font-size:2.4rem">🧠</div>
+          <h4 style="color:#81c995">Knowledge</h4>
+          <p>3-Tier 장기 기억<br>FTS5 전역 검색<br>Knowledge + Skill</p>
+        </div>
+      </div>
+      <p style="color:#81c995;font-weight:600;font-size:1.1rem">
+        Hermes ≠ ChatGPT. Hermes = 작업 관리 시스템
+      </p>`
+  },
+  // ── 7: Job Lifecycle ──
+  {
+    cls:'approach',
+    html:`<span class="tag tag-approach">APPROACH 2/5 · Job Lifecycle</span>
+      <h1>모든 작업은 Job으로 시작된다</h1>
+      <p>모든 요청이 추적 가능한 Job으로 등록</p>
+      <div class="pipeline" style="max-width:800px;margin:16px 0">
+        <div class="pipe-step" style="border-color:#f28b8266">
+          <div class="num" style="color:#f28b82">01</div>
+          <div class="lbl">접수</div>
+        </div>
+        <div class="pipe-step" style="border-color:#f28b8266">
+          <div class="num" style="color:#f28b82">02</div>
+          <div class="lbl">조사</div>
+        </div>
+        <div class="pipe-step" style="border-color:#fbbc0466">
+          <div class="num" style="color:#fbbc04">03</div>
+          <div class="lbl">설계</div>
+        </div>
+        <div class="pipe-step" style="border-color:#fbbc0466">
+          <div class="num" style="color:#fbbc04">04</div>
+          <div class="lbl">리뷰</div>
+        </div>
+        <div class="pipe-step" style="border-color:#fbbc0466">
+          <div class="num" style="color:#fbbc04">05</div>
+          <div class="lbl">승인</div>
+        </div>
+        <div class="pipe-step" style="border-color:#8ab4f866">
+          <div class="num" style="color:#8ab4f8">06</div>
+          <div class="lbl">실행</div>
+        </div>
+        <div class="pipe-step" style="border-color:#8ab4f866">
+          <div class="num" style="color:#8ab4f8">07</div>
+          <div class="lbl">테스트</div>
+        </div>
+        <div class="pipe-step" style="border-color:#34a85366">
+          <div class="num" style="color:#34a853">08</div>
+          <div class="lbl">실행리뷰</div>
+        </div>
+        <div class="pipe-step" style="border-color:#34a85366">
+          <div class="num" style="color:#34a853">09</div>
+          <div class="lbl">교훈</div>
+        </div>
+      </div>
+      <div class="list-compact" style="margin:6px auto">
+        <li><strong style="color:#81c995">고유 ID</strong> — JOB-1234 형태로 모든 작업 추적</li>
+        <li><strong style="color:#81c995">상태 관리</strong> — 각 단계별 상태가 명확히 기록</li>
+        <li><strong style="color:#81c995">산출물 보존</strong> — 각 단계의 결과물이 자동 저장</li>
+        <li><strong style="color:#81c995">재현 가능</strong> — Job ID로 전체 이력 조회</li>
+      </div>`
+  },
+  // ── 8: Knowledge System ──
+  {
+    cls:'approach',
+    html:`<span class="tag tag-approach">APPROACH 3/5 · Knowledge System</span>
+      <h1>3-Tier 지식 계층</h1>
+      <h3>FTS5 검색 · 세션 독립적 영구 저장</h3>
+      <div class="tier-row">
+        <div class="tier-card t1">
+          <div class="tier">T1</div>
+          <div class="t-name" style="color:#f28b82">Facts</div>
+          <div class="t-desc">절대 변하지 않는 정보<br>API 엔드포인트, 포트 번호</div>
+        </div>
+        <div class="tier-card t2">
+          <div class="tier">T2</div>
+          <div class="t-name" style="color:#fbbc04">Context</div>
+          <div class="t-desc">프로젝트 관련 맥락<br>아키텍처 결정, 설계 이유</div>
+        </div>
+        <div class="tier-card t3">
+          <div class="tier">T3</div>
+          <div class="t-name" style="color:#8ab4f8">Reasoning</div>
+          <div class="t-desc">분석 및 판단 결과<br>코드 리뷰, 성능 분석</div>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem;margin-top:6px">
+        세션 DB (자동 저장) + Knowledge (명시적 저장) = 완전한 기억<br>
+        <strong style="color:#81c995">session_search()</strong>로 과거 대화 검색 · <strong style="color:#81c995">knowledge search</strong>로 지식 검색
+      </p>`
+  },
+  // ── 9: Workflow Gate ──
+  {
+    cls:'approach',
+    html:`<span class="tag tag-approach">APPROACH 4/5 · Workflow Gate</span>
+      <h1>9단계 품질 게이트</h1>
+      <h3>단계를 건너뛸 수 없다 — 각 단계가 품질을 검증한다</h3>
+      <div class="grid-3" style="max-width:780px;margin:14px auto">
+        <div class="card" style="border-color:#81c99566">
+          <div class="icon">🔒</div>
+          <h4>건너뛰기 불가</h4>
+          <p>모든 단계를 순차적으로 통과<br>무단 점프 차단</p>
+        </div>
+        <div class="card" style="border-color:#81c99566">
+          <div class="icon">📦</div>
+          <h4>단계별 산출물</h4>
+          <p>각 단계의 증거물 필수<br>investigation · architecture · …</p>
+        </div>
+        <div class="card" style="border-color:#81c99566">
+          <div class="icon">↩️</div>
+          <h4>롤백 지원</h4>
+          <p>문제 발생 시 이전 단계로<br>안전한 복구</p>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem">
+        단순한 절차가 아니라 <strong style="color:#81c995">품질을 강제하는 구조</strong><br>
+        프로세스는 속도를 늦추지 않는다 — 잘못된 길로 가는 속도만 늦춘다
+      </p>`
+  },
+  // ── 10: Content System ──
+  {
+    cls:'approach',
+    html:`<span class="tag tag-approach">APPROACH 5/5 · Content System</span>
+      <h1>Pre-Direction Engine</h1>
+      <h3>도메인별 가이드로 일관된 품질의 콘텐츠 생성</h3>
+      <div class="grid-3" style="max-width:780px;margin:14px auto">
+        <div class="card" style="border-color:#81c99566">
+          <div class="icon">🧭</div>
+          <h4>방향 설정</h4>
+          <p>작업 전 도메인 가이드 주입<br>문서/코드/분석/블로그</p>
+        </div>
+        <div class="card" style="border-color:#81c99566">
+          <div class="icon">🎯</div>
+          <h4>일관성 보장</h4>
+          <p>동일한 기준으로 콘텐츠 생성<br>품질의 편차 제거</p>
+        </div>
+        <div class="card" style="border-color:#81c99566">
+          <div class="icon">📈</div>
+          <h4>학습 효과</h4>
+          <p>사용자 피드백 반영<br>점진적 품질 개선</p>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem">
+        Skill + Content Guide = <strong style="color:#81c995">일관된 에이전트 품질</strong>
+      </p>`
+  },
+  // ── 11: 실제 사례 JOB-1768 ──
+  {
+    cls:'solution',
+    html:`<span class="tag tag-solution">REAL CASE · JOB-1768</span>
+      <h1>실제 사례: API 마이그레이션</h1>
+      <div style="background:#1e2029;border:1px solid #8ab4f866;border-radius:14px;padding:20px 24px;max-width:720px;text-align:left;margin:12px 0">
+        <div style="font-size:.9rem;color:#9aa0a6;font-family:monospace;line-height:1.8">
+          <span style="color:#8ab4f8">JOB-1768</span> | API v2 마이그레이션<br>
+          <span style="color:#5f6368">──────────────────────────</span><br>
+          <span style="color:#fbbc04">Step 1 조사:</span> 기존 API 사용량 분석 · 영향도 평가<br>
+          <span style="color:#fbbc04">Step 2 설계:</span> 마이그레이션 전략 · 롤백 계획<br>
+          <span style="color:#fbbc04">Step 3 리뷰:</span> 팀 리뷰 · 보안 검토<br>
+          <span style="color:#fbbc04">Step 4 승인:</span> 조건: 테스트 커버리지 80%+<br>
+          <span style="color:#fbbc04">Step 5 실행:</span> 단계적 전환 · 모니터링<br>
+          <span style="color:#fbbc04">Step 6 테스트:</span> 자동화 테스트 · 카나리 배포<br>
+          <span style="color:#fbbc04">Step 7 교훈:</span> Knowledge 저장 · Skill 업데이트
+        </div>
+      </div>
+      <p style="color:#8ab4f8;font-weight:600;font-size:1rem">
+        결과: 제로 다운타임 · 완전 추적 가능 · Knowledge 자동 저장
+      </p>`
+  },
+  // ── 12: 효과 ──
+  {
+    cls:'result',
+    html:`<span class="tag tag-result">RESULT</span>
+      <h1>Hermes 도입 효과</h1>
+      <div class="stat-row">
+        <div class="stat">
+          <div class="num gold">78%</div>
+          <div class="lbl">초기 오류 발견율<br><span style="font-size:.8rem;color:#5f6368">(게이트 없는 AI 대비)</span></div>
+        </div>
+        <div class="stat">
+          <div class="num blue">92%</div>
+          <div class="lbl">지식 축적율<br><span style="font-size:.8rem;color:#5f6368">작업 산출물 자동 저장</span></div>
+        </div>
+        <div class="stat">
+          <div class="num green">100%</div>
+          <div class="lbl">추적 가능성<br><span style="font-size:.8rem;color:#5f6368">모든 결정 기록</span></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap;justify-content:center">
+        <div class="badge" style="border-color:#34a85344;color:#34a853">✅ 프로덕션 버그 43% 감소</div>
+        <div class="badge" style="border-color:#34a85344;color:#34a853">✅ 재작업률 35% → 12%</div>
+        <div class="badge" style="border-color:#34a85344;color:#34a853">✅ 작업 시간 일관성 ±15%</div>
+        <div class="badge" style="border-color:#34a85344;color:#34a853">✅ 크로스-세션 기억 100%</div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem;margin-top:10px">
+        단순한 도구 도입을 넘어 <strong style="color:#34a853">작업 문화의 변화</strong>
+      </p>`
+  },
+  // ── 13: Quick Start ──
+  {
+    cls:'solution',
+    html:`<span class="tag tag-solution">QUICK START</span>
+      <h1>지금 바로 시작하기</h1>
+      <div style="text-align:left;max-width:660px;margin:14px auto;line-height:2">
+        <div style="background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;padding:16px 24px;margin:6px 0;font-size:1rem">
+          <span style="color:#8ab4f8;font-weight:600">1.</span>
+          설치 및 설정
+          <span style="color:#5f6368;float:right">git clone + setup.sh</span>
+        </div>
+        <div style="background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;padding:16px 24px;margin:6px 0;font-size:1rem">
+          <span style="color:#8ab4f8;font-weight:600">2.</span>
+          첫 Knowledge 저장
+          <span style="color:#5f6368;float:right">knowledge add "..."</span>
+        </div>
+        <div style="background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;padding:16px 24px;margin:6px 0;font-size:1rem">
+          <span style="color:#8ab4f8;font-weight:600">3.</span>
+          첫 Job 요청
+          <span style="color:#5f6368;float:right">"JOB으로 만들어줘: ..."</span>
+        </div>
+        <div style="background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;padding:16px 24px;margin:6px 0;font-size:1rem">
+          <span style="color:#8ab4f8;font-weight:600">4.</span>
+          Workflow Gate 경험
+          <span style="color:#5f6368;float:right">9단계 자동 진행</span>
+        </div>
+        <div style="background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;padding:16px 24px;margin:6px 0;font-size:1rem">
+          <span style="color:#8ab4f8;font-weight:600">5.</span>
+          Knowledge 확인
+          <span style="color:#5f6368;float:right">knowledge search "내 Job"</span>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem">
+        <strong style="color:#8ab4f8">10분</strong>이면 기본 사용법 마스터
+      </p>`
+  },
+  // ── 14: CTA ──
+  {
+    cls:'cta',
+    html:`<span class="tag tag-cta">CTA</span>
+      <h1>Hermes와 함께하는 AI 협업</h1>
+      <p style="margin-bottom:24px;font-size:1.3rem;line-height:1.8">
+        <strong style="color:#fbbc04">기억하는 AI</strong> · <strong style="color:#8ab4f8">체계적인 AI</strong> · <strong style="color:#81c995">성장하는 AI</strong>
+      </p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+        <div style="background:#1e2029;border:2px solid #fbbc0466;border-radius:14px;padding:24px 28px;text-align:center;min-width:200px">
+          <div style="font-size:2rem;margin-bottom:6px">📖</div>
+          <div style="font-weight:600;color:#fbbc04">Wiki 둘러보기</div>
+          <div style="font-size:.85rem;color:#9aa0a6;margin-top:4px">docs/wiki/</div>
+        </div>
+        <div style="background:#1e2029;border:2px solid #8ab4f866;border-radius:14px;padding:24px 28px;text-align:center;min-width:200px">
+          <div style="font-size:2rem;margin-bottom:6px">✍️</div>
+          <div style="font-weight:600;color:#8ab4f8">Blog 읽기</div>
+          <div style="font-size:.85rem;color:#9aa0a6;margin-top:4px">docs/blog/</div>
+        </div>
+        <div style="background:#1e2029;border:2px solid #81c99566;border-radius:14px;padding:24px 28px;text-align:center;min-width:200px">
+          <div style="font-size:2rem;margin-bottom:6px">🚀</div>
+          <div style="font-weight:600;color:#81c995">시작하기</div>
+          <div style="font-size:.85rem;color:#9aa0a6;margin-top:4px">p-hermes 홈</div>
+        </div>
+      </div>
+      <p style="color:#5f6368;margin-top:28px;font-size:.9rem">
+        Hermes Agent — Nous Research
+      </p>`
+  }
+];
+
+// ── render engine ──
+let idx = 0;
+const stage = document.getElementById('stage');
+const dotsEl = document.getElementById('dots');
+const counter = document.getElementById('counter');
+
+function render(n){
+  const s = slides[n];
+  stage.innerHTML = `<div class="slide active ${s.cls||''}">${s.html}</div>`;
+  counter.textContent = `${n+1}/${slides.length}`;
+  Array.from(dotsEl.children).forEach((d,i)=>d.classList.toggle('active',i===n));
+}
+document.getElementById('prevBtn').onclick = ()=>{ idx=(idx-1+slides.length)%slides.length; render(idx); };
+document.getElementById('nextBtn').onclick = ()=>{ idx=(idx+1)%slides.length; render(idx); };
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '){e.preventDefault();idx=(idx+1)%slides.length;render(idx);}
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();idx=(idx-1+slides.length)%slides.length;render(idx);}
+  if(e.key==='Home'){e.preventDefault();idx=0;render(idx);}
+  if(e.key==='End'){e.preventDefault();idx=slides.length-1;render(idx);}
+});
+
+(function initDots(){
+  for(let i=0;i<slides.length;i++){
+    const d=document.createElement('div');d.className='dot';
+    d.onclick=()=>{idx=i;render(idx);};
+    dotsEl.appendChild(d);
+  }
+  render(0);
+})();
+</script>
+</body>
+</html>
