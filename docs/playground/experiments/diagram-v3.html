@@ -528,28 +528,28 @@
             </marker>
           </defs>
 
-          <!-- Layer 1 → Layer 2: Optimized Bezier curves -->
-          <!-- Left: Agent Layer (20%,55) → Session Manager (20%,190) -->
-          <path d="M 18% 55 C 18% 90, 18% 115, 18% 165" class="diagram-edge arrow accent-blue"/>
-          <!-- Center: Knowledge Layer (42%,55) → Knowledge DB (42%,190) -->
-          <path d="M 42% 55 C 42% 90, 42% 115, 42% 165" class="diagram-edge arrow accent-green"/>
-          <!-- Right: Deploy Layer (70%,55) → Pipeline Runner (70%,190) -->
-          <path d="M 70% 55 C 70% 90, 70% 115, 70% 165" class="diagram-edge arrow accent-gold"/>
+          <!-- Layer 1 → Layer 2: Optimized Bezier curves (px) -->
+          <!-- Agent(171,55) → Session(171,200) -->
+          <path d="M 171 55 C 171 95, 171 150, 171 200" class="diagram-edge arrow accent-blue"/>
+          <!-- Knowledge(437,55) → KnowDB(437,200) -->
+          <path d="M 437 55 C 437 95, 437 150, 437 200" class="diagram-edge arrow accent-green"/>
+          <!-- Deploy(703,55) → Pipeline(703,200) -->
+          <path d="M 703 55 C 703 95, 703 150, 703 200" class="diagram-edge arrow accent-gold"/>
 
-          <!-- Layer 2 → Layer 3: Converging Bezier curves -->
-          <!-- Left: Session Manager (18%,190) → Storage (50%,300) -->
-          <path d="M 18% 195 C 18% 230, 30% 245, 40% 285" class="diagram-edge arrow accent-purple"/>
-          <!-- Center: Knowledge DB (42%,195) → Storage (50%,300) -->
-          <path d="M 42% 195 C 42% 230, 44% 245, 40% 285" class="diagram-edge animated accent-purple" stroke-dasharray="5,3"/>
-          <!-- Right: Pipeline Runner (70%,195) → Storage (50%,300) -->
-          <path d="M 70% 195 C 70% 230, 55% 245, 40% 285" class="diagram-edge arrow accent-purple"/>
+          <!-- Layer 2 → Layer 3: Converging Bezier curves (px) -->
+          <!-- Session(171,200) → Storage(475,325) -->
+          <path d="M 171 200 C 171 250, 320 260, 475 325" class="diagram-edge arrow accent-purple"/>
+          <!-- KnowDB(437,200) → Storage(475,325) -->
+          <path d="M 437 200 C 437 250, 450 260, 475 325" class="diagram-edge animated accent-purple" stroke-dasharray="5,3"/>
+          <!-- Pipeline(703,200) → Storage(475,325) -->
+          <path d="M 703 200 C 703 250, 620 260, 475 325" class="diagram-edge arrow accent-purple"/>
 
           <!-- Edge labels with background (paint-order stroke) -->
-          <text x="28%" y="110" class="diagram-edge-label">orchestrates</text>
-          <text x="60%" y="110" class="diagram-edge-label">triggers</text>
-          <text x="28%" y="260" class="diagram-edge-label">persist</text>
-          <text x="47%" y="260" class="diagram-edge-label">query (read)</text>
-          <text x="62%" y="260" class="diagram-edge-label">collect</text>
+          <text x="285" y="110" class="diagram-edge-label">orchestrates</text>
+          <text x="570" y="110" class="diagram-edge-label">triggers</text>
+          <text x="250" y="260" class="diagram-edge-label">persist</text>
+          <text x="450" y="260" class="diagram-edge-label">query (read)</text>
+          <text x="630" y="260" class="diagram-edge-label">collect</text>
         </svg>
 
         <!-- Group: Layer 1 (Runtime) -->
@@ -651,9 +651,9 @@
           <rect width="900" height="400" fill="url(#grid)" rx="12"/>
 
           <!-- Layer backgrounds -->
-          <rect x="15" y="15" width="870" height="105" fill="rgba(88,166,255,0.02)" rx="10"/>
-          <rect x="15" y="135" width="870" height="120" fill="rgba(210,153,34,0.02)" rx="10"/>
-          <rect x="15" y="270" width="870" height="115" fill="rgba(188,140,255,0.02)" rx="10"/>
+          <rect x="15" y="15" width="870" height="95" fill="rgba(88,166,255,0.02)" rx="10"/>
+          <rect x="15" y="140" width="870" height="90" fill="rgba(210,153,34,0.02)" rx="10"/>
+          <rect x="15" y="275" width="870" height="95" fill="rgba(188,140,255,0.02)" rx="10"/>
 
           <!-- Layer labels -->
           <text x="30" y="35" fill="var(--text-tertiary)" font-size="10" font-weight="600" letter-spacing="0.08em" text-transform="uppercase" stroke="var(--bg-canvas)" stroke-width="3" paint-order="stroke fill">LAYER 1: INPUT</text>
@@ -662,68 +662,70 @@
 
           <!-- Edges: Bezier curves with flow animation -->
           <!-- User Input → Hermes Agent -->
-          <path d="M 140 65 C 200 65, 250 55, 300 60" class="svg-edge animated bl"/>
-          <!-- Hermes Agent → Session Manager + Context Router -->
-          <path d="M 450 75 C 450 120, 250 130, 230 195" class="svg-edge bl"/>
-          <path d="M 450 75 C 450 120, 600 130, 620 195" class="svg-edge bl"/>
+          <path d="M 150 57 C 240 57, 280 40, 340 45" class="svg-edge animated bl"/>
+          <!-- Hermes Agent → Context Router -->
+          <path d="M 560 55 C 620 55, 640 40, 680 47" class="svg-edge bl"/>
+          <!-- Hermes Agent → Session Manager -->
+          <path d="M 400 80 C 350 120, 180 130, 200 175" class="svg-edge bl"/>
+          <!-- Hermes Agent → Pipeline Executor -->
+          <path d="M 480 80 C 510 120, 580 130, 600 175" class="svg-edge bl"/>
           <!-- Session Manager → Workflow Gate -->
-          <path d="M 230 205 C 230 235, 340 240, 340 265" class="svg-edge gr"/>
-          <!-- Context Router → Pipeline Executor -->
-          <path d="M 620 205 C 620 235, 510 240, 510 265" class="svg-edge gr"/>
-          <!-- Workflow Gate → Knowledge DB -->
-          <path d="M 340 275 C 340 310, 260 315, 260 340" class="svg-edge animated"/>
+          <path d="M 300 177 C 325 177, 335 177, 350 177" class="svg-edge gr"/>
           <!-- Pipeline Executor → Skills -->
-          <path d="M 510 275 C 510 310, 590 315, 590 340" class="svg-edge animated"/>
-          <!-- Knowledge DB + Skills → Deliverable -->
-          <path d="M 260 350 C 260 370, 360 375, 400 368" class="svg-edge gd"/>
-          <path d="M 590 350 C 590 370, 490 375, 450 368" class="svg-edge gd"/>
+          <path d="M 700 177 C 715 177, 720 177, 730 177" class="svg-edge gr"/>
+          <!-- Knowledge DB → Deliverable -->
+          <path d="M 300 312 C 325 312, 335 312, 350 312" class="svg-edge animated"/>
+          <!-- Skills → Deliverable -->
+          <path d="M 730 312 C 680 312, 550 312, 550 312" class="svg-edge animated"/>
+          <!-- Workflow Gate → Knowledge DB -->
+          <path d="M 550 177 C 500 220, 250 250, 200 312" class="svg-edge gd"/>
 
           <!-- Nodes: Layer 1 -->
           <!-- User Input -->
-          <rect x="30" y="40" width="120" height="50" class="svg-node layer-input" rx="10" ry="10"/>
-          <text x="90" y="64" class="svg-label" fill="var(--accent-orange)">📝 User Input</text>
-          <text x="90" y="80" class="svg-sub">CLI · API · Chat</text>
+          <rect x="30" y="35" width="120" height="45" class="svg-node layer-input" rx="10" ry="10"/>
+          <text x="90" y="57" class="svg-label" fill="var(--accent-orange)">📝 User Input</text>
+          <text x="90" y="68" class="svg-sub">CLI · API · Chat</text>
 
           <!-- Hermes Agent -->
-          <rect x="300" y="40" width="160" height="55" class="svg-node layer-core" rx="10" ry="10" filter="url(#glow)"/>
-          <text x="380" y="64" class="svg-label" fill="var(--accent-green)">⚡ Hermes Agent</text>
-          <text x="380" y="82" class="svg-sub">Core Orchestrator</text>
+          <rect x="340" y="30" width="220" height="50" class="svg-node layer-core" rx="10" ry="10" filter="url(#glow)"/>
+          <text x="450" y="55" class="svg-label" fill="var(--accent-green)">⚡ Hermes Agent</text>
+          <text x="450" y="68" class="svg-sub">Core Orchestrator</text>
 
           <!-- Nodes: Layer 2 -->
           <!-- Session Manager -->
-          <rect x="130" y="185" width="200" height="50" class="svg-node layer-proc" rx="10" ry="10"/>
-          <text x="230" y="208" class="svg-label">Session Manager</text>
-          <text x="230" y="224" class="svg-sub">Context · History</text>
+          <rect x="100" y="155" width="200" height="45" class="svg-node layer-proc" rx="10" ry="10"/>
+          <text x="200" y="177" class="svg-label">Session Manager</text>
+          <text x="200" y="188" class="svg-sub">Context · History</text>
 
           <!-- Context Router -->
-          <rect x="560" y="185" width="120" height="50" class="svg-node layer-proc" rx="10" ry="10"/>
-          <text x="620" y="208" class="svg-label">Context Router</text>
-          <text x="620" y="224" class="svg-sub">Intent Classification</text>
+          <rect x="680" y="35" width="170" height="45" class="svg-node layer-proc" rx="10" ry="10"/>
+          <text x="765" y="57" class="svg-label">Context Router</text>
+          <text x="765" y="68" class="svg-sub">Intent Classification</text>
 
           <!-- Workflow Gate -->
-          <rect x="240" y="260" width="200" height="50" class="svg-node bl" rx="10" ry="10"/>
-          <text x="340" y="283" class="svg-label">Workflow Gate</text>
-          <text x="340" y="299" class="svg-sub">9-Step Pipeline</text>
+          <rect x="350" y="155" width="200" height="45" class="svg-node bl" rx="10" ry="10"/>
+          <text x="450" y="177" class="svg-label">Workflow Gate</text>
+          <text x="450" y="188" class="svg-sub">9-Step Pipeline</text>
 
           <!-- Pipeline Executor -->
-          <rect x="410" y="260" width="200" height="50" class="svg-node bl" rx="10" ry="10"/>
-          <text x="510" y="283" class="svg-label">Pipeline Executor</text>
-          <text x="510" y="299" class="svg-sub">Step Runner · Hooks</text>
+          <rect x="500" y="155" width="200" height="45" class="svg-node bl" rx="10" ry="10"/>
+          <text x="600" y="177" class="svg-label">Pipeline Executor</text>
+          <text x="600" y="188" class="svg-sub">Step Runner · Hooks</text>
 
           <!-- Nodes: Layer 3 -->
           <!-- Knowledge DB -->
-          <rect x="160" y="335" width="200" height="50" class="svg-node gr" rx="10" ry="10"/>
-          <text x="260" y="358" class="svg-label" fill="var(--accent-green)">📖 Knowledge DB</text>
-          <text x="260" y="374" class="svg-sub">FTS5 · Vector</text>
+          <rect x="100" y="290" width="200" height="45" class="svg-node gr" rx="10" ry="10"/>
+          <text x="200" y="312" class="svg-label" fill="var(--accent-green)">📖 Knowledge DB</text>
+          <text x="200" y="323" class="svg-sub">FTS5 · Vector</text>
 
           <!-- Skills -->
-          <rect x="490" y="335" width="200" height="50" class="svg-node gr" rx="10" ry="10"/>
-          <text x="590" y="358" class="svg-label" fill="var(--accent-green)">🛠️ Skills</text>
-          <text x="590" y="374" class="svg-sub">Procedures</text>
+          <rect x="730" y="155" width="140" height="45" class="svg-node gr" rx="10" ry="10"/>
+          <text x="800" y="177" class="svg-label" fill="var(--accent-green)">🛠️ Skills</text>
+          <text x="800" y="188" class="svg-sub">Procedures</text>
 
           <!-- Deliverable (bottom center) -->
-          <rect x="360" y="355" width="180" height="40" class="svg-node gd" rx="10" ry="10" filter="url(#glow)"/>
-          <text x="450" y="375" class="svg-label" fill="var(--accent-gold)">📦 Deliverable</text>
+          <rect x="350" y="290" width="200" height="45" class="svg-node gd" rx="10" ry="10" filter="url(#glow)"/>
+          <text x="450" y="312" class="svg-label" fill="var(--accent-gold)">📦 Deliverable</text>
         </svg>
 
         <div class="t3-controls">
