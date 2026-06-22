@@ -228,6 +228,30 @@
       ". . . cmp-l3 cmp-l3 . cmp-r3 cmp-r3 cmp-r3 . . .";
   }
 
+  /* ── Template: Swimlane ── */
+  .tpl-swimlane{
+    grid-template-areas:
+      "lbl-a lbl-a . sw-a1 sw-a1 . sw-a2 sw-a2 . . . ."
+      ". . . . . . . . . . . ."
+      "lbl-b lbl-b . sw-b1 sw-b1 . sw-b2 sw-b2 . . . ."
+      ". . . . . . . . . . . ."
+      "lbl-c lbl-c . sw-c1 sw-c1 . sw-c2 sw-c2 . . . .";
+  }
+
+  /* ── Template: Tree ── */
+  .tpl-tree{
+    grid-template-areas:
+      ". . . . tr-root tr-root tr-root tr-root . . . ."
+      ". . . . . . . . . . . ."
+      ". . . . . . tr-c1 tr-c1 . . . ."
+      ". . . . . . . . . . . ."
+      ". . . . . . tr-l1 tr-l1 . . . ."
+      ". . . . . . . . . . . ."
+      ". . . . . . tr-c2 tr-c2 . . . ."
+      ". . . . . . . . . . . ."
+      ". . . . . . tr-l2 tr-l2 . . . .";
+  }
+
   /* ── Grid Area Assignments ── */
   .a-l1-1{grid-area:l1-1}
   .a-l1-2{grid-area:l1-2}
@@ -258,6 +282,24 @@
   .a-cmp-r2{grid-area:cmp-r2}
   .a-cmp-l3{grid-area:cmp-l3}
   .a-cmp-r3{grid-area:cmp-r3}
+
+  /* ── Swimlane Areas ── */
+  .a-lbl-a{grid-area:lbl-a}
+  .a-lbl-b{grid-area:lbl-b}
+  .a-lbl-c{grid-area:lbl-c}
+  .a-sw-a1{grid-area:sw-a1}
+  .a-sw-a2{grid-area:sw-a2}
+  .a-sw-b1{grid-area:sw-b1}
+  .a-sw-b2{grid-area:sw-b2}
+  .a-sw-c1{grid-area:sw-c1}
+  .a-sw-c2{grid-area:sw-c2}
+
+  /* ── Tree Areas ── */
+  .a-tr-root{grid-area:tr-root}
+  .a-tr-c1{grid-area:tr-c1}
+  .a-tr-l1{grid-area:tr-l1}
+  .a-tr-c2{grid-area:tr-c2}
+  .a-tr-l2{grid-area:tr-l2}
 
   /* ── Phase tags for Pipeline ── */
   .phase-tag{
@@ -427,6 +469,8 @@
     <button class="template-btn" data-template="pipeline">⚙️ Pipeline</button>
     <button class="template-btn" data-template="hub">🕸️ Hub &amp; Spoke</button>
     <button class="template-btn" data-template="comparison">📊 Comparison</button>
+    <button class="template-btn" data-template="swimlane">🏊 Swimlane</button>
+    <button class="template-btn" data-template="tree">🌳 Tree</button>
   </div>
   <div class="template-desc" id="templateDesc">3-Layer Architecture — CSS Grid + SVG Edge Overlay</div>
 
@@ -581,6 +625,74 @@
         <div class="sub">Automated Tests</div>
       </div>
 
+      <!-- ════════════════════════ SWIMLANE ════════════════════════ -->
+      <div class="grid-node accent-blue a-lbl-a" id="n-lbl-a" style="display:none">
+        <div class="label" style="font-weight:600">HERMES</div>
+      </div>
+      <div class="grid-node accent-blue a-sw-a1" id="n-sw-a1" style="display:none">
+        <div class="icon">📋</div>
+        <div class="label">Request · Plan</div>
+        <div class="sub">User Input → Analyze</div>
+      </div>
+      <div class="grid-node accent-blue a-sw-a2" id="n-sw-a2" style="display:none">
+        <div class="icon">⚡</div>
+        <div class="label">Execute</div>
+        <div class="sub">Tool Call · Result</div>
+      </div>
+      <div class="grid-node accent-green a-lbl-b" id="n-lbl-b" style="display:none">
+        <div class="label" style="font-weight:600">OPENCLAW</div>
+      </div>
+      <div class="grid-node accent-green a-sw-b1" id="n-sw-b1" style="display:none">
+        <div class="icon">⏰</div>
+        <div class="label">Schedule · Monitor</div>
+        <div class="sub">Cron · Health</div>
+      </div>
+      <div class="grid-node accent-green a-sw-b2" id="n-sw-b2" style="display:none">
+        <div class="icon">📊</div>
+        <div class="label">Report</div>
+        <div class="sub">Status · Alert</div>
+      </div>
+      <div class="grid-node accent-gold a-lbl-c" id="n-lbl-c" style="display:none">
+        <div class="label" style="font-weight:600">STORAGE</div>
+      </div>
+      <div class="grid-node accent-gold a-sw-c1" id="n-sw-c1" style="display:none">
+        <div class="icon">💾</div>
+        <div class="label">Read · Write</div>
+        <div class="sub">DB · FS</div>
+      </div>
+      <div class="grid-node accent-gold a-sw-c2" id="n-sw-c2" style="display:none">
+        <div class="icon">📦</div>
+        <div class="label">Archive</div>
+        <div class="sub">Backup · Cleanup</div>
+      </div>
+
+      <!-- ════════════════════════ TREE ════════════════════════ -->
+      <div class="grid-node accent-purple a-tr-root" id="n-tr-root" style="display:none">
+        <div class="icon">📚</div>
+        <div class="label">Knowledge Base</div>
+        <div class="sub">FTS5 · Vectors</div>
+      </div>
+      <div class="grid-node accent-blue a-tr-c1" id="n-tr-c1" style="display:none">
+        <div class="icon">📁</div>
+        <div class="label">Architecture Docs</div>
+        <div class="sub">System Design · API</div>
+      </div>
+      <div class="grid-node accent-green a-tr-l1" id="n-tr-l1" style="display:none">
+        <div class="icon">📄</div>
+        <div class="label">System Design</div>
+        <div class="sub">Layered · Pipeline</div>
+      </div>
+      <div class="grid-node accent-gold a-tr-c2" id="n-tr-c2" style="display:none">
+        <div class="icon">📁</div>
+        <div class="label">Wiki</div>
+        <div class="sub">Getting Started · Guides</div>
+      </div>
+      <div class="grid-node accent-red a-tr-l2" id="n-tr-l2" style="display:none">
+        <div class="icon">📄</div>
+        <div class="label">Install Guide</div>
+        <div class="sub">Setup · Config</div>
+      </div>
+
       <!-- SVG Overlay -->
       <svg class="svg-overlay" id="edgeSVG"></svg>
     </div>
@@ -645,6 +757,29 @@ const templates = {
       {from:'cmp-l2', to:'cmp-r2'},
       {from:'cmp-l3', to:'cmp-r3'}
     ]
+  },
+  swimlane: {
+    nodes: ['n-sw-a1','n-sw-a2','n-sw-b1','n-sw-b2','n-sw-c1','n-sw-c2','n-lbl-a','n-lbl-b','n-lbl-c'],
+    tplClass: 'tpl-swimlane',
+    desc: 'Swimlane — 3 roles (Hermes / OpenClaw / Storage) × 2 activities each',
+    edges: [
+      {from:'sw-a1', to:'sw-a2'},
+      {from:'sw-b1', to:'sw-b2'},
+      {from:'sw-c1', to:'sw-c2'},
+      {from:'sw-a2', to:'sw-b2'},
+      {from:'sw-b2', to:'sw-c2'}
+    ]
+  },
+  tree: {
+    nodes: ['n-tr-root','n-tr-c1','n-tr-l1','n-tr-c2','n-tr-l2'],
+    tplClass: 'tpl-tree',
+    desc: 'Tree — 3-level hierarchy (Root → Child → Leaf)',
+    edges: [
+      {from:'tr-root', to:'tr-c1'},
+      {from:'tr-c1', to:'tr-l1'},
+      {from:'tr-root', to:'tr-c2'},
+      {from:'tr-c2', to:'tr-l2'}
+    ]
   }
 };
 
@@ -693,15 +828,27 @@ function drawEdges(templateName) {
 
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
-    // Bezier curve with smart control points
-    if (Math.abs(dx) > Math.abs(dy)) {
-      // Horizontal: right→left with slight curve
-      const cx = (x1 + x2) / 2;
-      path.setAttribute('d', `M ${x1} ${y1} C ${cx} ${y1}, ${cx} ${y2}, ${x2} ${y2}`);
+    // Orthogonal (staircase) routing for Tree template
+    if (templateName === "tree") {
+      const sx = x1, sy = y1;
+      const ex = x2, ey = y2;
+      if (Math.abs(dx) > 10) {  // not same column
+        const midY = (sy + ey) / 2;
+        path.setAttribute('d', `M ${sx} ${sy} L ${sx} ${midY} L ${ex} ${midY} L ${ex} ${ey}`);
+      } else {
+        path.setAttribute('d', `M ${sx} ${sy} L ${ex} ${ey}`);
+      }
     } else {
-      // Vertical: bottom→top
-      const cy = (y1 + y2) / 2;
-      path.setAttribute('d', `M ${x1} ${y1} C ${x1} ${cy}, ${x2} ${cy}, ${x2} ${y2}`);
+      // Bezier curve with smart control points
+      if (Math.abs(dx) > Math.abs(dy)) {
+        // Horizontal: right→left with slight curve
+        const cx = (x1 + x2) / 2;
+        path.setAttribute('d', `M ${x1} ${y1} C ${cx} ${y1}, ${cx} ${y2}, ${x2} ${y2}`);
+      } else {
+        // Vertical: bottom→top
+        const cy = (y1 + y2) / 2;
+        path.setAttribute('d', `M ${x1} ${y1} C ${x1} ${cy}, ${x2} ${cy}, ${x2} ${y2}`);
+      }
     }
 
     // Color from source node's accent class
