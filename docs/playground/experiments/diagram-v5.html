@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CSS Grid + SVG Overlay · p-hermes Diagram v5</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  /* ── CSS Custom Properties (Token System: matches diagram-v4) ── */
+  :root {
+    /* Surface */
+    --bg-canvas:       #0d1117;
+    --bg-surface:      #161b22;
+    --bg-elevated:     #1c2128;
+    --bg-node:         #1e2029;
+    --bg-node-hover:   #262833;
+
+    /* Border */
+    --border-default:  #30363d;
+    --border-subtle:   rgba(255,255,255,0.06);
+    --border-accent:   #58a6ff;
+
+    /* Text */
+    --text-primary:    #e6edf3;
+    --text-secondary:  #8b949e;
+    --text-tertiary:   #6e7681;
+    --text-muted:      #484f58;
+
+    /* Accent */
+    --accent-blue:     #58a6ff;
+    --accent-green:    #3fb950;
+    --accent-gold:     #d29922;
+    --accent-purple:   #bc8cff;
+    --accent-red:      #f85149;
+    --accent-orange:   #f28b82;
+
+    /* Spacing (4px base) */
+    --space-xs:  4px;
+    --space-sm:  8px;
+    --space-md:  16px;
+    --space-lg:  24px;
+    --space-xl:  32px;
+
+    /* Radius */
+    --radius-sm:  6px;
+    --radius-md:  10px;
+    --radius-lg:  14px;
+    --radius-pill: 9999px;
+
+    /* Shadow */
+    --shadow-node:     0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+    --shadow-node-hvr: 0 4px 12px rgba(0,0,0,0.4), 0 0 0 1px rgba(88,166,255,0.15);
+    --shadow-elevated: 0 8px 24px rgba(0,0,0,0.4);
+
+    /* Transition */
+    --transition-fast: 150ms ease;
+    --transition-norm: 250ms ease;
+    --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  body {
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:var(--bg-canvas);
+    color:var(--text-primary);
+    overflow-x:hidden;
+  }
+
+  .container {
+    max-width:1100px;
+    margin:0 auto;
+    padding:var(--space-xl) var(--space-lg) 80px;
+  }
+
+  /* ── Header ── */
+  .header{text-align:center;padding:32px 0 12px}
+  .header h1{
+    font-size:1.5rem;font-weight:700;letter-spacing:-0.025em;line-height:1.2;
+    background:linear-gradient(135deg,#58a6ff,#3fb950,#bc8cff);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  }
+  .header p{color:var(--text-secondary);font-size:.88rem;margin-top:6px}
+  .header .badge{
+    display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.04em;
+    padding:3px 12px;border-radius:var(--radius-pill);
+    background:rgba(88,166,255,0.15);color:var(--accent-blue);
+    margin-top:8px;
+  }
+
+  /* ── Template Selector ── */
+  .template-nav{
+    display:flex;gap:10px;justify-content:center;
+    flex-wrap:wrap;margin:20px 0 6px;
+  }
+  .template-btn{
+    padding:10px 20px;border-radius:var(--radius-md);
+    border:1px solid var(--border-default);
+    background:var(--bg-surface);color:var(--text-secondary);
+    cursor:pointer;font-size:.88rem;font-weight:600;
+    transition:border-color var(--transition-fast),color var(--transition-fast),
+               background var(--transition-fast),box-shadow var(--transition-fast);
+  }
+  .template-btn:hover{border-color:var(--accent-blue);color:var(--text-primary)}
+  .template-btn:focus-visible{outline:2px solid var(--accent-blue);outline-offset:2px}
+  .template-btn.active{
+    background:rgba(26,35,51,0.8);border-color:var(--accent-blue);
+    color:var(--accent-blue);box-shadow:0 0 12px rgba(88,166,255,0.15);
+  }
+
+  .template-desc{
+    text-align:center;padding:4px 0 18px;
+    font-size:.82rem;color:var(--text-tertiary);min-height:24px;
+  }
+
+  /* ── Diagram Wrapper ── */
+  .diagram-wrapper{
+    position:relative;
+    background:var(--bg-surface);
+    border:1px solid var(--border-default);
+    border-radius:var(--radius-lg);
+    overflow:hidden;
+    margin:0 auto;
+  }
+
+  /* ── CSS Grid ── */
+  .diagram-grid{
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    gap:16px 24px;
+    position:relative;
+    padding:28px 24px;
+    z-index:0;
+    transition:opacity var(--transition-norm);
+  }
+
+  /* ── Grid Nodes ── */
+  .grid-node{
+    background:var(--bg-node);
+    border:1px solid var(--border-default);
+    border-left:3px solid var(--border-default);
+    border-radius:var(--radius-md);
+    padding:14px 12px;
+    text-align:center;
+    min-height:60px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    cursor:default;
+    z-index:2;
+    position:relative;
+    box-shadow:var(--shadow-node);
+    transition:border-color var(--transition-fast),box-shadow var(--transition-fast),
+               transform var(--transition-fast),background var(--transition-fast);
+  }
+  .grid-node:hover{
+    border-color:var(--accent-blue);
+    box-shadow:var(--shadow-node-hvr);
+    transform:translateY(-1px);
+    background:var(--bg-node-hover);
+  }
+  .grid-node:focus-visible{outline:2px solid var(--accent-blue);outline-offset:2px}
+
+  .grid-node .icon{font-size:1.4rem;line-height:1.3;margin-bottom:4px}
+  .grid-node .label{font-size:13px;font-weight:600;color:var(--text-primary)}
+  .grid-node .sub{font-size:11px;color:var(--text-secondary);margin-top:2px}
+
+  /* ── Accent border-left colors ── */
+  .accent-blue  {border-left-color:var(--accent-blue)}
+  .accent-green {border-left-color:var(--accent-green)}
+  .accent-gold  {border-left-color:var(--accent-gold)}
+  .accent-purple{border-left-color:var(--accent-purple)}
+  .accent-red   {border-left-color:var(--accent-red)}
+  .accent-orange{border-left-color:var(--accent-orange)}
+
+  /* ── SVG Overlay ── */
+  .svg-overlay{
+    position:absolute;
+    top:0;left:0;
+    width:100%;height:100%;
+    pointer-events:none;
+    z-index:1;
+  }
+  .svg-overlay path{
+    fill:none;
+    stroke-width:2.5;
+    stroke-linecap:round;
+    transition:opacity var(--transition-fast);
+  }
+
+  /* ── Hover highlight for edges via JS-controlled class ── */
+
+  /* ── Template: Layered ── */
+  .tpl-layered{
+    grid-template-areas:
+      ". l1-1 l1-1 . l1-2 l1-2 . l1-3 l1-3 . . ."
+      ". . . . . . . . . . . ."
+      ". l2-1 l2-1 . l2-2 l2-2 . l2-3 l2-3 . . ."
+      ". . . . . . . . . . . ."
+      ". l3 l3 l3 l3 l3 l3 l3 l3 l3 . .";
+  }
+
+  /* ── Template: Pipeline ── */
+  .tpl-pipeline{
+    grid-template-areas:
+      "ph1 ph1 ph1 . ph2 ph2 ph2 . ph3 ph3 ph3 ."
+      ". . . . . . . . . . . ."
+      ". . . . . . . . . . . ."
+      ". . . . ph4 ph4 ph4 . . . . ."
+      ". . . . . . . . . . . .";
+  }
+
+  /* ── Template: Hub & Spoke ── */
+  .tpl-hub{
+    grid-template-areas:
+      ". . . . . . . . . . . ."
+      ". mem mem . tools tools . models models . . ."
+      ". . . . hub hub hub hub . . . ."
+      ". search search . . . . llm llm . . ."
+      ". . . . . . img img . . . .";
+  }
+
+  /* ── Template: Comparison ── */
+  .tpl-comparison{
+    grid-template-areas:
+      "cmp-l cmp-l . cmp-r cmp-r cmp-r . . . . . ."
+      "cmp-l cmp-l . cmp-r cmp-r cmp-r . . . . . ."
+      "cmp-l cmp-l . cmp-r cmp-r cmp-r . . . . . .";
+  }
+
+  /* ── Grid Area Assignments ── */
+  .a-l1-1{grid-area:l1-1}
+  .a-l1-2{grid-area:l1-2}
+  .a-l1-3{grid-area:l1-3}
+  .a-l2-1{grid-area:l2-1}
+  .a-l2-2{grid-area:l2-2}
+  .a-l2-3{grid-area:l2-3}
+  .a-l3{grid-area:l3}
+
+  .a-ph1{grid-area:ph1}
+  .a-ph2{grid-area:ph2}
+  .a-ph3{grid-area:ph3}
+  .a-ph4{grid-area:ph4}
+
+  .a-hub{grid-area:hub}
+  .a-mem{grid-area:mem}
+  .a-tools{grid-area:tools}
+  .a-models{grid-area:models}
+  .a-search{grid-area:search}
+  .a-llm{grid-area:llm}
+  .a-img{grid-area:img}
+
+  .a-cmp-l{grid-area:cmp-l}
+  .a-cmp-r{grid-area:cmp-r}
+
+  /* ── Phase tags for Pipeline ── */
+  .phase-tag{
+    display:inline-block;font-size:10px;font-weight:700;letter-spacing:0.08em;
+    padding:3px 12px;border-radius:var(--radius-pill);text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .phase-tag.orang{background:rgba(242,139,130,0.2);color:var(--accent-orange)}
+  .phase-tag.gold{background:rgba(210,153,34,0.2);color:var(--accent-gold)}
+  .phase-tag.bl{background:rgba(88,166,255,0.2);color:var(--accent-blue)}
+  .phase-tag.gr{background:rgba(63,185,80,0.2);color:var(--accent-green)}
+
+  /* ── Comparison divider ── */
+  .cmp-divider{
+    position:absolute;
+    top:28px;bottom:28px;
+    left:calc(2/12*100% + 8px);
+    width:2px;
+    background:var(--border-subtle);
+    z-index:0;
+    pointer-events:none;
+  }
+  .cmp-label{
+    position:absolute;
+    top:50%;transform:translateY(-50%);
+    font-size:13px;font-weight:600;
+    color:var(--text-tertiary);
+    letter-spacing:0.05em;
+    z-index:0;
+    pointer-events:none;
+  }
+  .cmp-label.before{
+    left:calc(1/12*100% - 20px);
+  }
+  .cmp-label.after{
+    left:calc(5/12*100% + 6px);
+  }
+
+  /* ── Stats row ── */
+  .stats-row{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+    margin-top:20px;
+  }
+  .stat-card{
+    background:var(--bg-node);
+    border:1px solid var(--border-default);
+    border-radius:var(--radius-md);
+    padding:12px 10px;text-align:center;
+  }
+  .stat-card .num{font-size:1.1rem;font-weight:700}
+  .stat-card .lbl{font-size:.78rem;color:var(--text-secondary);margin-top:2px}
+  .stat-card.bl .num{color:var(--accent-blue)}
+  .stat-card.gr .num{color:var(--accent-green)}
+  .stat-card.gd .num{color:var(--accent-gold)}
+  .stat-card.pr .num{color:var(--accent-purple)}
+
+  /* ── prefers-reduced-motion ── */
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:0.01ms !important;transition-duration:0.01ms !important}
+    .grid-node{transition:none}
+    .grid-node:hover{transform:none}
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 960px){
+    .container{padding:var(--space-lg) var(--space-md) 60px}
+    .diagram-grid{gap:14px 18px;padding:20px 16px}
+    .grid-node{padding:12px 10px;min-height:52px}
+    .grid-node .icon{font-size:1.2rem}
+    .grid-node .label{font-size:12px}
+    .grid-node .sub{font-size:10px}
+    .phase-tag{font-size:9px;padding:2px 10px}
+  }
+  @media (max-width: 720px){
+    .container{padding:var(--space-md) var(--space-sm) 40px}
+    .header h1{font-size:1.25rem}
+    .template-btn{padding:8px 14px;font-size:.82rem}
+    .diagram-grid{gap:12px 14px;padding:16px 12px}
+    .grid-node{padding:10px 8px;min-height:46px}
+    .grid-node .icon{font-size:1.1rem;margin-bottom:2px}
+    .grid-node .label{font-size:11px}
+    .grid-node .sub{font-size:9px}
+    /* Compact grid for layered at 720 */
+    .tpl-layered{
+      grid-template-areas:
+        "l1-1 l1-1 l1-1 l1-2 l1-2 l1-2 l1-3 l1-3 l1-3 . . ."
+        ". . . . . . . . . . . ."
+        "l2-1 l2-1 l2-1 l2-2 l2-2 l2-2 l2-3 l2-3 l2-3 . . ."
+        ". . . . . . . . . . . ."
+        "l3 l3 l3 l3 l3 l3 l3 l3 l3 l3 l3 .";
+    }
+    .tpl-hub{
+      grid-template-areas:
+        ". . . . . . . . . . . ."
+        "mem mem mem . tools tools tools . models models models ."
+        ". . . . hub hub hub hub . . . ."
+        "search search search . . . . llm llm llm . ."
+        ". . . . . . img img . . . .";
+    }
+    .tpl-comparison{
+      grid-template-areas:
+        ". cmp-l cmp-l cmp-l . cmp-r cmp-r cmp-r . . . ."
+        ". cmp-l cmp-l cmp-l . cmp-r cmp-r cmp-r . . . ."
+        ". cmp-l cmp-l cmp-l . cmp-r cmp-r cmp-r . . . .";
+    }
+    .cmp-divider{display:none}
+    .cmp-label{display:none}
+    .stats-row{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width: 480px){
+    .container{padding:var(--space-sm) var(--space-xs) 30px}
+    .header h1{font-size:1.1rem}
+    .header p{font-size:.8rem}
+    .template-btn{padding:6px 10px;font-size:.76rem}
+    .template-btn{gap:6px}
+    .diagram-grid{gap:8px 8px;padding:12px 8px}
+    .grid-node{padding:8px 6px;min-height:40px}
+    .grid-node .icon{font-size:1rem}
+    .grid-node .label{font-size:10px}
+    .grid-node .sub{font-size:8px}
+    .phase-tag{font-size:8px;padding:1px 8px;margin-bottom:3px}
+    .tpl-layered{
+      grid-template-areas:
+        "l1-1 l1-1 l1-1 l1-2 l1-2 l1-2 l1-3 l1-3 l1-3 . . ."
+        "l2-1 l2-1 l2-1 l2-2 l2-2 l2-2 l2-3 l2-3 l2-3 . . ."
+        "l3 l3 l3 l3 l3 l3 l3 l3 l3 l3 l3 .";
+    }
+    .tpl-pipeline{
+      grid-template-areas:
+        "ph1 ph1 ph1 ph1 . ph2 ph2 ph2 ph2 . ph3 ph3"
+        ". . . . . . . . . . . ."
+        ". . . . ph4 ph4 ph4 ph4 . . . .";
+    }
+    .tpl-hub{
+      grid-template-areas:
+        "mem mem mem . tools tools tools . models models models ."
+        "search search search . hub hub hub hub . llm llm llm"
+        ". . . . . . img img . . . .";
+    }
+    .tpl-comparison{
+      grid-template-areas:
+        ". cmp-l cmp-l cmp-l cmp-l cmp-l . cmp-r cmp-r cmp-r cmp-r ."
+        ". cmp-l cmp-l cmp-l cmp-l cmp-l . cmp-r cmp-r cmp-r cmp-r ."
+        ". cmp-l cmp-l cmp-l cmp-l cmp-l . cmp-r cmp-r cmp-r cmp-r .";
+    }
+    .stats-row{grid-template-columns:repeat(2,1fr);gap:8px}
+    .stat-card{padding:8px}
+    .stat-card .num{font-size:1rem}
+    .stat-card .lbl{font-size:.7rem}
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>CSS Grid + SVG Overlay Diagram</h1>
+    <p>Layout via CSS Grid (12-column) — Edges via SVG getBoundingClientRect() — Dynamically re-calculated</p>
+    <span class="badge">v5 · p-hermes</span>
+  </div>
+
+  <!-- Template Selector -->
+  <div class="template-nav">
+    <button class="template-btn active" data-template="layered">🏗️ Layered</button>
+    <button class="template-btn" data-template="pipeline">⚙️ Pipeline</button>
+    <button class="template-btn" data-template="hub">🕸️ Hub &amp; Spoke</button>
+    <button class="template-btn" data-template="comparison">📊 Comparison</button>
+  </div>
+  <div class="template-desc" id="templateDesc">3-Layer Architecture — CSS Grid + SVG Edge Overlay</div>
+
+  <!-- Diagram -->
+  <div class="diagram-wrapper">
+    <div class="diagram-grid tpl-layered" id="diagramGrid">
+
+      <!-- ════════════════════════ LAYERED ════════════════════════ -->
+      <!-- Row 1 -->
+      <div class="grid-node accent-blue a-l1-1" id="n-l1-1">
+        <div class="icon">🤖</div>
+        <div class="label">Agent</div>
+        <div class="sub">LLM Orchestration</div>
+      </div>
+      <div class="grid-node accent-green a-l1-2" id="n-l1-2">
+        <div class="icon">🧠</div>
+        <div class="label">Knowledge</div>
+        <div class="sub">FTS5 · Skills</div>
+      </div>
+      <div class="grid-node accent-gold a-l1-3" id="n-l1-3">
+        <div class="icon">🚀</div>
+        <div class="label">Deploy</div>
+        <div class="sub">CI/CD · Containers</div>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="grid-node accent-blue a-l2-1" id="n-l2-1">
+        <div class="icon">⚡</div>
+        <div class="label">Session</div>
+        <div class="sub">Context · History</div>
+      </div>
+      <div class="grid-node accent-green a-l2-2" id="n-l2-2">
+        <div class="icon">📚</div>
+        <div class="label">KnowledgeDB</div>
+        <div class="sub">Vector + FTS5</div>
+      </div>
+      <div class="grid-node accent-gold a-l2-3" id="n-l2-3">
+        <div class="icon">⚙️</div>
+        <div class="label">Pipeline</div>
+        <div class="sub">Job Lifecycle</div>
+      </div>
+
+      <!-- Row 3 -->
+      <div class="grid-node accent-purple a-l3" id="n-l3">
+        <div class="icon">💾</div>
+        <div class="label">Persistent Storage</div>
+        <div class="sub">SQLite · Filesystem · Git</div>
+      </div>
+
+      <!-- ════════════════════════ PIPELINE ════════════════════════ -->
+      <div class="grid-node accent-orange a-ph1" id="n-ph1" style="display:none">
+        <span class="phase-tag orang">PHASE 1</span>
+        <div class="icon">🔍</div>
+        <div class="label">Investigation</div>
+        <div class="sub">접수 · 조사 · 분석</div>
+      </div>
+      <div class="grid-node accent-gold a-ph2" id="n-ph2" style="display:none">
+        <span class="phase-tag gold">PHASE 2</span>
+        <div class="icon">📐</div>
+        <div class="label">Design · Review · Approval</div>
+        <div class="sub">설계 · 리뷰 · 승인</div>
+      </div>
+      <div class="grid-node accent-blue a-ph3" id="n-ph3" style="display:none">
+        <span class="phase-tag bl">PHASE 3</span>
+        <div class="icon">⚡</div>
+        <div class="label">Execution · Test</div>
+        <div class="sub">실행 · 테스트</div>
+      </div>
+      <div class="grid-node accent-green a-ph4" id="n-ph4" style="display:none">
+        <span class="phase-tag gr">PHASE 4</span>
+        <div class="icon">📋</div>
+        <div class="label">Review · Lessons</div>
+        <div class="sub">실행리뷰 · 교훈</div>
+      </div>
+
+      <!-- ════════════════════════ HUB & SPOKE ════════════════════════ -->
+      <div class="grid-node accent-blue a-hub" id="n-hub" style="display:none">
+        <div class="icon">⚡</div>
+        <div class="label">Hermes Agent</div>
+        <div class="sub">Core Orchestrator</div>
+      </div>
+      <div class="grid-node accent-green a-mem" id="n-mem" style="display:none">
+        <div class="icon">🧠</div>
+        <div class="label">Memory</div>
+        <div class="sub">FTS5 + Vector</div>
+      </div>
+      <div class="grid-node accent-gold a-tools" id="n-tools" style="display:none">
+        <div class="icon">🔧</div>
+        <div class="label">Tools</div>
+        <div class="sub">Shell · Browser</div>
+      </div>
+      <div class="grid-node accent-purple a-models" id="n-models" style="display:none">
+        <div class="icon">🤖</div>
+        <div class="label">Models</div>
+        <div class="sub">LLM · Vision</div>
+      </div>
+      <div class="grid-node accent-red a-search" id="n-search" style="display:none">
+        <div class="icon">🔍</div>
+        <div class="label">Search</div>
+        <div class="sub">Web Search</div>
+      </div>
+      <div class="grid-node accent-red a-llm" id="n-llm" style="display:none">
+        <div class="icon">🧠</div>
+        <div class="label">LLM Provider</div>
+        <div class="sub">Claude · GPT</div>
+      </div>
+      <div class="grid-node accent-purple a-img" id="n-img" style="display:none">
+        <div class="icon">🖼️</div>
+        <div class="label">Image Gen</div>
+        <div class="sub">DALL·E · Stable Diffusion</div>
+      </div>
+
+      <!-- ════════════════════════ COMPARISON ════════════════════════ -->
+      <div class="grid-node accent-red a-cmp-l" id="n-cmp-l1" style="display:none">
+        <div class="icon">❌</div>
+        <div class="label">Monolith</div>
+        <div class="sub">Single codebase</div>
+      </div>
+      <div class="grid-node accent-green a-cmp-r" id="n-cmp-r1" style="display:none">
+        <div class="icon">✅</div>
+        <div class="label">Modular</div>
+        <div class="sub">Microservices</div>
+      </div>
+      <div class="grid-node accent-red a-cmp-l" id="n-cmp-l2" style="display:none">
+        <div class="icon">❌</div>
+        <div class="label">Manual</div>
+        <div class="sub">수동 배포</div>
+      </div>
+      <div class="grid-node accent-green a-cmp-r" id="n-cmp-r2" style="display:none">
+        <div class="icon">✅</div>
+        <div class="label">Automated</div>
+        <div class="sub">CI/CD Pipeline</div>
+      </div>
+      <div class="grid-node accent-red a-cmp-l" id="n-cmp-l3" style="display:none">
+        <div class="icon">❌</div>
+        <div class="label">Slow</div>
+        <div class="sub">수동 QA</div>
+      </div>
+      <div class="grid-node accent-green a-cmp-r" id="n-cmp-r3" style="display:none">
+        <div class="icon">✅</div>
+        <div class="label">Fast</div>
+        <div class="sub">Automated Tests</div>
+      </div>
+
+      <!-- SVG Overlay -->
+      <svg class="svg-overlay" id="edgeSVG"></svg>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card bl"><div class="num" id="statNodes">—</div><div class="lbl">Nodes</div></div>
+    <div class="stat-card gr"><div class="num" id="statEdges">—</div><div class="lbl">Edges</div></div>
+    <div class="stat-card gd"><div class="num" id="statAccents">—</div><div class="lbl">Accent Colors</div></div>
+    <div class="stat-card pr"><div class="num" id="statResponsive">3</div><div class="lbl">Breakpoints</div></div>
+  </div>
+
+</div>
+
+<script>
+// ── Template Definitions ──
+// Edge from/to values are suffix after 'n-' — drawEdges prepends 'n-'
+const templates = {
+  layered: {
+    nodes: ['n-l1-1','n-l1-2','n-l1-3','n-l2-1','n-l2-2','n-l2-3','n-l3'],
+    tplClass: 'tpl-layered',
+    desc: '3-Layer Architecture — CSS Grid + SVG Edge Overlay',
+    edges: [
+      {from:'l1-1', to:'l2-1'},
+      {from:'l1-2', to:'l2-2'},
+      {from:'l1-3', to:'l2-3'},
+      {from:'l2-1', to:'l3'},
+      {from:'l2-2', to:'l3'},
+      {from:'l2-3', to:'l3'}
+    ]
+  },
+  pipeline: {
+    nodes: ['n-ph1','n-ph2','n-ph3','n-ph4'],
+    tplClass: 'tpl-pipeline',
+    desc: 'JOB Lifecycle — 4 Phases: Investigation → Design → Execution → Review',
+    edges: [
+      {from:'ph1', to:'ph2'},
+      {from:'ph2', to:'ph3'},
+      {from:'ph3', to:'ph4'}
+    ]
+  },
+  hub: {
+    nodes: ['n-hub','n-mem','n-tools','n-models','n-search','n-llm','n-img'],
+    tplClass: 'tpl-hub',
+    desc: 'Agent-centered — All services connect to Hermes Agent',
+    edges: [
+      {from:'mem', to:'hub'},
+      {from:'tools', to:'hub'},
+      {from:'models', to:'hub'},
+      {from:'search', to:'hub'},
+      {from:'llm', to:'hub'},
+      {from:'img', to:'hub'}
+    ]
+  },
+  comparison: {
+    nodes: ['n-cmp-l1','n-cmp-r1','n-cmp-l2','n-cmp-r2','n-cmp-l3','n-cmp-r3'],
+    tplClass: 'tpl-comparison',
+    desc: 'Before / After — Monolith → Modular, Manual → Automated, Slow → Fast',
+    edges: [
+      {from:'cmp-l1', to:'cmp-r1'},
+      {from:'cmp-l2', to:'cmp-r2'},
+      {from:'cmp-l3', to:'cmp-r3'}
+    ]
+  }
+};
+
+// ── Draw Edges ──
+function drawEdges(templateName) {
+  const template = templates[templateName];
+  if (!template) return;
+
+  const svg = document.getElementById('edgeSVG');
+  const grid = document.getElementById('diagramGrid');
+  svg.innerHTML = '';
+
+  const gridRect = grid.getBoundingClientRect();
+
+  template.edges.forEach(e => {
+    const from = document.getElementById('n-' + e.from);
+    const to = document.getElementById('n-' + e.to);
+    if (!from || !to) return;
+
+    const f = from.getBoundingClientRect();
+    const t = to.getBoundingClientRect();
+
+    const x1 = f.left + f.width/2 - gridRect.left;
+    const y1 = f.bottom - gridRect.top;
+    const x2 = t.left + t.width/2 - gridRect.left;
+    const y2 = t.top - gridRect.top;
+
+    const cy = (y1 + y2) / 2;
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+    // Straight line if same x, curve otherwise
+    if (Math.abs(x1 - x2) < 1) {
+      path.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2}`);
+    } else {
+      path.setAttribute('d', `M ${x1} ${y1} C ${x1} ${cy}, ${x2} ${cy}, ${x2} ${y2}`);
+    }
+
+    // Color from source node's accent class
+    const cls = from.classList.value;
+    if (cls.includes('gold'))        path.style.stroke = '#d29922';
+    else if (cls.includes('green'))  path.style.stroke = '#3fb950';
+    else if (cls.includes('purple')) path.style.stroke = '#bc8cff';
+    else if (cls.includes('red'))    path.style.stroke = '#f85149';
+    else if (cls.includes('orange')) path.style.stroke = '#f28b82';
+    else                             path.style.stroke = '#58a6ff';
+
+    svg.appendChild(path);
+  });
+}
+
+// ── Show Template ──
+function showTemplate(name) {
+  const template = templates[name];
+  if (!template) return;
+
+  // Update buttons
+  document.querySelectorAll('.template-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.template === name);
+  });
+
+  // Update description
+  document.getElementById('templateDesc').textContent = template.desc;
+
+  // Update grid class
+  const grid = document.getElementById('diagramGrid');
+  grid.className = 'diagram-grid ' + template.tplClass;
+
+  // Show only active nodes
+  document.querySelectorAll('.grid-node').forEach(n => {
+    n.style.display = template.nodes.includes(n.id) ? 'flex' : 'none';
+  });
+
+  // Wait for layout then draw edges
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      drawEdges(name);
+    });
+  });
+
+  // Update stats
+  const accentSet = new Set();
+  template.nodes.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      const cls = el.classList.value;
+      if (cls.includes('blue'))   accentSet.add('blue');
+      if (cls.includes('green'))  accentSet.add('green');
+      if (cls.includes('gold'))   accentSet.add('gold');
+      if (cls.includes('purple')) accentSet.add('purple');
+      if (cls.includes('red'))    accentSet.add('red');
+      if (cls.includes('orange')) accentSet.add('orange');
+    }
+  });
+  document.getElementById('statNodes').textContent = template.nodes.length;
+  document.getElementById('statEdges').textContent = template.edges.length;
+  document.getElementById('statAccents').textContent = accentSet.size;
+}
+
+// ── Resize Debounce ──
+let resizeTimer;
+function onResize() {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    const activeBtn = document.querySelector('.template-btn.active');
+    if (activeBtn) {
+      showTemplate(activeBtn.dataset.template);
+    }
+  }, 100);
+}
+window.addEventListener('resize', onResize);
+
+// ── Button Click Handlers ──
+document.querySelectorAll('.template-btn').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    showTemplate(this.dataset.template);
+  });
+});
+
+// ── Mutation Observer: re-draw edges if CSS grid changes layout ──
+// (catches responsive reflow at breakpoints)
+const resizeObserver = new ResizeObserver(() => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    const activeBtn = document.querySelector('.template-btn.active');
+    if (activeBtn) {
+      const name = activeBtn.dataset.template;
+      drawEdges(name);
+    }
+  }, 80);
+});
+resizeObserver.observe(document.getElementById('diagramGrid'));
+
+// ── Init ──
+showTemplate('layered');
+</script>
+
+</body>
+</html>

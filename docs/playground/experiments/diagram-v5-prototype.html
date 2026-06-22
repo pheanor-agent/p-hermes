@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Grid + SVG Edge Prototype</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0d1117;color:#e6edf3;font-family:system-ui,sans-serif;padding:20px}
+  
+  .diagram-wrapper{position:relative;max-width:960px;margin:0 auto}
+  
+  .diagram-grid{
+    display:grid;
+    grid-template-columns:repeat(12,1fr);
+    gap:16px 20px;
+    position:relative;
+    padding:20px;
+    background:#161b22;
+    border-radius:12px;
+    border:1px solid #30363d;
+  }
+  
+  /* Layered template */
+  .template-layered{
+    grid-template-areas:
+      "layer1 layer1 layer1 layer1 layer1 layer1 layer1 layer1 layer1 layer1 layer1 layer1"
+      ". . . . . . . . . . . ."
+      "layer2 layer2 layer2 layer2 layer2 layer2 layer2 layer2 layer2 layer2 layer2 layer2"
+      ". . . . . . . . . . . ."
+      "layer3 layer3 layer3 layer3 layer3 layer3 layer3 layer3 layer3 layer3 layer3 layer3";
+  }
+  
+  /* Hub & Spoke */
+  .template-hub{
+    grid-template-areas:
+      ". . . . tools tools tools tools . . . ."
+      ". . memory memory . . . . models models . ."
+      ". . . . hermes hermes hermes hermes . . . ."
+      ". . search search . . . . llm llm . ."
+      ". . . . . . image image . . . .";
+  }
+  
+  .grid-node{
+    padding:16px 12px;
+    text-align:center;
+    background:#1c2128;
+    border:1px solid #30363d;
+    border-radius:8px;
+    font-size:14px;
+    transition:border-color .2s;
+    min-height:52px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+  .grid-node:hover{border-color:#58a6ff}
+  .grid-node .icon{font-size:1.4rem;margin-bottom:2px}
+  .grid-node .sub{font-size:11px;color:#8b949e;margin-top:2px}
+  
+  .node-accent-blue{border-left:3px solid #58a6ff}
+  .node-accent-green{border-left:3px solid #3fb950}
+  .node-accent-gold{border-left:3px solid #d29922}
+  .node-accent-purple{border-left:3px solid #bc8cff}
+  
+  /* Areas */
+  .a-agent{grid-area:layer1}
+  .a-session{grid-area:layer2}
+  .a-storage{grid-area:layer3}
+  
+  .a-hub{grid-area:hermes}
+  .a-mem{grid-area:memory}
+  .a-tools{grid-area:tools}
+  .a-models{grid-area:models}
+  
+  /* SVG Overlay */
+  .svg-overlay{
+    position:absolute;
+    top:0;left:0;
+    width:100%;height:100%;
+    pointer-events:none;
+    z-index:1;
+  }
+  .svg-overlay path{
+    fill:none;
+    stroke-width:2.5;
+    stroke-linecap:round;
+    stroke:#58a6ff;
+  }
+  
+  /* Info */
+  .info{text-align:center;margin:12px 0 0;font-size:13px;color:#8b949e}
+  .template-btn{
+    display:inline-block;margin:0 4px 12px;
+    padding:6px 16px;border-radius:6px;
+    background:#21262d;border:1px solid #30363d;
+    color:#e6edf3;cursor:pointer;font-size:13px;
+  }
+  .template-btn.active{background:#1f6feb;border-color:#58a6ff}
+</style>
+</head><body>
+
+<h2 style="margin-bottom:12px;color:#3fb950">🧪 CSS Grid + SVG Edge Prototype</h2>
+<p style="color:#8b949e;margin-bottom:16px">레이아웃=CSS Grid, 엣지만 SVG(getBoundingClientRect 동적 계산)</p>
+
+<button class="template-btn active" onclick="showTemplate('layered')">🔲 Layered</button>
+<button class="template-btn" onclick="showTemplate('hub')">🕸️ Hub & Spoke</button>
+
+<div class="diagram-wrapper">
+<div class="diagram-grid template-layered" id="grid">
+  <div class="grid-node node-accent-blue a-agent" id="n-agent">
+    <div class="icon">⚡</div>
+    <div>Hermes Agent</div>
+    <div class="sub">Core Orchestrator</div>
+  </div>
+  <div class="grid-node a-session" id="n-session">
+    <div class="icon">⚡</div>
+    <div>Session Manager</div>
+    <div class="sub">Context · History</div>
+  </div>
+  <div class="grid-node node-accent-purple a-storage" id="n-storage">
+    <div class="icon">💾</div>
+    <div>Persistent Storage</div>
+    <div class="sub">SQLite · Filesystem</div>
+  </div>
+  
+  <!-- Hub nodes (hidden initially) -->
+  <div class="grid-node node-accent-green a-hub" id="n-hub" style="display:none">
+    <div class="icon">⚡</div>
+    <div>Hermes Agent</div>
+    <div class="sub">Orchestrator</div>
+  </div>
+  <div class="grid-node node-accent-blue a-mem" id="n-mem" style="display:none">
+    <div class="icon">🧠</div>
+    <div>Memory</div>
+    <div class="sub">FTS5 + Vector</div>
+  </div>
+  <div class="grid-node node-accent-gold a-tools" id="n-tools" style="display:none">
+    <div class="icon">🔧</div>
+    <div>Tools</div>
+    <div class="sub">Shell · Browser</div>
+  </div>
+  <div class="grid-node node-accent-blue a-models" id="n-models" style="display:none">
+    <div class="icon">🤖</div>
+    <div>Models</div>
+    <div class="sub">LLM · Vision</div>
+  </div>
+  
+  <!-- Hubs spoke hidden nodes -->
+  <div class="grid-node a-search" style="display:none">Search</div>
+  <div class="grid-node a-llm" style="display:none">LLM</div>
+  <div class="grid-node a-image" style="display:none">Image</div>
+  
+  <svg class="svg-overlay" id="svgOverlay"></svg>
+</div>
+</div>
+
+<div class="info" id="status">✅ 엣지 동적 계산 — 노드 크기/위치 변경에도 자동 대응</div>
+
+<script>
+function drawEdges(gridId, edges) {
+  const grid = document.getElementById(gridId);
+  const svg = document.getElementById('svgOverlay');
+  if (!svg) return;
+  
+  svg.innerHTML = '';
+  
+  const gridRect = grid.getBoundingClientRect();
+  
+  edges.forEach(e => {
+    const from = document.getElementById(e.from);
+    const to = document.getElementById(e.to);
+    if (!from || !to || from.style.display === 'none' || to.style.display === 'none') return;
+    
+    const fromRect = from.getBoundingClientRect();
+    const toRect = to.getBoundingClientRect();
+    
+    // Calculate in grid-relative coordinates
+    const x1 = fromRect.left + fromRect.width / 2 - gridRect.left;
+    const y1 = fromRect.bottom - gridRect.top;
+    const x2 = toRect.left + toRect.width / 2 - gridRect.left;
+    const y2 = toRect.top - gridRect.top;
+    
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    
+    // Bezier curve
+    const cy = (y1 + y2) / 2;
+    path.setAttribute('d', `M ${x1} ${y1} C ${x1} ${cy}, ${x2} ${cy}, ${x2} ${y2}`);
+    
+    // Color based on source node accent
+    const accentClasses = Array.from(from.classList);
+    if (accentClasses.some(c => c.includes('gold'))) path.style.stroke = '#d29922';
+    else if (accentClasses.some(c => c.includes('green'))) path.style.stroke = '#3fb950';
+    else if (accentClasses.some(c => c.includes('purple'))) path.style.stroke = '#bc8cff';
+    else path.style.stroke = '#58a6ff';
+    
+    svg.appendChild(path);
+  });
+}
+
+function showTemplate(name) {
+  document.querySelectorAll('.template-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  const grid = document.getElementById('grid');
+  
+  // Reset all
+  grid.className = 'diagram-grid';
+  document.querySelectorAll('.grid-node').forEach(n => n.style.display = 'none');
+  
+  if (name === 'layered') {
+    grid.classList.add('template-layered');
+    ['n-agent','n-session','n-storage'].forEach(id => {
+      document.getElementById(id).style.display = 'flex';
+    });
+    drawEdges('grid', [
+      {from:'n-agent', to:'n-session'},
+      {from:'n-session', to:'n-storage'}
+    ]);
+  } else if (name === 'hub') {
+    grid.classList.add('template-hub');
+    ['n-hub','n-mem','n-tools','n-models'].forEach(id => {
+      document.getElementById(id).style.display = 'flex';
+    });
+    drawEdges('grid', [
+      {from:'n-mem', to:'n-hub'},
+      {from:'n-tools', to:'n-hub'},
+      {from:'n-models', to:'n-hub'}
+    ]);
+  }
+}
+
+// Initial draw
+showTemplate('layered');
+
+// Redraw on resize with debounce
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    const active = document.querySelector('.template-btn.active');
+    if (active) showTemplate(active.textContent.includes('Layered') ? 'layered' : 'hub');
+  }, 100);
+});
+</script>
+</body></html>
