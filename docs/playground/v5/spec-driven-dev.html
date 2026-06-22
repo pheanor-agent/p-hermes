@@ -1,398 +1,639 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spec-Driven Dev: 명세서가 코드보다 먼저</title>
-  <link rel="stylesheet" href="../css/reveal.css">
-  <link rel="stylesheet" href="../css/white.css">
-  <!--"Google Fonts (한글) "-->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-  <!-- Highlight.js -->
-  <link rel="stylesheet" href="../css/highlight-github.min.css">
-  <script src="../js/highlight.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-  <script> window.mermaidConfig = { startOnLoad: false, theme: 'default' }; </script>
-  <style>
-    :root {
-      --scale-h1: 2.2em;
-      --scale-h2: 1.5em;
-      --scale-body: 0.85em;
-      --scale-small: 0.75em;
-      --scale-caption: 0.65em;
-      --scale-tiny: 0.55em;
-      --code-font: 0.76em;
-      --diagram-font: 0.82em;
-    }
-    .reveal { font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', 'Noto Sans KR', 'Helvetica Neue', sans-serif; }
-    .reveal h1 { font-size: var(--scale-h1); }
-    .reveal h2 { font-size: var(--scale-h2); color: #1a7f37; }
-    .reveal section img { background: none; border: none; box-shadow: none; }
-    .reveal .slides section.section-divider { text-align: left; }
-    .reveal .slides section.section-divider h2 { font-size: 2em; border-bottom: 3px solid #1a7f37; padding-bottom: 0.2em; }
-    .badge { display: inline-block; background: #1a7f37; color: #fff; padding: 0.2em 0.6em; border-radius: 12px; font-size: 0.6em; vertical-align: middle; }
-    .problem-card { background: #fff5f5; border-left: 4px solid #c0392b; padding: 1em; text-align: left; margin: 0.5em 0; }
-    .solution-card { background: #f0faf0; border-left: 4px solid #1a7f37; padding: 1em; text-align: left; margin: 0.5em 0; }
-    .two-col { display: flex; gap: 1em; }
-    .two-col > div { flex: 1; }
-    .stat { font-size: 2em; font-weight: bold; color: #1a7f37; }
-    .stat-label { font-size: 0.5em; color: #666; }
-    pre code { font-size: var(--code-font); }
-    .tree { list-style: none; padding-left: 1.5em; font-family: monospace; }
-    .tree li { margin: 0.2em 0; }
-    .tree .folder::before { content:"📁 "; }
-    .tree .file::before { content:"📄 "; }
-    .reveal pre.mermaid { 
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      max-width: 1080px; 
-      margin: 40px auto; 
-      overflow: visible;
-    }
-    .mermaid svg { 
-      max-width: 100%; 
-      height: auto; 
-      display: block;
-      overflow: visible;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spec-Driven Dev · Golden Circle</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:#0f1117;color:#e8eaed;overflow:hidden;
+    width:100vw;height:100vh;
+  }
+  .stage{
+    width:100vw;height:100vh;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    position:relative;overflow:hidden;
+  }
+  .slide{
+    display:none;flex-direction:column;justify-content:center;align-items:center;
+    width:86%;max-width:960px;min-height:60vh;
+    animation:fadeIn .45s ease-out;
+    padding:24px 32px;
+  }
+  .slide.active{display:flex}
 
-    /* Mermaid Click-to-Zoom */
-    .mermaid-zoom-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.85);
-      z-index: 9999;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-    }
-    .mermaid-zoom-overlay.active {
-      display: flex;
-    }
-    .mermaid-zoom-overlay svg {
-      max-width: 90%;
-      max-height: 90%;
-      width: auto;
-      height: auto;
-    }
-    .mermaid[data-zoomable="true"] {
-      cursor: zoom-in;
-    }
-    .v5-diagram-iframe{width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)}
-@media(max-width:700px){.v5-diagram-iframe{height:260px}}
-  </style>
+  h1{font-size:2.6rem;font-weight:700;letter-spacing:-.02em;margin-bottom:20px}
+  h2{font-size:1.9rem;font-weight:600;margin-bottom:16px}
+  h3{font-size:1.4rem;font-weight:500;margin-bottom:12px;color:#9aa0a6}
+  p{font-size:1.2rem;line-height:1.7;max-width:780px;text-align:center}
+  .gc-why h1{color:#fbbc04}
+  .gc-what h1{color:#8ab4f8}
+  .gc-how h1{color:#81c995}
+  .gc-title h1{background:linear-gradient(135deg,#fbbc04,#f28b82);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .gc-summary h1{background:linear-gradient(135deg,#8ab4f8,#c58af9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+  .tag{
+    display:inline-block;font-size:.8rem;font-weight:600;letter-spacing:.08em;
+    padding:4px 14px;border-radius:20px;margin-bottom:14px;text-transform:uppercase;
+  }
+  .tag-why{background:#fbbc0433;color:#fbbc04}
+  .tag-what{background:#8ab4f833;color:#8ab4f8}
+  .tag-how{background:#81c99533;color:#81c995}
+  .tag-pros{background:#34a85333;color:#34a853}
+  .tag-cons{background:#ea433533;color:#ea4335}
+  .tag-summary{background:#c58af933;color:#c58af9}
+
+  .grid-3{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:20px;width:100%;max-width:860px;margin:12px 0;
+  }
+  .grid-2{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:20px;width:100%;max-width:660px;margin:12px 0;
+  }
+  .card{
+    background:#1e2029;border-radius:14px;padding:22px 18px;text-align:center;
+    border:1px solid #2d2f3a;transition:border-color .2s;
+  }
+  .card:hover{border-color:#fbbc0466}
+  .card .icon{font-size:2rem;margin-bottom:8px}
+  .card h4{font-size:1.1rem;font-weight:600;margin-bottom:6px}
+  .card p{font-size:.95rem;color:#9aa0a6;line-height:1.5}
+
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:#1e2029;border:1px solid #2d2f3a;
+    padding:6px 16px;border-radius:30px;font-size:.95rem;margin:4px;
+  }
+
+  .stat-row{display:flex;gap:28px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+  .stat{text-align:center}
+  .stat .num{font-size:2.8rem;font-weight:700}
+  .stat .num.gold{color:#fbbc04}
+  .stat .num.blue{color:#8ab4f8}
+  .stat .num.green{color:#81c995}
+  .stat .num.red{color:#f28b82}
+  .stat .num.purple{color:#c58af9}
+  .stat .lbl{font-size:.9rem;color:#9aa0a6;margin-top:2px}
+
+  .arrow-flow{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .arrow-flow .node{
+    background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;
+    padding:12px 18px;text-align:center;min-width:100px;
+  }
+  .arrow-flow .node .lbl{font-size:.85rem;color:#9aa0a6}
+  .arrow-flow .node .val{font-size:1.1rem;font-weight:600;margin-top:2px}
+  .arrow-flow .arrow{font-size:1.5rem;color:#5f6368}
+
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px;width:100%;max-width:860px;margin:12px 0}
+  .two-col .col{text-align:center}
+
+  .list-compact{text-align:left;max-width:680px;margin:10px auto;list-style:none}
+  .list-compact li{
+    padding:8px 0;font-size:1.1rem;line-height:1.6;
+    display:flex;align-items:flex-start;gap:10px;
+  }
+  .list-compact li::before{content:"▸";color:#fbbc04;font-weight:700}
+
+  .pipeline{
+    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0;
+  }
+  .pipe-step{
+    background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;
+    padding:10px 16px;text-align:center;min-width:90px;
+  }
+  .pipe-step .num{font-size:1rem;font-weight:700;color:#8ab4f8}
+  .pipe-step .lbl{font-size:.85rem;color:#9aa0a6}
+  .pipe-step.gold .num{color:#fbbc04}
+  .pipe-step.green .num{color:#81c995}
+
+  .root-cause-box{
+    background:#1e2029;border:2px solid #fbbc0466;border-radius:14px;
+    padding:24px 32px;text-align:center;max-width:600px;margin:16px 0;
+  }
+  .root-cause-box .big{font-size:1.6rem;font-weight:700;color:#fbbc04;margin-bottom:8px}
+  .root-cause-box .sub{font-size:1rem;color:#9aa0a6;line-height:1.6}
+
+  .spec-flow{display:flex;align-items:center;justify-content:center;gap:6px;margin:16px 0}
+  .spec-flow .item{
+    background:#1e2029;border:1px solid #2d2f3a;border-radius:10px;
+    padding:10px 14px;text-align:center;min-width:80px;
+  }
+  .spec-flow .item .lbl{font-size:.8rem;color:#9aa0a6}
+  .spec-flow .item .val{font-size:1rem;font-weight:600;margin-top:2px}
+  .spec-flow .arrow{font-size:1.3rem;color:#5f6368}
+
+  .spec-step{
+    background:#1e2029;border:1px solid #2d2f3a;border-radius:14px;
+    padding:20px 24px;text-align:center;max-width:340px;margin:8px;
+  }
+  .spec-step .emoji{font-size:2rem;margin-bottom:8px}
+  .spec-step h4{font-size:1.1rem;font-weight:600;margin-bottom:6px}
+  .spec-step p{font-size:.9rem;color:#9aa0a6;line-height:1.5}
+  .spec-step .detail{margin-top:10px;font-size:.85rem;color:#5f6368;text-align:left;padding-left:12px}
+  .spec-step .detail li{list-style:none;padding:3px 0}
+  .spec-step .detail li::before{content:"→ ";color:#8ab4f8}
+
+  .pros-grid,.cons-grid{
+    display:flex;flex-direction:column;gap:12px;width:100%;max-width:400px;margin:8px;
+  }
+  .pros-item,.cons-item{
+    background:#1e2029;border-radius:12px;padding:16px 20px;
+    display:flex;align-items:center;gap:14px;
+  }
+  .pros-item{border:1px solid #34a85344}
+  .cons-item{border:1px solid #ea433544}
+  .pros-item .check{color:#34a853;font-size:1.4rem;font-weight:700}
+  .cons-item .cross{color:#ea4335;font-size:1.4rem;font-weight:700}
+  .pros-item .txt{font-size:.95rem;color:#e8eaed}
+  .pros-item .txt .hl{color:#34a853;font-weight:600}
+  .cons-item .txt{font-size:.95rem;color:#e8eaed}
+  .cons-item .txt .hl{color:#ea4335;font-weight:600}
+
+  .summary-block{
+    background:#1e2029;border:2px solid #c58af944;border-radius:16px;
+    padding:32px;text-align:center;max-width:720px;width:100%;margin:16px 0;
+  }
+  .summary-block .main-line{font-size:1.8rem;font-weight:700;margin-bottom:12px;line-height:1.4}
+  .summary-block .sub-line{font-size:1rem;color:#9aa0a6;line-height:1.6;margin-bottom:20px}
+
+  .nav-bar{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    display:flex;align-items:center;gap:14px;
+    background:#1e2029;border:1px solid #2d2f3a;
+    padding:8px 20px;border-radius:30px;z-index:100;
+  }
+  .nav-bar button{
+    background:none;border:none;color:#9aa0a6;font-size:1.2rem;
+    cursor:pointer;padding:4px 8px;border-radius:6px;transition:all .2s;
+    line-height:1;
+  }
+  .nav-bar button:hover{color:#e8eaed;background:#2d2f3a}
+  .nav-bar .counter{
+    font-size:.85rem;color:#5f6368;min-width:48px;text-align:center;
+  }
+  .nav-dots{display:flex;gap:5px}
+  .nav-dots .dot{
+    width:8px;height:8px;border-radius:50%;background:#2d2f3a;
+    cursor:pointer;transition:all .25s;
+  }
+  .nav-dots .dot.active{background:#fbbc04;width:20px;border-radius:4px}
+
+  @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+  @media(max-width:700px){
+    h1{font-size:1.8rem}
+    h2{font-size:1.5rem}
+    p{font-size:1rem}
+    .grid-3,.grid-2{grid-template-columns:1fr}
+    .two-col{grid-template-columns:1fr}
+    .slide{width:92%;padding:16px}
+    .nav-bar{gap:8px;padding:6px 14px}
+  }
+</style>
 </head>
 <body>
-  <div class="reveal">
-    <div class="slides">
 
-      <!-- ===== SECTION 0: OPENING ===== -->
+<div class="stage" id="stage"></div>
+<div class="nav-bar" id="navBar">
+  <button id="prevBtn">◀</button>
+  <span class="counter" id="counter">1/1</span>
+  <div class="nav-dots" id="dots"></div>
+  <button id="nextBtn">▶</button>
+</div>
 
-      <!-- Slide 1: Title -->
-      <section class="title-slide">
-        <p style="color: var(--r-heading-color); margin-bottom: 1rem; font-size: 0.8em;">p-hermes · 기술 컨셉 강의</p>
-        <h1>Spec-Driven Dev</h1>
-        <p style="font-size: 1.1em;">명세서가 코드보다 먼저 — SSOT 원칙과 의존성 추적</p>
-        <p style="font-size: 0.6em; color: #888; margin-top: 2em;">Slides overview deck · GitHub Pages</p>
-      </section>
-
-      <!-- Slide 2: Agenda -->
-      <section>
-        <h2>오늘의 여정</h2>
-        <table style="font-size: 0.75em; width: 80%; margin: 0 auto;">
-          <tr><td style="color:#c0392b; width: 15%;">WHY</td><td>명세서 없는 개발의 리스크 — 재작업, 불일치, 추적 불가</td></tr>
-          <tr><td style="color:#1a7f37; width: 15%;">WHAT</td><td>SSOT 원칙 + 3종 의존성 + 3단계 Conflict Detection</td></tr>
-          <tr><td style="color:#0969da; width: 15%;">HOW</td><td>Spec 등록 흐름, Batch Modification 병렬 워크플로우</td></tr>
-          <tr><td style="color:#bc4c00; width: 15%;">TRADE-OFFS</td><td>초기 작성 오버헤드, 작은 프로젝트에서의 과잉</td></tr>
-        </table>
-        <p style="font-size: 0.6em; color: #888; margin-top: 1em;">약 18분 소요</p>
-      </section>
-
-      <!-- ===== SECTION 1: WHY ===== -->
-
-      <!-- Slide 3: Section divider - WHY -->
-      <section class="section-divider">
-        <span class="badge">WHY</span>
-        <h2>왜 명세서가 먼저인가?</h2>
-      </section>
-
-      <!--"Slide 4: Problem - 명세서 없는 개발의 리스크 "-->
-      <section>
-        <h2>명세서 없이 코드부터 작성하면</h2>
-        <div class="problem-card">
-          <strong>① 재작업 비용 폭발</strong><br>
-          <span style="font-size: 0.8em;">방향이 어긋나면 처음부터 다시. 여러 에이전트가 각기 다른 기준으로 작업.</span>
+<script>
+const slides = [
+  // ────────────── 1: Title ──────────────
+  {
+    cls:'gc-title',
+    html:`<span class="tag tag-why">GOLDEN CIRCLE</span>
+      <h1>Spec-Driven Dev</h1>
+      <h2 style="color:#9aa0a6;font-weight:400">명세서가 코드보다 먼저</h2>
+      <p style="color:#5f6368;margin-top:30px;font-size:1rem">
+        WHY &nbsp;·&nbsp; WHAT &nbsp;·&nbsp; HOW &nbsp;·&nbsp; PROS &amp; CONS
+      </p>`
+  },
+  // ────────────── 2: Agenda ──────────────
+  {
+    cls:'',
+    html:`<h1>Agenda</h1>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:20px;text-align:left">
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 20px;background:#1e2029;border-radius:12px;border-left:4px solid #fbbc04">
+          <span style="font-size:1.4rem;font-weight:700;color:#fbbc04">01</span>
+          <div><strong style="color:#fbbc04">WHY</strong><br><span style="font-size:.9rem;color:#9aa0a6">추측 기반 코딩 · 문서 격차 · 재현 불가능 · 근본 원인</span></div>
         </div>
-        <div class="problem-card">
-          <strong>② 수치·구조 불일치</strong><br>
-          <span style="font-size: 0.8em;">부모"1,500자" vs 자식"3,500자" — 어느 것이 진실? 폴더 경로 재정의도 참조 무효화.</span>
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 20px;background:#1e2029;border-radius:12px;border-left:4px solid #8ab4f8">
+          <span style="font-size:1.4rem;font-weight:700;color:#8ab4f8">02</span>
+          <div><strong style="color:#8ab4f8">WHAT</strong><br><span style="font-size:.9rem;color:#9aa0a6">Spec = SSOT · 9단계 연동 · Spec Matrix</span></div>
         </div>
-        <div class="problem-card">
-          <strong>③ 추적 불가</strong><br>
-          <span style="font-size: 0.8em;">누가, 언제, 왜 변경했는지 알 수 없으면 승인된 산출물조차 시스템과 불일치.</span>
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 20px;background:#1e2029;border-radius:12px;border-left:4px solid #81c995">
+          <span style="font-size:1.4rem;font-weight:700;color:#81c995">03</span>
+          <div><strong style="color:#81c995">HOW</strong><br><span style="font-size:.9rem;color:#9aa0a6">Spec 작성 · 리뷰 · 코드 생성 (1:1)</span></div>
         </div>
-      </section>
-
-      <!-- ===== SECTION 2: WHAT ===== -->
-
-      <!-- Slide 5: Section divider - WHAT -->
-      <section class="section-divider">
-        <span class="badge">WHAT</span>
-        <h2>Spec-Driven Dev의 핵심 메커니즘</h2>
-      </section>
-
-      <!--"Slide 6: SSOT 원칙 "-->
-      <section>
-        <h2>SSOT: 단일 진실 공급원</h2>
-        <p style="font-size: 0.85em;">명세서(Spec)가 시스템의 <strong>권위 있는 정의</strong>. 모든 것은 Spec에서 파생됩니다.</p>
-        <div class="two-col">
-          <div class="solution-card" style="font-size: 0.8em;">
-            <strong>Spec이 곧 진실</strong><br>
-            코드 · 테스트 · 문서는 모두 Spec에서 파생
-          </div>
-          <div class="solution-card" style="font-size: 0.8em;">
-            <strong>변경은 Spec에서 시작</strong><br>
-            기능 추가 · 버그 수정 · 리팩토링 모두 Spec 변경으로 시작
-          </div>
+        <div style="display:flex;align-items:center;gap:14px;padding:12px 20px;background:#1e2029;border-radius:12px;border-left:4px solid #34a853">
+          <span style="font-size:1.4rem;font-weight:700;color:#34a853">04</span>
+          <div><strong style="color:#34a853">PROS &amp; CONS</strong><br><span style="font-size:.9rem;color:#9aa0a6">효과와 한계 + 요약</span></div>
         </div>
-        <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">-> 자동화된 검증(<code>spec-conformance.sh</code>)으로 준수 여부를 기계가 확인</p>
-      </section>
-
-      <!--"Slide 7: 3종 의존성 타입 "-->
-      <section>
-        <h2>3종 의존성 타입</h2>
-        <table style="font-size: 0.8em; width: 90%;">
-          <tr style="border-bottom: 2px solid #1a7f37;">
-            <th>타입</th><th>의미</th><th>승인</th><th>부모 업데이트</th>
-          </tr>
-          <tr>
-            <td><strong>extends</strong></td>
-            <td>부모를 상세화하여 확장</td>
-            <td style="color:#1a7f37;">✅ 가능</td>
-            <td>❌ 불필요</td>
-          </tr>
-          <tr>
-            <td><strong>raises</strong></td>
-            <td>부모의 수치적 기준 상승 (분량·성능 등)</td>
-            <td style="color:#1a7f37;">✅ 가능 (delta 문서화)</td>
-            <td style="color:#bc4c00;">✅ 필수</td>
-          </tr>
-          <tr>
-            <td><strong>conflicts</strong></td>
-            <td>부모와 모순 (구조·경로 재정의 등)</td>
-            <td style="color:#c0392b;">❌ 차단</td>
-            <td>충돌 해결 필요</td>
-          </tr>
-        </table>
-        <p style="font-size: 0.65em; color: #666; margin-top: 0.5em;"><code>raises</code>는 충돌이 아닌 <em>의도적 요구사항 상승</em> — delta를 문서화하고 승인 시 부모를 업데이트</p>
-      </section>
-
-      <!--"Slide 8: 의존성 그래프 "-->
-      <section>
-        <h2>의존성 그래프 예시</h2>
-        <iframe src="../experiments/diagram-v5.html?template=tree" 
-        class="v5-diagram-iframe" 
-        loading="lazy"
-        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
-</iframe>
-        <p style="font-size: 0.65em; color: #666;">부모는 구조/권위, 자식은 부분집합 상세화 — 계층 구조 유지</p>
-      </section>
-
-      <!--"Slide 9: Conflict Detection 3단계 "-->
-      <section>
-        <h2>Conflict Detection: 3단계 검증</h2>
-        <table style="font-size: 0.78em; width: 95%; text-align: left;">
-          <tr class="fragment fade-in">
-            <td style="width: 32%;"><strong>① Quantitative</strong><br><span style="color:#888;">수치 비교</span></td>
-            <td>분량·라인 수·성능 지표 비교. 상승 -> <code>raises</code>, 모순 -> <code>conflicts</code></td>
-          </tr>
-          <tr class="fragment fade-in">
-            <td><strong>② Structural</strong><br><span style="color:#888;">구조 재정의</span></td>
-            <td>폴더 구조·트랙 아키텍처·파일 경로 재정의 시도 -> <code>conflicts</code> (경로 무효화 방지)</td>
-          </tr>
-          <tr class="fragment fade-in">
-            <td><strong>③ Domain Overlap</strong><br><span style="color:#888;">도메인 중복</span></td>
-            <td>동일 도메인 두 Spec의 역할 중복 확인. 부모=구조, 자식=부분 상세화</td>
-          </tr>
-        </table>
-        <p class="fragment" style="font-size: 0.7em; color: #1a7f37; margin-top: 0.5em;">-> 신규 Spec 등록 전 <strong>반드시</strong> 3단계를 모두 통과해야 승인</p>
-      </section>
-
-      <!--"Slide 10: Conflict Detection 흐름도 "-->
-      <section>
-        <h2>검증 흐름도</h2>
-        <iframe src="../experiments/diagram-v5.html?template=pipeline" 
-        class="v5-diagram-iframe" 
-        loading="lazy"
-        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
-</iframe>
-      </section>
-
-      <!-- ===== SECTION 3: HOW ===== -->
-
-      <!-- Slide 11: Section divider - HOW -->
-      <section class="section-divider">
-        <span class="badge">HOW</span>
-        <h2>어떻게 작동하는가?</h2>
-      </section>
-
-      <!--"Slide 12: Batch Modification 병렬 워크플로우 "-->
-      <section>
-        <h2>Batch Modification: 병렬 수정</h2>
-        <p style="font-size: 0.8em;">리뷰에서 여러 Spec 수정 사항이 발견되면 서브에이전트에게 병렬로 위임</p>
-        <iframe src="../experiments/diagram-v5.html?template=hubSpoke" 
-        class="v5-diagram-iframe" 
-        loading="lazy"
-        style="width:100%;max-width:960px;height:360px;border:none;border-radius:10px;margin:16px auto;display:block;background:transparent;box-shadow:0 2px 12px rgba(0,0,0,0.2)">
-</iframe>
-        <p style="font-size: 0.65em; color: #666;">핵심 규칙: 전체 컨텍스트 공유 · <code>patch</code> 도구 사용(전체 재작성 금지) · 수정 후 반드시 검증</p>
-      </section>
-
-      <!--"Slide 13: 신규 Spec 등록 체크리스트 + 예시 "-->
-      <section>
-        <h2>신규 Spec 등록 — 실제 체크리스트</h2>
-        <div class="two-col">
-          <table style="font-size: 0.68em; width: 100%;">
-            <tr style="border-bottom: 2px solid #1a7f37;"><th>#</th><th>작업</th><th>도구</th></tr>
-            <tr><td>1</td><td>Spec 작성</td><td><code>SPEC-NEW.md</code></td></tr>
-            <tr><td>2</td><td>Conflict Detection</td><td>grep 3단계</td></tr>
-            <tr><td>3</td><td><code>_matrix.json</code> 갱신</td><td>의존성 배열</td></tr>
-            <tr><td>4</td><td><code>_index.yaml</code> 갱신</td><td>카탈로그 항목</td></tr>
-            <tr><td>5</td><td>충돌 문서화</td><td><code>note</code> 필드</td></tr>
-            <tr><td>6</td><td>검증 실행</td><td><code>json.tool</code></td></tr>
-          </table>
-          <div>
-            <pre style="font-size: 0.5em; text-align: left;"><code class="language-bash" data-trim># 1. 수치 한계값 grep (Conflict Detection)
-grep -n"분량\|자\|chars" specs/active/SPEC-NEW.md
-
-# 2. 의존성 그래프 검증
-cat specs/_matrix.json | python3 -m json.tool
-
-# 3. 잔여 참조 확인 (Batch 후)
-grep -rn"old_value" specs/active/SPEC-*.md</code></pre>
+      </div>`
+  },
+  // ────────────── 3: WHY - Problem 1 ──────────────
+  {
+    cls:'gc-why',
+    html:`<span class="tag tag-why">WHY · 문제 1</span>
+      <h1>추측 기반 코딩</h1>
+      <p>명세서 없이 시작하면 개발자의 <strong style="color:#fbbc04">추측</strong>이 실제 요구사항을 대체합니다.</p>
+      <div class="grid-3" style="margin-top:24px">
+        <div class="card" style="border-color:#f28b8244">
+          <div class="icon">🤔</div>
+          <h4>요구사항 불일치</h4>
+          <p>개발자가 이해한 요구와<br>실제 요구가 항상 다릅니다</p>
+        </div>
+        <div class="card" style="border-color:#f28b8244">
+          <div class="icon">🔄</div>
+          <h4>반복 재작업</h4>
+          <p>"이게 아니에요" —<br>개발 시간의 40%가 재작업</p>
+        </div>
+        <div class="card" style="border-color:#f28b8244">
+          <div class="icon">🎯</div>
+          <h4>방향성 상실</h4>
+          <p>목표가 불명확하면<br>코드는 표류합니다</p>
+        </div>
+      </div>
+      <p style="color:#f28b82;font-size:1rem;margin-top:10px">명세 없음 → 요구사항 불일치 → 재작업 악순환</p>`
+  },
+  // ────────────── 4: WHY - Problem 2 ──────────────
+  {
+    cls:'gc-why',
+    html:`<span class="tag tag-why">WHY · 문제 2</span>
+      <h1>문서와 코드 격차</h1>
+      <p>구현이 완료되면 문서는 항상 <strong style="color:#fbbc04">구식</strong>이 됩니다.</p>
+      <div class="two-col" style="max-width:700px;margin-top:20px">
+        <div class="col">
+          <div style="background:#1e2029;border:1px solid #f28b8244;border-radius:14px;padding:24px">
+            <div style="font-size:2.4rem;font-weight:700;color:#34a853">코드</div>
+            <p style="font-size:.95rem;color:#e8eaed;margin-top:10px">매일 진화</p>
           </div>
         </div>
-      </section>
-
-      <!-- ===== SECTION 4: TRADE-OFFS ===== -->
-
-      <!-- Slide 14: Trade-offs -->
-      <section>
-        <h2><span class="badge" style="background: #bc4c00;">TRADE-OFFS</span> 한계와 주의점</h2>
-        <table style="font-size: 0.78em; width: 90%;">
-          <tr>
-            <th style="width: 40%;">장점</th>
-            <th style="width: 40%;">비용</th>
-          </tr>
-          <tr>
-            <td>변경 추적성 · 일관성 확보</td>
-            <td>초기 Spec 작성 오버헤드</td>
-          </tr>
-          <tr>
-            <td>다중 에이전트 충돌 사전 차단</td>
-            <td>검증 절차(grep/체크리스트) 학습 곡선</td>
-          </tr>
-          <tr>
-            <td>코드·문서·테스트의 자동 검증</td>
-            <td>작은/일회성 프로젝트엔 과잉</td>
-          </tr>
-        </table>
-        <div class="problem-card" style="margin-top: 0.8em;">
-          <strong>이런 경우엔 부적합</strong><br>
-          <span style="font-size: 0.8em;">단일 파일 스크립트 · 빠른 프로토타입 · Spec 간 관계가 없는 독립 작업 — 절차 비용만 커짐</span>
+        <div class="col">
+          <div style="background:#1e2029;border:1px solid #f28b8244;border-radius:14px;padding:24px">
+            <div style="font-size:2.4rem;font-weight:700;color:#f28b82">문서</div>
+            <p style="font-size:.95rem;color:#e8eaed;margin-top:10px">작성 후 방치</p>
+          </div>
         </div>
-      </section>
-
-      <!-- ===== SECTION 5: SUMMARY ===== -->
-
-      <!-- Slide 15: Summary -->
-      <section>
-        <h2>핵심 요약</h2>
-        <ol style="font-size: 0.9em;">
-          <li class="fragment"><strong>SSOT</strong> — 모든 코드·문서·테스트는 Spec에서 파생</li>
-          <li class="fragment"><strong>3종 의존성</strong> — extends(확장) / raises(상승) / conflicts(충돌)</li>
-          <li class="fragment"><strong>3단계 Conflict Detection</strong> — 수치 -> 구조 -> 도메인, 등록 전 필수</li>
-          <li class="fragment"><strong>Batch Modification</strong> — 병렬 위임 + patch + 검증으로 다중 Spec 수정</li>
-        </ol>
-        <p class="fragment" style="font-size: 0.7em; color: #888; margin-top: 1em;">"명세서가 있는 곳에 효율이 있습니다"</p>
-      </section>
-
-      <!-- Slide 16: Q&A / Next steps -->
-      <section>
-        <h1 style="font-size: 3em;">Q&A</h1>
-        <p style="font-size: 1em;">질문이 있으시면 편하게 말씀해주세요.</p>
-      </section>
-
-      <!-- 더 알아보기 -->
-      <section>
-        <h2>📌 더 알아보기</h2>
-        <div style="font-size: 0.7em; text-align: left; width: 80%; margin: 0 auto;">
-          <p><strong>참고 자료</strong></p>
-          <ul>
-            <li>📚 <a target="_blank" href="../../wiki/guides/spec-driven-dev.md">Wiki 가이드</a></li>
-            <li>📝 <a target="_blank" href="../../blog/posts/spec-driven-dev-design.md">Blog 분석</a></li>
-          </ul>
-          <p style="margin-top: 1em;"><strong>관련 슬라이드</strong></p>
-          <ul>
-                  <li>🎯 <a target="_blank" href="./workflow-pipeline.html">Workflow Pipeline</a></li>
-                  <li>🎯 <a href="./content-system.html">Content System</a></li>
-                  <li>🎯 <a href="./architecture-layered.html">Architecture</a></li>
+      </div>
+      <div style="background:#1e2029;border:1px solid #2d2f3a;border-radius:12px;padding:18px 24px;margin-top:16px;max-width:600px">
+        <p style="font-size:.95rem;color:#9aa0a6">
+          <strong style="color:#f28b82">격차의 결과:</strong> 신규 개발자 온보딩 2배 시간 ·<br>
+          유지보수 비용 기하급수적 증가 · 시스템 이해도 저하
+        </p>
+      </div>`
+  },
+  // ────────────── 5: WHY - Problem 3 ──────────────
+  {
+    cls:'gc-why',
+    html:`<span class="tag tag-why">WHY · 문제 3</span>
+      <h1>재현 불가능</h1>
+      <p>결정의 <strong style="color:#fbbc04">맥락</strong>이 기록되지 않으면, 모든 것이 '재발견'이 됩니다.</p>
+      <div class="grid-3" style="margin-top:20px">
+        <div class="card" style="border-color:#f28b8244">
+          <div class="icon">❓</div>
+          <h4>"왜 이렇게 했지?"</h4>
+          <p>6개월 후 아무도<br>그 이유를 모릅니다</p>
+        </div>
+        <div class="card" style="border-color:#f28b8244">
+          <div class="icon">🔁</div>
+          <h4>재발견 강요</h4>
+          <p>과거의 결정을 다시<br>연구하고 검증해야 함</p>
+        </div>
+        <div class="card" style="border-color:#f28b8244">
+          <div class="icon">📉</div>
+          <h4>기술 부채 누적</h4>
+          <p>기록 없는 결정이<br>돌이킬 수 없는 부채로</p>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem;margin-top:8px">"기록하지 않은 결정은 존재하지 않은 것과 같다"</p>`
+  },
+  // ────────────── 6: WHY - Root Cause ──────────────
+  {
+    cls:'gc-why',
+    html:`<span class="tag tag-why">WHY · 근본 원인</span>
+      <h1>Spec 없는 개발</h1>
+      <div class="root-cause-box">
+        <div class="big">세 가지 문제의 공통 원인</div>
+        <div class="sub">
+          설계 결정을 강제로 기록하고 검증하는<br>
+          <strong style="color:#fbbc04">메커니즘</strong>이 없다는 것
+        </div>
+      </div>
+      <div class="arrow-flow" style="max-width:600px;margin:10px auto">
+        <div class="node" style="border-color:#f28b8266">
+          <div class="val">명세 없음</div>
+          <div class="lbl">요구사항 불일치</div>
+        </div>
+        <div class="arrow" style="color:#5f6368">→</div>
+        <div class="node" style="border-color:#f28b8266">
+          <div class="val">기록 없음</div>
+          <div class="lbl">문서 격차</div>
+        </div>
+        <div class="arrow" style="color:#5f6368">→</div>
+        <div class="node" style="border-color:#f28b8266">
+          <div class="val">맥락 없음</div>
+          <div class="lbl">재현 불가능</div>
+        </div>
+      </div>
+      <p style="color:#f28b82;font-weight:600;font-size:1.1rem;margin-top:8px">
+        → Spec이 없는 개발이 모든 문제의 출발점
+      </p>`
+  },
+  // ────────────── 7: WHAT - Spec = SSOT ──────────────
+  {
+    cls:'gc-what',
+    html:`<span class="tag tag-what">WHAT · 해결책</span>
+      <h1>Spec = SSOT</h1>
+      <p>Single Source of Truth.<br>모든 변경은 반드시 <strong style="color:#8ab4f8">Spec을 경유</strong>합니다.</p>
+      <div class="grid-3" style="margin-top:24px">
+        <div class="card" style="border-color:#8ab4f844">
+          <div class="icon">📋</div>
+          <h4>Spec이 먼저</h4>
+          <p>변경 의도를 코드보다<br>먼저 문서화합니다</p>
+        </div>
+        <div class="card" style="border-color:#8ab4f844">
+          <div class="icon">🔗</div>
+          <h4>코드는 구현체</h4>
+          <p>코드는 Spec의 물리적<br>구현일 뿐입니다</p>
+        </div>
+        <div class="card" style="border-color:#8ab4f844">
+          <div class="icon">🎯</div>
+          <h4>진정한 설계</h4>
+          <p>Spec이 산출물이지<br>코드가 산출물이 아닙니다</p>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem;margin-top:8px">
+        Spec이 진정한 설계 산출물, 코드는 그 구현체
+      </p>`
+  },
+  // ────────────── 8: WHAT - 9단계 연동 ──────────────
+  {
+    cls:'gc-what',
+    html:`<span class="tag tag-what">WHAT · 9단계 연동</span>
+      <h1>설계 게이트: design.md</h1>
+      <p>설계 단계 진입 시 <strong style="color:#8ab4f8">Spec design.md</strong> 자동 생성</p>
+      <div class="pipeline" style="margin-top:16px">
+        <div class="pipe-step gold"><div class="num">1</div><div class="lbl">요청</div></div>
+        <div class="pipe-step gold"><div class="num">2</div><div class="lbl">조사</div></div>
+        <div class="pipe-step" style="border-color:#8ab4f866"><div class="num">3</div><div class="lbl">설계</div></div>
+        <div class="pipe-step" style="border-color:#8ab4f866"><div class="num">4</div><div class="lbl">리뷰</div></div>
+        <div class="pipe-step gold"><div class="num">5</div><div class="lbl">승인</div></div>
+        <div class="pipe-step green"><div class="num">6</div><div class="lbl">실행</div></div>
+        <div class="pipe-step green"><div class="num">7</div><div class="lbl">테스트</div></div>
+        <div class="pipe-step green"><div class="num">8</div><div class="lbl">실행검토</div></div>
+        <div class="pipe-step"><div class="num">9</div><div class="lbl">완료</div></div>
+      </div>
+      <div style="background:#1e2029;border:1px solid #8ab4f844;border-radius:12px;padding:16px 24px;margin-top:10px;max-width:650px">
+        <p style="font-size:.95rem;color:#9aa0a6">
+          <strong style="color:#8ab4f8">게이트 검증:</strong> Spec design.md 누락 시 다음 단계 차단<br>
+          <strong style="color:#8ab4f8">자동 생성:</strong> 설계 단계 진입 → design.md 템플릿 자동 작성
+        </p>
+      </div>`
+  },
+  // ────────────── 9: WHAT - Spec Matrix ──────────────
+  {
+    cls:'gc-what',
+    html:`<span class="tag tag-what">WHAT · Spec Matrix</span>
+      <h1>의존성 추적 + 충돌 감지</h1>
+      <p>다중 Spec 간의 관계를 <strong style="color:#8ab4f8">그래프</strong>로 관리합니다.</p>
+      <div class="grid-2" style="grid-template-columns:1fr 1fr;max-width:720px;margin-top:20px">
+        <div class="card" style="border-color:#8ab4f844">
+          <div class="icon">🔗</div>
+          <h4>의존성 그래프</h4>
+          <p>Spec 간의 의존 관계를<br>자동으로 추적하고 시각화</p>
+        </div>
+        <div class="card" style="border-color:#c58af944">
+          <div class="icon">⚡</div>
+          <h4>충돌 감지</h4>
+          <p>서로 충돌하는 Spec을<br>자동 감지하고 경고</p>
+        </div>
+      </div>
+      <div class="list-compact" style="margin:10px auto">
+        <li>의존성 그래프 <strong>자동 구축</strong> — Spec 등록 시 관계 분석</li>
+        <li>Spec 간 <strong>충돌 감지</strong> — 동일 모듈 상반된 변경 발견</li>
+        <li>변경 <strong>영향 범위 시각화</strong> — "이 Spec을 바꾸면 무엇이 바뀌나?"</li>
+      </div>`
+  },
+  // ────────────── 10: HOW - Spec 작성 ──────────────
+  {
+    cls:'gc-how',
+    html:`<span class="tag tag-how">HOW · 1단계</span>
+      <h1>Spec 작성</h1>
+      <p style="margin-bottom:8px">변경할 내용을 <strong style="color:#81c995">먼저 문서화</strong>합니다.</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:16px">
+        <div class="spec-step" style="border-color:#81c99544">
+          <div class="emoji">✍</div>
+          <h4>변경 의도 기록</h4>
+          <p>왜 이 변경이 필요한지,<br>어떤 문제를 해결하는지 서술</p>
+          <ul class="detail">
+            <li>변경 배경과 목적</li>
+            <li>예상 영향 범위</li>
+            <li>요구사항 매핑</li>
           </ul>
         </div>
-      </section>
+        <div class="spec-step" style="border-color:#81c99544">
+          <div class="emoji">📐</div>
+          <h4>설계 결정 명시</h4>
+          <p>기술적 결정과<br>그 근거를 투명하게 공개</p>
+          <ul class="detail">
+            <li>선택한 방식과 이유</li>
+            <li>대안과 비교 평가</li>
+            <li>예상 출력/동작 정의</li>
+          </ul>
+        </div>
+      </div>`
+  },
+  // ────────────── 11: HOW - Review ──────────────
+  {
+    cls:'gc-how',
+    html:`<span class="tag tag-how">HOW · 2단계</span>
+      <h1>리뷰: 양방향 검증 (논리 + 사실)</h1>
+      <p>정방향 <strong style="color:#81c995">구조 일치</strong>와 역방향 <strong style="color:#8ab4f8">사실 정확성</strong>을 모두 검증합니다.</p>
+      <div class="two-col" style="max-width:780px;margin-top:16px">
+        <div class="col">
+          <div style="background:#1e2029;border:1px solid #81c99544;border-radius:14px;padding:24px;text-align:left">
+            <h4 style="color:#81c995;margin-bottom:12px;font-size:1.1rem">→ 정방향 (Conformance)</h4>
+            <p style="font-size:.85rem;color:#9aa0a6;margin-bottom:10px">Spec → 코드 방향. 구조적 일치 검증</p>
+            <div class="list-compact" style="margin:0">
+              <li>요구사항 추적 가능성</li>
+              <li>의존성 그래프 검증</li>
+              <li>게이트 통과 조건 확인</li>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div style="background:#1e2029;border:1px solid #8ab4f844;border-radius:14px;padding:24px;text-align:left">
+            <h4 style="color:#8ab4f8;margin-bottom:12px;font-size:1.1rem">← 역방향 (Accuracy)</h4>
+            <p style="font-size:.85rem;color:#9aa0a6;margin-bottom:10px">코드 → Spec 방향. 사실 정확성 검증</p>
+            <div class="list-compact" style="margin:0">
+              <li>금칙어 스캔 (부정확한 표현)</li>
+              <li>파일 참조 검증 (존재하는 경로)</li>
+              <li>HTTP 엔드포인트 검증</li>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem;margin-top:10px">
+        양방향 모두 통과 시 → 승인 → 코드 생성 단계 진입
+      </p>`
+  },
+  // ────────────── 12: HOW - Code Generation ──────────────
+  {
+    cls:'gc-how',
+    html:`<span class="tag tag-how">HOW · 3단계</span>
+      <h1>코드 생성 (Spec과 1:1)</h1>
+      <p>Spec의 각 항목이 코드에 <strong style="color:#81c995">직접 매핑</strong>됩니다.</p>
+      <div class="spec-flow" style="margin-top:20px">
+        <div class="item" style="border-color:#81c99566">
+          <div class="val" style="color:#81c995">Spec</div>
+          <div class="lbl">설계 문서</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="item" style="border-color:#8ab4f866">
+          <div class="val" style="color:#8ab4f8">매핑</div>
+          <div class="lbl">1:1 대응</div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="item" style="border-color:#34a85366">
+          <div class="val" style="color:#34a853">Code</div>
+          <div class="lbl">구현체</div>
+        </div>
+      </div>
+      <div class="list-compact" style="margin:10px auto">
+        <li>Spec 항목별 <strong>코드 모듈 매핑</strong> — 트레이서빌리티 자동 유지</li>
+        <li>Spec 변경 시 <strong>코드 재생성</strong> — 항상 최신 상태 동기화</li>
+        <li>코드 리뷰 시 <strong>Spec 참조</strong> — "이 코드는 Spec의 어떤 항목을 구현하나?"</li>
+      </div>`
+  },
+  // ────────────── 13: PROS & CONS ──────────────
+  {
+    cls:'',
+    html:`<h1>Pros &amp; Cons</h1>
+      <p style="margin-bottom:6px">모든 방법론은 트레이드오프를 수반합니다.</p>
+      <div class="two-col" style="max-width:860px;margin-top:16px">
+        <div class="col">
+          <span class="tag tag-pros" style="margin-bottom:12px">PROS</span>
+          <div class="pros-grid">
+            <div class="pros-item">
+              <span class="check">✓</span>
+              <span class="txt"><span class="hl">요구사항 추적</span><br>변경의 시작과 끝을 Spec으로 추적</span>
+            </div>
+            <div class="pros-item">
+              <span class="check">✓</span>
+              <span class="txt"><span class="hl">코드+문서 일치</span><br>Spec = SSOT, 문서가 구식이 될 수 없음</span>
+            </div>
+            <div class="pros-item">
+              <span class="check">✓</span>
+              <span class="txt"><span class="hl">재현 가능</span><br>모든 결정 맥락이 Spec에 영구 기록</span>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <span class="tag tag-cons" style="margin-bottom:12px">CONS</span>
+          <div class="cons-grid">
+            <div class="cons-item">
+              <span class="cross">✗</span>
+              <span class="txt"><span class="hl">초기 문서화 비용</span><br>코딩 전 Spec 작성이 익숙하지 않음</span>
+            </div>
+            <div class="cons-item">
+              <span class="cross">✗</span>
+              <span class="txt"><span class="hl">전면 재검토</span><br>Spec 변경 시 전체 설계 재검증 필요</span>
+            </div>
+            <div class="cons-item">
+              <span class="cross">✗</span>
+              <span class="txt"><span class="hl">과잉 문서화 위험</span><br>적절한 선 긋기가 중요</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem;margin-top:8px">
+        빠른 프로토타이핑에는 경량화 룰 적용 필요
+      </p>`
+  },
+  // ────────────── 14: SUMMARY ──────────────
+  {
+    cls:'gc-summary',
+    html:`<span class="tag tag-summary">SUMMARY</span>
+      <div class="summary-block">
+        <div class="main-line">
+          <span style="color:#fbbc04">Spec</span>이 먼저, <span style="color:#34a853">코드</span>는 그 다음<br>
+          <span style="color:#8ab4f8">Spec = SSOT</span>
+        </div>
+        <div class="sub-line">
+          Spec-Driven Dev는 코딩 속도를 늦추는 것이 아니라,<br>
+          <strong>잘못된 방향으로 가는 속도</strong>를 늦추는 것입니다.
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat">
+          <div class="num gold">Spec</div>
+          <div class="lbl">Single Source of Truth</div>
+        </div>
+        <div class="stat">
+          <div class="num blue">9단계</div>
+          <div class="lbl">상태머신 연동</div>
+        </div>
+        <div class="stat">
+          <div class="num green">1:1</div>
+          <div class="lbl">Spec ↔ Code</div>
+        </div>
+        <div class="stat">
+          <div class="num purple">✓</div>
+          <div class="lbl">변경 추적 + 재현</div>
+        </div>
+      </div>
+      <p style="color:#9aa0a6;font-size:.95rem;font-style:italic;margin-top:10px">
+        "올바르게 설계하면, 실행은 빠르고 정확해진다"
+      </p>`
+  },
+  {
+    cls:'gc-summary',
+    html:`<span class="tag tag-summary">🎯 슬라이드 끝</span>
+      <h1>p-hermes 홈</h1>
+      <p style="margin-bottom:16px">시스템 문서와 슬라이드를 한눈에 확인하세요</p>
+      <div class="summary-item">
+        <div class="num">🔙</div>
+        <p><a href="../../" style="color:#8ab4f8">⚡ p-hermes 홈 →</a></p>
+      </div>`
+  }
+];
 
-    </div>
-  </div>
+// ── render engine ──
+let idx = 0;
+const stage = document.getElementById('stage');
+const dotsEl = document.getElementById('dots');
+const counter = document.getElementById('counter');
 
-  <script src="../js/reveal.js"></script>
-  <script>
-    Reveal.initialize({
-      hash: true,
-      slideNumber: 'c/t',
-      controls: true,
-      progress: true,
-      center: true,
-      transition: 'slide',
-      fragments: true,
-      minScale: 0.15,
-      maxScale: 2.0
-    }).then(() => {
-      mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose' });
-      // Wait for all mermaid renders then attach zoom
-      Promise.allSettled(Array.from(document.querySelectorAll('.mermaid')).map((el, idx) => {
-        const code = el.textContent.trim();
-        return mermaid.render('m' + idx, code).then(({ svg }) => { el.innerHTML = svg; }).catch(e => { console.error('Mermaid render failed', e); });
-      })).then(() => {
-        document.querySelectorAll('.mermaid').forEach(el => {
-          el.setAttribute('data-zoomable', 'true');
-          el.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const overlay = document.getElementById('mermaid-zoom-overlay');
-            overlay.innerHTML = el.innerHTML;
-            overlay.classList.add('active');
-          });
-        });
-        document.getElementById('mermaid-zoom-overlay').addEventListener('click', () => {
-          document.getElementById('mermaid-zoom-overlay').classList.remove('active');
-        });
-      });
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          document.getElementById('mermaid-zoom-overlay').classList.remove('active');
-        }
-      });
-    });
-    Reveal.addEventListener('ready', () => {
-      document.querySelectorAll('pre code').forEach((block) => {
-        hljs.highlightElement(block);
-      });
-    });
-  </script>
-  <div id="mermaid-zoom-overlay" class="mermaid-zoom-overlay"></div>
+function render(n){
+  const s = slides[n];
+  stage.innerHTML = `<div class="slide active ${s.cls||''}">${s.html}</div>`;
+  counter.textContent = `${n+1}/${slides.length}`;
+  Array.from(dotsEl.children).forEach((d,i)=>d.classList.toggle('active',i===n));
+}
+document.getElementById('prevBtn').onclick = ()=>{ idx=(idx-1+slides.length)%slides.length; render(idx); };
+document.getElementById('nextBtn').onclick = ()=>{ idx=(idx+1)%slides.length; render(idx); };
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '){e.preventDefault();idx=(idx+1)%slides.length;render(idx);}
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();idx=(idx-1+slides.length)%slides.length;render(idx);}
+  if(e.key==='Home'){e.preventDefault();idx=0;render(idx);}
+  if(e.key==='End'){e.preventDefault();idx=slides.length-1;render(idx);}
+});
+
+(function initDots(){
+  for(let i=0;i<slides.length;i++){
+    const d=document.createElement('div');d.className='dot';
+    d.onclick=()=>{idx=i;render(idx);};
+    dotsEl.appendChild(d);
+  }
+  render(0);
+})();
+</script>
 </body>
 </html>
