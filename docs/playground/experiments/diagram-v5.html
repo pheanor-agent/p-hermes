@@ -446,6 +446,22 @@
     .stat-card .num{font-size:1rem}
     .stat-card .lbl{font-size:.7rem}
   }
+
+  /* ── Embed Mode ── */
+  html[data-embed="true"] .header { display: none !important; }
+  html[data-embed="true"] .template-nav { display: none !important; }
+  html[data-embed="true"] .template-desc { display: none !important; }
+  html[data-embed="true"] .container { padding: 0; max-width: 100%; }
+  html[data-embed="true"] .diagram-wrapper { 
+    border: none !important; 
+    background: transparent !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+  html[data-embed="true"] body { 
+    background: transparent !important;
+    overflow: visible !important;
+  }
 </style>
 </head>
 <body>
@@ -946,6 +962,12 @@ resizeObserver.observe(document.getElementById('diagramGrid'));
 showTemplate('layered');
 
 // URL 파라미터로 템플릿 자동 로드
+
+  // Embed mode detection
+  var embed = params.get('embed');
+  if (embed === 'true') {
+    document.documentElement.setAttribute('data-embed', 'true');
+  }
 (function() {
   var params = new URLSearchParams(window.location.search);
   var tpl = params.get('template');
