@@ -326,8 +326,8 @@ graph TD
 
 ## 관련 문서
 
-- **Wiki Schema (SCHEMA.md)** — `~/.hermes/knowledge/wiki/SCHEMA.md` (지식 스키마 상세)
-- **Wiki Agent Guide (AGENTS.md)** — `~/.hermes/knowledge/wiki/AGENTS.md` (에이전트 운영 가이드)
+- [Wiki Schema (SCHEMA.md)](~/.hermes/knowledge/wiki/SCHEMA.md) — 지식 스키마 상세
+- [Wiki Agent Guide (AGENTS.md)](~/.hermes/knowledge/wiki/AGENTS.md) — 에이전트 운영 가이드
 - [자동화(Cron) 시스템 가이드](./automation.md) (Wiki) — 지식 가공 파이프라인이 크론 스케줄에 의해 자동화됩니다.
 - [작업 요청 및 워크플로우 가이드](./request-task.md) (Wiki) — JOB 완료 시 지식 시스템으로의 동기화 과정을 확인합니다.
 

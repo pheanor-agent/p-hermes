@@ -1,49 +1,29 @@
-# ✍️ Dev Blog
+# ✍️ p-hermes Dev Blog
 
-> **Why** — Hermes의 설계 철학과 기술적 결정을 기록합니다.
-> 모든 포스트는 GitHub 소스뷰어에서 `.md`로 읽을 수 있습니다.
-
----
-
+Hermes의 기술적 결정과 설계 철학을 기록하는 공간입니다. 단순한 기능 설명을 넘어, **왜 이 방식을 선택했는지**에 집중합니다.
 
 ## 한 줄 요약
 
-
+Hermes의 기술적 결정과 설계 철학을 심층 분석하는 블로그 — 각 시스템이 왜, 어떻게 설계되었는지 그 배경과 근거를 공유합니다.
 
 ## 기본 개념
 
+Dev Blog는 단순 기능 문서가 아니라 설계 배경과 공학적 근거를 기록합니다. 9단계 워크플로우의 안전성, 콘텐츠 검증 파이프라인의 Anti-Slop 철학, 지식 시스템의 Karpathy 구조 적용 등 각 시스템 설계의 '왜'에 집중합니다. 주제별 해시태그(#workflow, #knowledge, #cron 등)로 포스트를 탐색할 수 있습니다.
 
-## 🧭 Why Series
+## 🏷️ 주제별 탐색
+#workflow #knowledge #cron #model-routing #content #spec-driven-dev #hermes-agent
 
-Hermes의 핵심 설계 동기를 설명하는 시리즈입니다.
+## 📑 포스트 목록
 
-| 포스트 | 읽기 | 분량 |
-|--------|:----:|:----:|
-| [왜 AI는 기억하지 못하는가](posts/why-ai-has-no-memory.md) | 📖 | 15분 |
-| [왜 에이전트는 프로세스가 필요한가](posts/why-agents-need-process.md) | 📖 | 10분 |
-| [Job 기반 에이전트 설계](posts/job-based-agent-design.md) | 📖 | 10분 |
-| [Workflow Gate 설계 철학](posts/workflow-gate-philosophy.md) | 📖 | 15분 |
-| [Knowledge System 설계 철학](posts/knowledge-system-philosophy.md) | 📖 | 10분 |
-| [Hermes를 만든 이유](posts/why-we-built-hermes.md) | 📖 | 5분 |
-
-## 📐 Design Series
-
-각 시스템의 기술적 설계를 깊이 다룹니다.
-
-| 포스트 | 읽기 | 분량 |
-|--------|:----:|:----:|
-| [Hermes Agent 소개](posts/hermes-agent-intro.md) | 📖 | 20분 |
-| [레이어드 아키텍처](posts/architecture-layered.md) | 📖 | 15분 |
-| [왜 9단계 워크플로우인가](posts/why-9-step-workflow.md) | 📖 | 15분 |
-| [모델 라우팅 설계](posts/model-routing-design.md) | 📖 | 10분 |
-| [콘텐츠 시스템 설계](posts/content-system-design.md) | 📖 | 12분 |
-| [지식 분류 시스템 설계](posts/knowledge-system-design.md) | 📖 | 10분 |
-| [Cron 자동화 설계](posts/cron-automation-design.md) | 📖 | 10분 |
-| [Spec-Driven Dev 설계](posts/spec-driven-dev-design.md) | 📖 | 8분 |
+| 제목 | 주제 | 링크 |
+|------|------|------|
+| **왜 9단계 상태머신인가?** | #workflow | [읽기](./posts/why-9-step-workflow.md) |
+| **콘텐츠 시스템 설계** | #content | [읽기](./posts/content-system-design.md) |
+| **지식 분류 시스템 설계** | #knowledge | [읽기](./posts/knowledge-system-design.md) |
+| **모델 라우팅 설계** | #model-routing | [읽기](./posts/model-routing-design.md) |
+| **Spec-Driven Dev 설계** | #spec-driven-dev | [읽기](./posts/spec-driven-dev-design.md) |
+| **Cron 자동화 설계** | #cron | [읽기](./posts/cron-automation-design.md) |
+| **에르메스 에이전트 소개** | #hermes-agent | [읽기](./posts/hermes-agent-intro.md) |
+| **레이어드 아키텍처** | #architecture | [읽기](./posts/architecture-layered.md) |
 
 ---
-
-> **💡 Tip**: 블로그는 GitHub 소스뷰어에서 `.md` 프리뷰로 읽을 수 있습니다.
-> 관심 있는 주제를 클릭해서 바로 읽어보세요.
->
-> [← p-hermes 홈](../../README.md)
