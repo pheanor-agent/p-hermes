@@ -670,19 +670,19 @@
           <!-- Hermes Agent → Context Router -->
           <path d="M 560 55 C 620 55, 640 40, 680 47" class="svg-edge bl"/>
           <!-- Hermes Agent → Session Manager -->
-          <path d="M 400 80 C 350 120, 180 130, 200 175" class="svg-edge bl"/>
+          <path d="M 450 80 C 360 120, 250 130, 200 155" class="svg-edge bl"/>
           <!-- Hermes Agent → Pipeline Executor -->
-          <path d="M 480 80 C 510 120, 580 130, 600 175" class="svg-edge bl"/>
+          <path d="M 450 80 C 500 120, 580 130, 640 155" class="svg-edge bl"/>
           <!-- Session Manager → Workflow Gate -->
-          <path d="M 300 177 C 325 177, 335 177, 350 177" class="svg-edge gr"/>
+          <path d="M 300 177 C 310 177, 315 177, 320 177" class="svg-edge gr"/>
           <!-- Pipeline Executor → Skills -->
-          <path d="M 700 177 C 715 177, 720 177, 730 177" class="svg-edge gr"/>
+          <path d="M 740 177 C 750 177, 755 177, 760 177" class="svg-edge gr"/>
           <!-- Knowledge DB → Deliverable -->
           <path d="M 300 312 C 325 312, 335 312, 350 312" class="svg-edge animated"/>
           <!-- Skills → Deliverable -->
-          <path d="M 730 312 C 680 312, 550 312, 550 312" class="svg-edge animated"/>
+          <path d="M 820 200 C 750 270, 600 280, 550 312" class="svg-edge animated"/>
           <!-- Workflow Gate → Knowledge DB -->
-          <path d="M 550 177 C 500 220, 250 250, 200 312" class="svg-edge gd"/>
+          <path d="M 420 200 C 360 240, 260 250, 200 290" class="svg-edge gd"/>
 
           <!-- Nodes: Layer 1 -->
           <!-- User Input -->
@@ -708,13 +708,13 @@
 
           <!-- Workflow Gate -->
           <rect x="320" y="155" width="200" height="45" class="svg-node bl" rx="10" ry="10"/>
-          <text x="450" y="177" class="svg-label">Workflow Gate</text>
-          <text x="450" y="188" class="svg-sub">9-Step Pipeline</text>
+          <text x="420" y="177" class="svg-label">Workflow Gate</text>
+          <text x="420" y="188" class="svg-sub">9-Step Pipeline</text>
 
           <!-- Pipeline Executor -->
           <rect x="540" y="155" width="200" height="45" class="svg-node bl" rx="10" ry="10"/>
-          <text x="600" y="177" class="svg-label">Pipeline Executor</text>
-          <text x="600" y="188" class="svg-sub">Step Runner · Hooks</text>
+          <text x="640" y="177" class="svg-label">Pipeline Executor</text>
+          <text x="640" y="188" class="svg-sub">Step Runner · Hooks</text>
 
           <!-- Nodes: Layer 3 -->
           <!-- Knowledge DB -->
@@ -724,8 +724,8 @@
 
           <!-- Skills -->
           <rect x="760" y="155" width="120" height="45" class="svg-node gr" rx="10" ry="10"/>
-          <text x="800" y="177" class="svg-label" fill="var(--accent-green)">🛠️ Skills</text>
-          <text x="800" y="188" class="svg-sub">Procedures</text>
+          <text x="820" y="177" class="svg-label" fill="var(--accent-green)">🛠️ Skills</text>
+          <text x="820" y="188" class="svg-sub">Procedures</text>
 
           <!-- Deliverable (bottom center) -->
           <rect x="350" y="290" width="200" height="45" class="svg-node gd" rx="10" ry="10" filter="url(#glow)"/>
