@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Swimlane + Tree Prototype v5 — orthogonal routing</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d1117;color:#e6edf3;padding:20px;font-family:system-ui,sans-serif}
+h2{color:#3fb950;margin:10px 0}
+.grid-container{
+  display:grid;grid-template-columns:repeat(12,1fr);
+  gap:14px 20px;position:relative;padding:28px 24px;
+  background:#161b22;border-radius:12px;border:1px solid #30363d;
+  margin:0 auto 20px;max-width:960px;
+}
+.grid-node{
+  padding:14px 12px;text-align:center;
+  background:#1c2128;border:1px solid #30363d;
+  border-radius:8px;font-size:14px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:60px;
+}
+.grid-node .sub{font-size:11px;color:#8b949e;margin-top:2px}
+.label-node{font-size:12px;font-weight:600;letter-spacing:0.5px;min-height:60px;justify-content:center}
+.b-blue{border-left:3px solid #58a6ff}.b-green{border-left:3px solid #3fb950}
+.b-gold{border-left:3px solid #d29922}.b-purple{border-left:3px solid #bc8cff}
+.b-red{border-left:3px solid #f85149}
+</style></head><body>
+
+<h2>1. Swimlane</h2>
+<div class="grid-container" id="g1">
+  <div class="grid-node b-blue label-node lbl-a">HERMES</div>
+  <div class="grid-node b-blue sw-a1">Request · Plan<div class="sub">User Input → Analyze</div></div>
+  <div class="grid-node b-blue sw-a2">Execute<div class="sub">Tool Call · Result</div></div>
+  <div class="grid-node b-green label-node lbl-b">OPENCLAW</div>
+  <div class="grid-node b-green sw-b1">Schedule · Monitor<div class="sub">Cron · Health</div></div>
+  <div class="grid-node b-green sw-b2">Report<div class="sub">Status · Alert</div></div>
+  <div class="grid-node b-gold label-node lbl-c">STORAGE</div>
+  <div class="grid-node b-gold sw-c1">Read · Write<div class="sub">DB · FS</div></div>
+  <div class="grid-node b-gold sw-c2">Archive<div class="sub">Backup · Cleanup</div></div>
+</div>
+
+<h2>2. Tree (orthogonal routing)</h2>
+<div class="grid-container" id="g2">
+  <div class="grid-node b-purple tr-root">📚 Knowledge Base<div class="sub">FTS5 · Vectors</div></div>
+  <div class="grid-node b-blue tr-c1">📁 Architecture<div class="sub">System Design · API</div></div>
+  <div class="grid-node b-green tr-l1">📄 System Design<div class="sub">Layered · Pipeline</div></div>
+  <div class="grid-node b-gold tr-c2">📁 Wiki<div class="sub">Getting Started · Guides</div></div>
+  <div class="grid-node b-red tr-l2">📄 Install Guide<div class="sub">Setup · Config</div></div>
+</div>
+
+<script>
+(function(){
+var CFG = [
+  {id:"g1", name:"Swimlane", areas:[
+    "lbl-a lbl-a . sw-a1 sw-a1 . sw-a2 sw-a2 . . . .",
+    ". . . . . . . . . . . .",
+    "lbl-b lbl-b . sw-b1 sw-b1 . sw-b2 sw-b2 . . . .",
+    ". . . . . . . . . . . .",
+    "lbl-c lbl-c . sw-c1 sw-c1 . sw-c2 sw-c2 . . . ."
+  ], edges:[
+    ["sw-a1","sw-a2"],["sw-b1","sw-b2"],["sw-c1","sw-c2"],
+    ["sw-a2","sw-b2"],["sw-b2","sw-c2"]
+  ]},
+  {id:"g2", name:"Tree", areas:[
+    ". . . . tr-root tr-root tr-root tr-root . . . .",
+    ". . . . . . . . . . . .",
+    ". . . . . . tr-c1 tr-c1 . . . .",
+    ". . . . . . . . . . . .",
+    ". . . . . . tr-l1 tr-l1 . . . .",
+    ". . . . . . . . . . . .",
+    ". . . . . . tr-c2 tr-c2 . . . .",
+    ". . . . . . . . . . . .",
+    ". . . . . . tr-l2 tr-l2 . . . ."
+  ], edges:[
+    ["tr-root","tr-c1"],["tr-c1","tr-l1"],
+    ["tr-root","tr-c2"],["tr-c2","tr-l2"]
+  ]}
+];
+
+// Install grid areas
+CFG.forEach(function(cfg){
+  var grid=document.getElementById(cfg.id);
+  var aStr=cfg.areas.map(function(r){return '"'+r+'"';}).join(" ");
+  grid.style.gridTemplateAreas=aStr;
+  var seen={};
+  cfg.areas.forEach(function(row){
+    row.split(/\s+/).forEach(function(t){
+      if(t!="."&&!seen[t]){seen[t]=1;
+        var el=grid.querySelector("."+t); if(el) el.style.gridArea=t;
+      }
+    });
+  });
+});
+
+// Draw edges with routing
+setTimeout(function(){
+CFG.forEach(function(cfg){
+  var grid=document.getElementById(cfg.id);
+  var gRect=grid.getBoundingClientRect();
+  var svg=grid.querySelector("svg");
+  if(!svg){
+    svg=document.createElementNS("http://www.w3.org/2000/svg","svg");
+    svg.style.cssText="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1";
+    grid.appendChild(svg);
+  }
+
+  cfg.edges.forEach(function(e,i){
+    var from=grid.querySelector("."+e[0]), to=grid.querySelector("."+e[1]);
+    if(!from||!to)return;
+    var f=from.getBoundingClientRect(), t=to.getBoundingClientRect();
+    var cfx=f.left+f.width/2-gRect.left, cfy=f.top+f.height/2-gRect.top;
+    var ctx=t.left+t.width/2-gRect.left, cty=t.top+t.height/2-gRect.top;
+    var dx=ctx-cfx, dy=cty-cfy;
+    var absDx=Math.abs(dx), absDy=Math.abs(dy);
+
+    var path=document.createElementNS("http://www.w3.org/2000/svg","path");
+
+    // ORTHOGONAL ROUTING:
+    // For tree-like (parent→child): always use staircase
+    if(cfg.name==="Tree"){
+      var sx=cfx, sy=f.bottom-gRect.top;     // parent bottom center
+      var ex=ctx, ey=t.top-gRect.top;           // child top center
+      var midY=(sy+ey)/2;
+      // Staircase: down → right (or left) → down
+      if(absDx>10){ // not enough to see in same column
+        path.setAttribute("d","M "+sx+" "+sy+" L "+sx+" "+midY+" L "+ex+" "+midY+" L "+ex+" "+ey);
+      } else {
+        path.setAttribute("d","M "+sx+" "+sy+" L "+ex+" "+ey);
+      }
+    } else {
+      // SMART PORT ROUTING for non-tree
+      var x1,y1,x2,y2;
+      if(absDx>absDy){
+        x1=f.right-gRect.left; y1=cfy;
+        x2=t.left-gRect.left;  y2=cty;
+      } else {
+        x1=cfx; y1=f.bottom-gRect.top;
+        x2=ctx; y2=t.top-gRect.top;
+      }
+      var midX=(x1+x2)/2, midY=(y1+y2)/2;
+      path.setAttribute("d",absDx>absDy
+        ?"M "+x1+" "+y1+" C "+midX+" "+y1+", "+midX+" "+y2+", "+x2+" "+y2
+        :"M "+x1+" "+y1+" C "+x1+" "+midY+", "+x2+" "+midY+", "+x2+" "+y2);
+    }
+
+    path.style.stroke="#58a6ff"; path.style.fill="none";
+    path.style.strokeWidth="2.5"; path.style.strokeLinecap="round";
+    svg.appendChild(path);
+
+    var d=path.getAttribute("d");
+    console.log(e[0]+"->"+e[1]+" |d|="+absDx.toFixed(0)+","+absDy.toFixed(0)+" "+d.substring(0,50));
+  });
+});
+},400);
+})();
+</script>
+</body></html>

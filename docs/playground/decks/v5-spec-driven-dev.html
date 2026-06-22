@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>v5: Spec-Driven Development · p-hermes</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/dracula.css">
+  <style>
+    body{margin:0}
+    .reveal{font-family:system-ui,sans-serif}
+    .reveal h3{color:#3fb950;margin-bottom:20px}
+    .reveal .v5-diagram{width:100%;border:none;border-radius:8px;background:transparent}
+    .reveal .desc{color:#8b949e;font-size:0.8em;margin-top:12px}
+  </style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+  <section>
+    <h3>Spec-Driven Development</h3>
+    <iframe src="../experiments/diagram-v5.html?template=pipeline" 
+            class="v5-diagram" 
+            style="min-height:400px"
+            onload="this.style.height=(this.contentWindow.document.documentElement.scrollHeight+40)+'px'">
+    </iframe>
+    <p class="desc">Pipeline phases: Spec → Design → Implementation → Validation — SDD workflow</p>
+  </section>
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+<script>Reveal.initialize({controls:true,progress:true,center:true,hash:true})</script>
+</body>
+</html>
