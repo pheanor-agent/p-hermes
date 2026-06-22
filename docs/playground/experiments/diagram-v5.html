@@ -197,16 +197,16 @@
       ". . . . . . . . . . . ."
       ". l2-1 l2-1 . l2-2 l2-2 . l2-3 l2-3 . . ."
       ". . . . . . . . . . . ."
-      ". l3 l3 l3 l3 l3 l3 l3 l3 l3 . .";
+      ". l3-1 l3-1 . l3-2 l3-2 . l3-3 l3-3 . . .";
   }
 
   /* ── Template: Pipeline ── */
   .tpl-pipeline{
     grid-template-areas:
-      "ph1 ph1 ph1 . ph2 ph2 ph2 . ph3 ph3 ph3 ."
+      "ph1 ph1 ph1 ph2 ph2 ph2 ph3 ph3 ph3 ph4 ph4 ph4"
       ". . . . . . . . . . . ."
       ". . . . . . . . . . . ."
-      ". . . . ph4 ph4 ph4 . . . . ."
+      ". . . . . . . . . . . ."
       ". . . . . . . . . . . .";
   }
 
@@ -223,9 +223,9 @@
   /* ── Template: Comparison ── */
   .tpl-comparison{
     grid-template-areas:
-      "cmp-l cmp-l . cmp-r cmp-r cmp-r . . . . . ."
-      "cmp-l cmp-l . cmp-r cmp-r cmp-r . . . . . ."
-      "cmp-l cmp-l . cmp-r cmp-r cmp-r . . . . . .";
+      "cmp-l1 cmp-l1 . cmp-r1 cmp-r1 cmp-r1 . . . . . ."
+      "cmp-l2 cmp-l2 . cmp-r2 cmp-r2 cmp-r2 . . . . . ."
+      "cmp-l3 cmp-l3 . cmp-r3 cmp-r3 cmp-r3 . . . . . .";
   }
 
   /* ── Grid Area Assignments ── */
@@ -235,7 +235,9 @@
   .a-l2-1{grid-area:l2-1}
   .a-l2-2{grid-area:l2-2}
   .a-l2-3{grid-area:l2-3}
-  .a-l3{grid-area:l3}
+  .a-l3-1{grid-area:l3-1}
+  .a-l3-2{grid-area:l3-2}
+  .a-l3-3{grid-area:l3-3}
 
   .a-ph1{grid-area:ph1}
   .a-ph2{grid-area:ph2}
@@ -250,8 +252,12 @@
   .a-llm{grid-area:llm}
   .a-img{grid-area:img}
 
-  .a-cmp-l{grid-area:cmp-l}
-  .a-cmp-r{grid-area:cmp-r}
+  .a-cmp-l1{grid-area:cmp-l1}
+  .a-cmp-r1{grid-area:cmp-r1}
+  .a-cmp-l2{grid-area:cmp-l2}
+  .a-cmp-r2{grid-area:cmp-r2}
+  .a-cmp-l3{grid-area:cmp-l3}
+  .a-cmp-r3{grid-area:cmp-r3}
 
   /* ── Phase tags for Pipeline ── */
   .phase-tag{
@@ -464,10 +470,20 @@
       </div>
 
       <!-- Row 3 -->
-      <div class="grid-node accent-purple a-l3" id="n-l3">
+      <div class="grid-node accent-purple a-l3-1" id="n-l3-1">
         <div class="icon">💾</div>
-        <div class="label">Persistent Storage</div>
-        <div class="sub">SQLite · Filesystem · Git</div>
+        <div class="label">Session Store</div>
+        <div class="sub">Context · State</div>
+      </div>
+      <div class="grid-node accent-purple a-l3-2" id="n-l3-2">
+        <div class="icon">💾</div>
+        <div class="label">Knowledge Store</div>
+        <div class="sub">FTS5 · Vectors</div>
+      </div>
+      <div class="grid-node accent-purple a-l3-3" id="n-l3-3">
+        <div class="icon">💾</div>
+        <div class="label">Artifact Store</div>
+        <div class="sub">Results · Files</div>
       </div>
 
       <!-- ════════════════════════ PIPELINE ════════════════════════ -->
@@ -534,32 +550,32 @@
       </div>
 
       <!-- ════════════════════════ COMPARISON ════════════════════════ -->
-      <div class="grid-node accent-red a-cmp-l" id="n-cmp-l1" style="display:none">
+      <div class="grid-node accent-red a-cmp-l1" id="n-cmp-l1" style="display:none">
         <div class="icon">❌</div>
         <div class="label">Monolith</div>
         <div class="sub">Single codebase</div>
       </div>
-      <div class="grid-node accent-green a-cmp-r" id="n-cmp-r1" style="display:none">
+      <div class="grid-node accent-green a-cmp-r1" id="n-cmp-r1" style="display:none">
         <div class="icon">✅</div>
         <div class="label">Modular</div>
         <div class="sub">Microservices</div>
       </div>
-      <div class="grid-node accent-red a-cmp-l" id="n-cmp-l2" style="display:none">
+      <div class="grid-node accent-red a-cmp-l2" id="n-cmp-l2" style="display:none">
         <div class="icon">❌</div>
         <div class="label">Manual</div>
         <div class="sub">수동 배포</div>
       </div>
-      <div class="grid-node accent-green a-cmp-r" id="n-cmp-r2" style="display:none">
+      <div class="grid-node accent-green a-cmp-r2" id="n-cmp-r2" style="display:none">
         <div class="icon">✅</div>
         <div class="label">Automated</div>
         <div class="sub">CI/CD Pipeline</div>
       </div>
-      <div class="grid-node accent-red a-cmp-l" id="n-cmp-l3" style="display:none">
+      <div class="grid-node accent-red a-cmp-l3" id="n-cmp-l3" style="display:none">
         <div class="icon">❌</div>
         <div class="label">Slow</div>
         <div class="sub">수동 QA</div>
       </div>
-      <div class="grid-node accent-green a-cmp-r" id="n-cmp-r3" style="display:none">
+      <div class="grid-node accent-green a-cmp-r3" id="n-cmp-r3" style="display:none">
         <div class="icon">✅</div>
         <div class="label">Fast</div>
         <div class="sub">Automated Tests</div>
@@ -585,16 +601,16 @@
 // Edge from/to values are suffix after 'n-' — drawEdges prepends 'n-'
 const templates = {
   layered: {
-    nodes: ['n-l1-1','n-l1-2','n-l1-3','n-l2-1','n-l2-2','n-l2-3','n-l3'],
+    nodes: ['n-l1-1','n-l1-2','n-l1-3','n-l2-1','n-l2-2','n-l2-3','n-l3-1','n-l3-2','n-l3-3'],
     tplClass: 'tpl-layered',
     desc: '3-Layer Architecture — CSS Grid + SVG Edge Overlay',
     edges: [
       {from:'l1-1', to:'l2-1'},
       {from:'l1-2', to:'l2-2'},
       {from:'l1-3', to:'l2-3'},
-      {from:'l2-1', to:'l3'},
-      {from:'l2-2', to:'l3'},
-      {from:'l2-3', to:'l3'}
+      {from:'l2-1', to:'l3-1'},
+      {from:'l2-2', to:'l3-2'},
+      {from:'l2-3', to:'l3-3'}
     ]
   },
   pipeline: {
@@ -651,19 +667,40 @@ function drawEdges(templateName) {
     const f = from.getBoundingClientRect();
     const t = to.getBoundingClientRect();
 
-    const x1 = f.left + f.width/2 - gridRect.left;
-    const y1 = f.bottom - gridRect.top;
-    const x2 = t.left + t.width/2 - gridRect.left;
-    const y2 = t.top - gridRect.top;
+    const cx_f = f.left + f.width/2 - gridRect.left;
+    const cy_f = f.top + f.height/2 - gridRect.top;
+    const cx_t = t.left + t.width/2 - gridRect.left;
+    const cy_t = t.top + t.height/2 - gridRect.top;
 
-    const cy = (y1 + y2) / 2;
+    // Smart port routing: pick connection points based on relative position
+    let x1, y1, x2, y2;
+    const dx = cx_t - cx_f;
+    const dy = cy_t - cy_f;
+
+    if (Math.abs(dx) > Math.abs(dy)) {
+      // Horizontal flow: connect right-side → left-side
+      x1 = f.right - gridRect.left;
+      y1 = cy_f;
+      x2 = t.left - gridRect.left;
+      y2 = cy_t;
+    } else {
+      // Vertical flow: connect bottom → top
+      x1 = cx_f;
+      y1 = f.bottom - gridRect.top;
+      x2 = cx_t;
+      y2 = t.top - gridRect.top;
+    }
 
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
-    // Straight line if same x, curve otherwise
-    if (Math.abs(x1 - x2) < 1) {
-      path.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2}`);
+    // Bezier curve with smart control points
+    if (Math.abs(dx) > Math.abs(dy)) {
+      // Horizontal: right→left with slight curve
+      const cx = (x1 + x2) / 2;
+      path.setAttribute('d', `M ${x1} ${y1} C ${cx} ${y1}, ${cx} ${y2}, ${x2} ${y2}`);
     } else {
+      // Vertical: bottom→top
+      const cy = (y1 + y2) / 2;
       path.setAttribute('d', `M ${x1} ${y1} C ${x1} ${cy}, ${x2} ${cy}, ${x2} ${y2}`);
     }
 
