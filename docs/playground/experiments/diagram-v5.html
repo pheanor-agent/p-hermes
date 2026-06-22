@@ -958,24 +958,25 @@ const resizeObserver = new ResizeObserver(() => {
 });
 resizeObserver.observe(document.getElementById('diagramGrid'));
 
-// ── Init ──
-showTemplate('layered');
-
-// URL 파라미터로 템플릿 자동 로드
+// URL 파라미터로 템플릿 자동 로드 + Embed mode
+(function() {
+  var params = new URLSearchParams(window.location.search);
 
   // Embed mode detection
   var embed = params.get('embed');
   if (embed === 'true') {
     document.documentElement.setAttribute('data-embed', 'true');
   }
-(function() {
-  var params = new URLSearchParams(window.location.search);
+
   var tpl = params.get('template');
   if (tpl && templates[tpl]) {
     // Wait for DOM then load
     setTimeout(function() { showTemplate(tpl); }, 100);
   }
 })();
+
+// ── Init ──
+showTemplate('layered');
 </script>
 
 </body>
