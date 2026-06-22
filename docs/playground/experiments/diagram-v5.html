@@ -239,17 +239,13 @@
   }
 
   /* ── Template: Tree ── */
-  .tpl-tree{
+.tpl-tree{
     grid-template-areas:
-      ". . . . tr-root tr-root tr-root tr-root . . . ."
+      ". . . tr-root tr-root tr-root tr-root tr-root tr-root . . ."
       ". . . . . . . . . . . ."
-      ". . . . . . tr-c1 tr-c1 . . . ."
+      ". . ar-c1 ar-c1 . . . wi-c2 wi-c2 . . ."
       ". . . . . . . . . . . ."
-      ". . . . . . tr-l1 tr-l1 . . . ."
-      ". . . . . . . . . . . ."
-      ". . . . . . tr-c2 tr-c2 . . . ."
-      ". . . . . . . . . . . ."
-      ". . . . . . tr-l2 tr-l2 . . . .";
+      ". . . . sd-l1 sd-l1 . ig-l2 ig-l2 . . .";
   }
 
   /* ── Grid Area Assignments ── */
@@ -296,10 +292,10 @@
 
   /* ── Tree Areas ── */
   .a-tr-root{grid-area:tr-root}
-  .a-tr-c1{grid-area:tr-c1}
-  .a-tr-l1{grid-area:tr-l1}
-  .a-tr-c2{grid-area:tr-c2}
-  .a-tr-l2{grid-area:tr-l2}
+  .a-ar-c1{grid-area:ar-c1}
+  .a-wi-c2{grid-area:wi-c2}
+  .a-sd-l1{grid-area:sd-l1}
+  .a-ig-l2{grid-area:ig-l2}
 
   /* ── Phase tags for Pipeline ── */
   .phase-tag{
@@ -672,22 +668,22 @@
         <div class="label">Knowledge Base</div>
         <div class="sub">FTS5 · Vectors</div>
       </div>
-      <div class="grid-node accent-blue a-tr-c1" id="n-tr-c1" style="display:none">
+      <div class="grid-node accent-blue a-ar-c1" id="n-ar-c1" style="display:none">
         <div class="icon">📁</div>
-        <div class="label">Architecture Docs</div>
+        <div class="label">Architecture</div>
         <div class="sub">System Design · API</div>
       </div>
-      <div class="grid-node accent-green a-tr-l1" id="n-tr-l1" style="display:none">
-        <div class="icon">📄</div>
-        <div class="label">System Design</div>
-        <div class="sub">Layered · Pipeline</div>
-      </div>
-      <div class="grid-node accent-gold a-tr-c2" id="n-tr-c2" style="display:none">
+      <div class="grid-node accent-gold a-wi-c2" id="n-wi-c2" style="display:none">
         <div class="icon">📁</div>
         <div class="label">Wiki</div>
         <div class="sub">Getting Started · Guides</div>
       </div>
-      <div class="grid-node accent-red a-tr-l2" id="n-tr-l2" style="display:none">
+      <div class="grid-node accent-green a-sd-l1" id="n-sd-l1" style="display:none">
+        <div class="icon">📄</div>
+        <div class="label">System Design</div>
+        <div class="sub">Layered · Pipeline</div>
+      </div>
+      <div class="grid-node accent-red a-ig-l2" id="n-ig-l2" style="display:none">
         <div class="icon">📄</div>
         <div class="label">Install Guide</div>
         <div class="sub">Setup · Config</div>
@@ -771,14 +767,14 @@ const templates = {
     ]
   },
   tree: {
-    nodes: ['n-tr-root','n-tr-c1','n-tr-l1','n-tr-c2','n-tr-l2'],
+    nodes: ['n-tr-root','n-ar-c1','n-wi-c2','n-sd-l1','n-ig-l2'],
     tplClass: 'tpl-tree',
     desc: 'Tree — 3-level hierarchy (Root → Child → Leaf)',
     edges: [
-      {from:'tr-root', to:'tr-c1'},
-      {from:'tr-c1', to:'tr-l1'},
-      {from:'tr-root', to:'tr-c2'},
-      {from:'tr-c2', to:'tr-l2'}
+      {from:'tr-root', to:'ar-c1'},
+      {from:'ar-c1', to:'sd-l1'},
+      {from:'tr-root', to:'wi-c2'},
+      {from:'wi-c2', to:'ig-l2'}
     ]
   }
 };
