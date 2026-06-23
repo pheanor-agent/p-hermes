@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 02: Memory & Knowledge — Building an Agent OS with Hermes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0b0d12;
+    --surface: #12151c;
+    --card: #181c28;
+    --border: #262b3a;
+    --gold: #f0b429;
+    --gold-dim: #b8861e;
+    --gold-glow: rgba(240,180,41,.15);
+    --text: #e8edf5;
+    --text-dim: #8892a8;
+    --accent-cyan: #5bc0eb;
+    --accent-magenta: #f15bb5;
+    --accent-green: #00f5d4;
+    --accent-red: #ff6b6b;
+    --accent-orange: #ffa94d;
+    --accent-purple: #b197fc;
+    --radius: 16px;
+    --transition: 400ms cubic-bezier(.22,1,.36,1);
+  }
+
+  html, body {
+    height: 100%;
+    font-family: 'Inter','Noto Sans KR',system-ui,-apple-system,sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+  }
+
+  .deck {
+    display: flex;
+    height: 100vh;
+    scroll-snap-type: x mandatory;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  .deck::-webkit-scrollbar { display: none; }
+
+  .slide {
+    flex: 0 0 100vw;
+    height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nav {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 10px; z-index: 100;
+    background: rgba(18,21,28,.8);
+    padding: 8px 16px;
+    border-radius: 100px;
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+  }
+  .nav a {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border); transition: var(--transition);
+    display: block;
+  }
+  .nav a.active, .nav a:hover { background: var(--gold); box-shadow: 0 0 12px var(--gold-glow); }
+
+  .slide-number {
+    position: absolute; top: 24px; right: 32px;
+    font-size: 14px; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;
+  }
+
+  .lecture-badge {
+    position: absolute; top: 24px; left: 32px;
+    font-size: 12px; color: var(--gold-dim);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 1px;
+  }
+
+  /* ── Typography ── */
+  .title {
+    font-size: 48px; font-weight: 900;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    text-align: center; margin-bottom: 16px;
+  }
+  .subtitle {
+    font-size: 22px; color: var(--text-dim);
+    text-align: center; font-weight: 300;
+  }
+  .section-title {
+    font-size: 20px; font-weight: 700; color: var(--accent-cyan);
+    text-transform: uppercase; letter-spacing: 2px;
+    margin-bottom: 32px; text-align: center;
+  }
+
+  /* ── Flow Diagram ── */
+  .flow {
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+  }
+  .flow-item {
+    padding: 16px 40px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 22px; font-weight: 700;
+    min-width: 320px; text-align: center;
+    transition: var(--transition);
+  }
+  .flow-item:hover { border-color: var(--gold); box-shadow: 0 0 20px var(--gold-glow); }
+  .flow-arrow {
+    font-size: 28px; color: var(--gold);
+    text-shadow: 0 0 12px var(--gold-glow);
+  }
+
+  /* ── Two Column ── */
+  .two-col {
+    display: grid; grid-template-columns: 1fr 80px 1fr;
+    gap: 24px; align-items: center; width: 100%; max-width: 960px;
+  }
+  .col-card {
+    padding: 32px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-align: center;
+  }
+  .col-card h3 {
+    font-size: 22px; margin-bottom: 16px;
+  }
+  .col-card ul {
+    list-style: none; text-align: left;
+  }
+  .col-card li {
+    font-size: 20px; padding: 6px 0;
+    color: var(--text-dim);
+  }
+  .col-card li::before {
+    content: '•'; color: var(--gold); margin-right: 8px;
+  }
+  .vs-badge {
+    width: 64px; height: 64px;
+    background: var(--gold);
+    color: var(--bg);
+    font-size: 20px; font-weight: 900;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto;
+  }
+
+  /* ── Key Message ── */
+  .key-message {
+    margin-top: 32px;
+    padding: 20px 40px;
+    background: var(--gold-glow);
+    border: 1px solid var(--gold-dim);
+    border-radius: var(--radius);
+    font-size: 22px; font-weight: 700;
+    text-align: center;
+    color: var(--gold);
+  }
+
+  /* ── Tags ── */
+  .tags {
+    display: flex; flex-wrap: wrap; gap: 12px;
+    justify-content: center; margin-top: 24px;
+  }
+  .tag {
+    padding: 10px 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 20px; font-weight: 500;
+    transition: var(--transition);
+  }
+  .tag:hover { border-color: var(--gold); }
+  .tag.cyan { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+  .tag.purple { border-color: var(--accent-purple); color: var(--accent-purple); }
+  .tag.green { border-color: var(--accent-green); color: var(--accent-green); }
+  .tag.gold { border-color: var(--gold); color: var(--gold); }
+
+  /* ── Example Box ── */
+  .example-box {
+    margin-top: 32px;
+    padding: 24px 32px;
+    background: var(--card);
+    border-left: 4px solid var(--accent-cyan);
+    border-radius: var(--radius);
+    font-size: 20px;
+    max-width: 640px;
+  }
+  .example-box .label {
+    font-size: 14px; color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 8px;
+  }
+
+  /* ── Number Scale ── */
+  .number-scale {
+    display: flex; gap: 24px; align-items: flex-end; margin-top: 32px;
+  }
+  .number-item {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .number-bar {
+    width: 80px; background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 700;
+    transition: var(--transition);
+  }
+  .number-bar:hover { border-color: var(--accent-red); }
+  .number-label { font-size: 16px; color: var(--text-dim); }
+
+  /* ── Compare Table ── */
+  .compare-table {
+    width: 100%; max-width: 800px;
+    border-collapse: separate; border-spacing: 0;
+  }
+  .compare-table th {
+    font-size: 20px; padding: 16px 24px;
+    border-bottom: 2px solid var(--gold);
+    text-align: left;
+  }
+  .compare-table td {
+    font-size: 20px; padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  .compare-table tr:hover td { background: var(--gold-glow); }
+
+  /* ── Big Question ── */
+  .big-q {
+    font-size: 36px; font-weight: 900;
+    text-align: center;
+    color: var(--accent-purple);
+    margin: 24px 0;
+  }
+
+  /* ── Category Cards ── */
+  .category-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px; width: 100%; max-width: 960px; margin-top: 32px;
+  }
+  .category-card {
+    padding: 32px 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-align: center;
+    transition: var(--transition);
+  }
+  .category-card:hover { transform: translateY(-4px); border-color: var(--gold); }
+  .category-card h3 {
+    font-size: 22px; margin-bottom: 16px;
+  }
+  .category-card p {
+    font-size: 18px; color: var(--text-dim);
+  }
+
+  /* ── Example List ── */
+  .example-list {
+    display: flex; flex-direction: column; gap: 12px;
+    width: 100%; max-width: 560px; margin-top: 24px;
+  }
+  .example-item {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 24px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 20px;
+  }
+  .example-item .icon {
+    font-size: 24px;
+  }
+
+  /* ── Notes Toggle ── */
+  .notes-toggle {
+    position: fixed; bottom: 24px; right: 24px;
+    z-index: 100;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    transition: var(--transition);
+  }
+  .notes-toggle:hover { border-color: var(--gold); color: var(--gold); }
+
+  .notes-panel {
+    display: none;
+    position: fixed; bottom: 60px; right: 24px;
+    width: 480px; max-height: 320px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    overflow-y: auto;
+    z-index: 100;
+    font-size: 16px; line-height: 1.7;
+    color: var(--text-dim);
+  }
+  .notes-panel.visible { display: block; }
+  .notes-panel h4 {
+    color: var(--gold); margin-bottom: 12px; font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── Progress Bar ── */
+  .progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--accent-cyan));
+    z-index: 200; transition: width 200ms ease;
+    box-shadow: 0 0 8px var(--gold-glow);
+  }
+
+  /* ── Big Text ── */
+  .big-text {
+    font-size: 56px; font-weight: 900;
+    text-align: center;
+    background: linear-gradient(135deg, var(--gold), var(--accent-cyan));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  /* ── Not Equal ── */
+  .not-equal {
+    display: flex; align-items: center; gap: 32px;
+    font-size: 36px; font-weight: 700;
+  }
+  .neq-sign {
+    font-size: 48px; color: var(--accent-red);
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="deck" id="deck">
+
+  <!-- SLIDE 1: Title -->
+  <div class="slide" id="s1" data-notes="지난 강의에서 우리는 Agent가 실패하는 이유를 살펴봤습니다. 오늘은 그 첫 번째 해결책인 Memory를 다룹니다. 하지만 단순히 기억한다고 해서 똑똑해지는 것은 아닙니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">01 / 22</span>
+    <div class="title">Memory & Knowledge</div>
+    <div class="subtitle">Remembering vs Understanding</div>
+    <div class="flow" style="margin-top:48px;">
+      <div class="flow-item">Remembering</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item">Understanding</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item">Intelligence</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: Question -->
+  <div class="slide" id="s2" data-notes="많은 시스템이 이 둘을 같은 것으로 취급합니다. 하지만 실제로는 완전히 다른 개념입니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">02 / 22</span>
+    <div class="section-title">Question</div>
+    <div class="big-q">기억과 지식은 같은 것일까?</div>
+    <div class="two-col">
+      <div class="col-card">
+        <h3 style="color:var(--accent-cyan)">🧠 Memory</h3>
+      </div>
+      <div class="vs-badge">?</div>
+      <div class="col-card">
+        <h3 style="color:var(--accent-purple)">📚 Knowledge</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Human Memory -->
+  <div class="slide" id="s3" data-notes="인간의 인지 과정은 경험에서 시작됩니다. 경험이 기억이 되고, 기억이 조직화되어 지식이 되며, 지식이 반복되면 스킬이 됩니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">03 / 22</span>
+    <div class="section-title">Human Cognition</div>
+    <div class="flow">
+      <div class="flow-item">Experience</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item">Memory</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item">Knowledge</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item">Skill</div>
+    </div>
+    <div class="key-message">지식은 기억 위에 구축된다</div>
+  </div>
+
+  <!-- SLIDE 4: Case 1 -->
+  <div class="slide" id="s4" data-notes="사용자가 React 개발자라는 정보. 이건 Memory일까 Knowledge일까? 잠시 생각해보세요.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">04 / 22</span>
+    <div class="section-title">Case 1</div>
+    <div class="flow">
+      <div class="flow-item">사용자는 React 개발자</div>
+    </div>
+    <div class="big-q" style="margin-top:48px;">이건 Memory일까? Knowledge일까?</div>
+  </div>
+
+  <!-- SLIDE 5: Answer - Memory -->
+  <div class="slide" id="s5" data-notes="정답은 Memory입니다. 이건 단순 사실입니다. 구조화된 이해가 아닙니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">05 / 22</span>
+    <div class="section-title">Answer</div>
+    <div class="big-text">Memory</div>
+    <div class="flow" style="margin-top:32px;">
+      <div class="flow-item" style="border-color:var(--accent-cyan);color:var(--accent-cyan);">Fact</div>
+    </div>
+    <div class="example-box">
+      <div class="label">EXAMPLE</div>
+      사용자는 React 개발자
+    </div>
+    <div class="key-message">단순 사실 — 구조화된 이해가 아님</div>
+  </div>
+
+  <!-- SLIDE 6: Case 2 -->
+  <div class="slide" id="s6" data-notes="이것도 같은 질문입니다. 프로젝트가 Feature Folder 구조를 사용한다는 정보.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">06 / 22</span>
+    <div class="section-title">Case 2</div>
+    <div class="flow">
+      <div class="flow-item">프로젝트는 Feature Folder 구조를 사용한다</div>
+    </div>
+    <div class="big-q" style="margin-top:48px;">이것은?</div>
+  </div>
+
+  <!-- SLIDE 7: Answer - Knowledge -->
+  <div class="slide" id="s7" data-notes="정답은 Knowledge입니다. Rule, Architecture, Convention이 모두 포함되어 있습니다. 지식은 구조를 가집니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">07 / 22</span>
+    <div class="section-title">Answer</div>
+    <div class="big-text" style="background:linear-gradient(135deg,var(--accent-purple),var(--accent-magenta));-webkit-background-clip:text;">Knowledge</div>
+    <div class="tags" style="margin-top:24px;">
+      <span class="tag purple">Rule</span>
+      <span class="tag cyan">Architecture</span>
+      <span class="tag gold">Convention</span>
+    </div>
+    <div class="key-message">지식은 구조를 가진다</div>
+  </div>
+
+  <!-- SLIDE 8: Memory Characteristics -->
+  <div class="slide" id="s8" data-notes="Memory의 특징을 정리하면: Fact (사실), Specific (특정), Atomic (원자적), Personal (개인적) 입니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">08 / 22</span>
+    <div class="section-title">Memory의 특징</div>
+    <div class="tags" style="margin-bottom:32px;">
+      <span class="tag cyan">Fact</span>
+      <span class="tag cyan">Specific</span>
+      <span class="tag cyan">Atomic</span>
+      <span class="tag cyan">Personal</span>
+    </div>
+    <div class="example-box">
+      <div class="label">EXAMPLE</div>
+      사용자는 TypeScript를 선호한다
+    </div>
+  </div>
+
+  <!-- SLIDE 9: Knowledge Characteristics -->
+  <div class="slide" id="s9" data-notes="반면 Knowledge의 특징은: Pattern (패턴), Rule (규칙), Process (프로세스), Model (모델) 입니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">09 / 22</span>
+    <div class="section-title">Knowledge의 특징</div>
+    <div class="tags" style="margin-bottom:32px;">
+      <span class="tag purple">Pattern</span>
+      <span class="tag purple">Rule</span>
+      <span class="tag purple">Process</span>
+      <span class="tag purple">Model</span>
+    </div>
+    <div class="example-box">
+      <div class="label">EXAMPLE</div>
+      React 프로젝트 구조
+    </div>
+  </div>
+
+  <!-- SLIDE 10: Memory Explosion -->
+  <div class="slide" id="s10" data-notes="그렇다고 무작정 Memory를 계속 저장하면 될까요? 계속 저장하면 문제가 생깁니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">10 / 22</span>
+    <div class="section-title">Memory Explosion</div>
+    <div class="tags" style="margin-bottom:24px;">
+      <span class="tag gold">Memory</span>
+      <span class="tag gold">Memory</span>
+      <span class="tag gold">Memory</span>
+      <span class="tag gold">Memory</span>
+      <span class="tag gold">Memory</span>
+    </div>
+    <div class="big-q">계속 저장하면 될까?</div>
+  </div>
+
+  <!-- SLIDE 11: The Problem -->
+  <div class="slide" id="s11" data-notes="Memory가 10개면 괜찮습니다. 100개, 1000개, 10000개가 되면 검색 자체가 불가능해집니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">11 / 22</span>
+    <div class="section-title">The Problem</div>
+    <div class="number-scale">
+      <div class="number-item">
+        <div class="number-bar" style="height:48px;">10개</div>
+        <span class="number-label">OK</span>
+      </div>
+      <div class="number-item">
+        <div class="number-bar" style="height:80px;">100개</div>
+        <span class="number-label">😐</span>
+      </div>
+      <div class="number-item">
+        <div class="number-bar" style="height:120px;">1000개</div>
+        <span class="number-label">😰</span>
+      </div>
+      <div class="number-item">
+        <div class="number-bar" style="height:160px;background:rgba(255,107,107,.15);border-color:var(--accent-red);">10000개</div>
+        <span class="number-label">😱</span>
+      </div>
+    </div>
+    <div class="key-message" style="margin-top:32px;">검색 불가 → 활용 불가</div>
+  </div>
+
+  <!-- SLIDE 12: Memory Lifecycle -->
+  <div class="slide" id="s12" data-notes="Memory는 단순 저장이 아니라 생명주기를 가집니다. Conversation에서 Extract하고 Store하고 Retrieve하고 Update합니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">12 / 22</span>
+    <div class="section-title">Memory Lifecycle</div>
+    <div class="flow">
+      <div class="flow-item" style="border-color:var(--accent-cyan);">Conversation</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item" style="border-color:var(--accent-green);">Extract</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item" style="border-color:var(--gold);">Store</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item" style="border-color:var(--accent-purple);">Retrieve</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item" style="border-color:var(--accent-orange);">Update</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: Extraction -->
+  <div class="slide" id="s13" data-notes="Extraction 단계: 대화에서 중요 정보를 발견하고 Memory로 생성합니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">13 / 22</span>
+    <div class="section-title">Extraction</div>
+    <div class="flow">
+      <div class="flow-item">대화</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item" style="border-color:var(--accent-green);color:var(--accent-green);">중요 정보 발견</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item" style="border-color:var(--gold);color:var(--gold);">Memory 생성</div>
+    </div>
+    <div class="example-box">
+      <div class="label">EXAMPLE</div>
+      사용자는 DGX Spark 사용
+    </div>
+  </div>
+
+  <!-- SLIDE 14: Filtering -->
+  <div class="slide" id="s14" data-notes="모든 정보를 저장하면 안 됩니다. 필터링이 필수적입니다. DGX Spark 사용은 저장하지만, 점심 메뉴는 저장하지 않습니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">14 / 22</span>
+    <div class="section-title">Filtering</div>
+    <div class="two-col">
+      <div class="col-card" style="border-color:var(--accent-green);">
+        <h3 style="color:var(--accent-green);">✅ 저장</h3>
+        <p style="font-size:18px;">사용자는 DGX Spark 사용</p>
+      </div>
+      <div class="vs-badge">vs</div>
+      <div class="col-card" style="border-color:var(--accent-red);">
+        <h3 style="color:var(--accent-red);">❌ 저장 안함</h3>
+        <p style="font-size:18px;">오늘 점심은 김치찌개</p>
+      </div>
+    </div>
+    <div class="key-message">모든 정보를 저장하면 안 된다</div>
+  </div>
+
+  <!-- SLIDE 15: Memory Categories -->
+  <div class="slide" id="s15" data-notes="Memory는 세 가지 카테고리로 분류됩니다. User Memory, Project Memory, System Memory.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">15 / 22</span>
+    <div class="section-title">Memory Categories</div>
+    <div class="category-grid">
+      <div class="category-card" style="border-color:var(--accent-cyan);">
+        <h3 style="color:var(--accent-cyan);">👤 User</h3>
+        <p>사용자 선호도, 환경, 설정</p>
+      </div>
+      <div class="category-card" style="border-color:var(--accent-purple);">
+        <h3 style="color:var(--accent-purple);">📁 Project</h3>
+        <p>프로젝트 규칙, 구조, 컨벤션</p>
+      </div>
+      <div class="category-card" style="border-color:var(--accent-green);">
+        <h3 style="color:var(--accent-green);">⚙️ System</h3>
+        <p>설정, 상태, 메타데이터</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 16: User Memory -->
+  <div class="slide" id="s16" data-notes="User Memory 예시를 살펴보면: 사용자의 환경, 도구 선호도, 작업 패턴 등이 포함됩니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">16 / 22</span>
+    <div class="section-title">User Memory</div>
+    <div class="example-list">
+      <div class="example-item">
+        <span class="icon">🖥️</span>
+        <span>사용자는 ComfyUI 사용</span>
+      </div>
+      <div class="example-item">
+        <span class="icon">🐉</span>
+        <span>사용자는 DGX Spark 사용</span>
+      </div>
+      <div class="example-item">
+        <span class="icon">💻</span>
+        <span>사용자는 TypeScript 선호</span>
+      </div>
+      <div class="example-item">
+        <span class="icon">🎨</span>
+        <span>사용자는 Diagram First 선호</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 17: Project Memory -->
+  <div class="slide" id="s17" data-notes="Project Memory는 프로젝트 특유의 규칙과 컨벤션을 저장합니다. P-Hermes의 Diagram First 원칙 같은 것이 포함됩니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">17 / 22</span>
+    <div class="section-title">Project Memory</div>
+    <div class="example-list">
+      <div class="example-item">
+        <span class="icon">📐</span>
+        <span>P-Hermes — Diagram First</span>
+      </div>
+      <div class="example-item">
+        <span class="icon">🎬</span>
+        <span>P-Hermes — HTML Slides</span>
+      </div>
+      <div class="example-item">
+        <span class="icon">🌙</span>
+        <span>다크 테마 표준</span>
+      </div>
+      <div class="example-item">
+        <span class="icon">📝</span>
+        <span>JS 기준 코드 스타일</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 18: Memory Retrieval -->
+  <div class="slide" id="s18" data-notes="저장보다 검색이 더 중요합니다. Request에서 Relevant Memory를 찾아 Context로 제공하는 것이 핵심입니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">18 / 22</span>
+    <div class="section-title">Memory Retrieval</div>
+    <div class="flow">
+      <div class="flow-item" style="border-color:var(--accent-cyan);">Request</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item" style="border-color:var(--accent-green);">Relevant Memory</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item" style="border-color:var(--gold);color:var(--gold);">Context</div>
+    </div>
+    <div class="key-message">저장보다 검색이 더 중요하다</div>
+  </div>
+
+  <!-- SLIDE 19: Why Memory Alone Is Not Enough -->
+  <div class="slide" id="s19" data-notes="1000개의 기억이 있다고 해서 이해가 생기는 것은 아닙니다. 조직화가 필요합니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">19 / 22</span>
+    <div class="section-title">Why Memory Alone Is Not Enough</div>
+    <div class="not-equal">
+      <span style="color:var(--accent-cyan);">1000개의 기억</span>
+      <span class="neq-sign">≠</span>
+      <span style="color:var(--accent-purple);">이해</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 20: Knowledge Born -->
+  <div class="slide" id="s20" data-notes="Memory가 조직화될 때 Knowledge가 탄생합니다. 기억의 집합이 아닌 관계를 가진 이해가 됩니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">20 / 22</span>
+    <div class="section-title">Knowledge Born</div>
+    <div class="flow">
+      <div class="flow-item" style="border-color:var(--accent-cyan);">Memory</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item" style="border-color:var(--accent-green);">Organization</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item" style="border-color:var(--accent-purple);color:var(--accent-purple);">Knowledge</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 21: Hermes Structure -->
+  <div class="slide" id="s21" data-notes="Hermes의 구조: Conversation에서 Memory를 찾고, Memory를 조직화한 Knowledge를 활용하여 Response를 생성합니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">21 / 22</span>
+    <div class="section-title">Hermes 구조</div>
+    <div class="flow">
+      <div class="flow-item" style="border-color:var(--accent-cyan);">Conversation</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item" style="border-color:var(--accent-green);">Memory</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item" style="border-color:var(--accent-purple);">Knowledge</div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-item" style="border-color:var(--gold);color:var(--gold);">Response</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 22: Summary -->
+  <div class="slide" id="s22" data-notes="오늘의 핵심은 하나입니다. 기억과 이해는 다릅니다. Memory는 사실을 저장합니다. Knowledge는 사실들 사이의 관계를 설명합니다. Hermes는 이 둘을 분리함으로써 단순한 챗봇이 아니라 지속적으로 발전하는 Agent의 기반을 만듭니다.">
+    <span class="lecture-badge">LECTURE 02</span>
+    <span class="slide-number">22 / 22</span>
+    <div class="section-title">Summary</div>
+    <div class="two-col" style="margin-bottom:32px;">
+      <div class="col-card" style="border-color:var(--accent-cyan);">
+        <h3 style="color:var(--accent-cyan);">🧠 Memory</h3>
+        <p style="font-size:24px;font-weight:700;">기억한다</p>
+      </div>
+      <div class="vs-badge">vs</div>
+      <div class="col-card" style="border-color:var(--accent-purple);">
+        <h3 style="color:var(--accent-purple);">📚 Knowledge</h3>
+        <p style="font-size:24px;font-weight:700;">이해한다</p>
+      </div>
+    </div>
+    <div class="key-message">Memory는 사실을 저장 — Knowledge는 관계를 설명</div>
+  </div>
+
+</div>
+
+<!-- Nav Dots -->
+<div class="nav" id="nav"></div>
+
+<!-- Notes Toggle -->
+<button class="notes-toggle" id="notesToggle">📝 Notes</button>
+<div class="notes-panel" id="notesPanel">
+  <h4>발표자 노트</h4>
+  <p id="notesContent">슬라이드를 선택해주세요.</p>
+</div>
+
+<script>
+  const deck = document.getElementById('deck');
+  const slides = document.querySelectorAll('.slide');
+  const nav = document.getElementById('nav');
+  const notesToggle = document.getElementById('notesToggle');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesContent = document.getElementById('notesContent');
+  const progressBar = document.getElementById('progressBar');
+
+  // Build nav
+  slides.forEach((_, i) => {
+    const a = document.createElement('a');
+    a.href = `#s${i + 1}`;
+    a.classList.toggle('active', i === 0);
+    nav.appendChild(a);
+  });
+
+  // Intersection Observer
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const idx = [...slides].indexOf(entry.target);
+        document.querySelectorAll('.nav a').forEach((a, i) =>
+          a.classList.toggle('active', i === idx));
+        // Notes
+        notesContent.textContent = entry.target.dataset.notes || '';
+        // Progress
+        progressBar.style.width = `${((idx + 1) / slides.length) * 100}%`;
+      }
+    });
+  }, { root: deck, threshold: 0.6 });
+
+  slides.forEach(s => observer.observe(s));
+
+  // Notes toggle
+  notesToggle.addEventListener('click', () => {
+    notesPanel.classList.toggle('visible');
+  });
+
+  // Keyboard nav
+  document.addEventListener('keydown', (e) => {
+    const current = [...slides].findIndex(s => {
+      const r = s.getBoundingClientRect();
+      return r.left >= -200 && r.left < window.innerWidth / 2;
+    });
+    if (e.key === 'ArrowRight' && current < slides.length - 1)
+      slides[current + 1].scrollIntoView({ behavior: 'smooth' });
+    if (e.key === 'ArrowLeft' && current > 0)
+      slides[current - 1].scrollIntoView({ behavior: 'smooth' });
+  });
+</script>
+</body>
+</html>

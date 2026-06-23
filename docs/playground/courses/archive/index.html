@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Courses — Version Archive</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#0b0d12;--surface:#12151c;--card:#181c28;--border:#262b3a;--gold:#f0b429;--gold-dim:#b8861e;--gold-glow:rgba(240,180,41,.15);--text:#e8edf5;--text-dim:#8892a8;--accent-cyan:#5bc0eb;--accent-green:#00f5d4;--accent-purple:#b197fc;--radius:16px;--transition:400ms cubic-bezier(.22,1,.36,1)}
+  html,body{font-family:'Inter','Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+  .container{max-width:900px;margin:0 auto;padding:48px 24px 80px}
+  .hl{color:var(--gold)}
+  h1{font-size:clamp(28px,4vw,40px);font-weight:900;letter-spacing:-1px}
+  .back{margin-bottom:24px}
+  .back a{color:var(--text-dim);font-size:14px;text-decoration:none}
+  .back a:hover{color:var(--gold)}
+  .section-title{font-size:14px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin:32px 0 16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+
+  .archive-grid{display:grid;gap:12px}
+  .ver-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;transition:var(--transition)}
+  .ver-card:hover{border-color:var(--gold)}
+  .ver-header{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+  .ver-badge{padding:2px 10px;border-radius:4px;font-size:12px;font-weight:700;background:var(--gold-glow);color:var(--gold)}
+  .ver-date{font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace}
+  .ver-changes{font-size:14px;color:var(--text-dim);margin:6px 0;line-height:1.5}
+  .ver-files{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .ver-file{display:inline-block;padding:4px 12px;border-radius:6px;font-size:13px;background:var(--surface);color:var(--accent-cyan);text-decoration:none;border:1px solid var(--border)}
+  .ver-file:hover{border-color:var(--accent-cyan)}
+  .ver-file.current{color:var(--accent-green);border-color:var(--accent-green)}
+
+  .footer{text-align:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--border);color:var(--text-dim);font-size:13px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="back"><a href="../">← Courses</a></div>
+  <h1>📜 <span class="hl">Version</span> Archive</h1>
+  <p style="color:var(--text-dim);margin-top:8px;font-size:15px">모든 강의 슬라이드의 과거 버전을 보관합니다</p>
+
+  <div class="section-title">📚 Lecture 01 · Why Agents Fail</div>
+  <div class="archive-grid">
+    <div class="ver-card">
+      <div class="ver-header">
+        <span class="ver-badge">v1.0</span>
+        <span class="ver-date">2026-06-23 · 20장</span>
+      </div>
+      <div class="ver-changes">초안 생성 — 기본 슬라이드 20장</div>
+      <div class="ver-files">
+        <a href="v1.0/lecture-01-why-agents-fail.html" class="ver-file">lecture-01-why-agents-fail.html</a>
+      </div>
+    </div>
+    <div class="ver-card">
+      <div class="ver-header">
+        <span class="ver-badge">v1.1</span>
+        <span class="ver-date">2026-06-23 · 20장</span>
+      </div>
+      <div class="ver-changes">11~15페이지 재설계 + Failure 페이지 재설계 + 폰트 크기 개선</div>
+      <div class="ver-files">
+        <a href="v1.1/lecture-01-why-agents-fail.html" class="ver-file">lecture-01-why-agents-fail.html</a>
+      </div>
+    </div>
+    <div class="ver-card" style="border-color:var(--accent-green)">
+      <div class="ver-header">
+        <span class="ver-badge" style="background:rgba(0,245,212,.15);color:var(--accent-green)">v1.2</span>
+        <span class="ver-date">2026-06-23 · 20장</span>
+        <span style="font-size:11px;color:var(--accent-green)">● 현재</span>
+      </div>
+      <div class="ver-changes">Notes UI 통일, id 속성 추가, data-notes 80~150자 보강</div>
+      <div class="ver-files">
+        <a href="../lecture-01-why-agents-fail.html" class="ver-file current">lecture-01-why-agents-fail.html</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">📚 Lecture 02 · Memory & Knowledge</div>
+  <div class="archive-grid">
+    <div class="ver-card">
+      <div class="ver-header">
+        <span class="ver-badge">v1.0</span>
+        <span class="ver-date">2026-06-23 · 22장</span>
+      </div>
+      <div class="ver-changes">초안 생성 — 22장, 커리큘럼 원고 기반</div>
+      <div class="ver-files">
+        <a href="v1.0/lecture-02-memory-and-knowledge.html" class="ver-file">lecture-02-memory-and-knowledge.html</a>
+      </div>
+    </div>
+    <div class="ver-card">
+      <div class="ver-header">
+        <span class="ver-badge">v1.1</span>
+        <span class="ver-date">2026-06-23 · 22장</span>
+      </div>
+      <div class="ver-changes">재설계 — 핵심 메시지 강화, Memory Lifecycle 7→3장 축약</div>
+      <div class="ver-files">
+        <a href="v1.1/lecture-02-memory-and-knowledge.html" class="ver-file">lecture-02-memory-and-knowledge.html</a>
+      </div>
+    </div>
+    <div class="ver-card" style="border-color:var(--accent-green)">
+      <div class="ver-header">
+        <span class="ver-badge" style="background:rgba(0,245,212,.15);color:var(--accent-green)">v1.2</span>
+        <span class="ver-date">2026-06-23 · 22장</span>
+        <span style="font-size:11px;color:var(--accent-green)">● 현재</span>
+      </div>
+      <div class="ver-changes">예시 일반화, Notes UI 통일, data-notes 80~150자 보강</div>
+      <div class="ver-files">
+        <a href="../lecture-02-memory-and-knowledge.html" class="ver-file current">lecture-02-memory-and-knowledge.html</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">📚 Lecture 03 · Skills & Workflow</div>
+  <div class="archive-grid">
+    <div class="ver-card" style="border-color:var(--accent-green)">
+      <div class="ver-header">
+        <span class="ver-badge" style="background:rgba(91,192,235,.15);color:var(--accent-cyan)">v1.2</span>
+        <span class="ver-date">2026-06-23 · 24장</span>
+        <span style="font-size:11px;color:var(--accent-green)">● 현재</span>
+      </div>
+      <div class="ver-changes">신규 제작 — glm-5.2, SPEC-SLIDES v1.2 완전 준수</div>
+      <div class="ver-files">
+        <a href="../lecture-03-skills-and-workflow.html" class="ver-file current">lecture-03-skills-and-workflow.html</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">📚 Lecture 04 · Hermes Core Architecture</div>
+  <div class="archive-grid">
+    <div class="ver-card" style="border-color:var(--accent-green)">
+      <div class="ver-header">
+        <span class="ver-badge" style="background:rgba(91,192,235,.15);color:var(--accent-cyan)">v1.2</span>
+        <span class="ver-date">2026-06-23 · 24장</span>
+        <span style="font-size:11px;color:var(--accent-green)">● 현재</span>
+      </div>
+      <div class="ver-changes">신규 제작 — glm-5.2, SPEC-SLIDES v1.2 완전 준수</div>
+      <div class="ver-files">
+        <a href="../lecture-04-hermes-core-architecture.html" class="ver-file current">lecture-04-hermes-core-architecture.html</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>p-hermes Course Archive · <a href="../" style="color:var(--accent-cyan);text-decoration:none">← 현재 버전으로</a></p>
+  </div>
+</div>
+</body>
+</html>
