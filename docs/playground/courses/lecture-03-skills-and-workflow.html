@@ -558,7 +558,7 @@
   </div>
 
   <!-- SLIDE 7: Knowledge vs Skills Comparison -->
-  <div class="slide" id="slide-7" data-notes="지식은 저장되고, 스킬은 실행됩니다. Knowledge는 '무엇을 알아야 하는가'이고, Skill은 '무엇을 할 수 있는가'입니다. 이 차이가 Agent의 생산성을 결정합니다. 핵심: 저장과 실행의 차이.">
+  <div class="slide" id="slide-7" data-notes="Knowledge와 Skills는 같은 데이터를 다루지만 목적이 완전히 다릅니다. 지식은 저장되고, 스킬은 실행됩니다. Knowledge는 '무엇을 알아야 하는가'이고, Skill은 '무엇을 할 수 있는가'입니다. 이 차이가 Agent의 생산성을 결정합니다. 핵심: 저장과 실행의 차이.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Knowledge vs Skills</div>
     <table class="compare-table">
@@ -577,6 +577,18 @@
       </tbody>
     </table>
     <div class="insight-box">저장과 실행의 차이가 생산성을 결정한다</div>
+    <div style="margin-top:16px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:16px;line-height:1.7;">
+      <div style="font-weight:700;color:var(--gold);margin-bottom:6px;">예시:</div>
+      <div style="color:var(--text-dim);">"3월 매출 1억 2천"이라는 같은 데이터라도</div>
+      <div style="display:flex;gap:8px;margin-top:4px;">
+        <span style="background:rgba(91,192,235,.15);padding:2px 8px;border-radius:4px;">🧠 Memory: 저장</span>
+        <span style="color:var(--text-dim);">→</span>
+        <span style="background:rgba(177,151,252,.15);padding:2px 8px;border-radius:4px;">📚 Knowledge: "전월 대비 15% 증가"</span>
+        <span style="color:var(--text-dim);">→</span>
+        <span style="background:rgba(0,245,212,.15);padding:2px 8px;border-radius:4px;">⚡ Skills: 리포트 생성 실행</span>
+      </div>
+      <div style="color:var(--text-dim);margin-top:4px;">→ 같은 데이터, 다른 층위, 다른 활용</div>
+    </div>
   </div>
 
   <!-- SLIDE 8: Hermes Skills System -->
@@ -660,13 +672,22 @@
   </div>
 
   <!-- SLIDE 11: Skills만으로 충분할까? -->
-  <div class="slide overflow-safe" id="slide-11" data-notes="Skills가 있으면 개별 작업은 자동화할 수 있습니다. 하지만 여러 Skill을 순서대로 실행하고 조건에 따라 분기해야 한다면? 이것이 Workflow가 필요한 이유입니다. 핵심: Skills는 부품, Workflow는 설계도입니다.">
+  <div class="slide" id="slide-11" data-notes="Skills가 있으면 개별 작업은 자동화할 수 있습니다. 하지만 여러 Skill을 순서대로 실행하고 조건에 따라 분기해야 한다면? 이것이 Workflow가 필요한 이유입니다. 핵심: Skills는 부품, Workflow는 설계도입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Transition</div>
-    <div class="question">Skills만으로 <span class="hl">충분할까?</span></div>
-    <div class="insight-box" style="max-width:520px;">
-      개별 작업은 자동화 가능<br>
-      <span class="highlight">순서와 조건</span>은 누가 관리할까?
+    <div style="display:flex;flex-direction:column;gap:14px;align-items:center;justify-content:center;max-width:520px;">
+      <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;font-size:20px;width:100%;">
+        <span style="font-size:26px;">🔄</span>
+        <span>Knowledge <span style="color:var(--text-dim);">→</span> Skill</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;font-size:20px;width:100%;">
+        <span style="font-size:26px;">⚡</span>
+        <span>Static <span style="color:var(--text-dim);">→</span> Dynamic</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;font-size:20px;width:100%;">
+        <span style="font-size:26px;">🎯</span>
+        <span>Reference <span style="color:var(--text-dim);">→</span> Action</span>
+      </div>
     </div>
     <div class="key-message" style="font-size:18px;">Skills는 부품, Workflow는 설계도</div>
   </div>
@@ -847,38 +868,28 @@
   </div>
 
   <!-- SLIDE 19: Full Pipeline -->
-  <div class="slide overflow-safe" id="slide-19" data-notes="실제 요청이 처리되는 전체 흐름입니다. 요청이 들어오면 Memory에서 컨텍스트를 찾고, Knowledge에서 관련 지식을 조회하고, 적절한 Skill을 선택하고, Workflow에 따라 실행한 후 응답을 반환합니다. 핵심: 모든 계층이 협력합니다.">
+  <div class="slide" id="slide-19" data-notes="실제 요청이 처리되는 전체 흐름입니다. 요청이 들어오면 Memory에서 컨텍스트를 찾고, Knowledge에서 관련 지식을 조회하고, 적절한 Skill을 선택하고, Workflow에 따라 실행한 후 응답을 반환합니다. 핵심: 모든 계층이 협력합니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Full Pipeline</div>
-    <div class="h-flow" style="max-width:700px;">
-      <div class="node orange" style="font-size:13px;padding:8px 14px;">Request</div>
-      <span class="arrow" style="font-size:16px;">→</span>
-      <div class="node cyan" style="font-size:13px;padding:8px 14px;">Memory<br>Lookup</div>
-      <span class="arrow" style="font-size:16px;">→</span>
-      <div class="node purple" style="font-size:13px;padding:8px 14px;">Knowledge<br>Query</div>
-      <span class="arrow" style="font-size:16px;">→</span>
-      <div class="node green" style="font-size:13px;padding:8px 14px;">Skill<br>Selection</div>
-      <span class="arrow" style="font-size:16px;">→</span>
-      <div class="node gold" style="font-size:13px;padding:8px 14px;">Workflow<br>Execution</div>
-      <span class="arrow" style="font-size:16px;">→</span>
-      <div class="node" style="font-size:13px;padding:8px 14px;">Response</div>
+    <div class="h-flow" style="gap:12px;">
+      <div class="node cyan" style="font-size:20px;padding:14px 24px;">수집<br><span style="font-size:14px;color:var(--text-dim);">Collect</span></div>
+      <span class="arrow" style="font-size:26px;">→</span>
+      <div class="node purple" style="font-size:20px;padding:14px 24px;">가공<br><span style="font-size:14px;color:var(--text-dim);">Process</span></div>
+      <span class="arrow" style="font-size:26px;">→</span>
+      <div class="node green" style="font-size:20px;padding:14px 24px;">실행<br><span style="font-size:14px;color:var(--text-dim);">Execute</span></div>
     </div>
     <div class="key-message" style="max-width:480px;font-size:18px;">모든 계층이 협력한다</div>
   </div>
 
   <!-- SLIDE 20: Part 1 통합 구조 -->
-  <div class="slide overflow-safe" id="slide-20" data-notes="L01은 문제 인식, L02는 기억과 지식, L03은 스킬과 워크플로우를 다뤘습니다. 다음 강의 L04에서는 이 모든 요소가 하나의 Architecture로 통합되는 과정을 다룹니다. 핵심: Part 1의 클라이맥스입니다.">
+  <div class="slide" id="slide-20" data-notes="L01은 문제 인식, L02는 기억과 지식, L03은 스킬과 워크플로우를 다뤘습니다. 다음 강의 L04에서는 이 모든 요소가 하나의 Architecture로 통합되는 과정을 다룹니다. 핵심: Part 1의 클라이맥스입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Part 1 Recap</div>
-    <div class="h-flow" style="max-width:600px;">
-      <div class="node" style="font-size:14px;padding:8px 16px;">L01<br>Problems</div>
-      <span class="arrow" style="font-size:18px;">→</span>
-      <div class="node" style="font-size:14px;padding:8px 16px;">L02<br>Memory &amp; Knowledge</div>
-      <span class="arrow" style="font-size:18px;">→</span>
-      <div class="node gold" style="font-size:14px;padding:8px 16px;">L03<br>Skills &amp; Workflow</div>
+    <div class="insight-box" style="max-width:520px;font-size:20px;">
+      L01 Problems <span style="color:var(--text-dim);">→</span> L02 Memory &amp; Knowledge <span style="color:var(--text-dim);">→</span> <span class="highlight">L03 Skills &amp; Workflow</span>
     </div>
-    <div class="insight-box" style="max-width:480px;">
-      다음 강의: <span class="highlight">Architecture</span> — 모든 요소의 통합
+    <div class="key-message" style="max-width:480px;font-size:18px;">
+      다음 강의: Architecture — 모든 요소의 통합
     </div>
   </div>
 
@@ -896,7 +907,7 @@
   </div>
 
   <!-- SLIDE 22: Skills+Workflow Before vs After -->
-  <div class="slide overflow-safe" id="slide-22" data-notes="도입 전: 매번 같은 작업을 수동으로, 일관성 없음, 상태 추적 불가. 도입 후: 반복 작업 자동화, 일관된 품질, 모든 상태 추적 가능. 핵심: 변화의 핵심은 일관성과 추적 가능성입니다.">
+  <div class="slide" id="slide-22" data-notes="도입 전: 매번 같은 작업을 수동으로, 일관성 없음, 상태 추적 불가. 도입 후: 반복 작업 자동화, 일관된 품질, 모든 상태 추적 가능. 핵심: 변화의 핵심은 일관성과 추적 가능성입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Before &amp; After</div>
     <div class="two-col" style="max-width:600px;">
