@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture 04: Hermes Core Architecture — Building an Agent OS with Hermes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0b0d12;
+    --surface: #12151c;
+    --card: #181c28;
+    --border: #262b3a;
+    --gold: #f0b429;
+    --gold-dim: #b8861e;
+    --gold-glow: rgba(240,180,41,.15);
+    --text: #e8edf5;
+    --text-dim: #8892a8;
+    --accent-cyan: #5bc0eb;
+    --accent-magenta: #f15bb5;
+    --accent-green: #00f5d4;
+    --accent-red: #ff6b6b;
+    --accent-orange: #ffa94d;
+    --accent-purple: #b197fc;
+    --radius: 16px;
+    --transition: 400ms cubic-bezier(.22,1,.36,1);
+  }
+
+  html, body {
+    height: 100%;
+    font-family: 'Inter','Noto Sans KR',system-ui,-apple-system,sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+  }
+
+  /* ── Deck ── */
+  .deck {
+    display: flex;
+    height: 100vh;
+    scroll-snap-type: x mandatory;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+  .deck::-webkit-scrollbar { display: none; }
+
+  .slide {
+    flex: 0 0 100vw;
+    height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 80px;
+    position: relative;
+    overflow: hidden;
+    max-height: 100vh;
+  }
+
+  /* ── Navigation ── */
+  .nav {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 10px; z-index: 100;
+    background: rgba(18,21,28,.8);
+    padding: 8px 16px;
+    border-radius: 100px;
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+  }
+  .nav a {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border); transition: var(--transition);
+    display: block;
+  }
+  .nav a.active, .nav a:hover { background: var(--gold); box-shadow: 0 0 12px var(--gold-glow); }
+
+  .slide-counter {
+    position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%);
+    font-size: 12px; color: var(--text-dim); z-index: 100;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── Header ── */
+  .lecture-badge {
+    position: absolute; top: 32px; left: 50%; transform: translateX(-50%);
+    font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--gold); background: var(--gold-glow); padding: 8px 24px;
+    border-radius: 100px; border: 1px solid var(--gold-dim);
+    white-space: nowrap;
+  }
+
+  /* ── Typography ── */
+  .title {
+    font-size: clamp(40px,6vw,64px); font-weight: 900;
+    letter-spacing: -2px; text-align: center; line-height: 1.1;
+  }
+  .title .hl { color: var(--gold); }
+  .subtitle {
+    font-size: clamp(20px,2.5vw,28px); color: var(--text-dim); margin-top: 16px;
+    font-weight: 400; text-align: center;
+  }
+
+  /* ── Hero ── */
+  .hero { text-align: center; }
+  .hero .ring {
+    width: 200px; height: 200px; border-radius: 50%;
+    border: 3px solid var(--gold); margin: 0 auto 24px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .hero .ring::before {
+    content: ''; position: absolute; inset: -8px; border-radius: 50%;
+    border: 1px solid var(--gold-dim); opacity: .4;
+  }
+  .hero .ring-text {
+    font-size: 32px; font-weight: 900; color: var(--gold);
+  }
+
+  /* ── Section Divider ── */
+  .section-divider {
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+    text-align: center;
+  }
+  .section-label {
+    font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .section-title {
+    font-size: clamp(36px,5vw,56px); font-weight: 900;
+    letter-spacing: -2px; text-align: center; line-height: 1.1;
+  }
+  .section-subtitle {
+    font-size: clamp(18px,2vw,24px); color: var(--text-dim);
+  }
+
+  /* ── Flow ── */
+  .flow {
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    margin: 24px 0;
+  }
+  .flow.compact { gap: 8px; margin: 16px 0; }
+  .flow .arrow {
+    font-size: 24px; color: var(--gold); font-weight: 700;
+    line-height: 1;
+  }
+  .flow .node {
+    background: var(--card); border: 1px solid var(--border);
+    padding: 16px 28px; border-radius: var(--radius);
+    font-size: 20px; font-weight: 700;
+    min-width: 200px; text-align: center;
+  }
+  .flow .node.cyan { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+  .flow .node.purple { border-color: var(--accent-purple); color: var(--accent-purple); }
+  .flow .node.green { border-color: var(--accent-green); color: var(--accent-green); }
+  .flow .node.gold { border-color: var(--gold); color: var(--gold); }
+  .flow .node.orange { border-color: var(--accent-orange); color: var(--accent-orange); }
+
+  /* ── Two Column ── */
+  .two-col {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
+    width: 100%; max-width: 640px; margin-top: 24px;
+  }
+  .col {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .col-title {
+    font-size: 14px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
+  }
+  .col-item {
+    font-size: 18px; color: var(--text); padding: 10px 16px;
+    background: var(--card); border-radius: 8px;
+    border-left: 3px solid var(--border);
+  }
+  .col-item.warn { border-left-color: var(--accent-red); }
+  .col-item.ok { border-left-color: var(--accent-green); }
+
+  /* ── Key Message ── */
+  .key-message {
+    margin-top: 24px; padding: 20px 28px;
+    background: var(--gold-glow); border: 1px solid var(--gold-dim);
+    border-radius: var(--radius);
+    font-size: 20px; font-weight: 700; color: var(--gold);
+    text-align: center;
+    max-width: 600px;
+  }
+
+  /* ── Table ── */
+  .compare-table {
+    width: 100%; max-width: 600px; margin: 24px 0;
+    border-collapse: collapse;
+  }
+  .compare-table th, .compare-table td {
+    padding: 12px 24px;
+    border: 1px solid var(--border);
+    font-size: 16px;
+    text-align: center;
+  }
+  .compare-table th {
+    background: var(--card);
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .compare-table td:first-child {
+    text-align: left;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+  .compare-table .check { color: var(--accent-green); }
+  .compare-table .cross { color: var(--accent-red); }
+
+  /* ── Insight Box ── */
+  .insight-box {
+    margin-top: 20px; padding: 16px 24px;
+    background: rgba(177,151,252,.1);
+    border: 1px solid var(--accent-purple);
+    border-radius: var(--radius);
+    font-size: 18px; font-weight: 700;
+    text-align: center;
+    color: var(--accent-purple);
+    max-width: 560px;
+  }
+  .insight-box .highlight { color: var(--gold); }
+
+  /* ── Example Box ── */
+  .example-box {
+    margin-top: 20px;
+    padding: 16px 24px;
+    background: var(--card);
+    border-left: 3px solid var(--accent-cyan);
+    border-radius: var(--radius);
+    font-size: 18px;
+    max-width: 520px;
+  }
+  .example-box .label {
+    font-size: 12px; color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 6px;
+  }
+
+  /* ── Big Question ── */
+  .big-q {
+    font-size: clamp(24px,3vw,36px); font-weight: 700;
+    text-align: center; color: var(--accent-purple);
+    margin: 20px 0;
+  }
+
+  /* ── Big Text ── */
+  .big-text {
+    font-size: clamp(40px,6vw,64px); font-weight: 900;
+    letter-spacing: -2px; text-align: center; line-height: 1.1;
+  }
+  .big-text .hl { color: var(--gold); }
+
+  /* ── Not Equal ── */
+  .not-equal {
+    display: flex; align-items: center; gap: 24px;
+    font-size: clamp(22px,3vw,32px); font-weight: 700;
+    margin: 24px 0;
+  }
+  .neq-sign {
+    font-size: 42px; color: var(--accent-red);
+  }
+
+  /* ── Tags ── */
+  .tags {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    justify-content: center; margin-top: 20px;
+  }
+  .tag {
+    padding: 6px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 16px; font-weight: 500;
+  }
+  .tag.cyan { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+  .tag.purple { border-color: var(--accent-purple); color: var(--accent-purple); }
+  .tag.green { border-color: var(--accent-green); color: var(--accent-green); }
+  .tag.gold { border-color: var(--gold); color: var(--gold); }
+
+  /* ── Number Scale ── */
+  .number-scale {
+    display: flex; gap: 20px; align-items: flex-end; margin: 24px 0;
+  }
+  .number-item {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .number-bar {
+    width: 72px; background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700;
+  }
+  .number-bar.warn { background: rgba(255,169,77,.15); border-color: var(--accent-orange); }
+  .number-bar.error { background: rgba(255,107,107,.15); border-color: var(--accent-red); }
+  .number-label { font-size: 12px; color: var(--text-dim); }
+
+  /* ── Category Grid ── */
+  .category-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 20px; width: 100%; max-width: 700px; margin-top: 24px;
+  }
+  .category-card {
+    padding: 20px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-align: center;
+  }
+  .category-card h3 {
+    font-size: 18px; margin-bottom: 8px;
+  }
+  .category-card p {
+    font-size: 14px; color: var(--text-dim);
+  }
+
+  /* ── Progress Bar ── */
+  .progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--accent-cyan));
+    z-index: 200; transition: width 200ms ease;
+    box-shadow: 0 0 8px var(--gold-glow);
+  }
+
+  /* ── Notes Toggle ── */
+  .notes-toggle {
+    position: fixed; bottom: 24px; right: 24px;
+    z-index: 100;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    transition: var(--transition);
+  }
+  .notes-toggle:hover { border-color: var(--gold); color: var(--gold); }
+
+  .notes-panel {
+    display: none;
+    position: fixed; bottom: 60px; right: 24px;
+    width: 480px; max-height: 320px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    overflow-y: auto;
+    z-index: 100;
+    font-size: 16px; line-height: 1.7;
+    color: var(--text-dim);
+  }
+  .notes-panel.visible { display: block; }
+  .notes-panel h4 {
+    color: var(--gold); margin-bottom: 12px; font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .highlight { color: var(--gold); }
+
+  /* ── Question ── */
+  .question {
+    font-size: clamp(28px,4vw,42px); font-weight: 900;
+    text-align: center; color: var(--text);
+    margin: 20px 0;
+  }
+  .question .hl { color: var(--accent-cyan); }
+
+  /* ── Quote ── */
+  .quote {
+    font-size: clamp(24px,4vw,40px); font-weight: 700;
+    text-align: center; line-height: 1.4;
+    color: var(--text);
+    max-width: 800px;
+  }
+  .quote .hl { color: var(--gold); }
+
+  /* ── Feature List ── */
+  .feature-list {
+    display: flex; flex-direction: column; gap: 10px;
+    margin: 20px 0;
+  }
+  .feature-item {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 18px;
+  }
+  .feature-icon {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+  }
+  .feature-icon.cyan { background: rgba(91,192,235,.2); color: var(--accent-cyan); }
+  .feature-icon.purple { background: rgba(177,151,252,.2); color: var(--accent-purple); }
+
+  /* ── Grid Cards ── */
+  .grid-cards {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+    width: 100%; max-width: 560px; margin: 24px 0;
+  }
+  .grid-card {
+    background: var(--card); border: 1px solid var(--border);
+    padding: 20px; border-radius: var(--radius);
+    text-align: center;
+  }
+  .grid-card-title {
+    font-size: 20px; font-weight: 700; margin-bottom: 6px;
+  }
+  .grid-card-desc {
+    font-size: 14px; color: var(--text-dim);
+  }
+
+  /* ── Big Number ── */
+  .big-number {
+    font-size: clamp(32px,5vw,48px); font-weight: 900;
+    color: var(--gold); line-height: 1;
+  }
+
+  /* ── Section Title (inline) ── */
+  .inline-section {
+    font-size: 14px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 20px; text-align: center;
+  }
+
+  /* ── Tag (inline) ── */
+  .tag {
+    display: inline-block; padding: 6px 14px; border-radius: 100px;
+    font-size: 13px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .tag-red { background: rgba(255,107,107,.15); color: var(--accent-red); }
+  .tag-green { background: rgba(0,245,212,.15); color: var(--accent-green); }
+  .tag-gold { background: var(--gold-glow); color: var(--gold); }
+  .tag-cyan { background: rgba(91,192,235,.15); color: var(--accent-cyan); }
+  .tag-purple { background: rgba(177,151,252,.15); color: var(--accent-purple); }
+
+  /* ── Overflow Protection ── */
+  .overflow-safe {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    max-height: calc(100vh - 200px);
+    overflow: hidden;
+  }
+  .overflow-safe > * { flex-shrink: 0; }
+
+  /* ── Layer Stack ── */
+  .layer-stack {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    margin: 16px 0;
+  }
+  .layer-stack .layer {
+    padding: 12px 40px; border-radius: var(--radius);
+    font-size: 18px; font-weight: 700; text-align: center;
+    min-width: 260px;
+  }
+  .layer-stack .layer-arrow {
+    font-size: 18px; color: var(--text-dim); line-height: 1;
+  }
+
+  /* ── Badge (inline within cards) ── */
+  .badge-sm {
+    display: inline-block; padding: 2px 10px; border-radius: 100px;
+    font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ── Scenario Card ── */
+  .scenario-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px 24px;
+    text-align: center; max-width: 520px; margin: 12px 0;
+  }
+  .scenario-card .scenario-title {
+    font-size: 18px; font-weight: 700; margin-bottom: 6px;
+  }
+  .scenario-card .scenario-desc {
+    font-size: 14px; color: var(--text-dim);
+  }
+
+  /* ── Lifecycle Row ── */
+  .lifecycle-row {
+    display: flex; align-items: center; gap: 0;
+    margin: 20px 0;
+  }
+  .lifecycle-row .step {
+    padding: 10px 20px; background: var(--card);
+    border: 1px solid var(--border); text-align: center;
+    font-size: 15px; font-weight: 700; min-width: 100px;
+  }
+  .lifecycle-row .step:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+  .lifecycle-row .step:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
+  .lifecycle-row .step-arrow {
+    font-size: 18px; color: var(--gold); padding: 0 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="deck" id="deck">
+
+  <!-- SLIDE 0: Title -->
+  <div class="slide" id="slide-0" data-notes="L01에서 문제를, L02에서 기억과 지식을, L03에서 스킬과 워크플로우를 배웠습니다. L04에서는 이 모든 요소가 하나의 Architecture로 통합되는 과정을 다룹니다. 핵심: 부분이 아닌 전체를 봐야 합니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="hero">
+      <div class="ring">
+        <div class="ring-text">04</div>
+      </div>
+    </div>
+    <div class="title">Hermes <span class="hl">Core</span> Architecture</div>
+    <div class="subtitle">How Everything Fits Together</div>
+    <div style="margin-top:24px">
+      <span class="tag tag-gold">Building an Agent OS with Hermes</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 1: Core Question -->
+  <div class="slide" id="slide-1" data-notes="L01~L03은 각각 독립적인 개념이 아니라, 하나의 시스템을 구성하는 계층입니다. 이 슬라이드에서는 그 전체 그림을 제시합니다. 핵심: 전체가 부분의 합보다 큽니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="question">지금까지 배운 것들이 <span class="hl">하나의 시스템</span>이 된다면?</div>
+    <div class="insight-box" style="max-width:560px;">L01 → L02 → L03 → <span class="highlight">L04: 통합의 순간</span></div>
+  </div>
+
+  <!-- SLIDE 2: Recap -->
+  <div class="slide" id="slide-2" data-notes="L01은 Agent가 실패하는 4가지 이유를, L02는 Memory와 Knowledge의 차이를, L03은 Skills와 Workflow의 필요성을 다뤘습니다. 핵심: 각 강의가 하나의 레이어입니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">지난 강의 복습</div>
+    <div class="grid-cards" style="max-width:600px;">
+      <div class="grid-card" style="border-color:var(--accent-cyan);">
+        <div class="grid-card-title" style="color:var(--accent-cyan);">📘 L01</div>
+        <div class="grid-card-desc">Why Agents Fail<br>4가지 실패 원인</div>
+      </div>
+      <div class="grid-card" style="border-color:var(--accent-purple);">
+        <div class="grid-card-title" style="color:var(--accent-purple);">📗 L02</div>
+        <div class="grid-card-desc">Memory & Knowledge<br>기억과 이해의 차이</div>
+      </div>
+      <div class="grid-card" style="border-color:var(--accent-green);">
+        <div class="grid-card-title" style="color:var(--accent-green);">📕 L03</div>
+        <div class="grid-card-desc">Skills & Workflow<br>재사용 가능한 행동</div>
+      </div>
+      <div class="grid-card" style="border-color:var(--gold);">
+        <div class="grid-card-title" style="color:var(--gold);">📙 L04</div>
+        <div class="grid-card-desc">Core Architecture<br>모든 것을 하나로</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Highlight — 4 Layers = 1 System -->
+  <div class="slide" id="slide-3" data-notes="Memory Layer(사실 저장), Knowledge Layer(관계 이해), Skills Layer(행동 실행), Workflow Layer(순서 관리). 이 4개 레이어가 하나의 시스템으로 동작합니다. 핵심: 레이어는 독립적이지만 함께 동작합니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">The Core Insight</div>
+    <div class="big-text" style="font-size:clamp(36px,5vw,56px);">
+      <span style="color:var(--accent-cyan);">4</span>
+      <span class="hl"> Layers</span>
+      <span> = </span>
+      <span style="color:var(--accent-green);">1</span>
+      <span class="hl"> System</span>
+    </div>
+    <div class="layer-stack" style="margin-top:16px;">
+      <div class="layer" style="background:rgba(91,192,235,.12);border:1px solid var(--accent-cyan);color:var(--accent-cyan);">🧠 Memory Layer</div>
+      <div class="layer-arrow">↑</div>
+      <div class="layer" style="background:rgba(177,151,252,.12);border:1px solid var(--accent-purple);color:var(--accent-purple);">📚 Knowledge Layer</div>
+      <div class="layer-arrow">↑</div>
+      <div class="layer" style="background:rgba(0,245,212,.12);border:1px solid var(--accent-green);color:var(--accent-green);">⚡ Skills Layer</div>
+      <div class="layer-arrow">↑</div>
+      <div class="layer" style="background:var(--gold-glow);border:1px solid var(--gold-dim);color:var(--gold);">🔗 Workflow Layer</div>
+    </div>
+    <div class="key-message">레이어는 독립적이지만 함께 동작한다</div>
+  </div>
+
+  <!-- SLIDE 4: The Big Picture (overflow-safe) -->
+  <div class="slide overflow-safe" id="slide-4" data-notes="전체 아키텍처는 4개의 수평 레이어로 구성됩니다. 하단에서 상단으로: Memory → Knowledge → Skills → Workflow. 각 레이어는 하위 레이어의 출력을 입력으로 받습니다. 핵심: 계층적 구조가 시스템의 안정성을 보장합니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">The Big Picture</div>
+    <div class="layer-stack" style="margin-top:8px;">
+      <div class="layer" style="background:var(--gold-glow);border:1px solid var(--gold-dim);color:var(--gold);font-size:22px;min-width:320px;">🔗 Workflow Layer<br><span style="font-size:13px;font-weight:400;color:var(--text-dim);">순서 관리 · 상태 기계</span></div>
+      <div class="layer-arrow">↑ 의존</div>
+      <div class="layer" style="background:rgba(0,245,212,.12);border:1px solid var(--accent-green);color:var(--accent-green);font-size:22px;min-width:320px;">⚡ Skills Layer<br><span style="font-size:13px;font-weight:400;color:var(--text-dim);">원자적 행동 · 스크립트</span></div>
+      <div class="layer-arrow">↑ 의존</div>
+      <div class="layer" style="background:rgba(177,151,252,.12);border:1px solid var(--accent-purple);color:var(--accent-purple);font-size:22px;min-width:320px;">📚 Knowledge Layer<br><span style="font-size:13px;font-weight:400;color:var(--text-dim);">구조화된 지식 · 관계</span></div>
+      <div class="layer-arrow">↑ 의존</div>
+      <div class="layer" style="background:rgba(91,192,235,.12);border:1px solid var(--accent-cyan);color:var(--accent-cyan);font-size:22px;min-width:320px;">🧠 Memory Layer<br><span style="font-size:13px;font-weight:400;color:var(--text-dim);">사실 저장 · 검색</span></div>
+    </div>
+    <div class="key-message" style="margin-top:12px;">하위 레이어가 상위 레이어의 기반이 된다</div>
+  </div>
+
+  <!-- SLIDE 5: Request Lifecycle (flow, overflow-safe) -->
+  <div class="slide overflow-safe" id="slide-5" data-notes="사용자 요청이 시스템을 통과하는 경로입니다. Input(수신), Route(라우팅), Process(처리 - Memory/Knowledge/Skills/Workflow 순), Respond(응답). 각 단계는 이전 단계의 결과에 의존합니다. 핵심: 요청 하나가 전체 시스템을 여행합니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">Request Lifecycle</div>
+    <div class="flow compact" style="margin-top:8px;">
+      <div class="node" style="font-size:18px;min-width:180px;">📥 Input</div>
+      <div class="arrow">↓</div>
+      <div class="node cyan" style="font-size:18px;min-width:180px;">🔄 Route</div>
+      <div class="arrow">↓</div>
+      <div class="node green" style="font-size:18px;min-width:180px;">⚙️ Process</div>
+      <div class="arrow">↓</div>
+      <div class="node gold" style="font-size:18px;min-width:180px;">📤 Respond</div>
+    </div>
+    <div class="insight-box" style="max-width:500px;font-size:16px;">
+      요청 하나가 <span class="highlight">전체 시스템</span>을 여행한다
+    </div>
+  </div>
+
+  <!-- SLIDE 6: Request Lifecycle 상세 (overflow-safe) -->
+  <div class="slide overflow-safe" id="slide-6" data-notes="Input은 사용자의 메시지를 받아 파싱합니다. Route는 적절한 핸들러로 전달합니다. Process는 Memory 조회 → Knowledge 검색 → Skill 실행 → Workflow 관리 순으로 진행됩니다. 핵심: 라우팅이 첫 번째 병목입니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">Request Lifecycle 상세</div>
+    <div class="grid-cards" style="max-width:600px;margin-top:8px;">
+      <div class="grid-card" style="border-color:var(--accent-cyan);text-align:left;">
+        <div class="grid-card-title" style="color:var(--accent-cyan);font-size:16px;">📥 Input</div>
+        <div class="grid-card-desc">메시지 파싱 · 인증 · 전처리</div>
+      </div>
+      <div class="grid-card" style="border-color:var(--accent-purple);text-align:left;">
+        <div class="grid-card-title" style="color:var(--accent-purple);font-size:16px;">🔄 Route</div>
+        <div class="grid-card-desc">핸들러 매핑 · 컨텍스트 할당</div>
+      </div>
+      <div class="grid-card" style="border-color:var(--accent-green);text-align:left;">
+        <div class="grid-card-title" style="color:var(--accent-green);font-size:16px;">⚙️ Process</div>
+        <div class="grid-card-desc">Memory → Knowledge → Skills → Workflow</div>
+      </div>
+      <div class="grid-card" style="border-color:var(--gold);text-align:left;">
+        <div class="grid-card-title" style="color:var(--gold);font-size:16px;">📤 Respond</div>
+        <div class="grid-card-desc">결과 취합 · 응답 생성 · 전송</div>
+      </div>
+    </div>
+    <div class="key-message" style="margin-top:12px;">Route가 첫 번째 병목이다</div>
+  </div>
+
+  <!-- SLIDE 7: Agent Runtime / User Context (two-col) -->
+  <div class="slide" id="slide-7" data-notes="Agent Runtime은 에이전트가 실행되는 환경입니다. 컨텍스트 관리, 툴 접근, 상태 유지를 담당합니다. User Context는 사용자별 설정, 선호도, 대화 이력을 관리합니다. 핵심: Runtime이 없으면 Agent는 실행될 수 없습니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">실행 환경</div>
+    <div class="two-col" style="max-width:600px;">
+      <div class="col">
+        <div class="col-title" style="color:var(--accent-cyan);">🤖 Agent Runtime</div>
+        <div class="col-item ok" style="font-size:16px;">컨텍스트 관리</div>
+        <div class="col-item ok" style="font-size:16px;">툴 접근</div>
+        <div class="col-item ok" style="font-size:16px;">상태 유지</div>
+      </div>
+      <div class="col">
+        <div class="col-title" style="color:var(--accent-purple);">👤 User Context</div>
+        <div class="col-item ok" style="font-size:16px;">사용자 설정</div>
+        <div class="col-item ok" style="font-size:16px;">선호도 저장</div>
+        <div class="col-item ok" style="font-size:16px;">대화 이력</div>
+      </div>
+    </div>
+    <div class="key-message">Runtime이 없으면 Agent는 실행될 수 없다</div>
+  </div>
+
+  <!-- SLIDE 8: Runtime Components (overflow-safe) -->
+  <div class="slide overflow-safe" id="slide-8" data-notes="Runtime의 세 가지 핵심 컴포넌트는 Session Management(세션 관리), Tool Access(도구 접근), Configuration(설정 관리)입니다. 이 세 가지가 Agent의 실행 환경을 정의합니다. 핵심: 세션은 컨텍스트의 생명주기입니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">Runtime Components</div>
+    <div class="category-grid" style="max-width:600px;margin-top:8px;">
+      <div class="category-card" style="border-color:var(--accent-cyan);">
+        <h3 style="color:var(--accent-cyan);">📋 Session</h3>
+        <p>세션 생성 · 유지 · 종료<br>컨텍스트 생명주기</p>
+      </div>
+      <div class="category-card" style="border-color:var(--accent-purple);">
+        <h3 style="color:var(--accent-purple);">🔧 Tools</h3>
+        <p>도구 등록 · 접근 제어<br>실행 환경</p>
+      </div>
+      <div class="category-card" style="border-color:var(--accent-green);">
+        <h3 style="color:var(--accent-green);">⚙️ Config</h3>
+        <p>설정 관리 · 프로필<br>모델 라우팅</p>
+      </div>
+    </div>
+    <div class="key-message" style="margin-top:12px;">세션은 컨텍스트의 생명주기이다</div>
+  </div>
+
+  <!-- SLIDE 9: Highlight — Memory Layer -->
+  <div class="slide" id="slide-9" data-notes="Memory Layer는 FTS5 검색 엔진과 SQLite 데이터베이스로 구성됩니다. 모든 대화, 결정, 사용자 정보를 구조화된 형태로 저장하고 검색합니다. 핵심: FTS5가 검색의 핵심입니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">Layer 1</div>
+    <div class="big-text" style="font-size:clamp(40px,5vw,56px);color:var(--accent-cyan);">🧠 Memory Layer</div>
+    <div class="flow compact">
+      <div class="node cyan" style="font-size:16px;min-width:180px;">Save</div>
+      <div class="arrow">→</div>
+      <div class="node green" style="font-size:16px;min-width:180px;">Index</div>
+      <div class="arrow">→</div>
+      <div class="node purple" style="font-size:16px;min-width:180px;">Retrieve</div>
+    </div>
+    <div class="key-message">FTS5가 검색의 핵심이다</div>
+  </div>
+
+  <!-- SLIDE 10: Memory Components (overflow-safe) -->
+  <div class="slide overflow-safe" id="slide-10" data-notes="Memory Layer는 FTS5(전문 검색), SQLite(관계형 저장소), Cache(빠른 접근)의 3계층으로 구성됩니다. FTS5는 키워드 검색, SQLite는 메타데이터와 관계, Cache는 자주 접근하는 데이터를 담당합니다. 핵심: 3계층이 속도와 정확성을 보장합니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">Memory Components</div>
+    <div class="category-grid" style="max-width:640px;margin-top:8px;">
+      <div class="category-card" style="border-color:var(--accent-cyan);">
+        <h3 style="color:var(--accent-cyan);">🔍 FTS5</h3>
+        <p>전문 검색 엔진<br>키워드 · 구문 검색</p>
+      </div>
+      <div class="category-card" style="border-color:var(--accent-purple);">
+        <h3 style="color:var(--accent-purple);">🗄️ SQLite</h3>
+        <p>관계형 저장소<br>메타데이터 · 관계</p>
+      </div>
+      <div class="category-card" style="border-color:var(--accent-green);">
+        <h3 style="color:var(--accent-green);">⚡ Cache</h3>
+        <p>빠른 접근<br>자주 조회하는 데이터</p>
+      </div>
+    </div>
+    <div class="key-message" style="margin-top:12px;">3계층이 속도와 정확성을 보장한다</div>
+  </div>
+
+  <!-- SLIDE 11: Highlight — Knowledge Layer -->
+  <div class="slide" id="slide-11" data-notes="Knowledge Layer는 Wiki 페이지, 인덱스 파일, 지식 베이스로 구성됩니다. 단순 사실이 아닌 구조화된 지식을 관리하고, 관계를 추적합니다. 핵심: 지식은 관계의 네트워크입니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">Layer 2</div>
+    <div class="big-text" style="font-size:clamp(40px,5vw,56px);color:var(--accent-purple);">📚 Knowledge Layer</div>
+    <div class="flow compact">
+      <div class="node purple" style="font-size:16px;min-width:180px;">Fact</div>
+      <div class="arrow">→</div>
+      <div class="node gold" style="font-size:16px;min-width:180px;">Relation</div>
+      <div class="arrow">→</div>
+      <div class="node green" style="font-size:16px;min-width:180px;">Understanding</div>
+    </div>
+    <div class="key-message">지식은 관계의 네트워크이다</div>
+  </div>
+
+  <!-- SLIDE 12: Knowledge Components (overflow-safe) -->
+  <div class="slide overflow-safe" id="slide-12" data-notes="Knowledge Layer는 Wiki(T1/T2/T3 계층), Index(검색 인덱스), Knowledge Base(구조화된 지식)로 구성됩니다. Wiki는 문서 저장, Index는 검색, Knowledge Base는 관계를 담당합니다. 핵심: Wiki가 지식의 SSOT입니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">Knowledge Components</div>
+    <div class="category-grid" style="max-width:640px;margin-top:8px;">
+      <div class="category-card" style="border-color:var(--accent-purple);">
+        <h3 style="color:var(--accent-purple);">📖 Wiki</h3>
+        <p>T1 · T2 · T3 계층<br>문서 저장 · 구조화</p>
+      </div>
+      <div class="category-card" style="border-color:var(--accent-cyan);">
+        <h3 style="color:var(--accent-cyan);">📑 Index</h3>
+        <p>검색 인덱스<br>llms.txt · llms-full.txt</p>
+      </div>
+      <div class="category-card" style="border-color:var(--accent-green);">
+        <h3 style="color:var(--accent-green);">🧠 KB</h3>
+        <p> Knowledge Base<br>관계 추적 · 패턴 저장</p>
+      </div>
+    </div>
+    <div class="key-message" style="margin-top:12px;">Wiki가 지식의 SSOT이다</div>
+  </div>
+
+  <!-- SLIDE 13: Highlight — Skills Layer -->
+  <div class="slide" id="slide-13" data-notes="Skills Layer는 재사용 가능한 작업 단위를 관리합니다. create-job.sh, workflow-gate.sh 같은 스크립트가 Skill의 예시입니다. 각 Skill은 Trigger, Input, Process, Output을 정의합니다. 핵심: 스크립트가 Skill의 단위입니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">Layer 3</div>
+    <div class="big-text" style="font-size:clamp(40px,5vw,56px);color:var(--accent-green);">⚡ Skills Layer</div>
+    <div class="flow compact">
+      <div class="node green" style="font-size:16px;min-width:180px;">Trigger</div>
+      <div class="arrow">→</div>
+      <div class="node cyan" style="font-size:16px;min-width:180px;">Execute</div>
+      <div class="arrow">→</div>
+      <div class="node gold" style="font-size:16px;min-width:180px;">Output</div>
+    </div>
+    <div class="key-message">스크립트가 Skill의 단위이다</div>
+  </div>
+
+  <!-- SLIDE 14: Skills — Scripts, Commands, Workflows (overflow-safe) -->
+  <div class="slide overflow-safe" id="slide-14" data-notes="Skills Layer는 Shell 스크립트, CLI 명령어, Workflow 정의로 구성됩니다. 각 Skill은 원자적이고 재사용 가능해야 합니다. Skill 간 의존성은 Workflow Layer에서 관리합니다. 핵심: 원자성과 재사용성이 Skill의 품질입니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">Skills Components</div>
+    <div class="category-grid" style="max-width:640px;margin-top:8px;">
+      <div class="category-card" style="border-color:var(--accent-green);">
+        <h3 style="color:var(--accent-green);">🐚 Scripts</h3>
+        <p>Shell · Python 스크립트<br>원자적 작업 단위</p>
+      </div>
+      <div class="category-card" style="border-color:var(--accent-cyan);">
+        <h3 style="color:var(--accent-cyan);">⌨️ Commands</h3>
+        <p>CLI 명령어 · 도구<br>재사용 가능</p>
+      </div>
+      <div class="category-card" style="border-color:var(--accent-purple);">
+        <h3 style="color:var(--accent-purple);">📋 Workflows</h3>
+        <p>순서 정의 · 조건<br>의존성 관리</p>
+      </div>
+    </div>
+    <div class="key-message" style="margin-top:12px;">원자성과 재사용성이 Skill의 품질이다</div>
+  </div>
+
+  <!-- SLIDE 15: Highlight — Workflow Layer -->
+  <div class="slide" id="slide-15" data-notes="Workflow Layer는 Skill 실행의 순서와 조건을 관리합니다. 9단계 상태 기계로 구성되며, 각 단계는 이전 단계의 결과에 의존합니다. .workflow-state 파일이 현재 상태를 추적합니다. 핵심: 상태 기계가 Workflow의 심장입니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">Layer 4</div>
+    <div class="big-text" style="font-size:clamp(40px,5vw,56px);color:var(--gold);">🔗 Workflow Layer</div>
+    <div class="flow compact">
+      <div class="node gold" style="font-size:16px;min-width:180px;">Step N</div>
+      <div class="arrow">→</div>
+      <div class="node cyan" style="font-size:16px;min-width:180px;">Check Condition</div>
+      <div class="arrow">→</div>
+      <div class="node green" style="font-size:16px;min-width:180px;">Next Step</div>
+    </div>
+    <div class="key-message">상태 기계가 Workflow의 심장이다</div>
+  </div>
+
+  <!-- SLIDE 16: Workflow — 9-Step State Machine (overflow-safe) -->
+  <div class="slide overflow-safe" id="slide-16" data-notes="Request → Investigation → Design → Review → Approval → Execution → Test → Execution Review → Done. 각 단계는 시작 시간, 완료 시간, 상태(pending/in_progress/done/error)를 가집니다. 핵심: 각 단계가 독립적인 상태를 가집니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">9-Step State Machine</div>
+    <div class="lifecycle-row" style="margin-top:8px;flex-wrap:wrap;justify-content:center;">
+      <div class="step" style="color:var(--accent-cyan);border-color:var(--accent-cyan);">Request</div>
+      <span class="step-arrow">→</span>
+      <div class="step" style="color:var(--accent-purple);border-color:var(--accent-purple);">Investigate</div>
+      <span class="step-arrow">→</span>
+      <div class="step" style="color:var(--accent-orange);border-color:var(--accent-orange);">Design</div>
+      <span class="step-arrow">→</span>
+      <div class="step" style="color:var(--accent-red);border-color:var(--accent-red);">Review</div>
+      <span class="step-arrow">→</span>
+      <div class="step" style="color:var(--gold);border-color:var(--gold-dim);">Approve</div>
+    </div>
+    <div class="lifecycle-row" style="margin-top:4px;flex-wrap:wrap;justify-content:center;">
+      <div class="step" style="color:var(--accent-green);border-color:var(--accent-green);">Execute</div>
+      <span class="step-arrow">→</span>
+      <div class="step" style="color:var(--accent-cyan);border-color:var(--accent-cyan);">Test</div>
+      <span class="step-arrow">→</span>
+      <div class="step" style="color:var(--accent-purple);border-color:var(--accent-purple);">Review</div>
+      <span class="step-arrow">→</span>
+      <div class="step" style="color:var(--gold);border-color:var(--gold-dim);">Done</div>
+    </div>
+    <div class="insight-box" style="max-width:480px;font-size:15px;margin-top:12px;">
+      각 단계: <span class="highlight">start · end · status</span><br>
+      pending → in_progress → done / error
+    </div>
+  </div>
+
+  <!-- SLIDE 17: With / Without Architecture (comparison) -->
+  <div class="slide" id="slide-17" data-notes="아키텍처가 있으면 각 레이어가 명확히 구분되고, 데이터 흐름이 예측 가능하며, 확장이 쉽습니다. 아키텍처가 없으면 모든 것이 뒤섞이고, 에러 추적이 불가능하며, 확장할 수 없습니다. 핵심: 아키텍처는 미래를 위한 투자입니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">Architecture Impact</div>
+    <table class="compare-table" style="max-width:560px;">
+      <thead>
+        <tr>
+          <th style="color:var(--accent-green);">✅ With Architecture</th>
+          <th style="color:var(--accent-red);">❌ Without Architecture</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>레이어가 명확히 구분됨</td><td>모든 것이 뒤섞임</td></tr>
+        <tr><td>데이터 흐름 예측 가능</td><td>에러 추적 불가능</td></tr>
+        <tr><td>확장이 쉬움</td><td>확장 불가능</td></tr>
+        <tr><td>팀 협업 용이</td><td>개인 의존성 증가</td></tr>
+        <tr><td>테스트 가능</td><td>테스트 불가능</td></tr>
+      </tbody>
+    </table>
+    <div class="key-message">아키텍처는 미래를 위한 투자이다</div>
+  </div>
+
+  <!-- SLIDE 18: Highlight — 하나라도 없으면 Agent는 실패한다 -->
+  <div class="slide" id="slide-18" data-notes="L01에서 배운 4가지 실패 원인을 기억하시나요? Memory Loss, Knowledge Loss, Skills Loss, Workflow Loss. 이 네 가지는 정확히 4개 레이어에 대응됩니다. 하나라도缺失하면 Agent는 실패합니다. 핵심: L01의 문제 = 아키텍처의 부재.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">L01 Revisited</div>
+    <div class="big-text" style="font-size:clamp(32px,4.5vw,50px);">
+      하나라도 없으면<br>
+      <span class="hl">Agent는 실패한다</span>
+    </div>
+    <div class="two-col" style="max-width:600px;margin-top:12px;">
+      <div class="col">
+        <div class="col-title" style="color:var(--accent-red);">❌ L01 Failures</div>
+        <div class="col-item warn" style="font-size:14px;">Memory Loss</div>
+        <div class="col-item warn" style="font-size:14px;">Knowledge Loss</div>
+        <div class="col-item warn" style="font-size:14px;">Skills Loss</div>
+        <div class="col-item warn" style="font-size:14px;">Workflow Loss</div>
+      </div>
+      <div class="col">
+        <div class="col-title" style="color:var(--accent-green);">✅ L04 Layers</div>
+        <div class="col-item ok" style="font-size:14px;">🧠 Memory Layer</div>
+        <div class="col-item ok" style="font-size:14px;">📚 Knowledge Layer</div>
+        <div class="col-item ok" style="font-size:14px;">⚡ Skills Layer</div>
+        <div class="col-item ok" style="font-size:14px;">🔗 Workflow Layer</div>
+      </div>
+    </div>
+    <div class="insight-box" style="max-width:480px;margin-top:12px;">
+      <span class="highlight">L01의 문제 = 아키텍처의 부재</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 19: Core / P-Hermes (two-col) -->
+  <div class="slide" id="slide-19" data-notes="Core는 Agent Runtime, Memory, Knowledge, Skills, Workflow를 포함합니다. P-Hermes는 생산 시스템(Factory Layer)으로, Knowledge Factory, Content Factory, Research Factory 등이 여기에 속합니다. 핵심: Core는 엔진, P-Hermes는 공장입니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">Core vs P-Hermes</div>
+    <div class="two-col" style="max-width:600px;">
+      <div class="col">
+        <div class="col-title" style="color:var(--accent-cyan);">⚙️ Core</div>
+        <div class="col-item ok" style="font-size:16px;">Agent Runtime</div>
+        <div class="col-item ok" style="font-size:16px;">Memory Layer</div>
+        <div class="col-item ok" style="font-size:16px;">Knowledge Layer</div>
+        <div class="col-item ok" style="font-size:16px;">Skills Layer</div>
+        <div class="col-item ok" style="font-size:16px;">Workflow Layer</div>
+      </div>
+      <div class="col">
+        <div class="col-title" style="color:var(--gold);">🏭 P-Hermes</div>
+        <div class="col-item ok" style="font-size:16px;">Knowledge Factory</div>
+        <div class="col-item ok" style="font-size:16px;">Content Factory</div>
+        <div class="col-item ok" style="font-size:16px;">Research Factory</div>
+        <div class="col-item ok" style="font-size:16px;">Deployment</div>
+      </div>
+    </div>
+    <div class="key-message">Core는 엔진, P-Hermes는 공장이다</div>
+  </div>
+
+  <!-- SLIDE 20: Core vs P-Hermes 경계 (overflow-safe) -->
+  <div class="slide overflow-safe" id="slide-20" data-notes="Core의 책임: 에이전트 실행, 기억/지식 관리, 스킬/워크플로우 실행. P-Hermes의 책임: 지식 생산, 콘텐츠 생성, 연구 워크플로우, 배포 관리. 이 경계가 명확할수록 시스템이 안정적입니다. 핵심: 명확한 경계가 안정성을 보장합니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">Boundary</div>
+    <div class="two-col" style="max-width:640px;margin-top:8px;">
+      <div class="col">
+        <div class="col-title" style="color:var(--accent-cyan);">⚙️ Core 책임</div>
+        <div class="col-item" style="font-size:14px;">에이전트 실행 환경</div>
+        <div class="col-item" style="font-size:14px;">기억 저장 및 검색</div>
+        <div class="col-item" style="font-size:14px;">지식 구조화</div>
+        <div class="col-item" style="font-size:14px;">스킬 실행</div>
+        <div class="col-item" style="font-size:14px;">워크플로우 관리</div>
+      </div>
+      <div class="col">
+        <div class="col-title" style="color:var(--gold);">🏭 P-Hermes 책임</div>
+        <div class="col-item" style="font-size:14px;">지식 생산 파이프라인</div>
+        <div class="col-item" style="font-size:14px;">콘텐츠 생성 및 배포</div>
+        <div class="col-item" style="font-size:14px;">연구 워크플로우</div>
+        <div class="col-item" style="font-size:14px;">Spec-Driven 개발</div>
+        <div class="col-item" style="font-size:14px;">배포 관리</div>
+      </div>
+    </div>
+    <div class="key-message" style="margin-top:12px;">명확한 경계가 안정성을 보장한다</div>
+  </div>
+
+  <!-- SLIDE 21: Highlight — Single Source of Truth -->
+  <div class="slide" id="slide-21" data-notes="Hermes의 핵심 설계 원칙 중 하나는 SSOT(Single Source of Truth)입니다. Spec이 단일 진실 근원이고, 모든 구현은 Spec을 따릅니다. Config, File System, Spec 문서가 SSOT를 구성합니다. 핵심: 하나의 진실, 하나의 출처.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">Design Principle</div>
+    <div class="big-text" style="font-size:clamp(28px,4vw,48px);">
+      <span class="hl">Single Source</span> of Truth
+    </div>
+    <div class="layer-stack" style="margin-top:12px;">
+      <div class="layer" style="background:rgba(240,180,41,.1);border:1px solid var(--gold-dim);color:var(--gold);min-width:280px;">📋 Spec 문서</div>
+      <div class="layer-arrow">↓ 검증</div>
+      <div class="layer" style="background:rgba(91,192,235,.1);border:1px solid var(--accent-cyan);color:var(--accent-cyan);min-width:280px;">⚙️ 구현 (Config / Code)</div>
+      <div class="layer-arrow">↓ 확인</div>
+      <div class="layer" style="background:rgba(0,245,212,.1);border:1px solid var(--accent-green);color:var(--accent-green);min-width:280px;">✅ File System / Runtime</div>
+    </div>
+    <div class="insight-box" style="max-width:480px;margin-top:12px;">
+      하나의 진실, <span class="highlight">하나의 출처</span>
+    </div>
+  </div>
+
+  <!-- SLIDE 22: Full Stack (flow, overflow-safe) -->
+  <div class="slide overflow-safe" id="slide-22" data-notes="전체 스택을 한눈에 보여줍니다. 하단의 Memory에서 출발해 Knowledge, Skills, Workflow를 거쳐 Factory Layer로 이어집니다. 각 레이어는 상위 레이어의 기반이 됩니다. 핵심: 하위 레이어가 상위 레이어의 품질을 결정합니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">Full Stack</div>
+    <div class="layer-stack" style="margin-top:8px;">
+      <div class="layer" style="background:var(--gold-glow);border:1px solid var(--gold-dim);color:var(--gold);min-width:340px;">🏭 Factory Layer (P-Hermes)</div>
+      <div class="layer-arrow">↑</div>
+      <div class="layer" style="background:rgba(240,180,41,.08);border:1px solid var(--gold-dim);color:var(--gold);min-width:340px;">🔗 Workflow Layer</div>
+      <div class="layer-arrow">↑</div>
+      <div class="layer" style="background:rgba(0,245,212,.12);border:1px solid var(--accent-green);color:var(--accent-green);min-width:340px;">⚡ Skills Layer</div>
+      <div class="layer-arrow">↑</div>
+      <div class="layer" style="background:rgba(177,151,252,.12);border:1px solid var(--accent-purple);color:var(--accent-purple);min-width:340px;">📚 Knowledge Layer</div>
+      <div class="layer-arrow">↑</div>
+      <div class="layer" style="background:rgba(91,192,235,.12);border:1px solid var(--accent-cyan);color:var(--accent-cyan);min-width:340px;">🧠 Memory Layer</div>
+    </div>
+    <div class="key-message" style="margin-top:12px;">하위 레이어가 상위 레이어의 품질을 결정한다</div>
+  </div>
+
+  <!-- SLIDE 23: Summary — Part 1 완료 -->
+  <div class="slide" id="slide-23" data-notes="Part 1에서는 Hermes Core의 4개 레이어를 배웠습니다. Part 2에서는 이 Core 위에 구축되는 P-Hermes의 Factory Layer를 다룹니다. Knowledge Factory에서 시작해 Spec-Driven Development까지 이어집니다. 핵심: Core가 준비되었습니다. 이제 공장을 지을 시간입니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="inline-section">Part 1 Complete</div>
+    <div class="section-divider" style="gap:8px;">
+      <div class="section-title" style="font-size:clamp(28px,4vw,44px);">
+        Part 1 <span class="hl">완료</span>
+      </div>
+      <div class="section-subtitle" style="font-size:clamp(18px,2.2vw,26px);">다음: Part 2 — Factory Layer</div>
+    </div>
+    <div class="two-col" style="max-width:560px;margin-top:12px;">
+      <div class="col">
+        <div class="col-title" style="color:var(--accent-cyan);">✅ 배운 것</div>
+        <div class="col-item" style="font-size:14px;">4 Layer Architecture</div>
+        <div class="col-item" style="font-size:14px;">Request Lifecycle</div>
+        <div class="col-item" style="font-size:14px;">Core vs P-Hermes</div>
+      </div>
+      <div class="col">
+        <div class="col-title" style="color:var(--gold);">🔜 앞으로</div>
+        <div class="col-item" style="font-size:14px;">Knowledge Factory</div>
+        <div class="col-item" style="font-size:14px;">Spec-Driven Dev</div>
+        <div class="col-item" style="font-size:14px;">Content Factory</div>
+      </div>
+    </div>
+    <div style="margin-top:24px;">
+      <div class="big-number">Q&amp;A</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Nav Dots -->
+<div class="nav" id="nav"></div>
+
+<!-- Slide Counter -->
+<div class="slide-counter" id="slideCounter"></div>
+
+<!-- Notes Toggle -->
+<button class="notes-toggle" id="notesToggle">📝 Notes</button>
+<div class="notes-panel" id="notesPanel">
+  <h4>발표자 노트</h4>
+  <p id="notesContent">슬라이드를 선택해주세요.</p>
+</div>
+
+<script>
+  const deck = document.getElementById('deck');
+  const slides = deck.querySelectorAll('.slide');
+  const nav = document.getElementById('nav');
+  const slideCounter = document.getElementById('slideCounter');
+  const notesToggle = document.getElementById('notesToggle');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesContent = document.getElementById('notesContent');
+  const progressBar = document.getElementById('progressBar');
+
+  // Build nav dots
+  slides.forEach((_, i) => {
+    const a = document.createElement('a');
+    a.href = `#slide-${i}`;
+    a.dataset.index = i;
+    nav.appendChild(a);
+  });
+
+  // Update on scroll
+  function update() {
+    const scrollLeft = deck.scrollLeft;
+    const vw = window.innerWidth;
+    const current = Math.round(scrollLeft / vw);
+    const progress = ((scrollLeft / (deck.scrollWidth - vw)) * 100).toFixed(0);
+
+    document.querySelectorAll('.nav a').forEach((a, i) => {
+      a.classList.toggle('active', i === current);
+    });
+
+    slideCounter.textContent = `${current + 1} / ${slides.length}`;
+    progressBar.style.width = `${progress}%`;
+
+    // Notes
+    const currentSlide = slides[current];
+    if (currentSlide) {
+      notesContent.textContent = currentSlide.dataset.notes || '';
+    }
+  }
+
+  deck.addEventListener('scroll', update);
+  window.addEventListener('resize', update);
+  update();
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    const vw = window.innerWidth;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      deck.scrollBy({ left: vw, behavior: 'smooth' });
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      deck.scrollBy({ left: -vw, behavior: 'smooth' });
+    }
+  });
+
+  // Notes toggle
+  notesToggle.addEventListener('click', () => {
+    notesPanel.classList.toggle('visible');
+  });
+
+  // Nav click
+  document.querySelectorAll('.nav a').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const idx = parseInt(a.dataset.index);
+      deck.scrollTo({ left: idx * window.innerWidth, behavior: 'smooth' });
+    });
+  });
+</script>
+
+</body>
+</html>

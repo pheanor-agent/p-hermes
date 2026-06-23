@@ -3,341 +3,315 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Building an Agent OS with Hermes — Course</title>
+<title>Building an Agent OS with Hermes — Course Dashboard</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0b0d12;--surface:#12151c;--card:#181c28;--border:#262b3a;
+    --gold:#f0b429;--gold-dim:#b8861e;--gold-glow:rgba(240,180,41,.15);
+    --text:#e8edf5;--text-dim:#8892a8;
+    --accent-cyan:#5bc0eb;--accent-magenta:#f15bb5;--accent-green:#00f5d4;
+    --accent-red:#ff6b6b;--accent-orange:#ffa94d;--accent-purple:#b197fc;
+    --radius:16px;--transition:400ms cubic-bezier(.22,1,.36,1)
+  }
+  html,body{font-family:'Inter','Noto Sans KR',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+  .container{max-width:960px;margin:0 auto;padding:48px 24px 80px}
+  .hl{color:var(--gold)}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  /* ── Header ── */
+  .header{text-align:center;margin-bottom:48px}
+  .title{font-size:clamp(32px,5vw,48px);font-weight:900;letter-spacing:-2px;line-height:1.1}
+  .subtitle{font-size:clamp(16px,2vw,22px);color:var(--text-dim);margin-top:8px;font-weight:300}
+  .badge-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+  .badge{padding:4px 14px;border-radius:100px;font-size:12px;font-weight:700;letter-spacing:1px}
+  .badge-gold{background:var(--gold-glow);color:var(--gold)}
+  .badge-cyan{background:rgba(91,192,235,.15);color:var(--accent-cyan)}
+  .badge-green{background:rgba(0,245,212,.15);color:var(--accent-green)}
+  .badge-purple{background:rgba(177,151,252,.15);color:var(--accent-purple)}
 
-  :root {
-    --bg: #0b0d12;
-    --surface: #12151c;
-    --card: #181c28;
-    --border: #262b3a;
-    --gold: #f0b429;
-    --gold-dim: #b8861e;
-    --gold-glow: rgba(240,180,41,.15);
-    --text: #e8edf5;
-    --text-dim: #8892a8;
-    --accent-cyan: #5bc0eb;
-    --accent-magenta: #f15bb5;
-    --accent-green: #00f5d4;
-    --accent-red: #ff6b6b;
-    --accent-orange: #ffa94d;
-    --accent-purple: #b197fc;
-    --radius: 16px;
-    --transition: 400ms cubic-bezier(.22,1,.36,1);
-  }
+  /* ── Timeline ── */
+  .section-title{font-size:14px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+  .section{margin-bottom:48px}
+  .timeline{position:relative;padding-left:24px}
+  .timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--border)}
+  .tl-item{position:relative;padding:10px 0 10px 20px;cursor:pointer;transition:var(--transition)}
+  .tl-item::before{content:'';position:absolute;left:-20px;top:16px;width:10px;height:10px;border-radius:50%;background:var(--border);border:2px solid var(--bg);transition:var(--transition)}
+  .tl-item:hover{color:var(--gold)}
+  .tl-item:hover::before{background:var(--gold);box-shadow:0 0 8px var(--gold-glow)}
+  .tl-date{font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace}
+  .tl-version{display:inline-block;margin:0 8px;padding:1px 8px;border-radius:4px;font-size:11px;font-weight:700;background:var(--gold-glow);color:var(--gold)}
+  .tl-desc{font-size:14px;margin-top:2px}
+  .tl-job{font-size:11px;color:var(--accent-purple);font-family:'JetBrains Mono',monospace}
 
-  html, body {
-    font-family: 'Inter','Noto Sans KR',system-ui,-apple-system,sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
+  /* ── Lecture Table ── */
+  .part-title{font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin:32px 0 16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+  .lec-card{display:block;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:8px;text-decoration:none;color:var(--text);cursor:pointer;transition:var(--transition)}
+  .lec-card:hover{border-color:var(--gold);transform:translateY(-1px)}
+  .lec-card.ready{border-left:3px solid var(--accent-green)}
+  .lec-card.new{border-left:3px solid var(--accent-cyan)}
+  .lec-card.pending{opacity:.45;pointer-events:none}
+  .lec-header{display:grid;grid-template-columns:36px 1fr auto auto;gap:12px;align-items:center}
+  .lec-num{width:32px;height:32px;border-radius:50%;background:var(--gold-glow);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900}
+  .lec-name{font-size:15px;font-weight:700}
+  .lec-name .desc{font-size:13px;font-weight:400;color:var(--text-dim);margin-left:8px}
+  .lec-tags{display:flex;gap:4px;flex-wrap:wrap}
+  .lec-tag{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px}
+  .tag-ready{background:rgba(0,245,212,.15);color:var(--accent-green)}
+  .tag-wip{background:rgba(91,192,235,.15);color:var(--accent-cyan)}
+  .tag-spec{background:rgba(177,151,252,.15);color:var(--accent-purple)}
+  .lec-slides{font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;text-align:right;min-width:50px}
 
-  .container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 64px 24px;
-  }
+  /* ── Expanded Detail ── */
+  .lec-detail{overflow:hidden;max-height:0;transition:max-height 400ms ease,opacity 300ms ease;opacity:0}
+  .lec-detail.open{max-height:500px;opacity:1}
+  .lec-detail-inner{padding:16px 0 8px 48px;border-top:1px solid var(--border);margin-top:12px}
+  .detail-item{display:flex;gap:12px;padding:4px 0;font-size:13px}
+  .detail-ver{color:var(--gold);font-family:'JetBrains Mono',monospace;min-width:48px;font-size:12px}
+  .detail-ver.wip{color:var(--accent-cyan)}
+  .detail-text{color:var(--text-dim)}
 
-  .header {
-    text-align: center;
-    margin-bottom: 64px;
-  }
+  /* ── Stats ── */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:24px}
+  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;text-align:center}
+  .stat-val{font-size:28px;font-weight:900;color:var(--gold)}
+  .stat-label{font-size:12px;color:var(--text-dim);margin-top:4px}
+  .stat-mini{font-size:13px;color:var(--text-dim);margin-top:4px}
 
-  .title {
-    font-size: clamp(32px,5vw,48px);
-    font-weight: 900;
-    letter-spacing: -2px;
-    line-height: 1.1;
-  }
-  .title .hl { color: var(--gold); }
+  .footer{text-align:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--border);color:var(--text-dim);font-size:13px}
 
-  .subtitle {
-    font-size: clamp(16px,2vw,22px);
-    color: var(--text-dim);
-    margin-top: 12px;
-    font-weight: 300;
-  }
-
-  .tag {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 100px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-top: 16px;
-  }
-  .tag-gold { background: var(--gold-glow); color: var(--gold); }
-
-  .part {
-    margin-bottom: 48px;
-  }
-
-  .part-title {
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 24px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .lecture-grid {
-    display: grid;
-    gap: 16px;
-  }
-
-  .lecture-card {
-    display: grid;
-    grid-template-columns: 60px 1fr auto;
-    gap: 20px;
-    align-items: center;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px 24px;
-    text-decoration: none;
-    color: var(--text);
-    transition: var(--transition);
-  }
-  .lecture-card:hover {
-    border-color: var(--gold);
-    transform: translateY(-2px);
-  }
-  .lecture-card.completed {
-    border-left: 3px solid var(--accent-green);
-  }
-  .lecture-card.upcoming {
-    opacity: 0.4;
-    pointer-events: none;
-  }
-
-  .lecture-num {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: var(--gold-glow);
-    color: var(--gold);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: 900;
-  }
-
-  .lecture-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .lecture-title {
-    font-size: 17px;
-    font-weight: 700;
-  }
-
-  .lecture-desc {
-    font-size: 14px;
-    color: var(--text-dim);
-  }
-
-  .lecture-meta {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .meta-tag {
-    padding: 4px 10px;
-    border-radius: 100px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-  .meta-slides { background: rgba(91,192,235,.15); color: var(--accent-cyan); }
-  .meta-time { background: rgba(177,151,252,.15); color: var(--accent-purple); }
-  .meta-status { background: rgba(0,245,212,.15); color: var(--accent-green); }
-
-  .footer {
-    text-align: center;
-    margin-top: 64px;
-    padding-top: 32px;
-    border-top: 1px solid var(--border);
-    color: var(--text-dim);
-    font-size: 14px;
-  }
+  /* ── Part Nav ── */
+  .part-nav{display:flex;gap:8px;justify-content:center;margin-bottom:32px;flex-wrap:wrap}
+  .part-nav a{color:var(--text-dim);font-size:13px;font-weight:500;text-decoration:none;padding:4px 12px;border-radius:100px;border:1px solid var(--border);transition:var(--transition)}
+  .part-nav a:hover{border-color:var(--gold);color:var(--gold)}
 </style>
 </head>
 <body>
 
 <div class="container">
 
+  <!-- ═══ HEADER ═══ -->
   <div class="header">
     <div class="title">Building an Agent <span class="hl">OS</span><br>with Hermes</div>
     <div class="subtitle">From Chatbots to Persistent AI Systems</div>
-    <div class="tag tag-gold">10 Lectures · ~250 Slides</div>
+    <div class="badge-row">
+      <span class="badge badge-gold">10 Lectures</span>
+      <span class="badge badge-cyan">259 Slides</span>
+      <span class="badge badge-purple">~600 min</span>
+      <span class="badge badge-green">SPEC-SLIDES v1.2</span>
+    </div>
   </div>
 
-  <!-- Part 1: Hermes Core -->
-  <div class="part">
+  <!-- ═══ VERSION TIMELINE ═══ -->
+  <div class="section" id="timeline">
+    <div class="section-title">📜 Version Timeline</div>
+    <div class="timeline" id="tlContainer">
+      <div class="tl-item" data-detail="Notes UI를 L02 스타일(우측 하단 모서리)로 통일. data-notes 내용 방향 R0~R5 정의. L01에 id 속성 추가. data-notes 길이 80~150자 보강.">
+        <div><span class="tl-date">2026-06-23</span><span class="tl-version">v1.2</span></div>
+        <div class="tl-desc">Notes UI 통일 + data-notes 내용 방향 R0~R5</div>
+        <div class="tl-job">JOB-1813</div>
+      </div>
+      <div class="tl-item" data-detail="L01/L02 예시 일반화(개인적 예시→일반 회사원 시나리오). data-notes 80~150자 보강. Content System 연동.">
+        <div><span class="tl-date">2026-06-23</span><span class="tl-version">v1.2</span></div>
+        <div class="tl-desc">예시 일반화 + data-notes 80~150자 보강</div>
+        <div class="tl-job">JOB-1812</div>
+      </div>
+      <div class="tl-item" data-detail="Published(docs/slides/)와 Playground(docs/playground/courses/)를 완전 분리. published는 deploy 전용, playground는 개발 공간.">
+        <div><span class="tl-date">2026-06-23</span><span class="tl-version">v1.1</span></div>
+        <div class="tl-desc">Published/Playground 분리</div>
+        <div class="tl-job">JOB-1810</div>
+      </div>
+      <div class="tl-item" data-detail="L02 초안을 핵심 메시지 중심으로 재설계. Memory Lifecycle 7장→3장 축약. Memory Alone Is Not Enough + Why Separation Matters 핵심 인사이트 추가.">
+        <div><span class="tl-date">2026-06-23</span><span class="tl-version">v1.1</span></div>
+        <div class="tl-desc">L02 재설계 — 핵심 메시지 강화, Lifecycle 축약</div>
+        <div class="tl-job">JOB-1803</div>
+      </div>
+      <div class="tl-item" data-detail="L01 11~15페이지를 아이콘+설명+카드 레이아웃으로 재설계. Failure 페이지(5~8)를 시나리오 카드+색상 코딩+이모지로 재설계.">
+        <div><span class="tl-date">2026-06-23</span><span class="tl-version">v1.1</span></div>
+        <div class="tl-desc">L01 11~15 재설계 + Failure 페이지 재설계</div>
+        <div class="tl-job">JOB-1803</div>
+      </div>
+      <div class="tl-item" data-detail="L01/L02 전체 폰트 크기를 약 20% 확대. 제목 40px, 부제목 20px, 흐름 노드 22px 등.">
+        <div><span class="tl-date">2026-06-23</span><span class="tl-version">v1.1</span></div>
+        <div class="tl-desc">폰트 크기 전면 개선 (~20% 확대)</div>
+        <div class="tl-job">JOB-1803</div>
+      </div>
+      <div class="tl-item" data-detail="L01(Why Agents Fail, 20장) 초안 생성. L02(Memory & Knowledge, 22장) 초안 생성. 첫 번째 배포.">
+        <div><span class="tl-date">2026-06-23</span><span class="tl-version">v1.0</span></div>
+        <div class="tl-desc">L01, L02 초안 생성 및 배포</div>
+        <div class="tl-job">JOB-1803</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PART NAV ═══ -->
+  <div class="part-nav">
+    <a href="#part1">Part 1 — Core</a>
+    <a href="#part2">Part 2 — Factory</a>
+    <a href="#part3">Part 3 — Production</a>
+    <a href="#stats">Stats</a>
+  </div>
+
+  <!-- ═══ PART 1 ═══ -->
+  <div class="section" id="part1">
     <div class="part-title">Part 1 — Hermes Core</div>
-    <div class="lecture-grid">
 
-      <a href="lecture-01-why-agents-fail.html" class="lecture-card completed">
-        <div class="lecture-num">01</div>
-        <div class="lecture-info">
-          <div class="lecture-title">Why Agents Fail</div>
-          <div class="lecture-desc">From Chatbots to Agent Operating Systems</div>
-        </div>
-        <div class="lecture-meta">
-          <span class="meta-tag meta-slides">20장</span>
-          <span class="meta-tag meta-time">60분</span>
-          <span class="meta-tag meta-status">Ready</span>
-        </div>
-      </a>
-
-      <a href="lecture-02-memory-and-knowledge.html" class="lecture-card completed">
-        <div class="lecture-num">02</div>
-        <div class="lecture-info">
-          <div class="lecture-title">Memory & Knowledge</div>
-          <div class="lecture-desc">Remembering vs Understanding</div>
-        </div>
-        <div class="lecture-meta">
-          <span class="meta-tag meta-slides">22장</span>
-          <span class="meta-tag meta-time">60분</span>
-          <span class="meta-tag meta-status">Ready</span>
-        </div>
-      </a>
-
-      <div class="lecture-card upcoming">
-        <div class="lecture-num">03</div>
-        <div class="lecture-info">
-          <div class="lecture-title">Skills & Workflow</div>
-          <div class="lecture-desc">Knowing vs Doing</div>
-        </div>
-        <div class="lecture-meta">
-          <span class="meta-tag meta-slides">24장</span>
-          <span class="meta-tag meta-time">60분</span>
+    <!-- L01 -->
+    <div class="lec-card ready" onclick="this.querySelector('.lec-detail').classList.toggle('open')">
+      <div class="lec-header">
+        <div class="lec-num">01</div>
+        <div class="lec-name">Why Agents Fail <span class="desc">From Chatbots to Agent OS</span></div>
+        <div class="lec-tags"><span class="lec-tag tag-ready">Ready</span><span class="lec-tag tag-spec">v1.2</span></div>
+        <div class="lec-slides">20장</div>
+      </div>
+      <div class="lec-detail">
+        <div class="lec-detail-inner">
+          <div class="detail-item"><span class="detail-ver">v1.2</span><span class="detail-text">Notes UI 통일 (우측 하단 모서리), id 속성 추가, data-notes 보강 — JOB-1813</span></div>
+          <div class="detail-item"><span class="detail-ver">v1.2</span><span class="detail-text">예시 일반화, data-notes 80~150자 — JOB-1812</span></div>
+          <div class="detail-item"><span class="detail-ver">v1.1</span><span class="detail-text">11~15 재설계 (아이콘+설명+카드), Failure 재설계 (시나리오+색상) — JOB-1803</span></div>
+          <div class="detail-item"><span class="detail-ver">v1.1</span><span class="detail-text">폰트 크기 전면 개선 — JOB-1803</span></div>
+          <div class="detail-item"><span class="detail-ver">v1.0</span><span class="detail-text">초안 생성 (20장) — JOB-1803</span></div>
         </div>
       </div>
+    </div>
 
-      <div class="lecture-card upcoming">
-        <div class="lecture-num">04</div>
-        <div class="lecture-info">
-          <div class="lecture-title">Hermes Core Architecture</div>
-          <div class="lecture-desc">How Everything Fits Together</div>
-        </div>
-        <div class="lecture-meta">
-          <span class="meta-tag meta-slides">24장</span>
-          <span class="meta-tag meta-time">60분</span>
+    <!-- L02 -->
+    <div class="lec-card ready" onclick="this.querySelector('.lec-detail').classList.toggle('open')">
+      <div class="lec-header">
+        <div class="lec-num">02</div>
+        <div class="lec-name">Memory & Knowledge <span class="desc">Remembering vs Understanding</span></div>
+        <div class="lec-tags"><span class="lec-tag tag-ready">Ready</span><span class="lec-tag tag-spec">v1.2</span></div>
+        <div class="lec-slides">22장</div>
+      </div>
+      <div class="lec-detail">
+        <div class="lec-detail-inner">
+          <div class="detail-item"><span class="detail-ver">v1.2</span><span class="detail-text">예시 일반화, data-notes 보강, Notes UI 통일 — JOB-1812/1813</span></div>
+          <div class="detail-item"><span class="detail-ver">v1.1</span><span class="detail-text">재설계 — 핵심 메시지 강화, Lifecycle 7→3장 축약 — JOB-1803</span></div>
+          <div class="detail-item"><span class="detail-ver">v1.0</span><span class="detail-text">초안 생성 (22장) — JOB-1803</span></div>
         </div>
       </div>
+    </div>
 
+    <!-- L03 -->
+    <div class="lec-card new" onclick="this.querySelector('.lec-detail').classList.toggle('open')">
+      <div class="lec-header">
+        <div class="lec-num">03</div>
+        <div class="lec-name">Skills & Workflow <span class="desc">Knowing vs Doing</span></div>
+        <div class="lec-tags"><span class="lec-tag tag-wip">New</span><span class="lec-tag tag-spec">v1.2</span></div>
+        <div class="lec-slides">24장</div>
+      </div>
+      <div class="lec-detail">
+        <div class="lec-detail-inner">
+          <div class="detail-item"><span class="detail-ver wip">v1.2</span><span class="detail-text">신규 제작 (glm-5.2) — SPEC-SLIDES v1.2 완전 준수 — JOB-1814</span></div>
+          <div class="detail-item"><span class="detail-ver"></span><span class="detail-text">data-notes: ✅ / id: ✅ / Notes UI: ✅ / validate-course.py: ✅</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- L04 -->
+    <div class="lec-card new" onclick="this.querySelector('.lec-detail').classList.toggle('open')">
+      <div class="lec-header">
+        <div class="lec-num">04</div>
+        <div class="lec-name">Hermes Core Architecture <span class="desc">How Everything Fits Together</span></div>
+        <div class="lec-tags"><span class="lec-tag tag-wip">New</span><span class="lec-tag tag-spec">v1.2</span></div>
+        <div class="lec-slides">24장</div>
+      </div>
+      <div class="lec-detail">
+        <div class="lec-detail-inner">
+          <div class="detail-item"><span class="detail-ver wip">v1.2</span><span class="detail-text">신규 제작 (glm-5.2) — SPEC-SLIDES v1.2 완전 준수 — JOB-1814</span></div>
+          <div class="detail-item"><span class="detail-ver"></span><span class="detail-text">data-notes: ✅ / id: ✅ / Notes UI: ✅ / validate-course.py: ✅</span></div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Part 2: Factory -->
-  <div class="part">
+  <!-- ═══ PART 2 ═══ -->
+  <div class="section" id="part2">
     <div class="part-title">Part 2 — Factory Layer</div>
-    <div class="lecture-grid">
 
-      <div class="lecture-card upcoming">
-        <div class="lecture-num">05</div>
-        <div class="lecture-info">
-          <div class="lecture-title">Knowledge Factory</div>
-          <div class="lecture-desc">From Information to Organizational Intelligence</div>
-        </div>
-        <div class="lecture-meta">
-          <span class="meta-tag meta-slides">24장</span>
-          <span class="meta-tag meta-time">60분</span>
-        </div>
-      </div>
+    <div class="lec-card pending"><div class="lec-header">
+      <div class="lec-num">05</div>
+      <div class="lec-name">Knowledge Factory <span class="desc">From Information to Intelligence</span></div>
+      <div class="lec-tags"></div>
+      <div class="lec-slides">24장</div>
+    </div></div>
 
-      <div class="lecture-card upcoming">
-        <div class="lecture-num">06</div>
-        <div class="lecture-info">
-          <div class="lecture-title">Content Factory</div>
-          <div class="lecture-desc">Turning Knowledge into Output</div>
-        </div>
-        <div class="lecture-meta">
-          <span class="meta-tag meta-slides">25장</span>
-          <span class="meta-tag meta-time">60분</span>
-        </div>
-      </div>
+    <div class="lec-card pending"><div class="lec-header">
+      <div class="lec-num">06</div>
+      <div class="lec-name">Content Factory <span class="desc">Turning Knowledge into Output</span></div>
+      <div class="lec-tags"></div>
+      <div class="lec-slides">25장</div>
+    </div></div>
 
-      <div class="lecture-card upcoming">
-        <div class="lecture-num">07</div>
-        <div class="lecture-info">
-          <div class="lecture-title">Research Factory</div>
-          <div class="lecture-desc">From Unknown to Knowledge</div>
-        </div>
-        <div class="lecture-meta">
-          <span class="meta-tag meta-slides">26장</span>
-          <span class="meta-tag meta-time">60분</span>
-        </div>
-      </div>
+    <div class="lec-card pending"><div class="lec-header">
+      <div class="lec-num">07</div>
+      <div class="lec-name">Research Factory <span class="desc">From Unknown to Knowledge</span></div>
+      <div class="lec-tags"></div>
+      <div class="lec-slides">26장</div>
+    </div></div>
 
-    </div>
+    <div class="lec-card pending"><div class="lec-header">
+      <div class="lec-num">08</div>
+      <div class="lec-name">Spec-Driven Development <span class="desc">From Idea to Implementation</span></div>
+      <div class="lec-tags"></div>
+      <div class="lec-slides">28장</div>
+    </div></div>
   </div>
 
-  <!-- Part 3: Production -->
-  <div class="part">
-    <div class="part-title">Part 3 — Production & Operating</div>
-    <div class="lecture-grid">
+  <!-- ═══ PART 3 ═══ -->
+  <div class="section" id="part3">
+    <div class="part-title">Part 3 — Production &amp; Operating</div>
 
-      <div class="lecture-card upcoming">
-        <div class="lecture-num">08</div>
-        <div class="lecture-info">
-          <div class="lecture-title">Spec-Driven Development</div>
-          <div class="lecture-desc">From Idea to Implementation</div>
-        </div>
-        <div class="lecture-meta">
-          <span class="meta-tag meta-slides">28장</span>
-          <span class="meta-tag meta-time">60분</span>
-        </div>
-      </div>
+    <div class="lec-card pending"><div class="lec-header">
+      <div class="lec-num">09</div>
+      <div class="lec-name">P-Hermes Operating Model <span class="desc">How the Whole System Works</span></div>
+      <div class="lec-tags"></div>
+      <div class="lec-slides">26장</div>
+    </div></div>
 
-      <div class="lecture-card upcoming">
-        <div class="lecture-num">09</div>
-        <div class="lecture-info">
-          <div class="lecture-title">P-Hermes Operating Model</div>
-          <div class="lecture-desc">How the Whole System Works</div>
-        </div>
-        <div class="lecture-meta">
-          <span class="meta-tag meta-slides">26장</span>
-          <span class="meta-tag meta-time">60분</span>
-        </div>
-      </div>
+    <div class="lec-card pending"><div class="lec-header">
+      <div class="lec-num">10</div>
+      <div class="lec-name">Building Your Own Agent OS <span class="desc">From Theory to Practice</span></div>
+      <div class="lec-tags"></div>
+      <div class="lec-slides">30장</div>
+    </div></div>
+  </div>
 
-      <div class="lecture-card upcoming">
-        <div class="lecture-num">10</div>
-        <div class="lecture-info">
-          <div class="lecture-title">Building Your Own Agent OS</div>
-          <div class="lecture-desc">From Theory to Practice</div>
-        </div>
-        <div class="lecture-meta">
-          <span class="meta-tag meta-slides">30장</span>
-          <span class="meta-tag meta-time">60분</span>
-        </div>
-      </div>
-
+  <!-- ═══ STATS ═══ -->
+  <div class="section" id="stats">
+    <div class="section-title">📊 Statistics &amp; Spec Compliance</div>
+    <div class="stats">
+      <div class="stat-card"><div class="stat-val">90</div><div class="stat-label">Total Slides</div><div class="stat-mini">L01(20) + L02(22) + L03(24) + L04(24)</div></div>
+      <div class="stat-card"><div class="stat-val">90/90</div><div class="stat-label">data-notes Coverage</div><div class="stat-mini">100% — 모든 슬라이드</div></div>
+      <div class="stat-card"><div class="stat-val">90/90</div><div class="stat-label">id Attribute</div><div class="stat-mini">100% — slide-N 형식</div></div>
+      <div class="stat-card"><div class="stat-val">✅ 4/4</div><div class="stat-label">validate-course.py</div><div class="stat-mini">L01 · L02 · L03 · L04 통과</div></div>
+      <div class="stat-card"><div class="stat-val">L02</div><div class="stat-label">Notes UI Style</div><div class="stat-mini">우측 하단 모서리 통일</div></div>
+      <div class="stat-card"><div class="stat-val">v1.2</div><div class="stat-label">SPEC-SLIDES</div><div class="stat-mini">R0~R5 내용 방향 적용</div></div>
     </div>
   </div>
 
   <div class="footer">
     <p>Building an Agent OS with Hermes · p-hermes Course</p>
-    <p style="margin-top:8px;font-size:12px;color:var(--text-dim)">Based on p-hermes documentation and Hermes Agent architecture</p>
+    <p style="margin-top:6px;font-size:12px;color:var(--text-dim)">Playground: docs/playground/courses/ · Published: docs/slides/</p>
   </div>
 
 </div>
+
+<script>
+  // Timeline click to expand detail
+  document.querySelectorAll('.tl-item').forEach(item => {
+    const detail = item.dataset.detail;
+    if (detail) {
+      const p = document.createElement('p');
+      p.style.cssText = 'font-size:13px;color:var(--text-dim);margin-top:4px;display:none;line-height:1.6';
+      p.textContent = detail;
+      item.appendChild(p);
+      item.addEventListener('click', () => {
+        p.style.display = p.style.display === 'none' ? 'block' : 'none';
+      });
+    }
+  });
+</script>
 
 </body>
 </html>
