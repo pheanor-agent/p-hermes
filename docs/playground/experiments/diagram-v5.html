@@ -248,6 +248,33 @@
       ". . . . sd-l1 sd-l1 . ig-l2 ig-l2 . . .";
   }
 
+  /* ── Template: Content Arch (2-Phase) ── */
+  .tpl-content-arch{
+    grid-template-columns: repeat(6, 1fr) repeat(6, 1fr);
+    grid-template-areas:
+      "ph1 ph1 ph1 ph1 ph1 ph1 . ph2 ph2 ph2 ph2 ph2"
+      "ca ca ca ca ca ca . cw cw cw cw cw cw"
+      "pe pe pe . . . . . . . . . ."
+      "dg dg dg . sl sl sl . . . . . ."
+      ". . . . . . . . . . . ."
+      "st st st . . . . sv sv sv . . ."
+      ". . . . . . . pa pa pa po po po";
+  }
+  /* Phase labels */
+  .phase-label{
+    position:absolute;
+    top:8px;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--text-tertiary);
+    z-index:3;
+    pointer-events:none;
+  }
+  .phase-label.p1{ left:calc(6/12*100% - 30px); }
+  .phase-label.p2{ left:calc(12/12*100% - 60px); }
+
   /* ── Grid Area Assignments ── */
   .a-l1-1{grid-area:l1-1}
   .a-l1-2{grid-area:l1-2}
@@ -296,6 +323,18 @@
   .a-wi-c2{grid-area:wi-c2}
   .a-sd-l1{grid-area:sd-l1}
   .a-ig-l2{grid-area:ig-l2}
+
+  .a-ph1{grid-area:ph1}
+  .a-ph2{grid-area:ph2}
+  .a-ca{grid-area:ca}
+  .a-cw{grid-area:cw}
+  .a-pe{grid-area:pe}
+  .a-dg{grid-area:dg}
+  .a-sl{grid-area:sl}
+  .a-st{grid-area:st}
+  .a-sv{grid-area:sv}
+  .a-pa{grid-area:pa}
+  .a-po{grid-area:po}
 
   /* ── Phase tags for Pipeline ── */
   .phase-tag{
@@ -705,6 +744,59 @@
         <div class="sub">Setup · Config</div>
       </div>
 
+      <!-- ════════════════════════ CONTENT ARCH ════════════════════════ -->
+      <div class="grid-node accent-blue a-ph1" id="n-ph1" style="display:none">
+        <div class="label" style="font-weight:700;font-size:12px;color:var(--accent-blue)">PHASE 1 · 사전 방향</div>
+      </div>
+      <div class="grid-node accent-green a-ph2" id="n-ph2" style="display:none">
+        <div class="label" style="font-weight:700;font-size:12px;color:var(--accent-green)">PHASE 2 · 사후 검증</div>
+      </div>
+      <div class="grid-node accent-blue a-ca" id="n-ca" style="display:none">
+        <div class="icon">📨</div>
+        <div class="label">콘텐츠 요청</div>
+        <div class="sub">User Request</div>
+      </div>
+      <div class="grid-node accent-gold a-pe" id="n-pe" style="display:none">
+        <div class="icon">⚙️</div>
+        <div class="label">pre_direction Engine</div>
+        <div class="sub">방향 분석</div>
+      </div>
+      <div class="grid-node accent-gold a-dg" id="n-dg" style="display:none">
+        <div class="icon">📋</div>
+        <div class="label">direction-guide.json</div>
+        <div class="sub">전략 · 청중 · 디자인</div>
+      </div>
+      <div class="grid-node accent-blue a-st" id="n-st" style="display:none">
+        <div class="icon">📊</div>
+        <div class="label">전략 분석</div>
+        <div class="sub">Strategy Frame</div>
+      </div>
+      <div class="grid-node accent-green a-cw" id="n-cw" style="display:none">
+        <div class="icon">✍️</div>
+        <div class="label">콘텐츠 작성</div>
+        <div class="sub">Content Creation</div>
+      </div>
+      <div class="grid-node accent-purple a-sl" id="n-sl" style="display:none">
+        <div class="icon">🔍</div>
+        <div class="label">Validator L1~L5</div>
+        <div class="sub">문법 → 구조 → 일관성 → 도메인 → 전략</div>
+      </div>
+      <div class="grid-node accent-purple a-sv" id="n-sv" style="display:none">
+        <div class="icon">💯</div>
+        <div class="label">최종 점수</div>
+        <div class="sub">Score Evaluation</div>
+      </div>
+      <div class="grid-node accent-green a-pa" id="n-pa" style="display:none">
+        <div class="icon">✅</div>
+        <div class="label">승인</div>
+        <div class="sub">Approved</div>
+      </div>
+      <div class="grid-node accent-red a-po" id="n-po" style="display:none">
+        <div class="icon">🔄</div>
+        <div class="label">수정 요청</div>
+        <div class="sub">Revise & Retry</div>
+      </div>
+
       <!-- SVG Overlay -->
       <svg class="svg-overlay" id="edgeSVG"></svg>
     </div>
@@ -792,6 +884,22 @@ const templates = {
       {from:'tr-root', to:'wi-c2'},
       {from:'wi-c2', to:'ig-l2'}
     ]
+  },
+  'content-arch': {
+    nodes: ['n-ph1','n-ph2','n-ca','n-pe','n-dg','n-st','n-cw','n-sl','n-sv','n-pa','n-po'],
+    tplClass: 'tpl-content-arch',
+    desc: 'Content System — 2-Phase Architecture (Pre-Direction + Validation)',
+    edges: [
+      {from:'ca', to:'pe'},
+      {from:'pe', to:'dg'},
+      {from:'dg', to:'st'},
+      {from:'dg', to:'cw', dashed:true},
+      {from:'cw', to:'sl'},
+      {from:'sl', to:'sv'},
+      {from:'sv', to:'pa'},
+      {from:'sv', to:'po'},
+      {from:'po', to:'cw', dashed:true}
+    ]
   }
 };
 
@@ -871,6 +979,12 @@ function drawEdges(templateName) {
     else if (cls.includes('red'))    path.style.stroke = '#f85149';
     else if (cls.includes('orange')) path.style.stroke = '#f28b82';
     else                             path.style.stroke = '#58a6ff';
+
+    // Dashed edge (for feedback loops)
+    if (e.dashed) {
+      path.style.strokeDasharray = '6,4';
+      path.style.opacity = '0.6';
+    }
 
     svg.appendChild(path);
   });
