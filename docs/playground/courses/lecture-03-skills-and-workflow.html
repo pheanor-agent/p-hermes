@@ -472,15 +472,41 @@
     </div>
   </div>
 
-  <!-- SLIDE 1: Core Question -->
-  <div class="slide" id="slide-1" data-notes="가장 큰 차이는 아는 것과 실행하는 것입니다. 우리는 많은 것을 알고 있지만 실행하지 못합니다. Agent도 마찬가지입니다. Knowledge는 무엇을, Skill은 어떻게를 다룹니다. 핵심: 무엇(What)과 어떻게(How)의 차이입니다.">
+  <!-- SLIDE 1: Table of Contents -->
+  <div class="slide" id="slide-1" data-notes="오늘 배울 내용을 overview합니다. Knowledge와 Skills의 차이, Hermes Skills 시스템, Workflow 상태 기계, 9단계 Workflow, 그리고 Memory+Knowledge+Skills+Workflow 통합 구조까지 다룹니다. 핵심: 오늘의 지도를 먼저 보여줍니다.">
+    <div class="lecture-badge">Lecture 03</div>
+    <div class="inline-section">Today's Map</div>
+    <div class="title" style="font-size:clamp(32px,4.5vw,48px); margin-bottom:24px;">
+      Skills <span class="hl">&amp;</span> Workflow
+    </div>
+    <div class="two-col" style="max-width:600px; margin-top:0;">
+      <div class="col">
+        <div class="col-title">🧠 Concepts</div>
+        <div class="col-item" style="font-size:16px;">Knowledge → Skill 전환</div>
+        <div class="col-item" style="font-size:16px;">선언적 vs 절차적 지식</div>
+        <div class="col-item" style="font-size:16px;">Skill = 재사용 가능한 행동 단위</div>
+        <div class="col-item" style="font-size:16px;">Workflow = 상태 기계</div>
+      </div>
+      <div class="col">
+        <div class="col-title">⚡ Practice</div>
+        <div class="col-item" style="font-size:16px;">Hermes Skills System</div>
+        <div class="col-item" style="font-size:16px;">Skill Anatomy (Trigger→Output)</div>
+        <div class="col-item" style="font-size:16px;">9-Stage Workflow</div>
+        <div class="col-item" style="font-size:16px;">Agent OS Stack 통합</div>
+      </div>
+    </div>
+    <div class="key-message" style="max-width:520px; font-size:18px;">개념 → 실습 → 통합의 흐름</div>
+  </div>
+
+  <!-- SLIDE 2: Core Question -->
+  <div class="slide" id="slide-2" data-notes="가장 큰 차이는 아는 것과 실행하는 것입니다. 우리는 많은 것을 알고 있지만 실행하지 못합니다. Agent도 마찬가지입니다. Knowledge는 무엇을, Skill은 어떻게를 다룹니다. 핵심: 무엇(What)과 어떻게(How)의 차이입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="question">안다는 것과 <span class="hl">실행한다는 것</span>은<br>무엇이 다른가?</div>
     <div class="insight-box" style="max-width:520px;">Knowledge: What &nbsp;·&nbsp; Skill: How</div>
   </div>
 
-  <!-- SLIDE 2: Knowledge → Skill Transition -->
-  <div class="slide" id="slide-2" data-notes="지식이 쌓이면 다음 질문이 생깁니다: 이걸로 무엇을 할 것인가? Knowledge가 쌓여도 Skill이 없으면 지식은 저장된 데이터에 불과합니다. 핵심: Knowledge는 재료, Skill은 요리법입니다.">
+  <!-- SLIDE 3: Knowledge → Skill Transition -->
+  <div class="slide" id="slide-3" data-notes="지식이 쌓이면 다음 질문이 생깁니다: 이걸로 무엇을 할 것인가? Knowledge가 쌓여도 Skill이 없으면 지식은 저장된 데이터에 불과합니다. 핵심: Knowledge는 재료, Skill은 요리법입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Transition</div>
     <div class="flow compact">
@@ -491,8 +517,8 @@
     <div class="key-message">Knowledge는 재료, Skill은 요리법</div>
   </div>
 
-  <!-- SLIDE 3: Declarative vs Procedural -->
-  <div class="slide" id="slide-3" data-notes="Knowledge가 '무엇'이라면 Skill은 '어떻게'입니다. 선언적 지식은 사실을 설명하고, 절차적 지식은 실행 방법을 설명합니다. Agent는 둘 다 필요합니다. 핵심: 무엇 + 어떻게 = 완전한 지능.">
+  <!-- SLIDE 4: Declarative vs Procedural -->
+  <div class="slide" id="slide-4" data-notes="Knowledge가 '무엇'이라면 Skill은 '어떻게'입니다. 선언적 지식은 사실을 설명하고, 절차적 지식은 실행 방법을 설명합니다. Agent는 둘 다 필요합니다. 핵심: 무엇 + 어떻게 = 완전한 지능.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Declarative vs Procedural</div>
     <div class="two-col" style="max-width:640px;">
@@ -514,8 +540,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 4: Skill = Reusable Action Unit -->
-  <div class="slide" id="slide-4" data-notes="Skill은 반복 가능한 행동의 최소 단위입니다. 한 번 작성한 보고서를 매일 새로 쓰는 것이 아니라, Skill로 정의하면 매번 같은 품질로 실행됩니다. 핵심: 반복은 Agent에게, 창의는 사람에게.">
+  <!-- SLIDE 5: Skill = Reusable Action Unit -->
+  <div class="slide" id="slide-5" data-notes="Skill은 반복 가능한 행동의 최소 단위입니다. 한 번 작성한 보고서를 매일 새로 쓰는 것이 아니라, Skill로 정의하면 매번 같은 품질로 실행됩니다. 핵심: 반복은 Agent에게, 창의는 사람에게.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Definition</div>
     <div class="big-text" style="font-size:clamp(32px,4.5vw,48px);">Skill = <span class="hl">재사용 가능한</span> 행동 단위</div>
@@ -527,8 +553,8 @@
     <div class="key-message">반복은 Agent에게, 창의는 사람에게</div>
   </div>
 
-  <!-- SLIDE 5: Scenario - Morning Report -->
-  <div class="slide" id="slide-5" data-notes="매일 아침 같은 형식의 보고서를 작성한다면? 수동으로 하면 30분, Skill로 자동화하면 1분입니다. Skills의 첫 번째 가치는 시간 절약이 아닌 일관성입니다. 핵심: 일관성이 품질을 만듭니다.">
+  <!-- SLIDE 6: Scenario - Morning Report -->
+  <div class="slide" id="slide-6" data-notes="매일 아침 같은 형식의 보고서를 작성한다면? 수동으로 하면 30분, Skill로 자동화하면 1분입니다. Skills의 첫 번째 가치는 시간 절약이 아닌 일관성입니다. 핵심: 일관성이 품질을 만듭니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Scenario 1</div>
     <div class="scenario-card">
@@ -542,8 +568,8 @@
     <div class="key-message" style="max-width:520px;">일관성이 품질을 만든다</div>
   </div>
 
-  <!-- SLIDE 6: Scenario - Customer Inquiry -->
-  <div class="slide" id="slide-6" data-notes="고객 문의가 들어올 때마다 유형을 분석하고 적절한 응답을 작성하는 것은 반복적이면서도 규칙 기반입니다. Skill로 정의하면 유형별 템플릿을 자동 적용합니다. 핵심: 규칙 기반 작업은 Skill의 완벽한 대상입니다.">
+  <!-- SLIDE 7: Scenario - Customer Inquiry -->
+  <div class="slide" id="slide-7" data-notes="고객 문의가 들어올 때마다 유형을 분석하고 적절한 응답을 작성하는 것은 반복적이면서도 규칙 기반입니다. Skill로 정의하면 유형별 템플릿을 자동 적용합니다. 핵심: 규칙 기반 작업은 Skill의 완벽한 대상입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Scenario 2</div>
     <div class="scenario-card">
@@ -557,8 +583,8 @@
     <div class="key-message" style="max-width:520px;">규칙 기반 작업은 Skill의 완벽한 대상</div>
   </div>
 
-  <!-- SLIDE 7: Knowledge vs Skills Comparison -->
-  <div class="slide" id="slide-7" data-notes="Knowledge와 Skills는 같은 데이터를 다루지만 목적이 완전히 다릅니다. 지식은 저장되고, 스킬은 실행됩니다. Knowledge는 '무엇을 알아야 하는가'이고, Skill은 '무엇을 할 수 있는가'입니다. 이 차이가 Agent의 생산성을 결정합니다. 핵심: 저장과 실행의 차이.">
+  <!-- SLIDE 8: Knowledge vs Skills Comparison -->
+  <div class="slide" id="slide-8" data-notes="Knowledge와 Skills는 같은 데이터를 다루지만 목적이 완전히 다릅니다. 지식은 저장되고, 스킬은 실행됩니다. Knowledge는 '무엇을 알아야 하는가'이고, Skill은 '무엇을 할 수 있는가'입니다. 이 차이가 Agent의 생산성을 결정합니다. 핵심: 저장과 실행의 차이.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Knowledge vs Skills</div>
     <table class="compare-table">
@@ -591,8 +617,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 8: Hermes Skills System -->
-  <div class="slide" id="slide-8" data-notes="Hermes Skills 시스템은 create-job.sh, workflow-gate.sh 같은 재사용 스크립트로 구성됩니다. 각 Skill은 입력을 받아 처리하고 출력을 반환합니다. 핵심: Shell 명령어가 Skill 단위입니다.">
+  <!-- SLIDE 9: Hermes Skills System -->
+  <div class="slide" id="slide-9" data-notes="Hermes Skills 시스템은 create-job.sh, workflow-gate.sh 같은 재사용 스크립트로 구성됩니다. 각 Skill은 입력을 받아 처리하고 출력을 반환합니다. 핵심: Shell 명령어가 Skill 단위입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Hermes Skills System</div>
     <div class="tags" style="margin-bottom:16px;">
@@ -608,8 +634,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 9: Skill Anatomy - Example + Folder Structure -->
-  <div class="slide" id="slide-9" data-notes="Skill Anatomy를 예제로 설명합니다. Reporting Skill: Trigger(매일 오전 9시/데이터 업데이트 시), Input(판매 데이터 CSV/DOCX 템플릿), Process(데이터 읽기→템플릿 채우기→차트 생성), Output(완성된 PDF 보고서). 핵심: Skill은 단일 스크립트가 아니라 스크립트+설정+템플릿+문서로 구성된 패키지입니다.">
+  <!-- SLIDE 10: Skill Anatomy - Example + Folder Structure -->
+  <div class="slide" id="slide-10" data-notes="Skill Anatomy를 예제로 설명합니다. Reporting Skill: Trigger(매일 오전 9시/데이터 업데이트 시), Input(판매 데이터 CSV/DOCX 템플릿), Process(데이터 읽기→템플릿 채우기→차트 생성), Output(완성된 PDF 보고서). 핵심: Skill은 단일 스크립트가 아니라 스크립트+설정+템플릿+문서로 구성된 패키지입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Skill Anatomy</div>
     <div class="h-flow">
@@ -647,8 +673,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 10: What vs How Two-column -->
-  <div class="slide" id="slide-10" data-notes="선언적 지식과 절차적 지식의 이분법은 Agent 설계의 핵심입니다. Memory는 선언적 지식을, Skills는 절차적 지식을 저장합니다. Workflow는 이 둘을 연결합니다. 핵심: Memory(무엇) → Skills(어떻게) → Workflow(언제).">
+  <!-- SLIDE 11: What vs How Two-column -->
+  <div class="slide" id="slide-11" data-notes="선언적 지식과 절차적 지식의 이분법은 Agent 설계의 핵심입니다. Memory는 선언적 지식을, Skills는 절차적 지식을 저장합니다. Workflow는 이 둘을 연결합니다. 핵심: Memory(무엇) → Skills(어떻게) → Workflow(언제).">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Agent Architecture</div>
     <div class="two-col" style="max-width:600px;">
@@ -671,8 +697,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 11: Skills만으로 충분할까? -->
-  <div class="slide" id="slide-11" data-notes="Skills가 있으면 개별 작업은 자동화할 수 있습니다. 하지만 여러 Skill을 순서대로 실행하고 조건에 따라 분기해야 한다면? 이것이 Workflow가 필요한 이유입니다. 핵심: Skills는 부품, Workflow는 설계도입니다.">
+  <!-- SLIDE 12: Skills만으로 충분할까? -->
+  <div class="slide" id="slide-12" data-notes="Skills가 있으면 개별 작업은 자동화할 수 있습니다. 하지만 여러 Skill을 순서대로 실행하고 조건에 따라 분기해야 한다면? 이것이 Workflow가 필요한 이유입니다. 핵심: Skills는 부품, Workflow는 설계도입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Transition</div>
     <div style="display:flex;flex-direction:column;gap:14px;align-items:center;justify-content:center;max-width:520px;">
@@ -692,8 +718,8 @@
     <div class="key-message" style="font-size:18px;">Skills는 부품, Workflow는 설계도</div>
   </div>
 
-  <!-- SLIDE 12: Workflow = Skill의 상태 기계 -->
-  <div class="slide" id="slide-12" data-notes="Workflow는 Skill 실행의 순서와 조건을 정의하는 상태 기계입니다. 각 단계는 상태를 가지고, 조건에 따라 다음 단계로 전이합니다. 9단계 워크플로우가 그 예시입니다. 핵심: 상태가 곧 위치(position)입니다.">
+  <!-- SLIDE 13: Workflow = Skill의 상태 기계 -->
+  <div class="slide" id="slide-13" data-notes="Workflow는 Skill 실행의 순서와 조건을 정의하는 상태 기계입니다. 각 단계는 상태를 가지고, 조건에 따라 다음 단계로 전이합니다. 9단계 워크플로우가 그 예시입니다. 핵심: 상태가 곧 위치(position)입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Definition</div>
     <div class="big-text" style="font-size:clamp(28px,4vw,44px);">Workflow = Skill의 <span class="hl">상태 기계</span></div>
@@ -705,8 +731,8 @@
     <div class="key-message">상태가 곧 위치(position)다</div>
   </div>
 
-  <!-- SLIDE 13: 9단계 Workflow Flow -->
-  <div class="slide overflow-safe" id="slide-13" data-notes="Hermes의 9단계 Workflow입니다. Request→Investigate→Design→Review→Approve→Execute→Test→Exec Review를 거쳐 Done까지. 각 단계는 이전 결과에 의존합니다. 핵심: 순서가 품질을 결정합니다.">
+  <!-- SLIDE 14: 9단계 Workflow Flow -->
+  <div class="slide overflow-safe" id="slide-14" data-notes="Hermes의 9단계 Workflow입니다. Request→Investigate→Design→Review→Approve→Execute→Test→Exec Review를 거쳐 Done까지. 각 단계는 이전 결과에 의존합니다. 핵심: 순서가 품질을 결정합니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">9-Stage Workflow</div>
     <div class="h-flow" style="max-width:700px;">
@@ -733,8 +759,8 @@
     <div class="key-message" style="max-width:520px;font-size:18px;">순서가 품질을 결정한다</div>
   </div>
 
-  <!-- SLIDE 14: Scenario - Without Workflow -->
-  <div class="slide" id="slide-14" data-notes="Workflow가 없으면 Agent는 매번 같은 작업을 다른 방식으로 처리합니다. 어떤 때는 조사 없이 실행하고, 어떤 때는 테스트 없이 배포합니다. 일관성이 사라집니다. 핵심: Workflow는 일관성의 보장입니다.">
+  <!-- SLIDE 15: Scenario - Without Workflow -->
+  <div class="slide" id="slide-15" data-notes="Workflow가 없으면 Agent는 매번 같은 작업을 다른 방식으로 처리합니다. 어떤 때는 조사 없이 실행하고, 어떤 때는 테스트 없이 배포합니다. 일관성이 사라집니다. 핵심: Workflow는 일관성의 보장입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Scenario 3</div>
     <div style="display:flex;flex-direction:column;gap:16px;max-width:520px;margin-top:8px;">
@@ -754,8 +780,8 @@
     <div class="key-message" style="max-width:520px;">Workflow는 일관성의 보장</div>
   </div>
 
-  <!-- SLIDE 15: With Workflow Benefits -->
-  <div class="slide" id="slide-15" data-notes="Workflow가 있으면 각 단계가 명확히 정의되어 있어 상태를 추적할 수 있고, 어디서 막혔는지 알 수 있으며, 완료 조건이 명확합니다. Workflow가 없으면 상태를 알 수 없고 진행을 확인할 수 없습니다. 핵심: Workflow는 가시성입니다.">
+  <!-- SLIDE 16: With Workflow Benefits -->
+  <div class="slide" id="slide-16" data-notes="Workflow가 있으면 각 단계가 명확히 정의되어 있어 상태를 추적할 수 있고, 어디서 막혔는지 알 수 있으며, 완료 조건이 명확합니다. Workflow가 없으면 상태를 알 수 없고 진행을 확인할 수 없습니다. 핵심: Workflow는 가시성입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Impact Comparison</div>
     <div style="display:flex;flex-direction:column;gap:16px;max-width:520px;margin-top:8px;">
@@ -777,8 +803,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 16: Hermes Workflow Engine -->
-  <div class="slide" id="slide-16" data-notes="Hermes의 Workflow Engine은 .workflow-state 파일로 각 JOB의 상태를 관리합니다. 9단계 상태 기계 + 원자적 파일 갱신(flock) + 오류 시 롤백이 핵심입니다. 핵심: 파일 하나로 상태를 추적합니다.">
+  <!-- SLIDE 17: Hermes Workflow Engine -->
+  <div class="slide" id="slide-17" data-notes="Hermes의 Workflow Engine은 .workflow-state 파일로 각 JOB의 상태를 관리합니다. 9단계 상태 기계 + 원자적 파일 갱신(flock) + 오류 시 롤백이 핵심입니다. 핵심: 파일 하나로 상태를 추적합니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Hermes Workflow Engine</div>
     <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;max-width:480px;width:100%;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:var(--text-dim);text-align:left;margin-top:8px;">
@@ -814,8 +840,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 17: Workflow vs Script -->
-  <div class="slide" id="slide-17" data-notes="Workflow와 Script의 차이는 조건부 분기 가능 여부입니다. Script는 정해진 순서대로만 실행되지만, Workflow는 각 단계의 결과에 따라 다음 단계가 결정됩니다. 핵심: Workflow는 살아있는 프로세스입니다.">
+  <!-- SLIDE 18: Workflow vs Script -->
+  <div class="slide" id="slide-18" data-notes="Workflow와 Script의 차이는 조건부 분기 가능 여부입니다. Script는 정해진 순서대로만 실행되지만, Workflow는 각 단계의 결과에 따라 다음 단계가 결정됩니다. 핵심: Workflow는 살아있는 프로세스입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Workflow vs Script</div>
     <div class="two-col" style="max-width:600px;">
@@ -835,8 +861,8 @@
     <div class="key-message" style="max-width:480px;">Workflow는 살아있는 프로세스</div>
   </div>
 
-  <!-- SLIDE 18: Memory + Knowledge + Skills + Workflow -->
-  <div class="slide overflow-safe" id="slide-18" data-notes="Memory는 사실을, Knowledge는 관계를, Skills는 행동을, Workflow는 순서를 담당합니다. 이 네 가지가 통합될 때 Agent는 단순한 챗봇을 넘어선 운영 체제가 됩니다. 핵심: 하나라도 없으면 Agent는 완전하지 않습니다.">
+  <!-- SLIDE 19: Memory + Knowledge + Skills + Workflow -->
+  <div class="slide overflow-safe" id="slide-19" data-notes="Memory는 사실을, Knowledge는 관계를, Skills는 행동을, Workflow는 순서를 담당합니다. 이 네 가지가 통합될 때 Agent는 단순한 챗봇을 넘어선 운영 체제가 됩니다. 핵심: 하나라도 없으면 Agent는 완전하지 않습니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Agent OS Stack</div>
     <div class="h-flow" style="max-width:600px;">
@@ -867,8 +893,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 19: Full Pipeline -->
-  <div class="slide" id="slide-19" data-notes="실제 요청이 처리되는 전체 흐름입니다. 요청이 들어오면 Memory에서 컨텍스트를 찾고, Knowledge에서 관련 지식을 조회하고, 적절한 Skill을 선택하고, Workflow에 따라 실행한 후 응답을 반환합니다. 핵심: 모든 계층이 협력합니다.">
+  <!-- SLIDE 20: Full Pipeline -->
+  <div class="slide" id="slide-20" data-notes="실제 요청이 처리되는 전체 흐름입니다. 요청이 들어오면 Memory에서 컨텍스트를 찾고, Knowledge에서 관련 지식을 조회하고, 적절한 Skill을 선택하고, Workflow에 따라 실행한 후 응답을 반환합니다. 핵심: 모든 계층이 협력합니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Full Pipeline</div>
     <div class="h-flow" style="gap:12px;">
@@ -881,8 +907,8 @@
     <div class="key-message" style="max-width:480px;font-size:18px;">모든 계층이 협력한다</div>
   </div>
 
-  <!-- SLIDE 20: Part 1 통합 구조 -->
-  <div class="slide" id="slide-20" data-notes="L01은 문제 인식, L02는 기억과 지식, L03은 스킬과 워크플로우를 다뤘습니다. 다음 강의 L04에서는 이 모든 요소가 하나의 Architecture로 통합되는 과정을 다룹니다. 핵심: Part 1의 클라이맥스입니다.">
+  <!-- SLIDE 21: Part 1 통합 구조 -->
+  <div class="slide" id="slide-21" data-notes="L01은 문제 인식, L02는 기억과 지식, L03은 스킬과 워크플로우를 다뤘습니다. 다음 강의 L04에서는 이 모든 요소가 하나의 Architecture로 통합되는 과정을 다룹니다. 핵심: Part 1의 클라이맥스입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Part 1 Recap</div>
     <div class="insight-box" style="max-width:520px;font-size:20px;">
@@ -893,8 +919,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 21: Key Insight -->
-  <div class="slide" id="slide-21" data-notes="아는 것만으로는 충분하지 않습니다. 조직화된 실행, 즉 Knowledge를 바탕으로 Skills를 체계적으로 실행하는 능력이 지능을 완성합니다. 이것이 단순한 챗봇과 Agent OS의 차이입니다. 핵심: 지능 = 지식 + 실행 + 조직화.">
+  <!-- SLIDE 22: Key Insight -->
+  <div class="slide" id="slide-22" data-notes="아는 것만으로는 충분하지 않습니다. 조직화된 실행, 즉 Knowledge를 바탕으로 Skills를 체계적으로 실행하는 능력이 지능을 완성합니다. 이것이 단순한 챗봇과 Agent OS의 차이입니다. 핵심: 지능 = 지식 + 실행 + 조직화.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Key Insight</div>
     <div class="key-insight">
@@ -906,8 +932,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 22: Skills+Workflow Before vs After -->
-  <div class="slide" id="slide-22" data-notes="도입 전: 매번 같은 작업을 수동으로, 일관성 없음, 상태 추적 불가. 도입 후: 반복 작업 자동화, 일관된 품질, 모든 상태 추적 가능. 핵심: 변화의 핵심은 일관성과 추적 가능성입니다.">
+  <!-- SLIDE 23: Skills+Workflow Before vs After -->
+  <div class="slide" id="slide-23" data-notes="도입 전: 매번 같은 작업을 수동으로, 일관성 없음, 상태 추적 불가. 도입 후: 반복 작업 자동화, 일관된 품질, 모든 상태 추적 가능. 핵심: 변화의 핵심은 일관성과 추적 가능성입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Before &amp; After</div>
     <div class="two-col" style="max-width:600px;">
@@ -927,8 +953,8 @@
     <div class="key-message" style="max-width:520px;font-size:18px;">일관성 + 추적 가능성 = 생산성</div>
   </div>
 
-  <!-- SLIDE 23: Summary -->
-  <div class="slide" id="slide-23" data-notes="오늘 배운 내용을 정리합니다. Knowledge는 무엇(What), Skill은 어떻게(How), Workflow는 언제(When)를 다룹니다. 이 셋이 모여 Agent 생산성을 완성합니다. 핵심: What + How + When = Complete.">
+  <!-- SLIDE 24: Summary -->
+  <div class="slide" id="slide-24" data-notes="오늘 배운 내용을 정리합니다. Knowledge는 무엇(What), Skill은 어떻게(How), Workflow는 언제(When)를 다룹니다. 이 셋이 모여 Agent 생산성을 완성합니다. 핵심: What + How + When = Complete.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">오늘의 핵심</div>
     <div class="summary-list">

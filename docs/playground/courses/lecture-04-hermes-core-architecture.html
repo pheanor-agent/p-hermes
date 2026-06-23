@@ -528,8 +528,7 @@
 <div class="progress-bar" id="progressBar"></div>
 
 <div class="deck" id="deck">
-
-  <!-- SLIDE 0: Title -->
+<!-- SLIDE 0: Title -->
   <div class="slide" id="slide-0" data-notes="L01에서 문제를, L02에서 기억과 지식을, L03에서 스킬과 워크플로우를 배웠습니다. L04에서는 이 모든 요소가 하나의 Architecture로 통합되는 과정을 다룹니다. 핵심: 부분이 아닌 전체를 봐야 합니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="hero">
@@ -632,7 +631,7 @@
   </div>
 
   <!-- SLIDE 6: Transition — Layers Overview -->
-  <div class="slide" id="slide-6" data-notes="지금까지 4계층 구조와 요청 흐름을 봤습니다. 이제 각 레이어가 실제로 어떻게 동작하는지 알아보겠습니다. 가장 아래 레이어인 Memory부터 시작해서 순서대로 올라갑니다. 핵심: 구조를 알았으니 동작을 이해할 차례입니다.">
+  <div class="slide" id="slide-6" data-notes="지금까지 4계층 구조와 요청 흐름을 봤습니다. 이제 각 레이어가 실제로 어떻게 동작하는지 알아보겠습니다. 아래에서 위로 순서대로 Memory, Knowledge, Skills, Workflow를 살펴본 후, 마지막으로 Runtime을 다룹니다. 핵심: 구조를 알았으니 동작을 이해할 차례입니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;min-height:200px;">
       <div style="font-size:28px;">🔍</div>
@@ -651,57 +650,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 7: Agent Runtime / User Context (two-col) -->
-  <div class="slide" id="slide-7" data-notes="Agent Runtime은 에이전트가 실행되는 환경입니다. 컨텍스트 관리, 툴 접근, 상태 유지를 담당합니다. User Context는 사용자별 설정, 선호도, 대화 이력을 관리합니다. 핵심: Runtime이 없으면 Agent는 실행될 수 없습니다.">
-    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
-    <div class="layer-indicator" style="display:flex;gap:8px;margin-bottom:16px;font-size:12px;font-family:'JetBrains Mono',monospace">
-      <span style="color:var(--text-dim)">Layer:</span>
-      <span style="color:var(--text-dim)">🧠 Memory</span>
-      <span style="color:var(--text-dim)">📚 Knowledge</span>
-      <span style="color:var(--text-dim)">⚡ Skills</span>
-      <span style="color:var(--gold)">🔗 Workflow</span>
-      <span style="margin-left:auto;color:var(--gold)">↑ 현재</span>
-    </div>
-    <div class="inline-section">실행 환경</div>
-    <div class="two-col" style="max-width:600px;">
-      <div class="col">
-        <div class="col-title" style="color:var(--accent-cyan);">🤖 Agent Runtime</div>
-        <div class="col-item ok" style="font-size:16px;">컨텍스트 관리</div>
-        <div class="col-item ok" style="font-size:16px;">툴 접근</div>
-        <div class="col-item ok" style="font-size:16px;">상태 유지</div>
-      </div>
-      <div class="col">
-        <div class="col-title" style="color:var(--accent-purple);">👤 User Context</div>
-        <div class="col-item ok" style="font-size:16px;">사용자 설정</div>
-        <div class="col-item ok" style="font-size:16px;">선호도 저장</div>
-        <div class="col-item ok" style="font-size:16px;">대화 이력</div>
-      </div>
-    </div>
-    <div class="key-message">Runtime이 없으면 Agent는 실행될 수 없다</div>
-  </div>
-
-  <!-- SLIDE 8: Runtime Components -->
-  <div class="slide" id="slide-8" data-notes="Runtime의 세 가지 핵심 컴포넌트는 Session Management(세션 관리), Tool Access(도구 접근), Configuration(설정 관리)입니다. 이 세 가지가 Agent의 실행 환경을 정의합니다. 핵심: 세션은 컨텍스트의 생명주기입니다.">
-    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
-    <div class="layer-indicator" style="display:flex;gap:8px;margin-bottom:16px;font-size:12px;font-family:'JetBrains Mono',monospace">
-      <span style="color:var(--text-dim)">Layer:</span>
-      <span style="color:var(--text-dim)">🧠 Memory</span>
-      <span style="color:var(--text-dim)">📚 Knowledge</span>
-      <span style="color:var(--text-dim)">⚡ Skills</span>
-      <span style="color:var(--gold)">🔗 Workflow</span>
-      <span style="margin-left:auto;color:var(--gold)">↑ 현재</span>
-    </div>
-    <div class="inline-section">Runtime</div>
-    <div class="feature-list" style="margin-top:8px;gap:8px;">
-      <div class="feature-item" style="font-size:20px;"><span class="feature-icon cyan">📍</span> Session Management — 컨텍스트 생명주기</div>
-      <div class="feature-item" style="font-size:20px;"><span class="feature-icon purple">🔧</span> Tool Access — 도구 등록 및 실행</div>
-      <div class="feature-item" style="font-size:20px;"><span class="feature-icon cyan">⚙️</span> Configuration — 설정·프로필·모델 라우팅</div>
-    </div>
-    <div class="key-message" style="margin-top:12px;">세션은 컨텍스트의 생명주기이다</div>
-  </div>
-
-  <!-- SLIDE 9: Highlight — Memory Layer -->
-  <div class="slide" id="slide-9" data-notes="가장 아래 레이어인 Memory부터 시작합니다. Memory Layer는 FTS5 검색 엔진과 SQLite 데이터베이스로 구성됩니다. 모든 대화, 결정, 사용자 정보를 구조화된 형태로 저장하고 검색합니다. 핵심: FTS5가 검색의 핵심입니다.">
+  <!-- SLIDE 7: Highlight — Memory Layer -->
+  <div class="slide" id="slide-7" data-notes="가장 아래 레이어인 Memory부터 시작합니다. Memory Layer는 FTS5 검색 엔진과 SQLite 데이터베이스로 구성됩니다. 모든 대화, 결정, 사용자 정보를 구조화된 형태로 저장하고 검색합니다. 핵심: FTS5가 검색의 핵심입니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="layer-indicator" style="display:flex;gap:8px;margin-bottom:16px;font-size:12px;font-family:'JetBrains Mono',monospace">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -723,8 +673,8 @@
     <div class="key-message">FTS5가 검색의 핵심이다</div>
   </div>
 
-  <!-- SLIDE 10: Memory Components -->
-  <div class="slide" id="slide-10" data-notes="Memory Layer는 FTS5(전문 검색), SQLite(관계형 저장소), Cache(빠른 접근)의 3계층으로 구성됩니다. FTS5는 키워드 검색, SQLite는 메타데이터와 관계, Cache는 자주 접근하는 데이터를 담당합니다. 핵심: 3계층이 속도와 정확성을 보장합니다.">
+  <!-- SLIDE 8: Memory Components -->
+  <div class="slide" id="slide-8" data-notes="Memory Layer는 FTS5(전문 검색), SQLite(관계형 저장소), Cache(빠른 접근)의 3계층으로 구성됩니다. FTS5는 키워드 검색, SQLite는 메타데이터와 관계, Cache는 자주 접근하는 데이터를 담당합니다. 핵심: 3계층이 속도와 정확성을 보장합니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="layer-indicator" style="display:flex;gap:8px;margin-bottom:16px;font-size:12px;font-family:'JetBrains Mono',monospace">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -743,8 +693,8 @@
     <div class="key-message" style="margin-top:12px;">3계층이 속도와 정확성을 보장한다</div>
   </div>
 
-  <!-- SLIDE 11: Highlight — Knowledge Layer -->
-  <div class="slide" id="slide-11" data-notes="Memory가 사실을 저장한다면, Knowledge는 관계를 이해합니다. Knowledge Layer는 Wiki 페이지, 인덱스 파일, 지식 베이스로 구성됩니다. 단순 사실이 아닌 구조화된 지식을 관리하고, 관계를 추적합니다. 핵심: 지식은 관계의 네트워크입니다.">
+  <!-- SLIDE 9: Highlight — Knowledge Layer -->
+  <div class="slide" id="slide-9" data-notes="Memory가 사실을 저장한다면, Knowledge는 관계를 이해합니다. Knowledge Layer는 Wiki 페이지, 인덱스 파일, 지식 베이스로 구성됩니다. 단순 사실이 아닌 구조화된 지식을 관리하고, 관계를 추적합니다. 핵심: 지식은 관계의 네트워크입니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="layer-indicator" style="display:flex;gap:8px;margin-bottom:16px;font-size:12px;font-family:'JetBrains Mono',monospace">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -766,8 +716,8 @@
     <div class="key-message">지식은 관계의 네트워크이다</div>
   </div>
 
-  <!-- SLIDE 12: Knowledge Components -->
-  <div class="slide" id="slide-12" data-notes="Knowledge Layer는 Wiki(T1/T2/T3 계층), Index(검색 인덱스), Knowledge Base(구조화된 지식)로 구성됩니다. Wiki는 문서 저장, Index는 검색, Knowledge Base는 관계를 담당합니다. 핵심: Wiki가 지식의 SSOT입니다.">
+  <!-- SLIDE 10: Knowledge Components -->
+  <div class="slide" id="slide-10" data-notes="Knowledge Layer는 Wiki(T1/T2/T3 계층), Index(검색 인덱스), Knowledge Base(구조화된 지식)로 구성됩니다. Wiki는 문서 저장, Index는 검색, Knowledge Base는 관계를 담당합니다. 핵심: Wiki가 지식의 SSOT입니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="layer-indicator" style="display:flex;gap:8px;margin-bottom:16px;font-size:12px;font-family:'JetBrains Mono',monospace">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -795,8 +745,8 @@
     <div class="key-message" style="margin-top:12px;">Wiki가 지식의 SSOT이다</div>
   </div>
 
-  <!-- SLIDE 13: Highlight — Skills Layer -->
-  <div class="slide" id="slide-13" data-notes="지식을 아는 것과 실행하는 것은 다릅니다. Skills Layer는 재사용 가능한 작업 단위를 관리합니다. create-job.sh, workflow-gate.sh 같은 스크립트가 Skill의 예시입니다. 각 Skill은 Trigger, Input, Process, Output을 정의합니다. 핵심: 스크립트가 Skill의 단위입니다.">
+  <!-- SLIDE 11: Highlight — Skills Layer -->
+  <div class="slide" id="slide-11" data-notes="지식을 아는 것과 실행하는 것은 다릅니다. Skills Layer는 재사용 가능한 작업 단위를 관리합니다. create-job.sh, workflow-gate.sh 같은 스크립트가 Skill의 예시입니다. 각 Skill은 Trigger, Input, Process, Output을 정의합니다. 핵심: 스크립트가 Skill의 단위입니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="layer-indicator" style="display:flex;gap:8px;margin-bottom:16px;font-size:12px;font-family:'JetBrains Mono',monospace">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -818,8 +768,8 @@
     <div class="key-message">스크립트가 Skill의 단위이다</div>
   </div>
 
-  <!-- SLIDE 14: Skills — Scripts, Commands, Workflows -->
-  <div class="slide" id="slide-14" data-notes="Skills Layer는 Shell 스크립트, CLI 명령어, Workflow 정의로 구성됩니다. 각 Skill은 원자적이고 재사용 가능해야 합니다. Skill 간 의존성은 Workflow Layer에서 관리합니다. 핵심: 원자성과 재사용성이 Skill의 품질입니다.">
+  <!-- SLIDE 12: Skills — Scripts, Commands, Workflows -->
+  <div class="slide" id="slide-12" data-notes="Skills Layer는 Shell 스크립트, CLI 명령어, Workflow 정의로 구성됩니다. 각 Skill은 원자적이고 재사용 가능해야 합니다. Skill 간 의존성은 Workflow Layer에서 관리합니다. 핵심: 원자성과 재사용성이 Skill의 품질입니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="layer-indicator" style="display:flex;gap:8px;margin-bottom:16px;font-size:12px;font-family:'JetBrains Mono',monospace">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -839,8 +789,8 @@
     <div class="key-message" style="margin-top:12px;">원자성과 재사용성이 Skill의 품질이다</div>
   </div>
 
-  <!-- SLIDE 15: Highlight — Workflow Layer -->
-  <div class="slide" id="slide-15" data-notes="개별 Skill만으로는 복잡한 작업을 처리할 수 없습니다. Workflow Layer는 Skill 실행의 순서와 조건을 관리합니다. 9단계 상태 기계로 구성되며, 각 단계는 이전 단계의 결과에 의존합니다. .workflow-state 파일이 현재 상태를 추적합니다. 핵심: 상태 기계가 Workflow의 심장입니다.">
+  <!-- SLIDE 13: Highlight — Workflow Layer -->
+  <div class="slide" id="slide-13" data-notes="개별 Skill만으로는 복잡한 작업을 처리할 수 없습니다. Workflow Layer는 Skill 실행의 순서와 조건을 관리합니다. 9단계 상태 기계로 구성되며, 각 단계는 이전 단계의 결과에 의존합니다. .workflow-state 파일이 현재 상태를 추적합니다. 핵심: 상태 기계가 Workflow의 심장입니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="layer-indicator" style="display:flex;gap:8px;margin-bottom:16px;font-size:12px;font-family:'JetBrains Mono',monospace">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -862,8 +812,8 @@
     <div class="key-message">상태 기계가 Workflow의 심장이다</div>
   </div>
 
-  <!-- SLIDE 16: Workflow — 9-Step State Machine (overflow-safe) -->
-  <div class="slide overflow-safe" id="slide-16" data-notes="Request → Investigation → Design → Review → Approval → Execution → Test → Execution Review → Done. 각 단계는 시작 시간, 완료 시간, 상태(pending/in_progress/done/error)를 가집니다. 핵심: 각 단계가 독립적인 상태를 가집니다.">
+  <!-- SLIDE 14: Workflow — 9-Step State Machine (overflow-safe) -->
+  <div class="slide overflow-safe" id="slide-14" data-notes="Request → Investigation → Design → Review → Approval → Execution → Test → Execution Review → Done. 각 단계는 시작 시간, 완료 시간, 상태(pending/in_progress/done/error)를 가집니다. 핵심: 각 단계가 독립적인 상태를 가집니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="layer-indicator" style="display:flex;gap:8px;margin-bottom:16px;font-size:12px;font-family:'JetBrains Mono',monospace">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -900,38 +850,57 @@
     </div>
   </div>
 
-  <!-- SLIDE 17: With / Without Architecture (comparison) -->
-  <div class="slide" id="slide-17" data-notes="아키텍처가 있으면 각 레이어가 명확히 구분되고, 데이터 흐름이 예측 가능하며, 확장이 쉽습니다. 아키텍처가 없으면 모든 것이 뒤섞이고, 에러 추적이 불가능하며, 확장할 수 없습니다. 핵심: 아키텍처는 미래를 위한 투자입니다. — 지금까지 배운 4개 레이어(Memory → Knowledge → Skills → Workflow)가 모두 있어야 이 비교표의 'With Architecture' 열이 가능합니다. 하나라도 없으면 'Without Architecture'가 됩니다.">
+  <!-- SLIDE 15: Agent Runtime / User Context (two-col) -->
+  <div class="slide" id="slide-15" data-notes="Agent Runtime은 에이전트가 실행되는 환경입니다. 컨텍스트 관리, 툴 접근, 상태 유지를 담당합니다. User Context는 사용자별 설정, 선호도, 대화 이력을 관리합니다. 핵심: Runtime이 없으면 Agent는 실행될 수 없습니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="layer-indicator" style="display:flex;gap:8px;margin-bottom:16px;font-size:12px;font-family:'JetBrains Mono',monospace">
       <span style="color:var(--text-dim)">Layer:</span>
-      <span style="color:var(--gold)">🧠 Memory</span>
-      <span style="color:var(--gold)">📚 Knowledge</span>
-      <span style="color:var(--gold)">⚡ Skills</span>
+      <span style="color:var(--text-dim)">🧠 Memory</span>
+      <span style="color:var(--text-dim)">📚 Knowledge</span>
+      <span style="color:var(--text-dim)">⚡ Skills</span>
       <span style="color:var(--gold)">🔗 Workflow</span>
       <span style="margin-left:auto;color:var(--gold)">↑ 현재</span>
     </div>
-    <div class="inline-section">Architecture Impact</div>
-    <table class="compare-table" style="max-width:560px;">
-      <thead>
-        <tr>
-          <th style="color:var(--accent-green);">✅ With Architecture</th>
-          <th style="color:var(--accent-red);">❌ Without Architecture</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>레이어가 명확히 구분됨</td><td>모든 것이 뒤섞임</td></tr>
-        <tr><td>데이터 흐름 예측 가능</td><td>에러 추적 불가능</td></tr>
-        <tr><td>확장이 쉬움</td><td>확장 불가능</td></tr>
-        <tr><td>팀 협업 용이</td><td>개인 의존성 증가</td></tr>
-        <tr><td>테스트 가능</td><td>테스트 불가능</td></tr>
-      </tbody>
-    </table>
-    <div class="key-message">아키텍처는 미래를 위한 투자이다</div>
+    <div class="inline-section">실행 환경</div>
+    <div class="two-col" style="max-width:600px;">
+      <div class="col">
+        <div class="col-title" style="color:var(--accent-cyan);">🤖 Agent Runtime</div>
+        <div class="col-item ok" style="font-size:16px;">컨텍스트 관리</div>
+        <div class="col-item ok" style="font-size:16px;">툴 접근</div>
+        <div class="col-item ok" style="font-size:16px;">상태 유지</div>
+      </div>
+      <div class="col">
+        <div class="col-title" style="color:var(--accent-purple);">👤 User Context</div>
+        <div class="col-item ok" style="font-size:16px;">사용자 설정</div>
+        <div class="col-item ok" style="font-size:16px;">선호도 저장</div>
+        <div class="col-item ok" style="font-size:16px;">대화 이력</div>
+      </div>
+    </div>
+    <div class="key-message">Runtime이 없으면 Agent는 실행될 수 없다</div>
   </div>
 
-  <!-- SLIDE 18: Highlight — 하나라도 없으면 Agent는 실패한다 -->
-  <div class="slide" id="slide-18" data-notes="L01에서 배운 4가지 실패 원인을 기억하시나요? Memory Loss, Knowledge Loss, Skills Loss, Workflow Loss. 이 네 가지는 정확히 4개 레이어에 대응됩니다. 하나라도 없으면 Agent는 실패합니다. 핵심: L01의 문제 = 아키텍처의 부재.">
+  <!-- SLIDE 16: Runtime Components -->
+  <div class="slide" id="slide-16" data-notes="Runtime의 세 가지 핵심 컴포넌트는 Session Management(세션 관리), Tool Access(도구 접근), Configuration(설정 관리)입니다. 이 세 가지가 Agent의 실행 환경을 정의합니다. 핵심: 세션은 컨텍스트의 생명주기입니다.">
+    <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
+    <div class="layer-indicator" style="display:flex;gap:8px;margin-bottom:16px;font-size:12px;font-family:'JetBrains Mono',monospace">
+      <span style="color:var(--text-dim)">Layer:</span>
+      <span style="color:var(--text-dim)">🧠 Memory</span>
+      <span style="color:var(--text-dim)">📚 Knowledge</span>
+      <span style="color:var(--text-dim)">⚡ Skills</span>
+      <span style="color:var(--gold)">🔗 Workflow</span>
+      <span style="margin-left:auto;color:var(--gold)">↑ 현재</span>
+    </div>
+    <div class="inline-section">Runtime</div>
+    <div class="feature-list" style="margin-top:8px;gap:8px;">
+      <div class="feature-item" style="font-size:20px;"><span class="feature-icon cyan">📍</span> Session Management — 컨텍스트 생명주기</div>
+      <div class="feature-item" style="font-size:20px;"><span class="feature-icon purple">🔧</span> Tool Access — 도구 등록 및 실행</div>
+      <div class="feature-item" style="font-size:20px;"><span class="feature-icon cyan">⚙️</span> Configuration — 설정·프로필·모델 라우팅</div>
+    </div>
+    <div class="key-message" style="margin-top:12px;">세션은 컨텍스트의 생명주기이다</div>
+  </div>
+
+  <!-- SLIDE 17: Highlight — 하나라도 없으면 Agent는 실패한다 -->
+  <div class="slide" id="slide-17" data-notes="L01에서 배운 4가지 실패 원인을 기억하시나요? Memory Loss, Knowledge Loss, Skills Loss, Workflow Loss. 이 네 가지는 정확히 4개 레이어에 대응됩니다. 하나라도 없으면 Agent는 실패합니다. 핵심: L01의 문제 = 아키텍처의 부재.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="layer-indicator" style="display:flex;gap:8px;margin-bottom:16px;font-size:12px;font-family:'JetBrains Mono',monospace">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -965,10 +934,30 @@
     <div class="insight-box" style="max-width:480px;margin-top:12px;">
       <span class="highlight">L01의 문제 = 아키텍처의 부재</span>
     </div>
-  </div>
+  
+    <!-- Merged from Architecture Impact (slide-17) -->
+    <div style="margin-top:24px;width:100%;max-width:600px;">
+      <div style="font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);text-align:center;margin-bottom:8px;">Architecture Impact</div>
+      <table class="compare-table" style="max-width:560px;">
+      <thead>
+        <tr>
+          <th style="color:var(--accent-green);">✅ With Architecture</th>
+          <th style="color:var(--accent-red);">❌ Without Architecture</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>레이어가 명확히 구분됨</td><td>모든 것이 뒤섞임</td></tr>
+        <tr><td>데이터 흐름 예측 가능</td><td>에러 추적 불가능</td></tr>
+        <tr><td>확장이 쉬움</td><td>확장 불가능</td></tr>
+        <tr><td>팀 협업 용이</td><td>개인 의존성 증가</td></tr>
+        <tr><td>테스트 가능</td><td>테스트 불가능</td></tr>
+      </tbody>
+    </table>
+      <div class="key-message">아키텍처는 미래를 위한 투자이다</div>
+    </div></div>
 
-  <!-- SLIDE 19: Core / P-Hermes (two-col) -->
-  <div class="slide" id="slide-19" data-notes="Core는 Agent Runtime, Memory, Knowledge, Skills, Workflow를 포함합니다. P-Hermes는 생산 시스템(Factory Layer)으로, Knowledge Factory, Content Factory, Research Factory 등이 여기에 속합니다. 핵심: Core는 엔진, P-Hermes는 공장입니다. — 이 4개 레이어가 Core를 구성합니다. P-Hermes의 Factory Layer는 이 Core 위에 구축되어 생산 파이프라인을 실행합니다.">
+  <!-- SLIDE 18: Core / P-Hermes (two-col) -->
+  <div class="slide" id="slide-18" data-notes="Core는 Agent Runtime, Memory, Knowledge, Skills, Workflow를 포함합니다. P-Hermes는 생산 시스템(Factory Layer)으로, Knowledge Factory, Content Factory, Research Factory 등이 여기에 속합니다. 핵심: Core는 엔진, P-Hermes는 공장입니다. — 이 4개 레이어가 Core를 구성합니다. P-Hermes의 Factory Layer는 이 Core 위에 구축되어 생산 파이프라인을 실행합니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="layer-indicator" style="display:flex;gap:8px;margin-bottom:16px;font-size:12px;font-family:'JetBrains Mono',monospace">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -1003,8 +992,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 20: Core vs P-Hermes 경계 (overflow-safe) -->
-  <div class="slide overflow-safe" id="slide-20" data-notes="Core의 책임: 에이전트 실행, 기억/지식 관리, 스킬/워크플로우 실행. P-Hermes의 책임: 지식 생산, 콘텐츠 생성, 연구 워크플로우, 배포 관리. 이 경계가 명확할수록 시스템이 안정적입니다. 핵심: 명확한 경계가 안정성을 보장합니다.">
+  <!-- SLIDE 19: Core vs P-Hermes 경계 (overflow-safe) -->
+  <div class="slide overflow-safe" id="slide-19" data-notes="Core의 책임: 에이전트 실행, 기억/지식 관리, 스킬/워크플로우 실행. P-Hermes의 책임: 지식 생산, 콘텐츠 생성, 연구 워크플로우, 배포 관리. 이 경계가 명확할수록 시스템이 안정적입니다. 핵심: 명확한 경계가 안정성을 보장합니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="layer-indicator" style="display:flex;gap:8px;margin-bottom:16px;font-size:12px;font-family:'JetBrains Mono',monospace">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -1036,8 +1025,8 @@
     <div class="key-message" style="margin-top:12px;">명확한 경계가 안정성을 보장한다</div>
   </div>
 
-  <!-- SLIDE 21: Highlight — Single Source of Truth -->
-  <div class="slide" id="slide-21" data-notes="Hermes의 핵심 설계 원칙 중 하나는 SSOT(Single Source of Truth)입니다. Spec이 단일 진실 근원이고, 모든 구현은 Spec을 따릅니다. Config, File System, Spec 문서가 SSOT를 구성합니다. 핵심: 하나의 진실, 하나의 출처. — 이 SSOT 원칙은 4개 레이어 전체에 적용됩니다. Memory Layer의 FTS5/SQLite, Knowledge Layer의 Wiki, Skills Layer의 스크립트, Workflow Layer의 .workflow-state — 모든 레이어가 자신만의 SSOT를 가집니다.">
+  <!-- SLIDE 20: Highlight — Single Source of Truth -->
+  <div class="slide" id="slide-20" data-notes="Hermes의 핵심 설계 원칙 중 하나는 SSOT(Single Source of Truth)입니다. Spec이 단일 진실 근원이고, 모든 구현은 Spec을 따릅니다. Config, File System, Spec 문서가 SSOT를 구성합니다. 핵심: 하나의 진실, 하나의 출처. — 이 SSOT 원칙은 4개 레이어 전체에 적용됩니다. Memory Layer의 FTS5/SQLite, Knowledge Layer의 Wiki, Skills Layer의 스크립트, Workflow Layer의 .workflow-state — 모든 레이어가 자신만의 SSOT를 가집니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="layer-indicator" style="display:flex;gap:8px;margin-bottom:16px;font-size:12px;font-family:'JetBrains Mono',monospace">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -1063,8 +1052,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 22: Full Stack (flow) -->
-  <div class="slide" id="slide-22" data-notes="전체 스택을 한눈에 보여줍니다. 하단의 Memory에서 출발해 Knowledge, Skills, Workflow를 거쳐 Factory Layer로 이어집니다. 각 레이어는 상위 레이어의 기반이 됩니다. 핵심: 하위 레이어가 상위 레이어의 품질을 결정합니다. — 이것이 전체 아키텍처의 완성된 모습입니다. Slide 4의 정적 구조 + Slide 5의 요청 흐름 + 각 레이어의 상세 내용이 모두 하나의 Full Stack으로 통합되었습니다.">
+  <!-- SLIDE 21: Full Stack (flow) -->
+  <div class="slide" id="slide-21" data-notes="전체 스택을 한눈에 보여줍니다. 하단의 Memory에서 출발해 Knowledge, Skills, Workflow를 거쳐 Factory Layer로 이어집니다. 각 레이어는 상위 레이어의 기반이 됩니다. 핵심: 하위 레이어가 상위 레이어의 품질을 결정합니다. — 이것이 전체 아키텍처의 완성된 모습입니다. Slide 4의 정적 구조 + Slide 5의 요청 흐름 + 각 레이어의 상세 내용이 모두 하나의 Full Stack으로 통합되었습니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="layer-indicator" style="display:flex;gap:8px;margin-bottom:16px;font-size:12px;font-family:'JetBrains Mono',monospace">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -1089,8 +1078,8 @@
     <div class="key-message" style="margin-top:12px;">하위 레이어가 상위 레이어의 품질을 결정한다</div>
   </div>
 
-  <!-- SLIDE 23: Summary -->
-  <div class="slide" id="slide-23" data-notes="Part 1에서는 Hermes Core의 4개 레이어를 배웠습니다. Part 2에서는 이 Core 위에 구축되는 P-Hermes의 Factory Layer를 다룹니다. Knowledge Factory에서 시작해 Spec-Driven Development까지 이어집니다. 핵심: Core가 준비되었습니다. 이제 공장을 지을 시간입니다.">
+  <!-- SLIDE 22: Summary -->
+  <div class="slide" id="slide-22" data-notes="Part 1에서는 Hermes Core의 4개 레이어를 배웠습니다. Part 2에서는 이 Core 위에 구축되는 P-Hermes의 Factory Layer를 다룹니다. Knowledge Factory에서 시작해 Spec-Driven Development까지 이어집니다. 핵심: Core가 준비되었습니다. 이제 공장을 지을 시간입니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="inline-section">Summary</div>
     <div class="feature-list" style="margin-top:8px;gap:8px;">
@@ -1110,8 +1099,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 24: Key Insight -->
-  <div class="slide" id="slide-24" data-notes="가장 중요한 인사이트입니다. Agent의 진짜 차이는 기능의 개수가 아니라 Memory→Knowledge→Skills→Workflow 순서의 계층 구조 설계에 있습니다. 이 구조가 p-hermes의 핵심 설계 철학입니다.">
+  <!-- SLIDE 23: Key Insight -->
+  <div class="slide" id="slide-23" data-notes="가장 중요한 인사이트입니다. Agent의 진짜 차이는 기능의 개수가 아니라 Memory→Knowledge→Skills→Workflow 순서의 계층 구조 설계에 있습니다. 이 구조가 p-hermes의 핵심 설계 철학입니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="inline-section">Key Insight</div>
     <div style="display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:16px;gap:8px;">
@@ -1124,8 +1113,8 @@
     </div>
   </div>
 
-  <!-- SLIDE 25: Q&A -->
-  <div class="slide" id="slide-25" data-notes="Q&A 세션. audience가 가장 궁금해할 세 가지 질문을 준비했습니다.">
+  <!-- SLIDE 24: Q&A -->
+  <div class="slide" id="slide-24" data-notes="Q&A 세션. audience가 가장 궁금해할 세 가지 질문을 준비했습니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="inline-section">Q&amp;A</div>
     <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
