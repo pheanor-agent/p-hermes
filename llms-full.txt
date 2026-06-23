@@ -17,6 +17,8 @@
 - **docs/blog/posts/why-ai-has-no-memory.md** (139 lines): 왜 AI는 기억하지 못하는가
 - **docs/blog/posts/why-we-built-hermes.md** (154 lines): Hermes를 만든 이유
 - **docs/blog/posts/workflow-gate-philosophy.md** (194 lines): Workflow Gate 설계 철학
+- **docs/slides/SPEC-SLIDES.md** (58 lines): SPEC-SLIDES — Published Version (v1.0)
+- **docs/slides/TEMPLATE.md** (287 lines): 강의 슬라이드 템플릿
 - **docs/wiki/core-concepts.md** (211 lines): 🧠 Core Concepts — Hermes 핵심 개념
 - **docs/wiki/faq.md** (124 lines): 자주 묻는 질문 (FAQ)
 - **docs/wiki/getting-started/configuration.md** (80 lines): 기본 설정 가이드
