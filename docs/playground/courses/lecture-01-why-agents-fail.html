@@ -424,6 +424,184 @@
     margin-top: 8px;
   }
 
+  /* ── Failure Header ── */
+  .failure-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .failure-number {
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--accent-red);
+    letter-spacing: 2px;
+  }
+  .failure-title {
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 900;
+    letter-spacing: -1px;
+    text-align: center;
+  }
+  .failure-title .hl { color: var(--accent-red); }
+  .failure-tag {
+    margin-top: 4px;
+  }
+
+  /* ── Failure Scenario ── */
+  .failure-scenario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 32px;
+    width: 100%;
+    max-width: 500px;
+    margin: 16px auto;
+  }
+  .scenario-icon {
+    font-size: 36px;
+  }
+  .scenario-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .scenario-text {
+    font-size: 18px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* ── Failure Impact ── */
+  .failure-impact {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .impact-label {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-red);
+  }
+  .impact-flow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .impact-node {
+    background: var(--card);
+    border: 2px solid var(--border);
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    min-width: 140px;
+  }
+  .impact-node.ok { border-color: var(--accent-green); }
+  .impact-node.warn { border-color: var(--accent-orange); }
+  .impact-node.error { border-color: var(--accent-red); }
+  .impact-arrow {
+    font-size: 20px;
+    color: var(--text-dim);
+    font-weight: 700;
+  }
+
+  /* ── Steps Loss Grid ── */
+  .failure-steps-loss {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .steps-loss-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 100%;
+    max-width: 500px;
+  }
+  .step-loss-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 14px 18px;
+    border-radius: 12px;
+  }
+  .step-loss-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--gold-glow);
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .step-loss-text {
+    font-size: 16px;
+    color: var(--text);
+    font-weight: 500;
+  }
+  .step-loss-status {
+    font-size: 13px;
+    color: var(--accent-red);
+    margin-left: auto;
+    font-weight: 700;
+  }
+
+  /* ── Failure Taxonomy ── */
+  .failure-taxonomy {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    width: 100%;
+    max-width: 700px;
+    margin: 32px 0;
+  }
+  .taxonomy-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 20px 16px;
+    border-radius: var(--radius);
+    text-align: center;
+  }
+  .taxonomy-icon {
+    font-size: 28px;
+  }
+  .taxonomy-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent-red);
+  }
+  .taxonomy-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
   /* ── Progress Bar ── */
   .progress-bar {
     position: fixed; top: 0; left: 0; height: 3px;
@@ -519,56 +697,120 @@
   <!-- Slide 5: Failure #1 -->
   <div class="slide" data-notes="가장 흔한 실패입니다. 프로젝트 구조를 설명했는데 새 채팅에서 다시 설명해야 합니다.">
     <div class="lecture-badge">Lecture 01</div>
-    <div class="title" style="font-size:clamp(28px,4vw,44px)">Failure <span class="hl">#1</span></div>
-    <div style="margin:16px 0"><span class="tag tag-red">Memory Loss</span></div>
-    <div class="flow">
-      <div class="node">프로젝트 구조 설명</div>
-      <div class="arrow">↓</div>
-      <div class="node" style="border-color:var(--accent-cyan)">새 채팅</div>
-      <div class="arrow">↓</div>
-      <div class="node" style="border-color:var(--accent-red)">설명 반복</div>
+    <div class="failure-header">
+      <div class="failure-number">#1</div>
+      <div class="failure-title">Memory <span class="hl">Loss</span></div>
+      <div class="failure-tag tag-red">기억 상실</div>
     </div>
+    <div class="failure-scenario">
+      <div class="scenario-icon">🗣️</div>
+      <div class="scenario-title">시나리오</div>
+      <div class="scenario-text">프로젝트 구조를 30분간 설명함</div>
+    </div>
+    <div class="failure-impact">
+      <div class="impact-label">문제 발생</div>
+      <div class="impact-flow">
+        <div class="impact-node ok">프로젝트 구조 설명</div>
+        <div class="impact-arrow">→</div>
+        <div class="impact-node warn">새 채팅 시작</div>
+        <div class="impact-arrow">→</div>
+        <div class="impact-node error">다시 설명 반복</div>
+      </div>
+    </div>
+    <div class="key-message">매일 첫 출근 상태 — 정보가 영구 저장되지 않음</div>
   </div>
 
   <!-- Slide 6: Failure #2 -->
   <div class="slide" data-notes="경험이 축적되지 않는다는 것은 매번 처음부터 시작한다는 의미입니다.">
     <div class="lecture-badge">Lecture 01</div>
-    <div class="title" style="font-size:clamp(28px,4vw,44px)">Failure <span class="hl">#2</span></div>
-    <div style="margin:16px 0"><span class="tag tag-red">Knowledge Loss</span></div>
-    <div class="flow">
-      <div class="node">README 작성 <span style="color:var(--accent-green);font-size:14px">50회 성공</span></div>
-      <div class="arrow">↓</div>
-      <div class="node" style="border-color:var(--accent-red)">51회도 처음부터</div>
+    <div class="failure-header">
+      <div class="failure-number">#2</div>
+      <div class="failure-title">Knowledge <span class="hl">Loss</span></div>
+      <div class="failure-tag tag-red">지식 손실</div>
     </div>
-    <div class="key-message">경험이 축적되지 않는다</div>
+    <div class="failure-scenario">
+      <div class="scenario-icon">📚</div>
+      <div class="scenario-title">시나리오</div>
+      <div class="scenario-text">50번 성공적으로 README 작성</div>
+    </div>
+    <div class="failure-impact">
+      <div class="impact-label">문제 발생</div>
+      <div class="impact-flow">
+        <div class="impact-node ok">README 작성 <span style="color:var(--accent-green);font-size:14px">✓ 50회</span></div>
+        <div class="impact-arrow">→</div>
+        <div class="impact-node warn">새 프로젝트</div>
+        <div class="impact-arrow">→</div>
+        <div class="impact-node error">51회도 처음부터</div>
+      </div>
+    </div>
+    <div class="key-message">경험이 축적되지 않음 — 학습된 지식이 손실됨</div>
   </div>
 
   <!-- Slide 7: Failure #3 -->
   <div class="slide" data-notes="절차를 기억하지 못합니다. 워크플로우를 재사용하지 못합니다.">
     <div class="lecture-badge">Lecture 01</div>
-    <div class="title" style="font-size:clamp(28px,4vw,44px)">Failure <span class="hl">#3</span></div>
-    <div style="margin:16px 0"><span class="tag tag-red">Workflow Loss</span></div>
-    <div class="steps">
-      <div class="step"><div class="step-num">1</div><div class="step-text">요구사항</div></div>
-      <div class="step"><div class="step-num">2</div><div class="step-text">설계</div></div>
-      <div class="step"><div class="step-num">3</div><div class="step-text">구현</div></div>
-      <div class="step"><div class="step-num">4</div><div class="step-text">검토</div></div>
+    <div class="failure-header">
+      <div class="failure-number">#3</div>
+      <div class="failure-title">Workflow <span class="hl">Loss</span></div>
+      <div class="failure-tag tag-red">절차 상실</div>
     </div>
-    <div class="key-message">절차도 기억하지 못한다</div>
+    <div class="failure-scenario">
+      <div class="scenario-icon">⚙️</div>
+      <div class="scenario-title">시나리오</div>
+      <div class="scenario-text">4단계 개발 프로세스를 완성함</div>
+    </div>
+    <div class="failure-steps-loss">
+      <div class="impact-label">문제 발생 — 매번 새로 생각해야 함</div>
+      <div class="steps-loss-grid">
+        <div class="step-loss-item">
+          <div class="step-loss-num">1</div>
+          <div class="step-loss-text">요구사항</div>
+          <div class="step-loss-status">❌ 잊힘</div>
+        </div>
+        <div class="step-loss-item">
+          <div class="step-loss-num">2</div>
+          <div class="step-loss-text">설계</div>
+          <div class="step-loss-status">❌ 잊힘</div>
+        </div>
+        <div class="step-loss-item">
+          <div class="step-loss-num">3</div>
+          <div class="step-loss-text">구현</div>
+          <div class="step-loss-status">❌ 잊힘</div>
+        </div>
+        <div class="step-loss-item">
+          <div class="step-loss-num">4</div>
+          <div class="step-loss-text">검토</div>
+          <div class="step-loss-status">❌ 잊힘</div>
+        </div>
+      </div>
+    </div>
+    <div class="key-message">절차도 기억하지 않음 — 검증된 프로세스 재사용 불가</div>
   </div>
 
   <!-- Slide 8: Failure #4 -->
   <div class="slide" data-notes="장기 프로젝트에서 가장 큰 문제는 목표 상실입니다. 세션이 끝나면 원래 무엇을 하려 했는지 잊어버립니다.">
     <div class="lecture-badge">Lecture 01</div>
-    <div class="title" style="font-size:clamp(28px,4vw,44px)">Failure <span class="hl">#4</span></div>
-    <div style="margin:16px 0"><span class="tag tag-red">Goal Drift</span></div>
-    <div class="flow">
-      <div class="node">3개월 프로젝트</div>
-      <div class="arrow">↓</div>
-      <div class="node" style="border-color:var(--accent-orange)">세션 종료</div>
-      <div class="arrow">↓</div>
-      <div class="node" style="border-color:var(--accent-red)">목표 상실</div>
+    <div class="failure-header">
+      <div class="failure-number">#4</div>
+      <div class="failure-title">Goal <span class="hl">Drift</span></div>
+      <div class="failure-tag tag-red">목표 표류</div>
     </div>
+    <div class="failure-scenario">
+      <div class="scenario-icon">🎯</div>
+      <div class="scenario-title">시나리오</div>
+      <div class="scenario-text">3개월 프로젝트 진행 중</div>
+    </div>
+    <div class="failure-impact">
+      <div class="impact-label">문제 발생</div>
+      <div class="impact-flow">
+        <div class="impact-node ok">3개월 프로젝트</div>
+        <div class="impact-arrow">→</div>
+        <div class="impact-node warn">세션 종료</div>
+        <div class="impact-arrow">→</div>
+        <div class="impact-node error">목표 상실</div>
+      </div>
+    </div>
+    <div class="key-message">장기적인 목표가 상실됨 — 방향성을 잃음</div>
   </div>
 
   <!-- Slide 9: Human vs Agent -->
@@ -591,23 +833,27 @@
   <!-- Slide 10: Failure Taxonomy -->
   <div class="slide" data-notes="Agent 실패를 4가지로 분류할 수 있습니다. 잊어버림, 혼동, 반복, 표류.">
     <div class="lecture-badge">Lecture 01</div>
-    <div class="title" style="font-size:clamp(28px,4vw,44px)">Agent Failure <span class="hl">Taxonomy</span></div>
-    <div class="grid-cards">
-      <div class="grid-card">
-        <div class="grid-card-title" style="color:var(--accent-red)">Forget</div>
-        <div class="grid-card-desc">기억 상실</div>
+    <div class="title" style="font-size:clamp(32px,4vw,48px)">Agent Failure <span class="hl">Taxonomy</span></div>
+    <div class="failure-taxonomy">
+      <div class="taxonomy-item">
+        <div class="taxonomy-icon">🧠</div>
+        <div class="taxonomy-title">Forget</div>
+        <div class="taxonomy-desc">기억 상실</div>
       </div>
-      <div class="grid-card">
-        <div class="grid-card-title" style="color:var(--accent-orange)">Confuse</div>
-        <div class="grid-card-desc">혼동</div>
+      <div class="taxonomy-item">
+        <div class="taxonomy-icon">😵‍💫</div>
+        <div class="taxonomy-title">Confuse</div>
+        <div class="taxonomy-desc">혼동</div>
       </div>
-      <div class="grid-card">
-        <div class="grid-card-title" style="color:var(--accent-purple)">Repeat</div>
-        <div class="grid-card-desc">반복</div>
+      <div class="taxonomy-item">
+        <div class="taxonomy-icon">🔁</div>
+        <div class="taxonomy-title">Repeat</div>
+        <div class="taxonomy-desc">반복</div>
       </div>
-      <div class="grid-card">
-        <div class="grid-card-title" style="color:var(--accent-cyan)">Drift</div>
-        <div class="grid-card-desc">표류</div>
+      <div class="taxonomy-item">
+        <div class="taxonomy-icon">🌊</div>
+        <div class="taxonomy-title">Drift</div>
+        <div class="taxonomy-desc">표류</div>
       </div>
     </div>
   </div>
