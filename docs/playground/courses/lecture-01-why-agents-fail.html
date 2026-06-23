@@ -993,7 +993,7 @@
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">통합</div>
     <div class="title" style="font-size:clamp(28px,4vw,44px)">Agent Operating <span class="hl">System</span></div>
-    <div class="grid-cards" style="grid-template-columns:repeat(2,1fr);max-width:600px">
+    <div class="grid-cards" style="grid-template-columns:repeat(3,1fr);max-width:650px">
       <div class="grid-card">
         <div class="grid-card-title" style="color:var(--accent-cyan)">Memory</div>
         <div class="grid-card-desc">기억</div>
@@ -1009,6 +1009,10 @@
       <div class="grid-card">
         <div class="grid-card-title" style="color:var(--accent-green)">Workflow</div>
         <div class="grid-card-desc">완수</div>
+      </div>
+      <div class="grid-card">
+        <div class="grid-card-title" style="color:var(--accent-cyan)">Automation</div>
+        <div class="grid-card-desc">자동화</div>
       </div>
     </div>
   </div>
@@ -1026,7 +1030,7 @@
   </div>
 
   <!-- Slide 18: Hermes Core -->
-  <div class="slide" id="slide-18" data-notes="Hermes Core는 이 4가지 요소를 제공합니다. Memory, Knowledge, Skills, Workflow.">
+  <div class="slide" id="slide-18" data-notes="Hermes Core는 이 5가지 요소를 제공합니다. Memory, Knowledge, Skills, Workflow, Automation.">
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">Core</div>
     <div class="title" style="font-size:clamp(28px,4vw,44px)">Hermes <span class="hl">Core</span></div>
@@ -1035,6 +1039,7 @@
       <div class="feature-item"><div class="feature-icon purple">K</div>Knowledge</div>
       <div class="feature-item"><div class="feature-icon gold">S</div>Skills</div>
       <div class="feature-item"><div class="feature-icon green">W</div>Workflow</div>
+      <div class="feature-item"><div class="feature-icon cyan">A</div>Automation</div>
     </div>
   </div>
 
@@ -1051,34 +1056,34 @@
   </div>
 
     <!-- SLIDE 20: Summary -->
-  <div class="slide" id="slide-20" data-notes="오늘 배운 핵심 4가지를 요약합니다. Agent는 Memory Loss로 과거를 잊고, Knowledge Loss로 맥락을 이해하지 못하며, Skills Loss로 반복 작업을 자동화하지 못하고, Workflow Loss로 일관된 프로세스를 유지하지 못합니다. Agent OS의 4개 Layer가 이 4가지 문제를 각각 해결합니다. 핵심: 4가지 실패 = 4개 Layer의 부재입니다.">
+  <div class="slide" id="slide-20" data-notes="오늘 배운 핵심 5가지를 요약합니다. Agent는 Memory Loss로 과거를 잊고, Knowledge Loss로 맥락을 이해하지 못하며, Skills Loss로 반복 작업을 자동화하지 못하고, Workflow Loss로 일관된 프로세스를 유지하지 못하고, Automation Loss로 정기 작업을 위임하지 못합니다. Agent OS의 5개 Layer가 이 5가지 문제를 각각 해결합니다. 핵심: 5가지 실패 = 5개 Layer의 부재입니다.">
     <div class="lecture-badge">Lecture 01 · Why Agents Fail</div>
     <div class="inline-section">Summary</div>
-    <div class="summary-grid">
+    <div class="summary-grid" style="grid-template-columns:repeat(3,1fr);max-width:650px">
       <div class="summary-card" style="border-color:var(--accent-cyan);"><span class="s-icon">🧠</span><span class="s-title">Memory Loss</span><span class="s-desc">과거 맥락 상실</span></div>
       <div class="summary-card" style="border-color:var(--accent-purple);"><span class="s-icon">📚</span><span class="s-title">Knowledge Loss</span><span class="s-desc">도메인 지식 부재</span></div>
       <div class="summary-card" style="border-color:var(--accent-green);"><span class="s-icon">⚡</span><span class="s-title">Skills Loss</span><span class="s-desc">반복 작업 미자동화</span></div>
       <div class="summary-card" style="border-color:var(--accent-orange);"><span class="s-icon">🔗</span><span class="s-title">Workflow Loss</span><span class="s-desc">일관된 프로세스 부재</span></div>
+      <div class="summary-card" style="border-color:var(--accent-cyan);"><span class="s-icon">⏰</span><span class="s-title">Automation Loss</span><span class="s-desc">정기 작업 미위임</span></div>
     </div>
-    <div class="key-message">4가지 실패 = 4개 Layer의 부재</div>
+    <div class="key-message">5가지 실패 = 5개 Layer의 부재</div>
   </div>
 
   <!-- SLIDE 21: Key Insight -->
-  <div class="slide" id="slide-21" data-notes="가장 중요한 인사이트입니다. Agent가 실패하는 이유는 Model의 성능 때문이 아니라 System 설계 때문입니다. 아무리 좋은 Model도 Memory, Knowledge, Skills, Workflow Layer가 없으면 실패합니다. Agent = Model + System입니다. 핵심: Agent는 Model이 아니라 System입니다.">
+  <div class="slide" id="slide-21" data-notes="가장 중요한 인사이트입니다. Agent가 실패하는 이유는 Model의 성능 때문이 아니라 System 설계 때문입니다. 아무리 좋은 Model도 Memory, Knowledge, Skills, Workflow, Automation Layer가 없으면 실패합니다. Agent = Model + System입니다. 핵심: Agent는 Model이 아니라 System입니다.">
     <div class="lecture-badge">Lecture 01 · Why Agents Fail</div>
     <div class="inline-section">Key Insight</div>
     <div class="big-text" style="font-size:clamp(28px,3.5vw,40px);color:var(--gold);max-width:600px;text-align:center;">Agent는<br><strong>Model</strong>이 아니라 <strong>System</strong>이다</div>
-    <div class="key-message" style="margin-top:24px;">→ 다음 강의: Memory &amp; Knowledge</div>
   </div>
 
   <!-- SLIDE 22: Q&A -->
-  <div class="slide" id="slide-22" data-notes="Q&A 세션. audience가 가장 궁금해할 세 가지 질문을 준비했습니다. 첫째, Model만 좋으면 되지 않나요? → Model은 지능의 일부일 뿐, System이 없으면 지속적 맥락 유지 불가. 둘째, 이 구조가 모든 Agent에 적용되나요? → Layer 개념은 보편적이나 구현은 도메인에 따라 달라집니다. 셋째, 기존 Agent에 Layer를 추가하는 방법은? → Memory Layer부터 단계적으로 구축하는 것이 권장됩니다.">
+  <div class="slide" id="slide-22" data-notes="Q&A. 청중 질문 예상: Model만 좋으면 되지 않나요? 이 구조가 모든 Agent에 적용되나요? 기존 Agent에 Layer를 추가하는 방법은?">
     <div class="lecture-badge">Lecture 01 · Why Agents Fail</div>
     <div class="inline-section">Q&A</div>
     <div class="qa-list">
-      <div class="qa-item"><span class="qa-q">Q1</span><span class="qa-text">Model만 좋으면 되지 않나요?</span><span class="qa-a">Model은 지능의 일부, System 없이 지속적 맥락 유지 불가</span></div>
-      <div class="qa-item"><span class="qa-q">Q2</span><span class="qa-text">이 구조가 모든 Agent에 적용되나요?</span><span class="qa-a">Layer 개념은 보편적, 구현은 도메인에 따라 다름</span></div>
-      <div class="qa-item"><span class="qa-q">Q3</span><span class="qa-text">기존 Agent에 Layer를 추가하는 방법은?</span><span class="qa-a">Memory Layer부터 단계적으로 구축 권장</span></div>
+      <div class="qa-item"><span class="qa-q">Q1</span><span class="qa-text">Model만 좋으면 되지 않나요?</span></div>
+      <div class="qa-item"><span class="qa-q">Q2</span><span class="qa-text">이 구조가 모든 Agent에 적용되나요?</span></div>
+      <div class="qa-item"><span class="qa-q">Q3</span><span class="qa-text">기존 Agent에 Layer를 추가하는 방법은?</span></div>
     </div>
     <div class="key-message" style="margin-top:20px;">🔜 다음 강의: Memory &amp; Knowledge</div>
   </div>
