@@ -4,30 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lecture 01: Why Agents Fail — Building an Agent OS with Hermes</title>
+<link rel="stylesheet" href="../playground/courses/components/slides-components.css">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #0b0d12;
-    --surface: #12151c;
-    --card: #181c28;
-    --border: #262b3a;
-    --gold: #f0b429;
-    --gold-dim: #b8861e;
-    --gold-glow: rgba(240,180,41,.15);
-    --text: #e8edf5;
-    --text-dim: #8892a8;
-    --accent-cyan: #5bc0eb;
-    --accent-magenta: #f15bb5;
-    --accent-green: #00f5d4;
-    --accent-red: #ff6b6b;
-    --accent-orange: #ffa94d;
-    --accent-purple: #b197fc;
-    --radius: 16px;
-    --transition: 400ms cubic-bezier(.22,1,.36,1);
-  }
 
   html, body {
     height: 100%;
@@ -60,29 +41,6 @@
     padding: 64px 80px;
     position: relative;
     overflow: hidden;
-  }
-
-  /* ── Navigation ── */
-  .nav {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 10px; z-index: 100;
-    background: rgba(18,21,28,.8);
-    padding: 8px 16px;
-    border-radius: 100px;
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--border);
-  }
-  .nav a {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--border); transition: var(--transition);
-    display: block;
-  }
-  .nav a.active, .nav a:hover { background: var(--gold); box-shadow: 0 0 12px var(--gold-glow); }
-
-  .slide-counter {
-    position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%);
-    font-size: 12px; color: var(--text-dim); z-index: 100;
-    font-family: 'JetBrains Mono', monospace;
   }
 
   /* ── Header ── */
@@ -602,12 +560,6 @@
     color: var(--text-dim);
   }
 
-  /* ── Progress Bar ── */
-  .progress-bar {
-    position: fixed; top: 0; left: 0; height: 3px;
-    background: linear-gradient(90deg, var(--gold), var(--accent-cyan));
-    z-index: 200; transition: width 200ms ease;
-  }
 </style>
 </head>
 <body>
@@ -695,7 +647,7 @@
   </div>
 
   <!-- Slide 5: Failure #1 -->
-  <div class="slide" id="slide-4" data-notes="어제 결재 올린 기획서 내용을 오늘 다시 정리해야 한다면 얼마나 짜증날까요? Stateless Agent는 매 세션마다 동일한 맥락을 처음부터 구축해야 합니다. 마치 모든 회의가 첫 미팅인 것처럼요.",>
+  <div class="slide" id="slide-4" data-notes="어제 결재 올린 기획서 내용을 오늘 다시 정리해야 한다면 얼마나 짜증날까요? Stateless Agent는 매 세션마다 동일한 맥락을 처음부터 구축해야 합니다. 마치 모든 회의가 첫 미팅인 것처럼요. 이 반복적인 설명의 피로감이 바로 Agent 실패의 핵심 원인입니다.">
     <div class="lecture-badge">Lecture 01</div>
     <div class="failure-header">
       <div class="failure-number">#1</div>
@@ -887,7 +839,7 @@
   </div>
 
   <!-- Slide 13: Skills -->
-  <div class="slide" id="slide-12" data-notes="매일 아침 30분씩 동일한 보고서를 작성한다면? Skills는 반복 작업을 자동화하고 재사용 가능한 단위로 만듭니다. Agent가 스스로 작업을 학습하고 실행할 수 있어야 진정한 생산성 향상이 가능합니다. 반복은 Agent에게, 창의는 사람에게.",>
+  <div class="slide" id="slide-12" data-notes="매일 아침 30분씩 동일한 보고서를 작성한다면? Skills는 반복 작업을 자동화하고 재사용 가능한 단위로 만듭니다. Agent가 스스로 작업을 학습하고 실행할 수 있어야 진정한 생산성 향상이 가능합니다. 반복은 Agent에게, 창의는 사람에게라는 원칙이 핵심입니다.">
     <div class="lecture-badge">Lecture 01</div>
     <div class="title" style="font-size:clamp(32px,4vw,48px)">무엇이 필요한가?</div>
     <div class="need-card gold">

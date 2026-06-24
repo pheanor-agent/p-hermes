@@ -11,28 +11,7 @@
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --bg: #0b0d12;
-    --surface: #12151c;
-    --card: #181c28;
-    --border: #262b3a;
-    --gold: #f0b429;
-    --gold-dim: #b8861e;
-    --gold-glow: rgba(240,180,41,.15);
-    --text: #e8edf5;
-    --text-dim: #8892a8;
-    --accent-cyan: #5bc0eb;
-    --accent-magenta: #f15bb5;
-    --accent-green: #00f5d4;
-    --accent-red: #ff6b6b;
-    --accent-orange: #ffa94d;
-    --accent-purple: #b197fc;
-    --radius: 16px;
-    --transition: 400ms cubic-bezier(.22,1,.36,1);
-    --green: #00f5d4;
-    --red: #ff6b6b;
-    --text-muted: #555e73;
-  }
+  
 
   html, body {
     height: 100%;
@@ -43,57 +22,22 @@
   }
 
   /* ── Navigation ── */
-  .nav {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 10px; z-index: 100;
-    background: rgba(18,21,28,.8);
-    padding: 8px 16px;
-    border-radius: 100px;
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--border);
-  }
-  .nav a {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--border); transition: var(--transition);
-    display: block;
-  }
+  
+  
   .nav a.active, .nav a:hover { background: var(--gold); box-shadow: 0 0 12px var(--gold-glow); }
 
-  .slide-counter {
-    position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%);
-    font-size: 12px; color: var(--text-dim); z-index: 100;
-    font-family: 'JetBrains Mono', monospace;
-  }
+  
 
   /* ── Section Progress Bar ── */
-  .section-progress {
-    position: fixed; bottom: 96px; left: 50%; transform: translateX(-50%);
-    display: flex; align-items: center; gap: 8px; z-index: 100;
-    background: rgba(18,21,28,.85); padding: 8px 20px;
-    border-radius: 100px; backdrop-filter: blur(8px);
-    border: 1px solid var(--border);
-    transition: opacity 300ms ease, visibility 300ms ease;
-  }
+  
   .section-progress.hidden {
     opacity: 0; visibility: hidden; pointer-events: none;
   }
-  .section-progress .sec {
-    font-size: 13px; font-weight: 600; letter-spacing: .5px;
-    color: var(--text-muted); transition: color 300ms ease;
-    white-space: nowrap;
-  }
-  .section-progress .sec.active {
-    color: var(--gold); font-weight: 700;
-  }
-  .section-progress .sec.done {
-    color: var(--text-dim);
-  }
-  .section-progress .sec.future {
-    color: var(--text-muted);
-  }
-  .section-progress .sec-arrow {
-    font-size: 12px; color: var(--text-muted); margin: 0 2px;
-  }
+  
+  
+  
+  
+  
 
   /* ── Header ── */
   .lecture-badge {
@@ -109,7 +53,7 @@
     font-size: clamp(40px,6vw,64px); font-weight: 900;
     letter-spacing: -2px; text-align: center; line-height: 1.1;
   }
-  .title .hl { color: var(--gold); }
+  .title 
   .subtitle {
     font-size: clamp(20px,2.5vw,28px); color: var(--text-dim); margin-top: 16px;
     font-weight: 400; text-align: center;
@@ -152,11 +96,11 @@
     font-size: 13px; font-weight: 700; letter-spacing: 1px;
     text-transform: uppercase;
   }
-  .tag-red { background: rgba(255,107,107,.15); color: var(--accent-red); }
-  .tag-green { background: rgba(0,245,212,.15); color: var(--accent-green); }
-  .tag-gold { background: var(--gold-glow); color: var(--gold); }
-  .tag-cyan { background: rgba(91,192,235,.15); color: var(--accent-cyan); }
-  .tag-purple { background: rgba(177,151,252,.15); color: var(--accent-purple); }
+  .tag
+  .tag
+  .tag
+  .tag
+  .tag
 
   /* ── Feature List ── */
   .feature-list { display: flex; flex-direction: column; gap: 12px; margin: 24px 0; }
@@ -166,11 +110,11 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 14px; font-weight: 700;
   }
-  .feature-icon.red { background: rgba(255,107,107,.2); color: var(--accent-red); }
-  .feature-icon.green { background: rgba(0,245,212,.2); color: var(--accent-green); }
-  .feature-icon.gold { background: var(--gold-glow); color: var(--gold); }
-  .feature-icon.cyan { background: rgba(91,192,235,.2); color: var(--accent-cyan); }
-  .feature-icon.purple { background: rgba(177,151,252,.2); color: var(--accent-purple); }
+  .feature-icon
+  .feature-icon
+  .feature-icon
+  .feature-icon
+  .feature-icon
 
   /* ── Code Block ── */
   .code-block {
@@ -193,16 +137,16 @@
 
   /* ── Quote ── */
   .quote { font-size: clamp(24px,4vw,40px); font-weight: 700; text-align: center; line-height: 1.4; color: var(--text); max-width: 800px; }
-  .quote .hl { color: var(--gold); }
+  .quote 
 
   /* ── Need Card ── */
   .need-card { display: flex; flex-direction: column; align-items: center; gap: 16px; background: var(--card); border: 2px solid var(--border); border-radius: 24px; padding: 40px 48px; width: 100%; max-width: 600px; margin: 24px auto; position: relative; transition: var(--transition); }
   .need-card:hover { transform: translateY(-4px); }
-  .need-card.cyan { border-color: var(--accent-cyan); }
-  .need-card.purple { border-color: var(--accent-purple); }
-  .need-card.gold { border-color: var(--gold); }
-  .need-card.green { border-color: var(--accent-green); }
-  .need-card.red { border-color: var(--accent-red); }
+  .need-card
+  .need-card
+  .need-card
+  .need-card
+  .need-card
   .need-icon { font-size: 48px; margin-bottom: 8px; }
   .need-number { position: absolute; top: 16px; right: 20px; font-size: 16px; font-weight: 900; color: var(--text-dim); opacity: 0.5; }
   .need-title { font-size: clamp(32px, 5vw, 48px); font-weight: 900; letter-spacing: -1px; }
@@ -213,7 +157,7 @@
   .failure-header { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 16px; }
   .failure-number { font-size: 16px; font-weight: 900; color: var(--accent-red); letter-spacing: 2px; }
   .failure-title { font-size: clamp(32px, 5vw, 48px); font-weight: 900; letter-spacing: -1px; text-align: center; }
-  .failure-title .hl { color: var(--accent-red); }
+  .failure-title 
   .failure-tag { margin-top: 4px; }
 
   /* ── Failure Scenario ── */
@@ -227,7 +171,7 @@
   .impact-label { font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-red); }
   .impact-flow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
   .impact-node { background: var(--card); border: 2px solid var(--border); padding: 12px 20px; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; min-width: 140px; }
-  .impact-node.ok { border-color: var(--accent-green); }
+  .impact-node
   .impact-node.warn { border-color: var(--accent-orange); }
   .impact-node.error { border-color: var(--accent-red); }
   .impact-arrow { font-size: 20px; color: var(--text-dim); font-weight: 700; }
@@ -248,23 +192,23 @@
   .taxonomy-desc { font-size: 13px; color: var(--text-dim); }
 
   /* ── Progress Bar ── */
-  .progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--gold), var(--accent-cyan)); z-index: 200; transition: width 200ms ease; }
+  
 
   /* ── Inline Section ── */
   .inline-section { font-size: 14px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; text-align: center; }
 
   /* ── Template Backgrounds ── */
-  .hero-slide { background: radial-gradient(ellipse at 50% 30%, rgba(240,180,41,.06) 0%, transparent 60%); }
+  
   .hero-slide .title { color: var(--text); }
   .hero-slide .subtitle { color: var(--text-dim); }
-  .problem-slide { background: radial-gradient(ellipse at 50% 30%, rgba(255,107,107,.06) 0%, transparent 60%); }
+  
   .problem-slide .title { color: var(--text); }
-  .problem-slide .question .hl { color: var(--accent-red); }
-  .diagram-slide { background: radial-gradient(ellipse at 50% 30%, rgba(91,192,235,.06) 0%, transparent 60%); }
+  .problem-slide .question 
+  
   .diagram-slide .title { color: var(--text); }
   .diagram-slide .flow .node { border-color: var(--accent-cyan); }
-  .example-slide { background: radial-gradient(ellipse at 50% 30%, rgba(0,245,212,.04) 0%, transparent 60%); }
-  .summary-slide { background: radial-gradient(ellipse at 50% 30%, rgba(177,151,252,.06) 0%, transparent 60%); }
+  
+  
   .summary-slide .title { color: var(--text); }
 
   /* ── Summary Grid ── */
@@ -328,7 +272,7 @@
   </div>
 
   <!-- Slide 2: Question / Problem 인식 -->
-  <div class="slide problem-slide" id="slide-2" data-notes="ChatGPT는 훌륭한 답변 엔진입니다. 하지만 비서는 아닙니다. 왜냐하면 내 프로젝트를 기억하지 못하고, 지난달의 결정을 기억하지 못하기 때문입니다.">
+  <div class="slide example-slide" id="slide-2" data-notes="ChatGPT는 훌륭한 답변 엔진입니다. 하지만 비서는 아닙니다. 왜냐하면 내 프로젝트를 기억하지 못하고, 지난달의 결정을 기억하지 못하기 때문입니다.">
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">문제 인식</div>
     <div class="question">왜 ChatGPT는 진짜 <span class="hl">비서</span>가 아닐까?</div>
@@ -388,7 +332,7 @@
   </div>
 
   <!-- Section Divider: 문제 인식 → 4가지 패턴 -->
-  <div class="slide section-divider" id="slide-5" data-notes="Part 1에서 LLM Agent의 Stateless 문제를 이해했습니다. Part 2에서는 구체적인 4가지 실패 패턴을 분석합니다.">
+  <div class="slide section-divider" id="slide-5" data-notes="Part 1에서 LLM Agent의 Stateless 문제를 이해했습니다. Part 2에서는 구체적인 4가지 실패 패턴을 분석합니다. 각각의 패턴이 어떤 현실적 문제로 이어지는지 살펴봅니다.">
     <div class="lecture-badge">Lecture 01</div>
     <div class="section-divider-content">
       <div class="divider-label">Section 2</div>
@@ -568,7 +512,7 @@
   </div>
 
   <!-- Section Divider: 4가지 패턴 → 해결: Agent OS -->
-  <div class="slide section-divider" id="slide-12" data-notes="Part 2에서 4가지 실패 패턴을 분석했습니다. Part 3에서는 Agent OS 개념을 통해 이 문제를 해결하는 방향을 알아봅니다.">
+  <div class="slide section-divider" id="slide-12" data-notes="Part 2에서 4가지 실패 패턴을 분석했습니다. Part 3에서는 Agent OS 개념을 통해 이 문제를 해결하는 방향을 알아봅니다. Memory, Knowledge, Skills, Workflow, Automation 5가지 요소가 어떻게 통합되는지 살펴봅니다.">
     <div class="lecture-badge">Lecture 01</div>
     <div class="section-divider-content">
       <div class="divider-label">Section 3</div>
@@ -682,7 +626,7 @@
   </div>
 
   <!-- Slide 19: Hermes Intro -->
-  <div class="slide hero-slide" id="slide-19" data-notes="이 모든 문제를 해결하는 시스템이 Hermes입니다. 다섯 가지 필요 요소를 처음부터 설계에 포함한 Agent Operating System입니다. 다음 강의부터 각 요소가 어떻게 구현되는지 살펴보겠습니다. 지금까지 배운 실패 원인을 기억하며 각 해결책을 이해해 봅시다.">
+  <div class="slide diagram-slide" id="slide-19" data-notes="이 모든 문제를 해결하는 시스템이 Hermes입니다. 다섯 가지 필요 요소를 처음부터 설계에 포함한 Agent Operating System입니다. 다음 강의부터 각 요소가 어떻게 구현되는지 살펴보겠습니다. 지금까지 배운 실패 원인을 기억하며 각 해결책을 이해해 봅시다.">
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">Hermes</div>
     <div class="question">이 문제를 해결하려면?</div>
@@ -694,7 +638,7 @@
   </div>
 
   <!-- Slide 20: Hermes Core -->
-  <div class="slide diagram-slide" id="slide-20" data-notes="Hermes Core는 이 5가지 요소를 제공합니다. Memory, Knowledge, Skills, Workflow, Automation.">
+  <div class="slide diagram-slide" id="slide-20" data-notes="Hermes Core는 Memory, Knowledge, Skills, Workflow, Automation 5가지 요소를 제공합니다. 각 요소가 독립적으로 동작하면서도 서로 연결되어 전체 시스템을 구성합니다.">
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">Core</div>
     <div class="title" style="font-size:clamp(28px,4vw,44px)">Hermes <span class="hl">Core</span></div>
@@ -708,7 +652,7 @@
   </div>
 
   <!-- Slide 21: P-Hermes -->
-  <div class="slide diagram-slide" id="slide-21" data-notes="그리고 P-Hermes는 Knowledge Factory, Content Factory, Project Factory를 제공합니다.">
+  <div class="slide diagram-slide" id="slide-21" data-notes="P-Hermes는 Knowledge Factory, Content Factory, Project Factory를 제공합니다. Core 시스템 위에서 실제 비즈니스 도메인에 맞게 확장할 수 있는 팩토리 패턴을 제공합니다.">
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">P-Hermes</div>
     <div class="title" style="font-size:clamp(28px,4vw,44px)">P-<span class="hl">Hermes</span></div>
@@ -734,7 +678,7 @@
   </div>
 
   <!-- Slide 23: Q&A -->
-  <div class="slide summary-slide" id="slide-23" data-notes="Q&A">
+  <div class="slide summary-slide" id="slide-23" data-notes="Q&A 세션입니다. 오늘 배운 Agent 실패 4가지 패턴과 Hermes Agent OS 해결 방향에 대해 자유롭게 질문해주세요. 궁금한 점이 있다면 언제든 말씀해주세요.">
     <div class="lecture-badge">Lecture 01 · Why Agents Fail</div>
     <div class="inline-section">Q&A</div>
     <div class="key-message" style="margin-top:20px;">🔜 다음 강의: Memory &amp; Knowledge</div>

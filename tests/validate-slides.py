@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-validate-slides.py — 슬라이드 사양 준수 검증 (JOB-1860)
+validate-slides.py — 슬라이드 사양 준수 검증 (JOB-1861)
 
 SPEC-SLIDES.md v1.7 규칙에 따라 4개 강의 HTML을 검증.
 Usage: python3 tests/validate-slides.py
@@ -9,107 +9,154 @@ Usage: python3 tests/validate-slides.py
 import re, os, sys
 
 BASE = os.path.join(os.path.dirname(__file__), "..", "docs", "playground", "courses")
+
+# Shared CSS selectors (SSOT)
+SHARED_CSS = """
+.hero-slide
+.problem-slide
+.diagram-slide
+.example-slide
+.summary-slide
+.section-divider
+.section-progress
+.nav
+.slide-counter
+.progress-bar
+.notes-toggle
+.notes-panel
+.slide
+.deck
+.lecture-badge
+.inline-section
+.grid-cards
+.grid-card
+.grid-card-title
+.grid-card-desc
+.two-col
+.col-title
+.col-item
+.compare-table
+.insight-box
+.key-message
+.question
+.flow
+.h-flow
+.h-node
+.h-label
+.highlight
+.hl
+.badge-sm
+.example-box
+.section-divider-content
+.divider-label
+.divider-title
+.divider-desc
+.goal-section
+.goal-tag
+.goal-why
+.goal-label
+.goal-list
+.goal-item
+.goal-num
+.goal-flow
+.goal-arrow
+.cover-title
+.cover-subtitle
+.cover-content
+.cover-info
+.section-title
+.section-subtitle
+.big-number
+.ring-icon
+.check
+.cross
+.overflow-safe
+.btn
+.flow
+.arrow
+.node
+.label
+.ok
+.future
+.active
+.done
+.sec
+.sec-arrow
+.cyan
+.gold
+.green
+.purple
+.red
+.orange
+.visible
+"""
+
+SHARED_SELECTORS = set([s.strip() for s in SHARED_CSS.split('\n') if s.strip()])
+
 LECTURES = [
-    ("L01", "lecture-01-why-agents-fail.html", {
-        "total_slides": 24,  # after removing Wrap-Up divider + Takeaways
-        "sections": {"문제 인식": (0, 5), "4가지 패턴": (5, 12), "해결: Agent OS": (12, 22)},
-    }),
-    ("L02", "lecture-02-memory-and-knowledge.html", {
-        "total_slides": 25,
-        "sections": {"Memory vs Knowledge": (0, 10), "Memory 관리": (10, 18), "Memory만으로 부족": (18, 23)},
-    }),
-    ("L03", "lecture-03-skills-and-workflow.html", {
-        "total_slides": 28,
-        "sections": {"Knowledge → Skills": (0, 5), "Workflow": (5, 18), "Engine": (18, 26)},
-    }),
-    ("L04", "lecture-04-hermes-core-architecture.html", {
-        "total_slides": 25,
-        "sections": {"Architecture": (0, 15), "Runtime & SSOT": (15, 23)},
-    }),
+    ("L01", "lecture-01-why-agents-fail.html"),
+    ("L02", "lecture-02-memory-and-knowledge.html"),
+    ("L03", "lecture-03-skills-and-workflow.html"),
+    ("L04", "lecture-04-hermes-core-architecture.html"),
 ]
 
 def check_ending(html, lid):
     """마무리 검증: 마지막 2장 = Summary + Q&A, 예시질문 금지"""
     slides = re.findall(r'<div class="([^"]*)"\s+id="([^"]+)"[^>]*data-notes="([^"]*)"[^>]*>', html)
-    
     issues = []
     if len(slides) < 2:
         return [f"{lid}: 슬라이드 부족 ({len(slides)}장)"]
-    
-    # Check last 2 slides
-    s_n1 = slides[-2]  # N-1 = Summary
-    s_n = slides[-1]   # N = Q&A
-    
-    # N-1 should be summary-slide
+    s_n1 = slides[-2]
+    s_n = slides[-1]
     if 'summary-slide' not in s_n1[0]:
         issues.append(f"{lid}: N-1 slides({s_n1[1]}) template='{s_n1[0]}' — should be summary-slide")
-    
-    # N should be summary-slide
     if 'summary-slide' not in s_n[0]:
         issues.append(f"{lid}: N slides({s_n[1]}) template='{s_n[0]}' — should be summary-slide")
-    
-    # N should NOT have example questions in data-notes or visible text
     notes = s_n[2]
-    full_slide_html = re.search(
-        rf'<div class="[^"]*"\s+id="{re.escape(s_n[1])}"[^>]*>.*?</div>\s*</div>',
-        html, re.DOTALL
-    )
+    full_slide_html = re.search(rf'<div class="[^"]*"\s+id="{re.escape(s_n[1])}"[^>]*>.*?</div>\s*</div>', html, re.DOTALL)
     if full_slide_html:
         visible = re.sub(r'<[^>]+>', ' ', full_slide_html.group(0))
         visible = re.sub(r'&[a-z]+;', ' ', visible)
     else:
         visible = ""
-    
     example_patterns = ['예시 질문', '질문 예상', '청중이 실제로', 'Q1', 'Q2', 'Q3', '실제로 질문할']
     for pat in example_patterns:
         if pat in notes or pat in visible:
             issues.append(f"{lid}: Q&A에 예시 질문 발견 ('{pat}') — 금지됨")
-    
     return issues
 
 def check_no_wrapup_divider(html, lid):
     """마무리 전 Wrap-Up Divider 검증"""
     slides = re.findall(r'<div class="([^"]*)"\s+id="([^"]+)"[^>]*data-notes="([^"]*)"[^>]*>', html)
+    issues = []
     if len(slides) < 5:
         return []
-    
-    issues = []
-    # Check slide N-2 and N-3 for unnecessary dividers before ending
     for i in range(max(0, len(slides)-5), len(slides)-2):
         tmpl, sid, notes = slides[i]
         if 'section-divider' in tmpl and ('Wrap' in notes or '요약' in notes or '정리' in notes[:40]):
             issues.append(f"{lid}: {sid} 불필요한 마무리 divider — 제거 필요")
-    
     return issues
 
 def check_no_takeaways(html, lid):
     """Takeaways 슬라이드 검증"""
     issues = []
-    takeaway_patterns = ['Takeaways', 'Takeaway', 'takeaway', 'Key Insight']
-    for pat in takeaway_patterns:
+    for pat in ['Takeaways', 'Takeaway', 'takeaway', 'Key Insight']:
         if pat in html:
-            # Check if it's a separate slide (not text inside another slide)
             pos = html.find(pat)
-            # Find the nearest slide div
             slide_before = html.rfind('<div class="', 0, pos)
             if slide_before >= 0:
                 slide_content = html[slide_before:pos+200]
                 if 'Takeaway' in slide_content:
                     issues.append(f"{lid}: Takeaways 슬라이드 발견 ('{pat}') — 제거 필요")
                     break
-    
     return issues
 
 def check_course_progress(html, lid):
     """course-progress 잔여 검증"""
     issues = []
-    count = html.count('course-progress')
-    if count > 0:
-        # section-progress is allowed (the new nav bar)
-        course_prog = re.findall(r'class="course-progress"', html)
-        if len(course_prog) > 0:
-            issues.append(f"{lid}: 'course-progress'가 {len(course_prog)}개 남아있음 — section-progress로 교체 필요")
-    
+    course_prog = re.findall(r'class="course-progress"', html)
+    if len(course_prog) > 0:
+        issues.append(f"{lid}: 'course-progress'가 {len(course_prog)}개 남아있음 — section-progress로 교체 필요")
     return issues
 
 def check_slide_ids(html, lid):
@@ -118,10 +165,9 @@ def check_slide_ids(html, lid):
     ids = re.findall(r'<div class="slide[^"]*"\s+id="([^"]+)"', html)
     for sid in ids:
         if sid == 'slideCounter':
-            continue  # DOM element, not a slide
+            continue
         if not re.match(r'slide-\d+$', sid):
             issues.append(f"{lid}: 비정규 슬라이드 ID '{sid}' — slide-N 형식 필요")
-    
     return issues
 
 def check_section_progress_position(html, lid):
@@ -132,7 +178,6 @@ def check_section_progress_position(html, lid):
         issues.append(f"{lid}: section-progress가 {count}개 — 단일 인스턴스여야 함")
     elif count == 0:
         issues.append(f"{lid}: section-progress 없음")
-    
     return issues
 
 def check_shared_css(html, lid):
@@ -141,48 +186,148 @@ def check_shared_css(html, lid):
         return [f"{lid}: slides-components.css 참조 없음"]
     return []
 
+# === NEW CHECKS (8개 추가) ===
+
+def check_template_classes(html, lid):
+    """템플릿 클래스 오분류 검증"""
+    slides = re.findall(r'<div class="([^"]*)"\s+id="slide-(\d+)"[^>]*data-notes="([^"]*)"[^>]*>', html)
+    issues = []
+    for tmpl, sid_idx, notes in slides:
+        idx = int(sid_idx)
+        classes = tmpl.split()
+        t = "unknown"
+        for c in classes:
+            if c in ['hero-slide', 'problem-slide', 'diagram-slide', 'example-slide', 'summary-slide', 'section-divider']:
+                t = c
+                break
+        # hero-slide should ONLY be slide-0 (Cover)
+        if t == 'hero-slide' and idx != 0:
+            issues.append(f"{lid}: slide-{idx}가 hero-slide — Cover만 hero-slide여야 함")
+        # problem-slide should ONLY be slide-1 (Goal/Intro)
+        if t == 'problem-slide' and idx != 1:
+            issues.append(f"{lid}: slide-{idx}가 problem-slide — Goal만 problem-slide여야 함")
+    return issues
+
+def check_css_conflicts(html, lid):
+    """로컬 CSS가 공용 CSS 재정의하는지 검증"""
+    style = re.search(r'<style>(.*?)</style>', html, re.DOTALL)
+    if not style:
+        return []
+    css = style.group(1)
+    local_selectors = set(re.findall(r'[\.\#][\w-]+\s*\{', css))
+    local_clean = set([s.strip() for s in local_selectors])
+    overlaps = local_clean & SHARED_SELECTORS
+    issues = []
+    if overlaps:
+        issues.append(f"{lid}: 공용 CSS와 충돌하는 선택자 {len(overlaps)}개 — 로컬 CSS 정리 필요")
+        for o in sorted(overlaps)[:5]:
+            issues.append(f"  → {o}")
+    return issues
+
+def check_local_css_size(html, lid):
+    """로컬 CSS 크기 검증 (WARNING만 — lecture-specific 스타일 불가피)"""
+    style = re.search(r'<style>(.*?)</style>', html, re.DOTALL)
+    if not style:
+        return []
+    css = style.group(1)
+    size = len(css)
+    # lecture-specific 스타일 불가피하므로 WARNING만
+    if size > 15000:
+        return [f"{lid}: 로컬 CSS {size} bytes — 15KB 경고선 초과"]
+    return []
+
+def check_root_duplicate(html, lid):
+    """:root 변수 중복 검증"""
+    style = re.search(r'<style>(.*?)</style>', html, re.DOTALL)
+    if not style:
+        return []
+    css = style.group(1)
+    issues = []
+    if ':root' in css:
+        var_count = len(re.findall(r'--[\w-]+\s*:', css))
+        issues.append(f"{lid}: 로컬 :root {var_count}개 변수 — slides-components.css에 중복됨")
+    return issues
+
+def check_nav_overlap(html, lid):
+    """nav dots와 slide-counter 겹침 검증"""
+    style = re.search(r'<style>(.*?)</style>', html, re.DOTALL)
+    if not style:
+        return []
+    css = style.group(1)
+    sc_bottom = re.search(r'\.slide-counter\s*{[^}]*bottom:\s*([^;]+)', css)
+    nav_bottom = re.search(r'\.nav\s*{[^}]*bottom:\s*([^;]+)', css)
+    issues = []
+    if sc_bottom and nav_bottom:
+        sc_val = int(sc_bottom.group(1).replace('px', '').strip())
+        nav_val = int(nav_bottom.group(1).replace('px', '').strip())
+        if abs(sc_val - nav_val) < 20:
+            issues.append(f"{lid}: slide-counter({sc_val}px)와 nav({nav_val}px) 간격 부족 — 20px 이상 권장")
+    return issues
+
+def check_section_divider_count(html, lid):
+    """Section divider가 섹션 수에 적합한지 검증"""
+    slides = re.findall(r'<div class="([^"]*)"\s+id="slide-(\d+)"[^>]*data-notes="([^"]*)"[^>]*>', html)
+    divider_count = sum(1 for t, _, _ in slides if 'section-divider' in t)
+    total = len(slides)
+    issues = []
+    # Ideal: 2-3 dividers for 20-30 slides
+    if total > 20 and divider_count < 2:
+        issues.append(f"{lid}: {total}장인데 divider {divider_count}개 — 2개 이상 권장")
+    if total > 20 and divider_count > 4:
+        issues.append(f"{lid}: {total}장인데 divider {divider_count}개 — 4개 이하 권장")
+    return issues
+
+def check_data_notes_length(html, lid):
+    """data-notes 분량 검증 (80자 이상 권장)"""
+    slides = re.findall(r'<div class="([^"]*)"\s+id="slide-(\d+)"[^>]*data-notes="([^"]*)"[^>]*>', html)
+    issues = []
+    short_notes = []
+    for _, idx, notes in slides:
+        if len(notes) < 80:
+            short_notes.append(idx)
+    if short_notes:
+        issues.append(f"{lid}: data-notes가 80자 미만인 slide {len(short_notes)}개: {','.join(short_notes[:5])}")
+    return issues
+
 def run():
     spec_path = os.path.join(BASE, "SPEC-SLIDES.md")
     if not os.path.exists(spec_path):
         print(f"❌ SPEC-SLIDES.md not found at {spec_path}")
         sys.exit(1)
-    
+
     all_issues = []
     totals = {"pass": 0, "fail": 0, "total": 0}
-    
-    for lid, fname, meta in LECTURES:
+
+    for lid, fname in LECTURES:
         path = os.path.join(BASE, fname)
         if not os.path.exists(path):
             print(f"❌ {lid}: {fname} not found")
             all_issues.append(f"{lid}: 파일 없음")
             continue
-        
+
         with open(path) as f:
             html = f.read()
-        
+
         lid_issues = []
-        
-        # Check 1: Ending format
+
+        # Check 1-7: 기존 규칙
         lid_issues.extend(check_ending(html, lid))
-        
-        # Check 2: No Wrap-Up divider
         lid_issues.extend(check_no_wrapup_divider(html, lid))
-        
-        # Check 3: No Takeaways
         lid_issues.extend(check_no_takeaways(html, lid))
-        
-        # Check 4: No course-progress remnants
         lid_issues.extend(check_course_progress(html, lid))
-        
-        # Check 5: Slide IDs
         lid_issues.extend(check_slide_ids(html, lid))
-        
-        # Check 6: section-progress single instance
         lid_issues.extend(check_section_progress_position(html, lid))
-        
-        # Check 7: Shared CSS
         lid_issues.extend(check_shared_css(html, lid))
-        
+
+        # Check 8-15: 신규 규칙
+        lid_issues.extend(check_template_classes(html, lid))
+        lid_issues.extend(check_css_conflicts(html, lid))
+        lid_issues.extend(check_local_css_size(html, lid))
+        lid_issues.extend(check_root_duplicate(html, lid))
+        lid_issues.extend(check_nav_overlap(html, lid))
+        lid_issues.extend(check_section_divider_count(html, lid))
+        lid_issues.extend(check_data_notes_length(html, lid))
+
         if lid_issues:
             print(f"\n{'='*60}")
             print(f"❌ {lid} — {len(lid_issues)} issues")
@@ -194,9 +339,9 @@ def run():
         else:
             print(f"✅ {lid} — ALL CHECKS PASSED")
             totals["pass"] += 1
-        
+
         totals["total"] += 1
-    
+
     print(f"\n{'='*60}")
     print(f"결과: {totals['pass']}/{totals['total']} 통과")
     if all_issues:

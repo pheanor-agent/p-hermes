@@ -9,89 +9,6 @@
   /* ── Lecture-specific styles (not in slides-components.css) ── */
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #0b0d12;
-    --surface: #12151c;
-    --card: #181c28;
-    --border: #262b3a;
-    --gold: #f0b429;
-    --gold-dim: #b8861e;
-    --gold-glow: rgba(240,180,41,.15);
-    --text: #e8edf5;
-    --text-dim: #8892a8;
-    --accent-cyan: #5bc0eb;
-    --accent-magenta: #f15bb5;
-    --accent-green: #00f5d4;
-    --accent-red: #ff6b6b;
-    --accent-orange: #ffa94d;
-    --accent-purple: #b197fc;
-    --radius: 16px;
-    --transition: 400ms cubic-bezier(.22,1,.36,1);
-  }
-
-  html, body {
-    height: 100%;
-    font-family: 'Inter','Noto Sans KR',system-ui,-apple-system,sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    overflow: hidden;
-  }
-
-  /* ── Section Progress bottom fixed bar (between slide-counter and nav) ── */
-  .section-progress {
-    position: fixed; bottom: 56px; left: 50%; transform: translateX(-50%);
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 6px 16px;
-    background: rgba(18,21,28,.85);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    border-radius: 100px;
-    font-size: 12px;
-    z-index: 100;
-    user-select: none;
-    white-space: nowrap;
-    backdrop-filter: blur(8px);
-    max-width: 90vw;
-    transition: opacity 0.25s ease;
-  }
-  .section-progress .sec {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 4px 12px; border-radius: 20px;
-    font-weight: 500; color: var(--text-dim);
-    transition: all 0.25s ease; white-space: nowrap; font-size: 12px;
-  }
-  .section-progress .sec.active {
-    background: rgba(240,180,41,0.15); color: var(--gold); font-weight: 600;
-  }
-  .section-progress .sec.done {
-    color: #5a6378; opacity: 0.5;
-  }
-  .section-progress .sec.future {
-    color: var(--text-dim); opacity: 0.4;
-  }
-  .section-progress .sec-arrow {
-    color: var(--border); font-size: 13px; flex-shrink: 0;
-  }
-
-  /* ── Section Divider (inside slide) ── */
-  .section-divider {
-    display: flex; flex-direction: column; align-items: center; gap: 16px;
-    text-align: center;
-  }
-  .section-label {
-    font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
-    color: var(--text-dim);
-  }
-  .section-title {
-    font-size: clamp(36px,5vw,56px); font-weight: 900;
-    letter-spacing: -2px; text-align: center; line-height: 1.1;
-  }
-  .section-subtitle {
-    font-size: clamp(18px,2vw,24px); color: var(--text-dim);
-  }
-
   /* ── Flow / H-Flow node coloring ── */
   .flow .node.cyan { border-color: var(--accent-cyan); color: var(--accent-cyan); }
   .flow .node.purple { border-color: var(--accent-purple); color: var(--accent-purple); }
@@ -308,7 +225,7 @@
   </div>
 
   <!-- SLIDE 2: Core Question -->
-  <div class="slide problem-slide" id="slide-3" data-notes="가장 큰 차이는 아는 것과 실행하는 것입니다. 우리는 많은 것을 알고 있지만 실행하지 못합니다. Agent도 마찬가지입니다. Knowledge는 무엇을, Skill은 어떻게를 다룹니다. 핵심: 무엇(What)과 어떻게(How)의 차이입니다.">
+  <div class="slide example-slide" id="slide-3" data-notes="가장 큰 차이는 아는 것과 실행하는 것입니다. 우리는 많은 것을 알고 있지만 실행하지 못합니다. Agent도 마찬가지입니다. Knowledge는 무엇을, Skill은 어떻게를 다룹니다. 핵심: 무엇(What)과 어떻게(How)의 차이입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="question">안다는 것과 <span class="hl">실행한다는 것</span>은<br>무엇이 다른가?</div>
     <div class="insight-box" style="max-width:520px;">Knowledge: What &nbsp;·&nbsp; Skill: How</div>
@@ -350,7 +267,7 @@
   </div>
 
   <!-- SLIDE 5: Skill = Reusable Action Unit -->
-  <div class="slide hero-slide" id="slide-6" data-notes="Skill은 반복 가능한 행동의 최소 단위입니다. 한 번 작성한 보고서를 매일 새로 쓰는 것이 아니라, Skill로 정의하면 매번 같은 품질로 실행됩니다. 핵심: 반복은 Agent에게, 창의는 사람에게.">
+  <div class="slide diagram-slide" id="slide-6" data-notes="Skill은 반복 가능한 행동의 최소 단위입니다. 한 번 작성한 보고서를 매일 새로 쓰는 것이 아니라, Skill로 정의하면 매번 같은 품질로 실행됩니다. 핵심: 반복은 Agent에게, 창의는 사람에게.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Definition</div>
     <div class="big-text" style="font-size:clamp(32px,4.5vw,48px);">Skill = <span class="hl">재사용 가능한</span> 행동 단위</div>
@@ -518,7 +435,7 @@
   </div>
 
   <!-- SLIDE 12: Skills만으로 충분할까? -->
-  <div class="slide problem-slide" id="slide-14" data-notes="Skills가 있으면 개별 작업은 자동화할 수 있습니다. 하지만 여러 Skill을 순서대로 실행하고 조건에 따라 분기해야 한다면? 이것이 Workflow가 필요한 이유입니다. 핵심: Skills는 부품, Workflow는 설계도입니다.">
+  <div class="slide diagram-slide" id="slide-14" data-notes="Skills가 있으면 개별 작업은 자동화할 수 있습니다. 하지만 여러 Skill을 순서대로 실행하고 조건에 따라 분기해야 한다면? 이것이 Workflow가 필요한 이유입니다. 핵심: Skills는 부품, Workflow는 설계도입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Transition</div>
     <div style="display:flex;flex-direction:column;gap:14px;align-items:center;justify-content:center;max-width:520px;">
@@ -539,7 +456,7 @@
   </div>
 
   <!-- SLIDE 13: Workflow = Skill의 상태 기계 -->
-  <div class="slide hero-slide" id="slide-15" data-notes="Workflow는 Skill 실행의 순서와 조건을 정의하는 상태 기계입니다. 각 단계는 상태를 가지고, 조건에 따라 다음 단계로 전이합니다. 9단계 워크플로우가 그 예시입니다. 핵심: 상태가 곧 위치(position)입니다.">
+  <div class="slide diagram-slide" id="slide-15" data-notes="Workflow는 Skill 실행의 순서와 조건을 정의하는 상태 기계입니다. 각 단계는 상태를 가지고, 조건에 따라 다음 단계로 전이합니다. 9단계 워크플로우가 그 예시입니다. 핵심: 상태가 곧 위치(position)입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Definition</div>
     <div class="big-text" style="font-size:clamp(28px,4vw,44px);">Workflow = Skill의 <span class="hl">상태 기계</span></div>
@@ -795,7 +712,7 @@
   </div>
 
   <!-- SLIDE : Q&A -->
-  <div class="slide summary-slide" id="slide-27" data-notes="Q&A 세션. 질문을 받습니다.">
+  <div class="slide summary-slide" id="slide-27" data-notes="Q&amp;A 세션입니다. 오늘 배운 Skills와 Workflow에 대해 자유롭게 질문해주세요. 다음 강의에서는 Hermes Core Architecture를 통해 모든 요소가 어떻게 통합되는지 살펴봅니다.">
     <div class="lecture-badge">Lecture 03 · Skills &amp; Workflow</div>
     <div class="inline-section">Q&amp;A</div>
     <div class="key-message" style="margin-top:20px;">🔜 다음 강의: Hermes Core Architecture</div>

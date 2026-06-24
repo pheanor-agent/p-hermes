@@ -35,6 +35,10 @@ fi
 echo "  🔍 중국어 문자 검증..."
 bash tests/validate-chinese.sh docs/ || { echo "❌ 중국어 문자 발견"; exit 1; }
 
+# 3.2 슬라이드 사양 검증 (JOB-1861)
+echo "  📝 슬라이드 사양 검증..."
+python3 tests/validate-slides.py || { echo "❌ 슬라이드 사양 검증 실패"; exit 1; }
+
 # 4. llms.txt 재생성
 echo "  📄 llms.txt 재생성..."
 bash scripts/generate-llms.sh || { echo "❌ llms.txt 생성 실패"; exit 1; }

@@ -6,423 +6,9 @@
 <title>Lecture 04: Hermes Core Architecture — Building an Agent OS with Hermes</title>
 <link rel="stylesheet" href="components/slides-components.css">
 <style>
-  /* ── Lecture-specific overrides ── */
+  /* ── Lecture-specific content styles ── */
 
-  :root {
-    --bg: #0b0d12;
-    --surface: #12151c;
-    --card: #181c28;
-    --border: #262b3a;
-    --gold: #f0b429;
-    --gold-dim: #b8861e;
-    --gold-glow: rgba(240,180,41,.15);
-    --text: #e8edf5;
-    --text-dim: #8892a8;
-    --accent-cyan: #5bc0eb;
-    --accent-magenta: #f15bb5;
-    --accent-green: #00f5d4;
-    --accent-red: #ff6b6b;
-    --accent-orange: #ffa94d;
-    --accent-purple: #b197fc;
-    --radius: 16px;
-    --transition: 400ms cubic-bezier(.22,1,.36,1);
-  }
-
-  /* ── Hero ── */
-  .hero { text-align: center; }
-  .hero .ring {
-    width: 200px; height: 200px; border-radius: 50%;
-    border: 3px solid var(--gold); margin: 0 auto 24px;
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-  }
-  .hero .ring::before {
-    content: ''; position: absolute; inset: -8px; border-radius: 50%;
-    border: 1px solid var(--gold-dim); opacity: .4;
-  }
-  .hero .ring-text {
-    font-size: 32px; font-weight: 900; color: var(--gold);
-  }
-
-  /* ── Section Divider ── */
-  .section-divider {
-    display: flex; flex-direction: column; align-items: center; gap: 16px;
-    text-align: center;
-  }
-  .section-label {
-    font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
-    color: var(--text-dim);
-  }
-  .section-title {
-    font-size: clamp(36px,5vw,56px); font-weight: 900;
-    letter-spacing: -2px; text-align: center; line-height: 1.1;
-  }
-  .section-subtitle {
-    font-size: clamp(18px,2vw,24px); color: var(--text-dim);
-  }
-
-  /* ── Flow ── */
-  .flow {
-    display: flex; flex-direction: column; align-items: center; gap: 12px;
-    margin: 24px 0;
-  }
-  .flow.compact { gap: 8px; margin: 16px 0; }
-  .flow .arrow {
-    font-size: 24px; color: var(--gold); font-weight: 700;
-    line-height: 1;
-  }
-  .flow .node {
-    background: var(--card); border: 1px solid var(--border);
-    padding: 16px 28px; border-radius: var(--radius);
-    font-size: 20px; font-weight: 700;
-    min-width: 200px; text-align: center;
-  }
-  .flow .node.cyan { border-color: var(--accent-cyan); color: var(--accent-cyan); }
-  .flow .node.purple { border-color: var(--accent-purple); color: var(--accent-purple); }
-  .flow .node.green { border-color: var(--accent-green); color: var(--accent-green); }
-  .flow .node.gold { border-color: var(--gold); color: var(--gold); }
-  .flow .node.orange { border-color: var(--accent-orange); color: var(--accent-orange); }
-
-  /* ── Two Column ── */
-  .two-col {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
-    width: 100%; max-width: 640px; margin-top: 24px;
-  }
-  .col {
-    display: flex; flex-direction: column; gap: 12px;
-  }
-  .col-title {
-    font-size: 14px; font-weight: 700; letter-spacing: 2px;
-    text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
-  }
-  .col-item {
-    font-size: 18px; color: var(--text); padding: 10px 16px;
-    background: var(--card); border-radius: 8px;
-    border-left: 3px solid var(--border);
-  }
-  .col-item.warn { border-left-color: var(--accent-red); }
-  .col-item.ok { border-left-color: var(--accent-green); }
-
-  /* ── Key Message ── */
-  .key-message {
-    margin-top: 24px; padding: 20px 28px;
-    background: var(--gold-glow); border: 1px solid var(--gold-dim);
-    border-radius: var(--radius);
-    font-size: 20px; font-weight: 700; color: var(--gold);
-    text-align: center;
-    max-width: 600px;
-  }
-
-  /* ── Table ── */
-  .compare-table {
-    width: 100%; max-width: 600px; margin: 24px 0;
-    border-collapse: collapse;
-  }
-  .compare-table th, .compare-table td {
-    padding: 12px 24px;
-    border: 1px solid var(--border);
-    font-size: 16px;
-    text-align: center;
-  }
-  .compare-table th {
-    background: var(--card);
-    color: var(--gold);
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-  .compare-table td:first-child {
-    text-align: left;
-    color: var(--text-dim);
-    font-weight: 500;
-  }
-  .compare-table .check { color: var(--accent-green); }
-  .compare-table .cross { color: var(--accent-red); }
-
-  /* ── Insight Box ── */
-  .insight-box {
-    margin-top: 20px; padding: 16px 24px;
-    background: rgba(177,151,252,.1);
-    border: 1px solid var(--accent-purple);
-    border-radius: var(--radius);
-    font-size: 18px; font-weight: 700;
-    text-align: center;
-    color: var(--accent-purple);
-    max-width: 560px;
-  }
-  .insight-box .highlight { color: var(--gold); }
-
-  /* ── Example Box ── */
-  .example-box {
-    margin-top: 20px;
-    padding: 16px 24px;
-    background: var(--card);
-    border-left: 3px solid var(--accent-cyan);
-    border-radius: var(--radius);
-    font-size: 18px;
-    max-width: 520px;
-  }
-  .example-box .label {
-    font-size: 12px; color: var(--text-dim);
-    font-family: 'JetBrains Mono', monospace;
-    margin-bottom: 6px;
-  }
-
-  /* ── Big Question ── */
-  .big-q {
-    font-size: clamp(24px,3vw,36px); font-weight: 700;
-    text-align: center; color: var(--accent-purple);
-    margin: 20px 0;
-  }
-
-  /* ── Big Text ── */
-  .big-text {
-    font-size: clamp(40px,6vw,64px); font-weight: 900;
-    letter-spacing: -2px; text-align: center; line-height: 1.1;
-  }
-  .big-text .hl { color: var(--gold); }
-
-  /* ── Not Equal ── */
-  .not-equal {
-    display: flex; align-items: center; gap: 24px;
-    font-size: clamp(22px,3vw,32px); font-weight: 700;
-    margin: 24px 0;
-  }
-  .neq-sign {
-    font-size: 42px; color: var(--accent-red);
-  }
-
-  /* ── Tags ── */
-  .tags {
-    display: flex; flex-wrap: wrap; gap: 10px;
-    justify-content: center; margin-top: 20px;
-  }
-  .tag {
-    padding: 6px 16px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 100px;
-    font-size: 16px; font-weight: 500;
-  }
-  .tag.cyan { border-color: var(--accent-cyan); color: var(--accent-cyan); }
-  .tag.purple { border-color: var(--accent-purple); color: var(--accent-purple); }
-  .tag.green { border-color: var(--accent-green); color: var(--accent-green); }
-  .tag.gold { border-color: var(--gold); color: var(--gold); }
-
-  /* ── Number Scale ── */
-  .number-scale {
-    display: flex; gap: 20px; align-items: flex-end; margin: 24px 0;
-  }
-  .number-item {
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-  }
-  .number-bar {
-    width: 72px; background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 700;
-  }
-  .number-bar.warn { background: rgba(255,169,77,.15); border-color: var(--accent-orange); }
-  .number-bar.error { background: rgba(255,107,107,.15); border-color: var(--accent-red); }
-  .number-label { font-size: 12px; color: var(--text-dim); }
-
-  /* ── Category Grid ── */
-  .category-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 20px; width: 100%; max-width: 700px; margin-top: 24px;
-  }
-  .category-card {
-    padding: 20px 16px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    text-align: center;
-  }
-  .category-card h3 {
-    font-size: 18px; margin-bottom: 8px;
-  }
-  .category-card p {
-    font-size: 14px; color: var(--text-dim);
-  }
-
-  /* ── Notes Toggle ── */
-  .notes-toggle {
-    position: fixed; bottom: 24px; right: 24px;
-    z-index: 100;
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    padding: 8px 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    font-family: 'JetBrains Mono', monospace;
-    transition: var(--transition);
-  }
-  .notes-toggle:hover { border-color: var(--gold); color: var(--gold); }
-
-  .notes-panel {
-    display: none;
-    position: fixed; bottom: 60px; right: 24px;
-    width: 480px; max-height: 320px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-    overflow-y: auto;
-    z-index: 100;
-    font-size: 16px; line-height: 1.7;
-    color: var(--text-dim);
-  }
-  .notes-panel.visible { display: block; }
-  .notes-panel h4 {
-    color: var(--gold); margin-bottom: 12px; font-size: 14px;
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .highlight { color: var(--gold); }
-
-  /* ── Question ── */
-  .question {
-    font-size: clamp(28px,4vw,42px); font-weight: 900;
-    text-align: center; color: var(--text);
-    margin: 20px 0;
-  }
-  .question .hl { color: var(--accent-cyan); }
-
-  /* ── Quote ── */
-  .quote {
-    font-size: clamp(24px,4vw,40px); font-weight: 700;
-    text-align: center; line-height: 1.4;
-    color: var(--text);
-    max-width: 800px;
-  }
-  .quote .hl { color: var(--gold); }
-
-  /* ── Feature List ── */
-  .feature-list {
-    display: flex; flex-direction: column; gap: 10px;
-    margin: 20px 0;
-  }
-  .feature-item {
-    display: flex; align-items: center; gap: 12px;
-    font-size: 18px;
-  }
-  .feature-icon {
-    width: 28px; height: 28px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 700;
-  }
-  .feature-icon.cyan { background: rgba(91,192,235,.2); color: var(--accent-cyan); }
-  .feature-icon.purple { background: rgba(177,151,252,.2); color: var(--accent-purple); }
-
-  /* ── Grid Cards ── */
-  .grid-cards {
-    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
-    width: 100%; max-width: 560px; margin: 24px 0;
-  }
-  .grid-card {
-    background: var(--card); border: 1px solid var(--border);
-    padding: 20px; border-radius: var(--radius);
-    text-align: center;
-  }
-  .grid-card-title {
-    font-size: 20px; font-weight: 700; margin-bottom: 6px;
-  }
-  .grid-card-desc {
-    font-size: 14px; color: var(--text-dim);
-  }
-
-  /* ── Big Number ── */
-  .big-number {
-    font-size: clamp(32px,5vw,48px); font-weight: 900;
-    color: var(--gold); line-height: 1;
-  }
-
-  /* ── Section Title (inline) ── */
-  .inline-section {
-    font-size: 14px; font-weight: 700; letter-spacing: 3px;
-    text-transform: uppercase; color: var(--gold);
-    margin-bottom: 20px; text-align: center;
-  }
-
-  /* ── Tag (inline) ── */
-  .tag {
-    display: inline-block; padding: 6px 14px; border-radius: 100px;
-    font-size: 13px; font-weight: 700; letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-  .tag-red { background: rgba(255,107,107,.15); color: var(--accent-red); }
-  .tag-green { background: rgba(0,245,212,.15); color: var(--accent-green); }
-  .tag-gold { background: var(--gold-glow); color: var(--gold); }
-  .tag-cyan { background: rgba(91,192,235,.15); color: var(--accent-cyan); }
-  .tag-purple { background: rgba(177,151,252,.15); color: var(--accent-purple); }
-
-  /* ── Overflow Protection ── */
-  .overflow-safe {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    max-height: calc(100vh - 200px);
-    overflow: hidden;
-  }
-  .overflow-safe > * { flex-shrink: 0; }
-
-  /* ── Layer Stack ── */
-  .layer-stack {
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-    margin: 16px 0;
-  }
-  .layer-stack .layer {
-    padding: 12px 40px; border-radius: var(--radius);
-    font-size: 18px; font-weight: 700; text-align: center;
-    min-width: 260px;
-  }
-  .layer-stack .layer-arrow {
-    font-size: 18px; color: var(--text-dim); line-height: 1;
-  }
-
-  /* ── Badge (inline within cards) ── */
-  .badge-sm {
-    display: inline-block; padding: 2px 10px; border-radius: 100px;
-    font-size: 11px; font-weight: 700; letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-
-  /* ── Scenario Card ── */
-  .scenario-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 20px 24px;
-    text-align: center; max-width: 520px; margin: 12px 0;
-  }
-  .scenario-card .scenario-title {
-    font-size: 18px; font-weight: 700; margin-bottom: 6px;
-  }
-  .scenario-card .scenario-desc {
-    font-size: 14px; color: var(--text-dim);
-  }
-
-  /* ── Lifecycle Row ── */
-  .lifecycle-row {
-    display: flex; align-items: center; gap: 0;
-    margin: 20px 0;
-  }
-  .lifecycle-row .step {
-    padding: 10px 20px; background: var(--card);
-    border: 1px solid var(--border); text-align: center;
-    font-size: 15px; font-weight: 700; min-width: 100px;
-  }
-  .lifecycle-row .step:first-child { border-radius: var(--radius) 0 0 var(--radius); }
-  .lifecycle-row .step:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
-  .lifecycle-row .step-arrow {
-    font-size: 18px; color: var(--gold); padding: 0 6px;
-  }
-
-  /* h-flow */
+  /* h-flow: horizontal flow diagram for architecture visualization */
   .h-flow{display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap}
   .h-node{display:flex;flex-direction:column;align-items:center;padding:12px 20px;border-radius:12px;min-width:110px}
   .h-icon{font-size:24px}
@@ -436,7 +22,7 @@
   .h-node.dim{opacity:.35}
   .h-node.glow{box-shadow:0 0 8px rgba(240,180,41,.2)}
 
-  /* ── Goal Section ── */
+  /* Goal Section (slide 1) */
   .goal-section {
     display: flex;
     flex-direction: column;
@@ -486,49 +72,7 @@
     border-radius: var(--radius);
   }
 
-  /* ── Section Progress ── */
-  .section-progress {
-    position: fixed;
-    bottom: 48px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-size: 13px;
-    font-family: 'JetBrains Mono', monospace;
-    z-index: 50;
-    transition: opacity 300ms ease;
-  }
-  .section-progress.hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
-  .section-progress .sec {
-    color: var(--text-dim);
-    padding: 4px 12px;
-    border-radius: 100px;
-    transition: var(--transition);
-  }
-  .section-progress .sec.active {
-    color: var(--gold);
-    background: var(--gold-glow);
-    border: 1px solid var(--gold-dim);
-  }
-  .section-progress .sec.future {
-    opacity: 0.35;
-  }
-  .section-progress .sec.done {
-    color: var(--accent-green);
-    opacity: 0.6;
-  }
-  .section-progress .sec-arrow {
-    color: var(--text-dim);
-    font-size: 14px;
-  }
-
-  /* ── Layer Indicator ── */
+  /* Layer Indicator: per-slide layer tracker */
   .layer-indicator {
     display: flex;
     gap: 8px;
@@ -536,6 +80,44 @@
     font-size: 12px;
     font-family: 'JetBrains Mono', monospace;
   }
+
+  /* Notes Toggle & Panel (interactive) */
+  .notes-toggle {
+    position: fixed; bottom: 24px; right: 24px;
+    z-index: 100;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    transition: var(--transition);
+  }
+  .notes-toggle:hover { border-color: var(--gold); color: var(--gold); }
+
+  .notes-panel {
+    display: none;
+    position: fixed; bottom: 60px; right: 24px;
+    width: 480px; max-height: 320px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    overflow-y: auto;
+    z-index: 100;
+    font-size: 16px; line-height: 1.7;
+    color: var(--text-dim);
+  }
+  .notes-panel.visible { display: block; }
+  .notes-panel h4 {
+    color: var(--gold); margin-bottom: 12px; font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Highlight within notes panel */
+  .highlight { color: var(--gold); }
 </style>
 </head>
 <body>
@@ -596,7 +178,7 @@
   </div>
 
   <!-- SECTION DIVIDER: Architecture -->
-  <div class="slide section-divider" id="slide-3" data-notes="Part 1: Architecture — 4개 레이어의 전체 구조">
+  <div class="slide section-divider" id="slide-3" data-notes="Part 1에서는 Hermes Core Architecture의 4개 레이어 구조를 살펴봅니다. Memory, Knowledge, Skills, Workflow가 어떻게 계층적으로 통합되는지 배웁니다. 핵심: 레이어가 분리되지만 함께 동작해야 시스템이 완성됩니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="section-divider-content">
       <div class="section-label">Part 1</div>
@@ -867,7 +449,7 @@
   </div>
 
   <!-- SECTION DIVIDER: Runtime -->
-  <div class="slide section-divider" id="slide-15" data-notes="Part 2: Runtime — 실행 환경과 컨텍스트 관리">
+  <div class="slide section-divider" id="slide-15" data-notes="Part 2에서는 Runtime 환경과 SSOT(Single Source of Truth) 원칙을 다룹니다. Agent가 4개 레이어 위에서 어떻게 실행되는지, 세션 관리와 컨텍스트 유지의 중요성을 배웁니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="section-divider-content">
       <div class="section-label">Part 2</div>
@@ -1130,7 +712,7 @@
   </div>
 
   <!-- SLIDE 24: Q&A -->
-  <div class="slide summary-slide" id="slide-24" data-notes="Q&A">
+  <div class="slide summary-slide" id="slide-24" data-notes="Q&A: 오늘 배운 4개 레이어(Memory, Knowledge, Skills, Workflow)와 Runtime, SSOT에 대한 질문을 받습니다. 핵심: 아키텍처의 각 요소가 어떻게 연결되는지 이해하는 것이 중요합니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="inline-section">Q&amp;A</div>
     <div style="text-align:center;margin-top:20px;font-size:20px;color:var(--text-dim);">질문이 있으신가요?</div>

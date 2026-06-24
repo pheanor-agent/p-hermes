@@ -113,31 +113,6 @@
     font-size: 14px; color: var(--text-dim);
   }
 
-  /* ── Navigation Dots (bottom fixed) ── */
-  .nav {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 10px; z-index: 100;
-    background: rgba(18,21,28,.8);
-    padding: 8px 16px;
-    border-radius: 100px;
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--border);
-  }
-  .nav a {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--border); transition: var(--transition);
-    display: block;
-  }
-  .nav a.active, .nav a:hover { background: var(--gold); box-shadow: 0 0 12px var(--gold-glow); }
-
-  /* ── Progress Bar (top edge) ── */
-  .progress-bar {
-    position: fixed; top: 0; left: 0; height: 3px;
-    background: linear-gradient(90deg, var(--gold), var(--accent-cyan));
-    z-index: 200; transition: width 200ms ease;
-    box-shadow: 0 0 8px var(--gold-glow);
-  }
-
   /* ── Question ── */
   .question {
     font-size: clamp(28px,4vw,42px); font-weight: 900;
@@ -172,14 +147,8 @@
   .feature-icon.cyan { background: rgba(91,192,235,.2); color: var(--accent-cyan); }
   .feature-icon.purple { background: rgba(177,151,252,.2); color: var(--accent-purple); }
 
-  /* ── Big Number ── */
-  .big-number {
-    font-size: clamp(32px,5vw,48px); font-weight: 900;
-    color: var(--gold); line-height: 1;
-  }
-
   /* ── Tag (inline) ── */
-  .tag {
+  .tag-inline {
     display: inline-block; padding: 6px 14px; border-radius: 100px;
     font-size: 13px; font-weight: 700; letter-spacing: 1px;
     text-transform: uppercase;
@@ -204,45 +173,6 @@
 
   /* ── Flow compact extension ── */
   .flow.compact { gap: 8px; margin: 16px 0; }
-
-  /* ── Slide Counter (must clear nav dots below) ── */
-  .slide-counter {
-    bottom: 36px;
-  }
-  /* ── Section Progress (fixed bottom nav bar) ── */
-  .section-progress {
-    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
-    display: flex; align-items: center; gap: 8px;
-    z-index: 100;
-    background: rgba(18,21,28,.8);
-    padding: 8px 20px;
-    border-radius: 100px;
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--border);
-    font-size: 13px;
-    font-weight: 600;
-    white-space: nowrap;
-    transition: opacity 300ms ease;
-  }
-  .section-progress .sec {
-    color: var(--text-dim);
-    transition: var(--transition);
-  }
-  .section-progress .sec.active {
-    color: var(--gold);
-    font-weight: 700;
-  }
-  .section-progress .sec.done {
-    color: var(--accent-green);
-  }
-  .section-progress .sec.future {
-    color: var(--text-dim);
-    opacity: .4;
-  }
-  .section-progress .sec-arrow {
-    color: var(--border);
-    font-size: 12px;
-  }
 </style>
 </head>
 <body>
@@ -305,7 +235,7 @@
   </div>
 
   <!-- SLIDE 4: Core Question -->
-  <div class="slide problem-slide" id="slide-3" data-notes="이 강의의 가장 중요한 질문입니다. 기억과 지식 — 일상에서는 같은 것처럼 느껴집니다. 하지만 Agent 시스템 설계에서는 이 둘을 구분하는 것이 생존과 실패를 결정합니다. 대부분의 Agent 시스템이 이 둘을 같은 것으로 취급하고 실패합니다.">
+  <div class="slide example-slide" id="slide-3" data-notes="이 강의의 가장 중요한 질문입니다. 기억과 지식 — 일상에서는 같은 것처럼 느껴집니다. 하지만 Agent 시스템 설계에서는 이 둘을 구분하는 것이 생존과 실패를 결정합니다. 대부분의 Agent 시스템이 이 둘을 같은 것으로 취급하고 실패합니다.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">핵심 질문</div>
     <div class="question">기억과 지식은 <span class="hl">같은 것일까?</span></div>
@@ -413,7 +343,7 @@
   </div>
 
   <!-- SLIDE 12: Memory Explosion -->
-  <div class="slide problem-slide" id="slide-11" data-notes="Memory가 많아지면 어떤 일이 벌어질까? 10개일 때는 괜찮지만, 100개, 1000개, 10000개로 늘어날수록 검색이 어려워집니다. 저장량이 증가할수록 검색 효율이 급격히 떨어집니다. 이것이 Memory 관리가 필요한 이유입니다.">
+  <div class="slide diagram-slide" id="slide-11" data-notes="Memory가 많아지면 어떤 일이 벌어질까? 10개일 때는 괜찮지만, 100개, 1000개, 10000개로 늘어날수록 검색이 어려워집니다. 저장량이 증가할수록 검색 효율이 급격히 떨어집니다. 이것이 Memory 관리가 필요한 이유입니다.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Memory Explosion</div>
     <div class="number-scale">
@@ -438,7 +368,7 @@
   </div>
 
   <!-- SLIDE 13: The Real Problem -->
-  <div class="slide problem-slide" id="slide-12" data-notes="Memory 폭발이 일으키는 실제 문제는 3가지입니다. 검색 불가 — 원하는 정보를 찾지 못합니다. 노이즈 증가 — 관련 없는 정보가 섞입니다. Relevance 감소 — 중요한 정보가 묻힙니다.">
+  <div class="slide diagram-slide" id="slide-12" data-notes="Memory 폭발이 일으키는 실제 문제는 3가지입니다. 검색 불가 — 원하는 정보를 찾지 못합니다. 노이즈 증가 — 관련 없는 정보가 섞입니다. Relevance 감소 — 중요한 정보가 묻힙니다.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Memory의 한계</div>
     <div class="grid-cards cols-2">
@@ -529,7 +459,7 @@
   </div>
 
   <!-- SLIDE 18: The Pivot - Memory Alone Is Not Enough -->
-  <div class="slide problem-slide" id="slide-17" data-notes="이 슬라이드가 강의의 전환점입니다. Memory를 충분히 쌓았다고 해서 지식이 생기는 것은 아닙니다. 1000개의 기억은 이해가 아닙니다. 기억은 축적됩니다. 이해는 조직화될 때 탄생합니다.">
+  <div class="slide diagram-slide" id="slide-17" data-notes="이 슬라이드가 강의의 전환점입니다. Memory를 충분히 쌓았다고 해서 지식이 생기는 것은 아닙니다. 1000개의 기억은 이해가 아닙니다. 기억은 축적됩니다. 이해는 조직화될 때 탄생합니다.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">핵심 전환점</div>
     <div class="not-equal">
@@ -592,7 +522,7 @@
   </div>
 
   <!-- SLIDE 22: Why Separation Matters -->
-  <div class="slide problem-slide" id="slide-21" data-notes="이 슬라이드가 2강의 핵심입니다. 왜 분리해야 하는가? 함께 저장하면 검색 불가, 관계 파괴, 성장 불가. 분리 저장하면 검색 가능, 관계 형성, 지속 성장. 많은 Agent 시스템이 실패하는 이유: Memory와 Knowledge를 구분하지 않기 때문입니다.">
+  <div class="slide diagram-slide" id="slide-21" data-notes="이 슬라이드가 2강의 핵심입니다. 왜 분리해야 하는가? 함께 저장하면 검색 불가, 관계 파괴, 성장 불가. 분리 저장하면 검색 가능, 관계 형성, 지속 성장. 많은 Agent 시스템이 실패하는 이유: Memory와 Knowledge를 구분하지 않기 때문입니다.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Why Separation Matters</div>
     <div class="two-col" style="max-width:640px;">
@@ -657,7 +587,7 @@
   </div>
 
   <!-- SLIDE 25: Q&A -->
-  <div class="slide summary-slide" id="slide-24" data-notes="Q&A.">
+  <div class="slide summary-slide" id="slide-24" data-notes="2강이 마무리되었습니다. Memory와 Knowledge의 차이, Memory 관리 방법, 그리고 왜 Memory만으로는 부족한지 알아봤습니다. 추가 질문이 있다면 말씀해주세요.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Q&amp;A</div>
     <div class="big-number" style="margin-bottom:20px;">Questions?</div>
