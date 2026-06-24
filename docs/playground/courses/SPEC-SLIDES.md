@@ -228,46 +228,80 @@ Q&A
 - 모든 강의는 이 3장 템플릿을 준수해야 함 (MUST)
 - Q&A 없이 Summary로만 끝나는 것 금지
 
-## 10. 목차 시스템 (v1.4)
+## 10. Progress Indicator (v1.5)
 
-### 10.1 목차 슬라이드
-타이틀 슬라이드(0번) 다음 슬라이드(1번)에 위치. L03 스타일을 기준 템플릿으로 사용.
+### 10.1 정의
+모든 슬라이드 상단에 전체 코스 경로를 표시하는 고정 바.
+TOC 슬라이드를 대체.
 
-**L03 스타일 (권장)**:
+### 10.2 구조
+```html
+<div class="course-progress">
+  <span class="step dim">01 Why Agents Fail</span>
+  <span class="sep">·</span>
+  <span class="step active">02 Memory & Knowledge</span>
+  <span class="sep">·</span>
+  <span class="step dim">03 Skills & Workflow</span>
+  <span class="sep">·</span>
+  <span class="step dim">04 Core Architecture</span>
+</div>
 ```
-[강의명] · 오늘의 목차
-┌───────────────────────────────────────┐
-│ 01 [섹션명] (slide-2~N) — 설명       │
-│ 02 [섹션명] (slide-N+1~M) — 설명     │
-│ 03 [섹션명] (slide-M+1~END) — 설명   │
-└───────────────────────────────────────┘
-```
-
-**규칙**:
-- 섹션 번호 앞에 `01`, `02`, `03` 형식 사용 (L03 스타일) — 숫자만, 체크마크/이모지 금지 (MUST)
-- 각 섹션에 슬라이드 범위 포함 (SHOULD)
-- 각 섹션에 1줄 설명 포함 (SHOULD)
-- 강의당 목차 슬라이드 1장 필수 (MUST)
-
-### 10.2 위치 표시기
-
-```
-오늘 배울 내용
-┌─────────────────────────────┐
-│ 1. [섹션명] (slide-2~7)    │
-│ 2. [섹션명] (slide-8~15)   │
-│ 3. [섹션명] (slide-16~END) │
-└─────────────────────────────┘
-```
-
-각 섹션은 3~4개, 각각 슬라이드 범위 포함.
-
-### 10.2 위치 표시기
-모든 콘텐츠 슬라이드 상단 `.lecture-badge` 또는 `.inline-section` 옆에 `[Part X/Y]` 텍스트.
 
 ### 10.3 규칙
-- 강의당 목차 슬라이드 1장 필수 (MUST)
-- 위치 표시기는 가급적 포함 (SHOULD)
+- 모든 슬라이드 상단에 위치 (MUST)
+- 현재 강의: `class="step active"`, 나머지: `class="step dim"` (MUST)
+- 구분자: `<span class="sep">·</span>` (MUST)
+- 라벨: `course_metadata.json` SSOT 준수 (SHOULD)
+- CSS only — JS 변경 불필요
+
+## 11. Section Divider (v1.5)
+
+### 11.1 정의
+섹션 전환을 표시하는 구분 슬라이드. TOC가 하던 "지금 Part X" 역할.
+
+### 11.2 구조
+- Gradient 배경 (Hero 변형)
+- 가운데 정렬
+- label + title + description 3층
+
+### 11.3 규칙
+- 강의당 최대 4개 (SHOULD)
+- Section Divider는 Hero 템플릿 변형으로 취급
+- 하나의 섹션 = 하나의 Divider (OPTIONAL)
+
+## 12. 강의 구조 가이드라인 (v1.5)
+
+### 12.1 공통 구조
+| 순서 | 역할 | 템플릿 |
+|:----:|:-----|:-------|
+| 0 | **Cover** | Hero |
+| 1 | **Why This Matters** | Problem |
+| 2 | **Learning Goal** | Hero |
+| 3~N | **Main Content** | Mixed (Diagram 중심) |
+| — | **Section Divider** | Hero (변형) |
+| N-2 | **Summary** | Summary |
+| N-1 | **Takeaways** | Summary |
+| N | **[Q&A 선택]** | Summary |
+
+### 12.2 규칙
+- Cover + Why + Goal 각 1장씩 (SHOULD)
+- Summary + Takeaways 각 1장 (MUST)
+- Section Divider ≤ 4 (SHOULD)
+
+## 13. 템플릿 제약 (v1.5)
+
+### 13.1 허용 템플릿 (5종)
+| # | 템플릿 | CSS 클래스 | 용도 |
+|:-:|:-------|:-----------|:------|
+| 1 | **Hero** | `.hero-slide` | Cover, Goal, Section Divider |
+| 2 | **Problem** | `.problem-slide` | Why Matters, 문제 제기 |
+| 3 | **Diagram** | `.diagram-slide` | 프로세스/아키텍처 (주력) |
+| 4 | **Example** | `.example-slide` | 사례, 코드 |
+| 5 | **Summary** | `.summary-slide` | Summary, Takeaways, Q&A |
+
+### 13.2 규칙
+- 하나의 슬라이드는 정확히 하나의 템플릿 (MUST)
+- 신규 템플릿은 SPEC-SLIDES amendment 필요
 
 ## 11. 레이아웃 규칙 (v1.3)
 

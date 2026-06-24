@@ -1,0 +1,13 @@
+{
+  "courses": [
+    {"id": "L01", "num": "01", "title": "Why Agents Fail", "slug": "lecture-01-why-agents-fail"},
+    {"id": "L02", "num": "02", "title": "Memory & Knowledge", "slug": "lecture-02-memory-and-knowledge"},
+    {"id": "L03", "num": "03", "title": "Skills & Workflow", "slug": "lecture-03-skills-and-workflow"},
+    {"id": "L04", "num": "04", "title": "Core Architecture", "slug": "lecture-04-hermes-core-architecture"}
+  ],
+  "templates": ["hero", "problem", "diagram", "example", "summary"],
+  "structure": {
+    "opening": ["cover", "why_matters", "learning_goal"],
+    "closing": ["summary", "takeaways", "qa"]
+  }
+}
