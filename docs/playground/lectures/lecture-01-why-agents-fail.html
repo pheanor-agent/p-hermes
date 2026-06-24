@@ -31,16 +31,8 @@
 
   /* ── Hero ── */
   .hero { text-align: center; }
-  .hero .ring {
-    width: 200px; height: 200px; border-radius: 50%;
-    border: 3px solid var(--gold); margin: 0 auto 24px;
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-  }
-  .hero .ring::before {
-    content: ''; position: absolute; inset: -8px; border-radius: 50%;
-    border: 1px solid var(--gold-dim); opacity: .4;
-  }
+    /* v1.9: hero ring CSS moved to shared slides-components.css */
+  
   .hero .ring-text {
     font-size: 32px; font-weight: 900; color: var(--gold);
   }
@@ -146,8 +138,8 @@
 
   /* ── Template Backgrounds ── */
 
-  .hero-slide .title { color: var(--text); }
-  .hero-slide .subtitle { color: var(--text-dim); }
+  
+  
 
   .problem-slide .title { color: var(--text); }
 
@@ -714,10 +706,14 @@
   // Keyboard navigation
   document.addEventListener('keydown', (e) => {
     const vw = window.innerWidth;
+    const isArrow = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(e.key);
+    if (isArrow) e.preventDefault();
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-      deck.scrollBy({ left: vw, behavior: 'smooth' });
+      const target = deck.scrollLeft + vw;
+      deck.scrollTo({ left: target, behavior: 'smooth' });
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-      deck.scrollBy({ left: -vw, behavior: 'smooth' });
+      const target = deck.scrollLeft - vw;
+      deck.scrollTo({ left: target, behavior: 'smooth' });
     }
   });
 

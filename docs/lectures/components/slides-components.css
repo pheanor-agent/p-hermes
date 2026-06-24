@@ -249,6 +249,64 @@ html, body {
   text-align: center;
 }
 
+/* ── Cover Hero (공통) ── */
+.cover-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+
+.hero .ring {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 3px solid var(--gold);
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: ring-pulse 4s ease-in-out infinite;
+}
+
+.hero .ring::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1px solid var(--gold-dim);
+  opacity: .4;
+}
+
+.hero .ring-text {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--gold);
+  letter-spacing: -0.02em;
+}
+
+.hero-slide .title {
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 900;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.hero-slide .subtitle {
+  font-size: clamp(16px, 2.5vw, 24px);
+  color: var(--text-dim);
+  margin-top: 12px;
+  font-weight: 400;
+}
+
+@keyframes ring-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.02); opacity: .85; }
+}
+
 .slide.problem-slide {
   justify-content: center;
   align-items: center;

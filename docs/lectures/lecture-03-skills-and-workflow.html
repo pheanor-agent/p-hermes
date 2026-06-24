@@ -764,10 +764,14 @@
   // Keyboard navigation
   document.addEventListener('keydown', (e) => {
     const vw = window.innerWidth;
+    const isArrow = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(e.key);
+    if (isArrow) e.preventDefault();
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-      deck.scrollBy({ left: vw, behavior: 'smooth' });
+      const target = deck.scrollLeft + vw;
+      deck.scrollTo({ left: target, behavior: 'smooth' });
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-      deck.scrollBy({ left: -vw, behavior: 'smooth' });
+      const target = deck.scrollLeft - vw;
+      deck.scrollTo({ left: target, behavior: 'smooth' });
     }
   });
 
