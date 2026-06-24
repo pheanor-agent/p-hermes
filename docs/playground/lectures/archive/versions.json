@@ -1,0 +1,265 @@
+{
+  "current_version": "v1.8",
+  "last_updated": "2026-06-24",
+  "lectures": {
+    "01": {
+      "title": "Why Agents Fail",
+      "current_slides": 24,
+      "versions": [
+        {
+          "version": "v1.0",
+          "date": "2026-06-23",
+          "slides": 20,
+          "path": "archive/v1.0/lecture-01-why-agents-fail.html",
+          "changes": "초안 생성 — 기본 슬라이드 20장"
+        },
+        {
+          "version": "v1.1",
+          "date": "2026-06-23",
+          "slides": 20,
+          "path": "archive/v1.1/lecture-01-why-agents-fail.html",
+          "changes": "11~15 재설계, Failure 재설계, 폰트 개선"
+        },
+        {
+          "version": "v1.2",
+          "date": "2026-06-23",
+          "slides": 20,
+          "path": "archive/v1.8/lecture-01-why-agents-fail.html",
+          "changes": "Notes UI 통일, id 속성 추가, data-notes 보강"
+        },
+        {
+          "version": "v1.3",
+          "date": "2026-06-23",
+          "slides": 24,
+          "path": "archive/v1.8/lecture-01-why-agents-fail.html",
+          "changes": "슬라이드 수 증가(20→24), SPEC-SLIDES v1.3 준수"
+        },
+        {
+          "version": "v1.4",
+          "date": "2026-06-24",
+          "slides": 24,
+          "path": "archive/v1.8/lecture-01-why-agents-fail.html",
+          "changes": "도입/마무리 구조 통일, Progress Indicator v1.4"
+        },
+        {
+          "version": "v1.5",
+          "date": "2026-06-24",
+          "slides": 24,
+          "path": "archive/v1.8/lecture-01-why-agents-fail.html",
+          "changes": "Progress Indicator v1.5, TOC 제거, shared CSS 통합"
+        },
+        {
+          "version": "v1.6",
+          "date": "2026-06-24",
+          "slides": 24,
+          "path": "archive/v1.8/lecture-01-why-agents-fail.html",
+          "changes": "Section Progress nav bar 도입,SPEC-SLIDES v1.6"
+        },
+        {
+          "version": "v1.7",
+          "date": "2026-06-24",
+          "slides": 24,
+          "path": "archive/v1.8/lecture-01-why-agents-fail.html",
+          "changes": "nav 바 하단 통합, 도입/마무리 nav 숨김, validate-slides.py"
+        },
+        {
+          "version": "v1.8",
+          "date": "2026-06-24",
+          "slides": 24,
+          "path": "lecture-01-why-agents-fail.html",
+          "changes": "nav 숨김 JS 통일, compare-table div 변환, 반응형 CSS, SPEC v1.8 (최신)"
+        }
+      ]
+    },
+    "02": {
+      "title": "Memory & Knowledge",
+      "current_slides": 25,
+      "versions": [
+        {
+          "version": "v1.0",
+          "date": "2026-06-23",
+          "slides": 22,
+          "path": "archive/v1.0/lecture-02-memory-and-knowledge.html",
+          "changes": "초안 생성 — 22장"
+        },
+        {
+          "version": "v1.1",
+          "date": "2026-06-23",
+          "slides": 22,
+          "path": "archive/v1.1/lecture-02-memory-and-knowledge.html",
+          "changes": "재설계 — 핵심 메시지 강화, Lifecycle 7→3장 축약"
+        },
+        {
+          "version": "v1.2",
+          "date": "2026-06-23",
+          "slides": 22,
+          "path": "archive/v1.8/lecture-02-memory-and-knowledge.html",
+          "changes": "예시 일반화, Notes UI 통일, data-notes 보강"
+        },
+        {
+          "version": "v1.3",
+          "date": "2026-06-23",
+          "slides": 22,
+          "path": "archive/v1.8/lecture-02-memory-and-knowledge.html",
+          "changes": "SPEC-SLIDES v1.3 준수"
+        },
+        {
+          "version": "v1.4",
+          "date": "2026-06-24",
+          "slides": 25,
+          "path": "archive/v1.8/lecture-02-memory-and-knowledge.html",
+          "changes": "도입/마무리 구조 통일, 슬라이드 수 증가(22→25)"
+        },
+        {
+          "version": "v1.5",
+          "date": "2026-06-24",
+          "slides": 25,
+          "path": "archive/v1.8/lecture-02-memory-and-knowledge.html",
+          "changes": "Progress Indicator v1.5, shared CSS 통합"
+        },
+        {
+          "version": "v1.6",
+          "date": "2026-06-24",
+          "slides": 25,
+          "path": "archive/v1.8/lecture-02-memory-and-knowledge.html",
+          "changes": "Section Progress nav bar 도입, dark 테마 복원"
+        },
+        {
+          "version": "v1.7",
+          "date": "2026-06-24",
+          "slides": 25,
+          "path": "archive/v1.8/lecture-02-memory-and-knowledge.html",
+          "changes": "nav 바 하단 통합, 도입/마무리 nav 숨김"
+        },
+        {
+          "version": "v1.8",
+          "date": "2026-06-24",
+          "slides": 25,
+          "path": "lecture-02-memory-and-knowledge.html",
+          "changes": "nav 숨김 JS 통일, compare-table div 변환, 반응형 CSS, SPEC v1.8 (최신)"
+        }
+      ]
+    },
+    "03": {
+      "title": "Skills & Workflow",
+      "current_slides": 27,
+      "versions": [
+        {
+          "version": "v1.2",
+          "date": "2026-06-23",
+          "slides": 24,
+          "path": "archive/v1.8/lecture-03-skills-and-workflow.html",
+          "changes": "신규 제작 — glm-5.2, SPEC-SLIDES v1.2 완전 준수"
+        },
+        {
+          "version": "v1.3",
+          "date": "2026-06-23",
+          "slides": 24,
+          "path": "archive/v1.8/lecture-03-skills-and-workflow.html",
+          "changes": "SPEC-SLIDES v1.3 준수"
+        },
+        {
+          "version": "v1.4",
+          "date": "2026-06-24",
+          "slides": 27,
+          "path": "archive/v1.8/lecture-03-skills-and-workflow.html",
+          "changes": "도입/마무리 구조 통일, 슬라이드 수 증가(24→27)"
+        },
+        {
+          "version": "v1.5",
+          "date": "2026-06-24",
+          "slides": 27,
+          "path": "archive/v1.8/lecture-03-skills-and-workflow.html",
+          "changes": "Progress Indicator v1.5, shared CSS 통합"
+        },
+        {
+          "version": "v1.6",
+          "date": "2026-06-24",
+          "slides": 27,
+          "path": "archive/v1.8/lecture-03-skills-and-workflow.html",
+          "changes": "Section Progress nav bar 도입"
+        },
+        {
+          "version": "v1.7",
+          "date": "2026-06-24",
+          "slides": 27,
+          "path": "archive/v1.8/lecture-03-skills-and-workflow.html",
+          "changes": "nav 바 하단 통합, 도입/마무리 nav 숨김"
+        },
+        {
+          "version": "v1.8",
+          "date": "2026-06-24",
+          "slides": 27,
+          "path": "lecture-03-skills-and-workflow.html",
+          "changes": "nav 숨김 JS 통일, compare-table div 변환, 반응형 CSS, SPEC v1.8 (최신)"
+        }
+      ]
+    },
+    "04": {
+      "title": "Hermes Core Architecture",
+      "current_slides": 25,
+      "versions": [
+        {
+          "version": "v1.2",
+          "date": "2026-06-23",
+          "slides": 24,
+          "path": "archive/v1.8/lecture-04-hermes-core-architecture.html",
+          "changes": "신규 제작 — glm-5.2, SPEC-SLIDES v1.2 완전 준수"
+        },
+        {
+          "version": "v1.3",
+          "date": "2026-06-23",
+          "slides": 24,
+          "path": "archive/v1.8/lecture-04-hermes-core-architecture.html",
+          "changes": "SPEC-SLIDES v1.3 준수"
+        },
+        {
+          "version": "v1.4",
+          "date": "2026-06-24",
+          "slides": 25,
+          "path": "archive/v1.8/lecture-04-hermes-core-architecture.html",
+          "changes": "도입/마무리 구조 통일, 슬라이드 수 증가(24→25), 섹션 2개로 재정의"
+        },
+        {
+          "version": "v1.5",
+          "date": "2026-06-24",
+          "slides": 25,
+          "path": "archive/v1.8/lecture-04-hermes-core-architecture.html",
+          "changes": "Progress Indicator v1.5, shared CSS 통합"
+        },
+        {
+          "version": "v1.6",
+          "date": "2026-06-24",
+          "slides": 25,
+          "path": "archive/v1.8/lecture-04-hermes-core-architecture.html",
+          "changes": "Section Progress nav bar 도입, dark 테마 복원"
+        },
+        {
+          "version": "v1.7",
+          "date": "2026-06-24",
+          "slides": 25,
+          "path": "archive/v1.8/lecture-04-hermes-core-architecture.html",
+          "changes": "nav 바 하단 통합, 도입/마무리 nav 숨김"
+        },
+        {
+          "version": "v1.8",
+          "date": "2026-06-24",
+          "slides": 25,
+          "path": "lecture-04-hermes-core-architecture.html",
+          "changes": "nav 숨김 JS 통일, compare-table div 변환, 반응형 CSS, SPEC v1.8 (최신)"
+        }
+      ]
+    }
+  },
+  "changelog": {
+    "v1.0": "2026-06-23 — L01, L02 초안 (20장, 22장)",
+    "v1.1": "2026-06-23 — L01, L02 재설계",
+    "v1.2": "2026-06-23 — Notes UI 통일, L03, L04 신규 제작 (24장 각)",
+    "v1.3": "2026-06-23 — SPEC-SLIDES v1.3 완전 준수 (4개 강의)",
+    "v1.4": "2026-06-24 — 도입/마무리 구조 통일, 슬라이드 수 조정",
+    "v1.5": "2026-06-24 — Progress Indicator v1.5, shared CSS 통합, TOC 제거",
+    "v1.6": "2026-06-24 — Section Progress nav bar 도입, dark 테마 통일",
+    "v1.7": "2026-06-24 — nav 바 하단 통합, 도입/마무리 nav 숨김, validate-slides.py",
+    "v1.8": "2026-06-24 — nav 숨김 JS 통일, compare-table div 변환, 반응형 CSS, SPEC v1.8"
+  }
+}

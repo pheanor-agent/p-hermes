@@ -15,7 +15,7 @@
 [![Quick Start](https://img.shields.io/badge/⚡_Quick_Start-2EA043?style=for-the-badge)](#-quick-start)
 [![Wiki](https://img.shields.io/badge/📘_Guide_Wiki-58A6FF?style=for-the-badge)](https://github.com/pheanor-agent/p-hermes/blob/main/docs/wiki/index.md)
 [![Blog](https://img.shields.io/badge/✍️_Dev_Blog-D2A8FF?style=for-the-badge)](https://github.com/pheanor-agent/p-hermes/blob/main/docs/blog/index.md)
-[![Slides](https://img.shields.io/badge/🖼️_Slides-3FB950?style=for-the-badge)](https://pheanor-agent.github.io/p-hermes/)
+[![Lectures](https://img.shields.io/badge/📖_Lectures-3FB950?style=for-the-badge)](https://pheanor-agent.github.io/p-hermes/)
 
 </div>
 
@@ -49,7 +49,7 @@ p-hermes 문서는 **3-Track 구조**로 구성되어 있습니다.
 |:-----:|:----:|:--------:|------|
 | 📘 **Guide Wiki** | **How** | GitHub 소스뷰어 | 설치부터 고급 기능까지 단계별 가이드 |
 | ✍️ **Dev Blog** | **Why** | GitHub 소스뷰어 | 설계 철학과 기술적 결정 이유 |
-| 🖼️ **Slides** | **What** | GitHub Pages | 시스템 구조 시각화 — 발표용 HTML 슬라이드 |
+| 📖 **Lectures** | **What** | GitHub Pages | 에이전트 OS 구축 강의 — HTML 슬라이드 |
 
 ### 빠른 링크
 
@@ -57,7 +57,7 @@ p-hermes 문서는 **3-Track 구조**로 구성되어 있습니다.
 |------|:----:|
 | 📘 Guide Wiki | [전체 목록](https://github.com/pheanor-agent/p-hermes/blob/main/docs/wiki/index.md) |
 | ✍️ Dev Blog | [전체 목록](https://github.com/pheanor-agent/p-hermes/blob/main/docs/blog/index.md) |
-| 🖼️ **Slides** | [전체 목록](https://pheanor-agent.github.io/p-hermes/) |
+| 📖 **Lectures** | [전체 목록](https://pheanor-agent.github.io/p-hermes/) |
 
 ---
 
@@ -118,7 +118,7 @@ p-hermes/
   ·
   <a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/blog/index.md">✍️ Blog</a>
   ·
-  <a href="https://pheanor-agent.github.io/p-hermes/">🖼️ Slides</a>
+  <a href="https://pheanor-agent.github.io/p-hermes/">📖 Lectures</a>
   <br><br>
   Built with Hermes Agent
 </div>

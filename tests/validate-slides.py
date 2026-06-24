@@ -8,7 +8,7 @@ Usage: python3 tests/validate-slides.py
 
 import re, os, sys
 
-BASE = os.path.join(os.path.dirname(__file__), "..", "docs", "playground", "courses")
+BASE = os.path.join(os.path.dirname(__file__), "..", "docs", "playground", "lectures")
 
 # Shared CSS selectors (SSOT)
 SHARED_CSS = """

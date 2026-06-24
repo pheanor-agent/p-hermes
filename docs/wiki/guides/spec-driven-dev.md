@@ -224,7 +224,7 @@ grep -c "new_value" specs/active/SPEC-*.md
 - [SPEC-D01: 문서 구조 (SSOT)](../../../specs/active/SPEC-D01.md)
 - [SPEC-D02: GitHub Pages 자동 배포](../../../specs/active/SPEC-D02.md)
 - [Design Blog: Spec-Driven Dev 설계 철학](../../blog/posts/spec-driven-dev-design.md)
-- [Slides: Spec-Driven Dev](../../slides/decks/spec-driven-dev.html)
+- [Slides: Spec-Driven Dev](../../playground/decks/archive/spec-driven-dev.html)
 
 ---
 

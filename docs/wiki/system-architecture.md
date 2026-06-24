@@ -307,4 +307,4 @@ A: `event.sh`는 비동기 이벤트 처리를 사용하므로 단일 이벤트 
 
 - [5계층 아키텍처 설계 철학](../blog/posts/architecture-layered.md) — 아키텍처 설계 배경과 교착 상태 문제 분석
 - [워크플로우 가이드](guides/request-task.md) — 9-Step 상태 머신 동작 흐름과 승인 게이트
-- [아키텍처 슬라이드](../slides/decks/architecture-layered.html) — 레이어드 구조 시각화 및 핵심 개념
+- [아키텍처 슬라이드](../playground/decks/archive/architecture-layered.html) — 레이어드 구조 시각화 및 핵심 개념

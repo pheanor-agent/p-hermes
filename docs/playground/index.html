@@ -3,228 +3,113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>p-hermes — Persistent AI Agent Framework</title>
+<title>p-hermes Playground — Versions &amp; Experiments</title>
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans KR',sans-serif;background:#0d1117;color:#e6edf3;line-height:1.6}
-  a{color:#58a6ff;text-decoration:none}
-  a:hover{text-decoration:underline}
-  .container{max-width:960px;margin:0 auto;padding:2rem 1.5rem}
-
-  /* Hero */
-  .hero{text-align:center;padding:4rem 0 3rem}
-  .hero h1{font-size:2.8rem;font-weight:700;background:linear-gradient(135deg,#58a6ff,#3fb950,#d2a8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.5rem}
-  .hero .tagline{font-size:1.2rem;color:#8b949e;margin-bottom:.3rem}
-  .hero .sub{font-size:0.95rem;color:#6e7681;max-width:600px;margin:1rem auto 0;line-height:1.7}
-  .hero .badges{display:flex;justify-content:center;gap:.5rem;margin-top:1.5rem;flex-wrap:wrap}
-  .badge{display:inline-flex;align-items:center;gap:4px;font-size:.8rem;padding:4px 12px;border-radius:20px;background:#21262d;color:#8b949e;border:1px solid #30363d}
-  .badge svg{width:14px;height:14px;fill:#8b949e}
-
-  /* 3-Track */
-  .section-title{font-size:1.4rem;margin:2.5rem 0 1.2rem;padding-bottom:.5rem;border-bottom:1px solid #21262d}
-  .tracks{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-  @media(max-width:720px){.tracks{grid-template-columns:1fr}}
-  .track{border:1px solid #30363d;border-radius:10px;padding:1.5rem;background:#161b22;transition:border-color .2s}
-  .track:hover{border-color:#58a6ff}
-  .track-icon{font-size:1.8rem;margin-bottom:.6rem}
-  .track h3{font-size:1.1rem;margin-bottom:.3rem}
-  .track .track-desc{font-size:.85rem;color:#8b949e;margin-bottom:.8rem}
-  .track .track-detail{font-size:.82rem;color:#6e7681;margin-bottom:.8rem}
-  .track-links{list-style:none;padding:0}
-  .track-links li{padding:.2rem 0}
-  .track-links a{font-size:.88rem;color:#58a6ff;display:flex;align-items:center;gap:6px}
-  .track-links a::before{content:"→";color:#6e7681;font-size:.8rem}
-  .track-links a .platform{font-size:.7rem;color:#6e7681;font-weight:400;margin-left:auto}
-  .track-links a .platform{background:#21262d;padding:1px 6px;border-radius:4px}
-
-  /* Scenario */
-  .scenario-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:1rem}
-  @media(max-width:600px){.scenario-grid{grid-template-columns:1fr}}
-  .scenario{border:1px solid #30363d;border-radius:10px;padding:1.2rem;background:#161b22}
-  .scenario .prompt{font-size:.88rem;color:#e6edf3;margin-bottom:.5rem;padding:.5rem;background:#21262d;border-radius:6px;font-family:SFMono-Regular,Consolas,'Courier New',monospace}
-  .scenario .flow{font-size:.8rem;color:#8b949e;line-height:1.8;padding-left:.5rem}
-  .scenario .flow span{color:#3fb950}
-  .scenario .arrow{color:#6e7681}
-
-  /* Quick Start */
-  .quickstart{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:1.5rem;margin-bottom:1.5rem}
-  .quickstart code{background:#21262d;padding:2px 6px;border-radius:4px;font-size:.85rem;color:#e6edf3}
-  .quickstart .cmd{display:block;background:#0d1117;padding:.8rem 1rem;border-radius:6px;margin:.5rem 0;font-family:SFMono-Regular,Consolas,'Courier New',monospace;font-size:.9rem;color:#7ee787;border:1px solid #21262d}
-  .quickstart .cmd .prompt-sign{color:#6e7681}
-
-  /* CTA */
-  .cta{text-align:center;margin:2.5rem 0 1rem}
-  .cta a{display:inline-block;padding:.6rem 1.8rem;border-radius:8px;font-size:.95rem;font-weight:500;background:#238636;color:#fff;transition:background .2s}
-  .cta a:hover{background:#2ea043;text-decoration:none}
-
-  /* Footer */
-  .footer{text-align:center;padding:2rem 0;color:#6e7681;font-size:.8rem;border-top:1px solid #21262d;margin-top:2rem}
-  .footer a{color:#58a6ff}
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--bg:#0b0d12;--surface:#12151c;--card:#181c28;--border:#262b3a;--gold:#f0b429;--gold-dim:#b8861e;--gold-glow:rgba(240,180,41,.15);--text:#e8edf5;--text-dim:#8892a8;--accent-cyan:#5bc0eb;--accent-magenta:#f15bb5;--accent-green:#00f5d4;--accent-red:#ff6b6b;--accent-purple:#b197fc;--accent-orange:#ff9f43;--radius:16px;--transition:400ms cubic-bezier(.22,1,.36,1)}
+  html,body{font-family:'Inter','Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+  .container{max-width:960px;margin:0 auto;padding:64px 24px}
+  .hl{color:var(--gold)}
+  .header{text-align:center;margin-bottom:48px}
+  .title{font-size:clamp(28px,4.5vw,44px);font-weight:900;letter-spacing:-2px;line-height:1.1}
+  .subtitle{font-size:clamp(14px,1.8vw,20px);color:var(--text-dim);margin-top:8px;font-weight:300}
+  .badge-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+  .badge{padding:4px 14px;border-radius:100px;font-size:12px;font-weight:700;letter-spacing:1px}
+  .badge-gold{background:var(--gold-glow);color:var(--gold)}
+  .badge-cyan{background:rgba(91,192,235,.15);color:var(--accent-cyan)}
+  .badge-purple{background:rgba(177,151,252,.15);color:var(--accent-purple)}
+  .badge-orange{background:rgba(255,159,67,.15);color:var(--accent-orange)}
+  .section{position:relative;margin-bottom:40px}
+  .section-title{font-size:14px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+  .table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);background:var(--card)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th{background:var(--surface);color:var(--text-dim);font-weight:600;text-align:left;padding:12px 16px;border-bottom:1px solid var(--border);white-space:nowrap}
+  td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text)}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:rgba(240,180,41,.04)}
+  .tag{padding:2px 10px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1px;white-space:nowrap}
+  .tag-ready{background:rgba(0,245,212,.15);color:var(--accent-green)}
+  .tag-dev{background:rgba(91,192,235,.15);color:var(--accent-cyan)}
+  .tag-deprecated{background:rgba(255,107,107,.15);color:var(--accent-red)}
+  .tag-experimental{background:rgba(177,151,252,.15);color:var(--accent-purple)}
+  .link{color:var(--accent-cyan);text-decoration:none;transition:var(--transition)}
+  .link:hover{color:var(--gold)}
+  .card-link{display:block;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;text-decoration:none;color:var(--text);transition:var(--transition)}
+  .card-link:hover{border-color:var(--gold);transform:translateY(-1px)}
+  .card-link .label{font-size:13px;color:var(--text-dim);margin-top:4px}
+  .footer{text-align:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--border);color:var(--text-dim);font-size:13px}
+  .footer a{color:var(--accent-cyan);text-decoration:none}
+  .footer a:hover{color:var(--gold)}
 </style>
 </head>
 <body>
 <div class="container">
-
-  <!-- Hero -->
-  <div class="hero">
-    <h1>⚡ p-hermes</h1>
-    <p class="tagline">Persistent AI Agent Framework</p>
-    <p class="sub">Memory · Workflow · Knowledge · Projects · Content</p>
-    <div class="badges">
-      <span class="badge">🧠 Memory</span>
-      <span class="badge">⚙️ Workflow</span>
-      <span class="badge">📚 Knowledge</span>
-      <span class="badge">📋 Jobs</span>
-      <span class="badge">🔧 Content</span>
-    </div>
-    <p class="sub">설치하면 대화가 끝나도 잊지 않고, 작업 단위로 관리하며, 지식을 축적하는 AI 에이전트를 쓸 수 있습니다.</p>
-  </div>
-
-  <!-- Quick Start -->
-  <h2 class="section-title">⚡ Quick Start</h2>
-  <div class="quickstart">
-    <code>git clone</code> 후 한 줄이면 준비 완료:
-    <span class="cmd"><span class="prompt-sign">$</span> git clone https://github.com/pheanor-agent/p-hermes.git</span>
-    <span class="cmd"><span class="prompt-sign">$</span> cd p-hermes && bash setup.sh</span>
-    <div style="margin-top:.8rem;font-size:.85rem;color:#8b949e">
-      자세한 설치는 <a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/wiki/getting-started/install.md">📘 설치 가이드</a> 참고
+  <div class="header">
+    <div class="title">p-hermes <span class="hl">Playground</span></div>
+    <div class="subtitle">Version History, Concept Decks &amp; Experiments</div>
+    <div class="badge-row">
+      <span class="badge badge-gold">Lectures</span>
+      <span class="badge badge-cyan">Concept Decks</span>
+      <span class="badge badge-purple">Experiments</span>
     </div>
   </div>
 
-  <!-- Real Scenarios -->
-  <h2 class="section-title">🎯 실제 이렇게 씁니다</h2>
-  <div class="scenario-grid">
-    <div class="scenario">
-      <div class="prompt">"이 설계 문서를 리뷰해줘"</div>
-      <div class="flow">
-        <span>JOB 생성</span> <span class="arrow">→</span> <span>Investigation</span> <span class="arrow">→</span>
-        <span>Architecture</span> <span class="arrow">→</span> <span>Review</span> <span class="arrow">→</span>
-        <span>Knowledge 저장</span> <span class="arrow">→</span> <span>Result</span>
-      </div>
-    </div>
-    <div class="scenario">
-      <div class="prompt">"이 문서를 슬라이드로 만들어줘"</div>
-      <div class="flow">
-        <span>Content System</span> <span class="arrow">→</span> <span>슬라이드 생성</span>
-        <span class="arrow">→</span> <span>검증</span> <span class="arrow">→</span> <span>Knowledge 축적</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Course Section -->
-  <h2 class="section-title">📚 Course: Building an Agent OS with Hermes</h2>
-  <div class="tracks" style="grid-template-columns:1fr 1fr">
-    <div class="track" style="cursor:pointer" onclick="location.href='courses/'">
-      <div class="track-icon">🎓</div>
-      <h3>Lecture Slides</h3>
-      <p class="track-desc">10 lectures · From chatbots to persistent AI</p>
-      <p class="track-detail">Part 1: Core (완료) · Part 2: Factory · Part 3: Production</p>
-      <ul class="track-links"><li><a href="courses/">View Lectures →</a></li></ul>
-    </div>
-    <div class="track" style="cursor:pointer" onclick="location.href='courses/archive/'">
-      <div class="track-icon">📜</div>
-      <h3>Version Archive</h3>
-      <p class="track-desc">Browse historical versions of all lectures</p>
-      <p class="track-detail">v1.0 ~ v1.2 · Changelog · Access past versions</p>
-      <ul class="track-links"><li><a href="courses/archive/">View Archive →</a></li></ul>
+  <!-- Lecture Courses -->
+  <div class="section">
+    <div class="section-title">📖 Lecture Courses</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Version</th><th>Lectures</th><th>Slides</th><th>Status</th><th>Link</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>v1.9</strong></td><td>10</td><td>~300</td><td><span class="tag tag-dev">In Development</span></td><td><a class="link" href="lectures/">Current</a></td></tr>
+          <tr><td><strong>v1.8</strong></td><td>8</td><td>259</td><td><span class="tag tag-ready">Ready</span></td><td>—</td></tr>
+          <tr><td><strong>v1.7</strong></td><td>8</td><td>240</td><td><span class="tag tag-ready">Ready</span></td><td>—</td></tr>
+          <tr><td><strong>v1.6</strong></td><td>7</td><td>210</td><td><span class="tag tag-ready">Ready</span></td><td>—</td></tr>
+          <tr><td><strong>v1.5</strong></td><td>6</td><td>180</td><td><span class="tag tag-ready">Ready</span></td><td>—</td></tr>
+          <tr><td><strong>v1.4</strong></td><td>5</td><td>155</td><td><span class="tag tag-ready">Ready</span></td><td>—</td></tr>
+          <tr><td><strong>v1.3</strong></td><td>4</td><td>120</td><td><span class="tag tag-ready">Ready</span></td><td>—</td></tr>
+          <tr><td><strong>v1.2</strong></td><td>3</td><td>85</td><td><span class="tag tag-deprecated">Deprecated</span></td><td>—</td></tr>
+          <tr><td><strong>v1.1</strong></td><td>2</td><td>55</td><td><span class="tag tag-deprecated">Deprecated</span></td><td>—</td></tr>
+          <tr><td><strong>v1.0</strong></td><td>1</td><td>25</td><td><span class="tag tag-deprecated">Deprecated</span></td><td>—</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <!-- 3-Track Documentation -->
-  <h2 class="section-title">📖 문서 탐색</h2>
-  <div class="tracks">
-    <!-- Wiki -->
-    <div class="track">
-      <div class="track-icon">📘</div>
-      <h3>Guide Wiki</h3>
-      <p class="track-desc">How — 사용법을 익히는 문서</p>
-      <p class="track-detail">설치부터 고급 기능까지 단계별 가이드</p>
-      <ul class="track-links">
-        <li><a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/wiki/getting-started/overview.md">Hermes 개요 <span class="platform">GitHub</span></a></li>
-        <li><a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/wiki/getting-started/install.md">설치 가이드 <span class="platform">GitHub</span></a></li>
-        <li><a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/wiki/getting-started/first-job.md">첫 작업 요청 <span class="platform">GitHub</span></a></li>
-        <li><a href="./wiki/index.md">📂 확장 문서 <span class="platform">Sandbox</span></a></li>
-        <li><a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/wiki/index.md">📂 전체 목록 <span class="platform">GitHub</span></a></li>
-      </ul>
-    </div>
-    <!-- Blog -->
-    <div class="track">
-      <div class="track-icon">✍️</div>
-      <h3>Dev Blog</h3>
-      <p class="track-desc">Why — 설계 철학과 결정 이유</p>
-      <p class="track-detail">왜 이런 시스템이 필요한지 깊이 이해</p>
-      <ul class="track-links">
-        <li><a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/blog/posts/why-ai-has-no-memory.md">왜 AI는 기억하지 못하는가 <span class="platform">GitHub</span></a></li>
-        <li><a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/blog/posts/why-agents-need-process.md">왜 에이전트는 프로세스가 필요한가 <span class="platform">GitHub</span></a></li>
-        <li><a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/blog/posts/hermes-agent-intro.md">Hermes Agent 소개 <span class="platform">GitHub</span></a></li>
-        <li><a href="./blog/index.md">📂 확장 포스트 <span class="platform">Sandbox</span></a></li>
-        <li><a href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/blog/index.md">📂 전체 목록 <span class="platform">GitHub</span></a></li>
-      </ul>
-    </div>
-    <!-- Slides -->
-    <div class="track">
-      <div class="track-icon">🖼️</div>
-      <h3>Slides</h3>
-      <p class="track-desc">What — 시스템 구조 시각화</p>
-      <p class="track-detail">발표용 HTML 슬라이드로 핵심 개념을 한눈에</p>
-      <div style="font-size:.82rem;font-weight:600;color:#3fb950;margin:10px 0 4px">▼ v5 (CSS Grid + SVG)</div>
-      <ul class="track-links">
-        <li><a href="./v5/hermes-overview.html">Hermes Overview</a></li>
-        <li><a href="./v5/workflow-pipeline.html">Workflow Pipeline</a></li>
-        <li><a href="./v5/architecture-layered.html">Architecture</a></li>
-        <li><a href="./v5/knowledge-system.html">Knowledge System</a></li>
-        <li><a href="./v5/model-routing.html">Model Routing</a></li>
-        <li><a href="./v5/cron-system.html">Cron System</a></li>
-        <li><a href="./v5/content-system.html">Content System</a></li>
-        <li><a href="./v5/spec-driven-dev.html">Spec-Driven Dev</a></li>
-        <li><a href="./v5/">📂 v5 Deck Index</a></li>
-      </ul>
-      <div style="font-size:.82rem;font-weight:600;color:#8b949e;margin:10px 0 4px">▸ Diagram Experiments</div>
-      <ul class="track-links">
-        <li><a href="./experiments/diagram-v5.html">CSS Grid + SVG Overlay <span style="font-size:.7rem;color:#3fb950;margin-left:auto">Live</span></a></li>
-        <li><a href="./experiments/diagram-v4.html">Flexbox + SVG <span style="font-size:.7rem;color:#8b949e;margin-left:auto">Preview</span></a></li>
-        <li><a href="./experiments/diagram-v3.html">3-Tier <span style="font-size:.7rem;color:#6e7681;margin-left:auto">Legacy</span></a></li>
-      </ul>
-      <div style="font-size:.82rem;font-weight:600;color:#6e7681;margin:10px 0 4px">▸ Archive (이전 슬라이드)</div>
-      <ul class="track-links">
-        <li><a href="./v3/">📂 Slides v3</a></li>
-        <li><a href="./v2/">📂 Slides v2</a></li>
-        <li><a href="../slides/decks/hermes-overview.html">Text-only (Mermaid)</a></li>
-        <li><a href="https://github.com/pheanor-agent/p-hermes/tree/main/docs/playground">📂 GitHub 전체</a></li>
-      </ul>
+  <!-- Concept Decks -->
+  <div class="section">
+    <div class="section-title">🧪 Concept Decks</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Deck</th><th>Focus</th><th>Slides</th><th>Status</th><th>Link</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>v5</strong></td><td>Agent OS Architecture</td><td>120</td><td><span class="tag tag-ready">Ready</span></td><td><a class="link" href="#">v5 Deck</a></td></tr>
+          <tr><td><strong>v4</strong></td><td>Memory &amp; Knowledge Systems</td><td>95</td><td><span class="tag tag-ready">Ready</span></td><td><a class="link" href="#">v4 Deck</a></td></tr>
+          <tr><td><strong>v3</strong></td><td>Workflow &amp; Skills Engine</td><td>80</td><td><span class="tag tag-ready">Ready</span></td><td><a class="link" href="#">v3 Deck</a></td></tr>
+          <tr><td><strong>v2</strong></td><td>Content Factory Pipeline</td><td>60</td><td><span class="tag tag-experimental">Experimental</span></td><td><a class="link" href="#">v2 Deck</a></td></tr>
+          <tr><td><strong>v1</strong></td><td>Why Agents Fail</td><td>45</td><td><span class="tag tag-deprecated">Deprecated</span></td><td>—</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <!-- Examples -->
-  <h2 class="section-title">📋 실제 작업 사례 (Examples)</h2>
-  <div class="tracks" style="grid-template-columns:repeat(3,1fr)">
-    <div class="track">
-      <div class="track-icon">🔍</div>
-      <h3>설계 리뷰</h3>
-      <p class="track-detail">설계 문서를 요청 → 검토 → 결과까지</p>
-    </div>
-    <div class="track">
-      <div class="track-icon">🎨</div>
-      <h3>슬라이드 생성</h3>
-      <p class="track-detail">Content System으로 슬라이드 자동 생성</p>
-    </div>
-    <div class="track">
-      <div class="track-icon">📝</div>
-      <h3>블로그 작성</h3>
-      <p class="track-detail">아이디어에서 블로그 포스트까지</p>
-    </div>
-  </div>
-
-  <div class="cta">
-    <a href="https://github.com/pheanor-agent/p-hermes">GitHub에서 전체 문서 보기 →</a>
+  <!-- Experiments -->
+  <div class="section">
+    <div class="section-title">🔬 Experiments</div>
+    <a href="lectures/archive/" class="card-link">
+      <div><strong>📜 Archive &amp; Version History</strong></div>
+      <div class="label">Browse past versions, archived lecture decks, and experimental content</div>
+    </a>
   </div>
 
   <div class="footer">
-    <a href="https://github.com/pheanor-agent/p-hermes">pheanor-agent/p-hermes</a> ·
-    MIT License ·
-    Built with Hermes Agent
+    <p><a href="https://pheanor-agent.github.io/p-hermes/">← Back to Lectures</a> · Building an Agent OS with Hermes · p-hermes Playground</p>
   </div>
-
 </div>
 </body>
 </html>
