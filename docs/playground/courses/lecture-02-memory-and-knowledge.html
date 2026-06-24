@@ -130,39 +130,6 @@
   }
   .nav a.active, .nav a:hover { background: var(--gold); box-shadow: 0 0 12px var(--gold-glow); }
 
-  /* ── Course Progress (top fixed bar) ── */
-  .course-progress {
-    position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 6px; align-items: center;
-    z-index: 150;
-    background: rgba(11,13,18,.85);
-    padding: 6px 14px;
-    border-radius: 100px;
-    border: 1px solid var(--border);
-    backdrop-filter: blur(6px);
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-  }
-  .course-progress .cp-item, .course-progress .step {
-    padding: 3px 8px;
-    border-radius: 12px;
-    color: var(--text-dim);
-    transition: var(--transition);
-  }
-  .course-progress .cp-item.dim, .course-progress .step.dim { opacity: 0.4; }
-  .course-progress .cp-item.active, .course-progress .step.active {
-    background: var(--gold-glow);
-    color: var(--gold);
-    font-weight: 700;
-    box-shadow: 0 0 8px var(--gold-glow);
-  }
-  .course-progress .cp-sep, .course-progress .sep {
-    color: var(--border);
-    font-size: 8px;
-  }
-
   /* ── Progress Bar (top edge) ── */
   .progress-bar {
     position: fixed; top: 0; left: 0; height: 3px;
@@ -238,6 +205,10 @@
   /* ── Flow compact extension ── */
   .flow.compact { gap: 8px; margin: 16px 0; }
 
+  /* ── Slide Counter (must clear nav dots below) ── */
+  .slide-counter {
+    bottom: 36px;
+  }
   /* ── Section Progress (fixed bottom nav bar) ── */
   .section-progress {
     position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
@@ -277,17 +248,6 @@
 <body>
 
 <div class="progress-bar" id="progressBar"></div>
-
-<!-- Course Progress Indicator -->
-<div class="course-progress" id="courseProgress">
-  <span class="step dim">01 Why Agents Fail</span>
-  <span class="sep">·</span>
-  <span class="step active">02 Memory &amp; Knowledge</span>
-  <span class="sep">·</span>
-  <span class="step dim">03 Skills &amp; Workflow</span>
-  <span class="sep">·</span>
-  <span class="step dim">04 Core Architecture</span>
-</div>
 
 <div class="deck" id="deck">
 
@@ -584,7 +544,7 @@
   </div>
 
   <!-- ================================================================ -->
-  <!-- SECTION: Memory만으로 부족  (slides 18–25)                       -->
+  <!-- SECTION: Memory만으로 부족  (slides 18–24)                       -->
   <!-- ================================================================ -->
 
   <!-- SLIDE 19: Part 3 Divider — Memory Alone Is Not Enough -->
@@ -696,49 +656,11 @@
     <div class="key-message" style="margin-top:16px;">Memory는 사실을 저장 — Knowledge는 관계를 설명</div>
   </div>
 
-  <!-- SLIDE 25: Takeaways -->
-  <div class="slide summary-slide" id="slide-24" data-notes="오늘 배운 핵심을 3가지로 요약합니다. (1) Memory와 Knowledge는 다르다 — 사실 저장 vs 구조화된 이해 (2) Memory만으로는 Agent가 성장할 수 없다 — 관리와 조직화가 필요하다 (3) Memory → Knowledge 전환이 Agent OS의 핵심이다.">
-    <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
-    <div class="inline-section">Takeaways</div>
-    <div class="grid-cards" style="grid-template-columns:1fr;max-width:500px;">
-      <div class="grid-card" style="border-color:var(--accent-cyan);text-align:left;">
-        <div class="grid-card-title" style="color:var(--accent-cyan);font-size:17px;">🧠 Memory ≠ Knowledge</div>
-        <div class="grid-card-desc" style="font-size:15px;">기억(사실 저장)과 지식(구조화된 이해)는 근본적으로 다르다</div>
-      </div>
-      <div class="grid-card" style="border-color:var(--accent-purple);text-align:left;">
-        <div class="grid-card-title" style="color:var(--accent-purple);font-size:17px;">📈 Memory만으로는 부족하다</div>
-        <div class="grid-card-desc" style="font-size:15px;">관리, 분류, 추출 없이 단순 저장만으로 Agent는 성장할 수 없다</div>
-      </div>
-      <div class="grid-card" style="border-color:var(--gold);text-align:left;">
-        <div class="grid-card-title" style="color:var(--gold);font-size:17px;">🔄 Memory → Knowledge</div>
-        <div class="grid-card-desc" style="font-size:15px;">기억을 조직화하고 연결하는 과정이 Agent OS의 핵심 설계 원칙이다</div>
-      </div>
-    </div>
-    <div style="margin-top:20px; display:flex; align-items:center; gap:12px; color:var(--text-dim); font-size:18px;">
-      <span style="font-size:28px;">🔜</span>
-      <span>다음 강의: <strong style="color:var(--accent-cyan);">Skills &amp; Workflow</strong></span>
-    </div>
-  </div>
-
-  <!-- SLIDE 26: Q&A -->
-  <div class="slide summary-slide" id="slide-25" data-notes="Q&A. 청중 질문 예상: Memory와 Knowledge의 실제 경계는 어디인가? 두 레이어가 충돌하면 어떻게 하나? 사실이 구조화되는 기준은? Agent가 스스로 Knowledge를 생성하는가?">
+  <!-- SLIDE 25: Q&A -->
+  <div class="slide summary-slide" id="slide-24" data-notes="Q&A.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Q&amp;A</div>
     <div class="big-number" style="margin-bottom:20px;">Questions?</div>
-    <div class="qa-list" style="display:flex;flex-direction:column;gap:12px;max-width:600px;margin-top:8px;">
-      <div class="qa-item" style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);">
-        <span class="qa-q" style="font-size:14px;font-weight:700;color:var(--gold);min-width:28px;">Q1</span>
-        <span class="qa-text" style="font-size:17px;font-weight:600;color:var(--text);flex:1;">Memory와 Knowledge의 실제 경계는 어디인가?</span>
-      </div>
-      <div class="qa-item" style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);">
-        <span class="qa-q" style="font-size:14px;font-weight:700;color:var(--gold);min-width:28px;">Q2</span>
-        <span class="qa-text" style="font-size:17px;font-weight:600;color:var(--text);flex:1;">두 레이어가 충돌하면 어떻게 처리해야 하는가?</span>
-      </div>
-      <div class="qa-item" style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);">
-        <span class="qa-q" style="font-size:14px;font-weight:700;color:var(--gold);min-width:28px;">Q3</span>
-        <span class="qa-text" style="font-size:17px;font-weight:600;color:var(--text);flex:1;">Agent가 스스로 Knowledge를 생성할 수 있는가?</span>
-      </div>
-    </div>
   </div>
 
 </div>

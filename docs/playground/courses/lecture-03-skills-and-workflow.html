@@ -257,53 +257,7 @@
   .compare-table .check { color: var(--accent-green); }
   .compare-table .cross { color: var(--accent-red); }
 
-  /* ── Course Progress ── */
-  .course-progress {
-    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
-    display: flex; align-items: flex-start; gap: 0;
-    z-index: 100;
-    background: rgba(18,21,28,.8);
-    padding: 8px 20px;
-    border-radius: 100px;
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--border);
-    font-size: 11px;
-    font-weight: 700;
-    font-family: 'JetBrains Mono', monospace;
-    white-space: nowrap;
-  }
-  .course-progress .step {
-    display: flex; flex-direction: column; align-items: center;
-    padding: 4px 12px;
-    border-radius: 6px;
-    transition: var(--transition);
-    text-align: center;
-    line-height: 1.3;
-    cursor: default;
-  }
-  .course-progress .step .step-label {
-    font-size: 9px;
-    font-weight: 400;
-    color: inherit;
-    font-family: 'Inter','Noto Sans KR',sans-serif;
-    opacity: .8;
-  }
-  .course-progress .step.active {
-    color: var(--gold);
-    background: var(--gold-glow);
-  }
-  .course-progress .step.dim {
-    color: var(--text-dim);
-    opacity: .45;
-  }
-  .course-progress .sep {
-    display: inline-block;
-    width: 1px;
-    height: 28px;
-    background: var(--border);
-    margin: 0 6px;
-    align-self: center;
-  }
+  /* ── (course-progress removed per SPEC-SLIDES v1.7) ── */
 </style>
 </head>
 <body>
@@ -840,49 +794,10 @@
     </div>
   </div>
 
-  <!-- SLIDE : Takeaways -->
-  <div class="slide summary-slide" id="slide-27" data-notes="Today's key takeaways: Knowledge = What, Skill = How, Workflow = When, Engine = Integration. All four layers together make an Agent complete.">
-    <div class="lecture-badge">Lecture 03</div>
-    <div class="inline-section">Takeaways</div>
-    <div class="summary-list">
-      <div class="summary-item">
-        <span class="marker">🧠</span>
-        Knowledge는 <strong>재료</strong>, Skill은 <strong>요리법</strong>
-      </div>
-      <div class="summary-item" style="border-left-color:var(--accent-cyan);">
-        <span class="marker">⚡</span>
-        Skill = 재사용 가능한 <strong>행동 단위</strong>
-      </div>
-      <div class="summary-item" style="border-left-color:var(--accent-green);">
-        <span class="marker">🔄</span>
-        Workflow = Skill의 <strong>상태 기계</strong>
-      </div>
-      <div class="summary-item" style="border-left-color:var(--gold);">
-        <span class="marker">🔧</span>
-        Engine = Memory + Knowledge + Skills + Workflow <strong>통합</strong>
-      </div>
-    </div>
-    <div class="key-message" style="margin-top:20px;">다음 강의: Hermes Core Architecture →</div>
-  </div>
-
-  <!-- SLIDE 26: Q&A -->
-  <div class="slide summary-slide" id="slide-28" data-notes="Q&A 세션. 청중이 실제로 질문할 법한 내용: 왜 Skill을 정의해야 하는가? Workflow와 스크립트의 차이는? 어디서부터 시작해야 하는가?">
+  <!-- SLIDE : Q&A -->
+  <div class="slide summary-slide" id="slide-27" data-notes="Q&A 세션. 질문을 받습니다.">
     <div class="lecture-badge">Lecture 03 · Skills &amp; Workflow</div>
     <div class="inline-section">Q&amp;A</div>
-    <div class="qa-list" style="display:flex;flex-direction:column;gap:12px;max-width:600px;margin-top:8px;">
-      <div class="qa-item" style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);">
-        <span class="qa-q" style="font-size:14px;font-weight:700;color:var(--gold);min-width:28px;">Q1</span>
-        <span class="qa-text" style="font-size:17px;font-weight:600;color:var(--text);flex:1;">왜 Skill을 정의해야 하나요?</span>
-      </div>
-      <div class="qa-item" style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);">
-        <span class="qa-q" style="font-size:14px;font-weight:700;color:var(--gold);min-width:28px;">Q2</span>
-        <span class="qa-text" style="font-size:17px;font-weight:600;color:var(--text);flex:1;">Workflow와 스크립트 차이는?</span>
-      </div>
-      <div class="qa-item" style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);">
-        <span class="qa-q" style="font-size:14px;font-weight:700;color:var(--gold);min-width:28px;">Q3</span>
-        <span class="qa-text" style="font-size:17px;font-weight:600;color:var(--text);flex:1;">어디서부터 시작해야 하나요?</span>
-      </div>
-    </div>
     <div class="key-message" style="margin-top:20px;">🔜 다음 강의: Hermes Core Architecture</div>
   </div>
 
@@ -890,15 +805,7 @@
 
 <div class="nav" id="nav"></div>
 <div class="slide-counter" id="slideCounter"></div>
-<div class="course-progress">
-  <span class="step dim">01<br><span class="step-label">Why Agents Fail</span></span>
-  <span class="sep"></span>
-  <span class="step dim">02<br><span class="step-label">Memory &amp; Knowledge</span></span>
-  <span class="sep"></span>
-  <span class="step active">03<br><span class="step-label">Skills &amp; Workflow</span></span>
-  <span class="sep"></span>
-  <span class="step dim">04<br><span class="step-label">Core Architecture</span></span>
-</div>
+<!-- (course-progress removed per SPEC-SLIDES) -->
 <div class="section-progress" id="sectionProgress">
   <span class="sec active" data-section="1">Knowledge → Skills</span>
   <span class="sec-arrow">→</span>
