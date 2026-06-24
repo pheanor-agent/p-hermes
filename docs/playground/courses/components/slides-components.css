@@ -1,35 +1,94 @@
 /* ============================================================
-   slides-components.css — p-hermes Slide Component Library v1.0
+   slides-components.css — p-hermes Slide Component Library v1.1
    
    SSOT for all shared slide component styles.
    All lecture HTML files reference this via <link>.
    
    Components:
-   1. Section Progress (nav bar with breadcrumb)
+   1. Section Progress (nav bar with breadcrumb) — 하단 배치
    2. Unified Opening (Cover + Goal/Intro)
    3. 5-Templates (Hero / Problem / Diagram / Example / Summary)
    4. Common Layout (deck, slide, grid cards, insight box, etc.)
    5. Section Divider
+   6. Navigation (progress-bar, dots, counter)
    ============================================================ */
+
+/* ──────────────────────────────────────────────
+   0. CSS VARIABLES (SSOT)
+   ────────────────────────────────────────────── */
+
+:root {
+  --bg: #0b0d12;
+  --surface: #12151c;
+  --card: #181c28;
+  --border: #262b3a;
+  --gold: #f0b429;
+  --gold-dim: #b8860e;
+  --gold-glow: rgba(240,180,41,.15);
+  --text: #e8edf5;
+  --text-dim: #8892a8;
+  --text-muted: #5a6378;
+  --accent-cyan: #5bc0eb;
+  --accent-magenta: #f15bb5;
+  --accent-green: #00f5d4;
+  --accent-red: #ff6b6b;
+  --accent-orange: #ffa94d;
+  --accent-purple: #b197fc;
+  --green: var(--accent-green);
+  --red: var(--accent-red);
+  --radius: 16px;
+  --transition: 400ms cubic-bezier(.22,1,.36,1);
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter','Noto Sans KR',system-ui,-apple-system,sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+}
 
 /* ──────────────────────────────────────────────
    1. SECTION PROGRESS — lecture-internal nav bar
    Shows current / past / future sections as pills.
-   Fixed at top, visible on every slide.
+   Fixed at BOTTOM (between slide-counter and nav dots).
+   Hidden on Cover/Goal/Divider/Summary/Takeaways/Q&A.
    ────────────────────────────────────────────── */
 
 .section-progress {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 8px 16px;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(18,21,28,.85);
+  border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
-  background: var(--bg);
   font-size: 12px;
   user-select: none;
-  flex-shrink: 0;
-  z-index: 10;
+  position: fixed;
+  bottom: 56px;  /* above slide-counter */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+  border-radius: 100px;
+  max-width: 90vw;
+}
+
+/* Hide section progress on intro/outro slides */
+.slide.hero-slide ~ .section-progress,
+.slide.problem-slide ~ .section-progress,
+.slide.summary-slide ~ .section-progress,
+.slide.section-divider ~ .section-progress {
+  display: none !important;
+}
+
+/* Force show only on content slides */
+.slide.diagram-slide ~ .section-progress,
+.slide.example-slide ~ .section-progress {
+  display: flex !important;
 }
 
 .section-progress .sec {
@@ -46,14 +105,14 @@
 }
 
 .section-progress .sec.active {
-  background: rgba(240, 180, 41, 0.12);
+  background: rgba(240, 180, 41, 0.15);
   color: var(--gold);
   font-weight: 600;
 }
 
 .section-progress .sec.done {
   color: var(--text-muted);
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 .section-progress .sec.future {
@@ -264,7 +323,6 @@
 
 /* ──────────────────────────────────────────────
    5. COMMON LAYOUT — deck, slides, utilities
-   Extracted from original lecture styles, unified.
    ────────────────────────────────────────────── */
 
 /* ── Deck ── */
@@ -554,11 +612,13 @@
 /* ── Slide Counter ── */
 .slide-counter {
   position: fixed;
-  bottom: 12px;
-  left: 12px;
-  font-size: 11px;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
   color: var(--text-dim);
   z-index: 100;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 /* ── Button ── */
@@ -617,4 +677,50 @@
   color: var(--text);
   max-width: 500px;
   line-height: 1.6;
+}
+
+/* ──────────────────────────────────────────────
+   6. NAVIGATION
+   ────────────────────────────────────────────── */
+
+/* Progress bar (top of screen) */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--accent-cyan));
+  z-index: 200;
+  transition: width 200ms ease;
+}
+
+/* Dot navigation (bottom center) */
+.nav {
+  position: fixed;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 100;
+  background: rgba(18,21,28,.8);
+  padding: 8px 16px;
+  border-radius: 100px;
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+}
+
+.nav a {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  display: inline-block;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.nav a.active {
+  background: var(--gold);
+  box-shadow: 0 0 6px var(--gold-glow);
 }

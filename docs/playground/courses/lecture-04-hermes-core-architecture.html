@@ -517,13 +517,22 @@
 
   /* ── Section Progress ── */
   .section-progress {
+    position: fixed;
+    bottom: 48px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    margin-bottom: 16px;
     font-size: 13px;
     font-family: 'JetBrains Mono', monospace;
+    z-index: 50;
+    transition: opacity 300ms ease;
+  }
+  .section-progress.hidden {
+    opacity: 0;
+    pointer-events: none;
   }
   .section-progress .sec {
     color: var(--text-dim);
@@ -575,13 +584,6 @@
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
     </div>
-    <div class="section-progress">
-      <span class="sec active">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
-    </div>
     <div class="cover-hero">
       <div class="ring">
         <div class="ring-text">04</div>
@@ -605,13 +607,6 @@
       <span class="step dim">03 Skills &amp; Workflow</span>
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
-    </div>
-    <div class="section-progress">
-      <span class="sec active">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
     </div>
     <div class="goal-section">
       <div class="goal-tag">🎯 오늘 배울 내용</div>
@@ -638,13 +633,6 @@
       <span class="step dim">03 Skills &amp; Workflow</span>
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
-    </div>
-    <div class="section-progress">
-      <span class="sec active">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
     </div>
     <div class="inline-section">지난 강의 복습</div>
     <div class="grid-cards" style="max-width:600px;">
@@ -679,13 +667,6 @@
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
     </div>
-    <div class="section-progress">
-      <span class="sec active">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
-    </div>
     <div class="section-divider-content">
       <div class="section-label">Part 1</div>
       <div class="section-title">🏗️ <span class="hl">Architecture</span></div>
@@ -704,13 +685,6 @@
       <span class="step dim">03 Skills &amp; Workflow</span>
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
-    </div>
-    <div class="section-progress">
-      <span class="sec active">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
     </div>
     <div class="inline-section">The Core Insight</div>
     <div class="big-text" style="font-size:clamp(36px,5vw,56px);">
@@ -744,13 +718,6 @@
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
     </div>
-    <div class="section-progress">
-      <span class="sec active">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
-    </div>
     <div class="inline-section">The Big Picture</div>
     <div class="h-flow" style="margin-top:12px;">
       <div class="h-node mem"><div class="h-icon">🧠</div><div class="h-label">Memory</div><div class="h-desc">기억한다</div></div>
@@ -774,13 +741,6 @@
       <span class="step dim">03 Skills &amp; Workflow</span>
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
-    </div>
-    <div class="section-progress">
-      <span class="sec active">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
     </div>
     <div class="inline-section">How It Flows</div>
     <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;min-height:200px;max-width:480px;">
@@ -814,13 +774,6 @@
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
     </div>
-    <div class="section-progress">
-      <span class="sec active">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
-    </div>
     <div class="layer-indicator">
       <span style="color:var(--text-dim)">Layer:</span>
       <span style="color:var(--gold)">🧠 Memory</span>
@@ -853,13 +806,6 @@
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
     </div>
-    <div class="section-progress">
-      <span class="sec active">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
-    </div>
     <div class="layer-indicator">
       <span style="color:var(--text-dim)">Layer:</span>
       <span style="color:var(--gold)">🧠 Memory</span>
@@ -888,13 +834,6 @@
       <span class="step dim">03 Skills &amp; Workflow</span>
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
-    </div>
-    <div class="section-progress">
-      <span class="sec active">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
     </div>
     <div class="layer-indicator">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -927,13 +866,6 @@
       <span class="step dim">03 Skills &amp; Workflow</span>
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
-    </div>
-    <div class="section-progress">
-      <span class="sec active">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
     </div>
     <div class="layer-indicator">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -973,13 +905,6 @@
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
     </div>
-    <div class="section-progress">
-      <span class="sec active">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
-    </div>
     <div class="layer-indicator">
       <span style="color:var(--text-dim)">Layer:</span>
       <span style="color:var(--text-dim)">🧠 Memory</span>
@@ -1012,13 +937,6 @@
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
     </div>
-    <div class="section-progress">
-      <span class="sec active">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
-    </div>
     <div class="layer-indicator">
       <span style="color:var(--text-dim)">Layer:</span>
       <span style="color:var(--text-dim)">🧠 Memory</span>
@@ -1048,13 +966,6 @@
       <span class="step dim">03 Skills &amp; Workflow</span>
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
-    </div>
-    <div class="section-progress">
-      <span class="sec active">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
     </div>
     <div class="layer-indicator">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -1087,13 +998,6 @@
       <span class="step dim">03 Skills &amp; Workflow</span>
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
-    </div>
-    <div class="section-progress">
-      <span class="sec active">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
     </div>
     <div class="layer-indicator">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -1142,13 +1046,6 @@
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
     </div>
-    <div class="section-progress">
-      <span class="sec done">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
-    </div>
     <div class="section-divider-content">
       <div class="section-label">Part 2</div>
       <div class="section-title">⚡ <span class="hl">Runtime</span></div>
@@ -1167,13 +1064,6 @@
       <span class="step dim">03 Skills &amp; Workflow</span>
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
-    </div>
-    <div class="section-progress">
-      <span class="sec done">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
     </div>
     <div class="layer-indicator">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -1216,13 +1106,6 @@
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
     </div>
-    <div class="section-progress">
-      <span class="sec done">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
-    </div>
     <div class="layer-indicator">
       <span style="color:var(--text-dim)">Layer:</span>
       <span style="color:var(--text-dim)">🧠 Memory</span>
@@ -1251,13 +1134,6 @@
       <span class="step dim">03 Skills &amp; Workflow</span>
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
-    </div>
-    <div class="section-progress">
-      <span class="sec done">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
     </div>
     <div class="layer-indicator">
       <span style="color:var(--text-dim)">Layer:</span>
@@ -1326,13 +1202,6 @@
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
     </div>
-    <div class="section-progress">
-      <span class="sec done">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
-    </div>
     <div class="layer-indicator">
       <span style="color:var(--text-dim)">Layer:</span>
       <span style="color:var(--gold)">🧠 Memory</span>
@@ -1378,13 +1247,6 @@
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
     </div>
-    <div class="section-progress">
-      <span class="sec done">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">SSOT</span>
-    </div>
     <div class="layer-indicator">
       <span style="color:var(--text-dim)">Layer:</span>
       <span style="color:var(--gold)">🧠 Memory</span>
@@ -1427,13 +1289,6 @@
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
     </div>
-    <div class="section-progress">
-      <span class="sec done">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">SSOT</span>
-    </div>
     <div class="layer-indicator">
       <span style="color:var(--text-dim)">Layer:</span>
       <span style="color:var(--gold)">🧠 Memory</span>
@@ -1470,13 +1325,6 @@
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
     </div>
-    <div class="section-progress">
-      <span class="sec done">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">SSOT</span>
-    </div>
     <div class="layer-indicator">
       <span style="color:var(--text-dim)">Layer:</span>
       <span style="color:var(--gold)">🧠 Memory</span>
@@ -1512,13 +1360,6 @@
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
     </div>
-    <div class="section-progress">
-      <span class="sec done">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">SSOT</span>
-    </div>
     <div class="inline-section">Summary</div>
     <div class="feature-list" style="margin-top:8px;gap:8px;">
       <div class="feature-item" style="font-size:20px;"><span class="feature-icon cyan">🧠</span> Memory Layer — FTS5 + SQLite + Cache로 사실 저장</div>
@@ -1549,13 +1390,6 @@
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
     </div>
-    <div class="section-progress">
-      <span class="sec done">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">SSOT</span>
-    </div>
     <div class="inline-section">Takeaways</div>
     <div class="feature-list" style="margin-top:12px;gap:8px;">
       <div class="feature-item" style="font-size:20px;"><span class="feature-icon cyan">🏗️</span> 4개 레이어가 하나의 Agent OS를 구성한다</div>
@@ -1578,13 +1412,6 @@
       <span class="sep">·</span>
       <span class="step active">04 Core Architecture</span>
     </div>
-    <div class="section-progress">
-      <span class="sec done">Architecture</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">Runtime</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">SSOT</span>
-    </div>
     <div class="inline-section">Q&amp;A</div>
     <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
       <div>
@@ -1603,6 +1430,15 @@
     </div>
   </div>
 
+</div>
+
+<!-- Section Progress Nav -->
+<div class="section-progress" id="sectionProgress">
+  <span class="sec active" data-section="1">Architecture</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future" data-section="2">Runtime</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future" data-section="3">SSOT</span>
 </div>
 
 <!-- Nav Dots -->
@@ -1649,6 +1485,26 @@
 
     slideCounter.textContent = `${current + 1} / ${slides.length}`;
     progressBar.style.width = `${progress}%`;
+
+
+    // Section progress - hide on hero, problem, summary, section-divider slides
+    const sectionProgress = document.getElementById('sectionProgress');
+    const secs = sectionProgress.querySelectorAll('.sec');
+    const currentSlideEl = slides[current];
+    if (currentSlideEl) {
+      const slideClass = currentSlideEl.className;
+      const isHidden = slideClass.includes('hero-slide') ||
+                       slideClass.includes('problem-slide') ||
+                       slideClass.includes('summary-slide') ||
+                       slideClass.includes('section-divider');
+      sectionProgress.classList.toggle('hidden', isHidden);
+
+      if (!isHidden) {
+        if (current < 4) { secs[0].className='sec active'; secs[1].className='sec future'; secs[2].className='sec future'; }
+        else if (current < 16) { secs[0].className='sec done'; secs[1].className='sec active'; secs[2].className='sec future'; }
+        else { secs[0].className='sec done'; secs[1].className='sec done'; secs[2].className='sec active'; }
+      }
+    }
 
     // Notes
     const currentSlide = slides[current];

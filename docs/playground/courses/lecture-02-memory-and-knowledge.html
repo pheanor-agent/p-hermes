@@ -237,6 +237,41 @@
 
   /* ── Flow compact extension ── */
   .flow.compact { gap: 8px; margin: 16px 0; }
+
+  /* ── Section Progress (fixed bottom nav bar) ── */
+  .section-progress {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 8px;
+    z-index: 100;
+    background: rgba(18,21,28,.8);
+    padding: 8px 20px;
+    border-radius: 100px;
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: opacity 300ms ease;
+  }
+  .section-progress .sec {
+    color: var(--text-dim);
+    transition: var(--transition);
+  }
+  .section-progress .sec.active {
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .section-progress .sec.done {
+    color: var(--accent-green);
+  }
+  .section-progress .sec.future {
+    color: var(--text-dim);
+    opacity: .4;
+  }
+  .section-progress .sec-arrow {
+    color: var(--border);
+    font-size: 12px;
+  }
 </style>
 </head>
 <body>
@@ -262,13 +297,6 @@
 
   <!-- SLIDE 1: Cover (unified format) -->
   <div class="slide hero-slide" id="slide-0" data-notes="1강에서 Agent 실패 4가지 원인을 보았습니다. 2강에서는 첫 번째 개념 — Memory와 Knowledge의 차이를 다룹니다. 단순히 기억하는 것과 이해하는 것의 차이가 Agent OS 설계의 시작점입니다. 핵심: 기억과 이해는 다릅니다.">
-    <div class="section-progress">
-      <span class="sec active">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="hero">
       <div class="ring">
@@ -284,13 +312,6 @@
 
   <!-- SLIDE 2: Goal + Intro (unified format) -->
   <div class="slide problem-slide" id="slide-1" data-notes="왜 Memory와 Knowledge를 구분하는 것이 중요한가? 단순한 개념적 차이가 아니라, Agent 시스템 설계의 첫 번째 분기점입니다. 오늘 배울 3가지 핵심: (1) Memory와 Knowledge는 다르다 (2) Memory만으로는 Agent가 성장할 수 없다 (3) Memory가 Knowledge로 전환되는 과정이 Agent OS의 핵심이다.">
-    <div class="section-progress">
-      <span class="sec active">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="goal-section">
       <div class="goal-tag">🎯 오늘 배울 내용</div>
@@ -315,13 +336,6 @@
 
   <!-- SLIDE 3: Part 1 Section Divider — Memory vs Knowledge -->
   <div class="slide section-divider" id="slide-2" data-notes="Part 1에서는 Memory와 Knowledge의 차이를 직접 체험합니다. 기억(기억)과 지식(이해)이 어떻게 다른지, 직관적인 예제를 통해 느껴보는 시간입니다.">
-    <div class="section-progress">
-      <span class="sec active">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="section-divider-content">
       <div class="divider-label">Part 1</div>
@@ -332,13 +346,6 @@
 
   <!-- SLIDE 4: Core Question -->
   <div class="slide problem-slide" id="slide-3" data-notes="이 강의의 가장 중요한 질문입니다. 기억과 지식 — 일상에서는 같은 것처럼 느껴집니다. 하지만 Agent 시스템 설계에서는 이 둘을 구분하는 것이 생존과 실패를 결정합니다. 대부분의 Agent 시스템이 이 둘을 같은 것으로 취급하고 실패합니다.">
-    <div class="section-progress">
-      <span class="sec active">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">핵심 질문</div>
     <div class="question">기억과 지식은 <span class="hl">같은 것일까?</span></div>
@@ -347,13 +354,6 @@
 
   <!-- SLIDE 5: Human Cognition -->
   <div class="slide diagram-slide" id="slide-4" data-notes="인간이 어떻게 학습하는지 생각해봅시다. 경험 → 기억 → 지식 → 스킬. 단순한 단계가 아니라, 하위 단계가 상위 단계의 기반이 됩니다. 지식이 기억 위에 구축됩니다. 이것이 핵심 — Agent도 이 구조를 따라야 합니다.">
-    <div class="section-progress">
-      <span class="sec active">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Human Cognition</div>
     <div class="flow compact">
@@ -368,13 +368,6 @@
 
   <!-- SLIDE 6: Experience - Case Study 1 -->
   <div class="slide example-slide" id="slide-5" data-notes="직접 경험해봅시다. 이 정보 — '사용자는 React 개발자' — 이것이 Memory일까 Knowledge일까? 잠시 생각해보세요. 핵심 단서는 '이 정보가 어떤 형태인가'입니다. 단순 사실인가, 구조를 가진 이해인가?">
-    <div class="section-progress">
-      <span class="sec active">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">직접 느껴보기</div>
     <div class="flow compact">
@@ -385,13 +378,6 @@
 
   <!-- SLIDE 7: Answer - Memory -->
   <div class="slide example-slide" id="slide-6" data-notes="정답은 Memory입니다. 왜냐하면 이것은 단순 사실(Fact)이기 때문입니다. 구조화된 이해가 아닙니다. 'React 개발자'라는 정보를 저장하는 것은 기억하는 것에 불과합니다. 이와 같은 단순 사실들을 몇 개 더 보여드립니다.">
-    <div class="section-progress">
-      <span class="sec active">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Answer</div>
     <div class="big-text" style="color:var(--accent-cyan);">Memory</div>
@@ -406,13 +392,6 @@
 
   <!-- SLIDE 8: Experience - Case Study 2 -->
   <div class="slide example-slide" id="slide-7" data-notes="두 번째 케이스입니다. '프로젝트는 Feature Folder 구조를 사용한다' — 이것 또한 Memory일까 Knowledge일까? 첫 번째 케이스와 어떤 점이 다른지 생각해보세요.">
-    <div class="section-progress">
-      <span class="sec active">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">직접 느껴보기</div>
     <div class="flow compact">
@@ -423,13 +402,6 @@
 
   <!-- SLIDE 9: Answer - Knowledge -->
   <div class="slide example-slide" id="slide-8" data-notes="정답은 Knowledge입니다. 왜냐하면 여기에는 Rule, Architecture, Convention이 모두 포함되어 있습니다. 단순 사실이 아니라 구조를 가진 이해입니다. 'Feature Folder 구조'라는 말 하나에 여러 규칙과 원칙이 포함되어 있습니다.">
-    <div class="section-progress">
-      <span class="sec active">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Answer</div>
     <div class="big-text" style="color:var(--accent-purple);">Knowledge</div>
@@ -443,13 +415,6 @@
 
   <!-- SLIDE 10: Memory vs Knowledge - Direct Comparison -->
   <div class="slide diagram-slide" id="slide-9" data-notes="이 슬라이드가 핵심입니다. Memory는 What happened를 기록하고, Knowledge는 Why it matters를 이해합니다. 전자는 사실 저장, 후자는 패턴 인식입니다. 핵심: 무엇(What)과 왜(Why)의 차이가 전부입니다.">
-    <div class="section-progress">
-      <span class="sec active">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Memory vs Knowledge</div>
     <table class="compare-table">
@@ -479,13 +444,6 @@
 
   <!-- SLIDE 11: Part 2 Divider — Memory Management -->
   <div class="slide section-divider" id="slide-10" data-notes="Memory의 한계를 넘는 방법을 배웁니다. 단순 저장이 아니라, 어떻게 관리할 것인가? Part 2에서는 Memory Lifecycle, 분류, 추출, 필터, 검색을 다룹니다.">
-    <div class="section-progress">
-      <span class="sec done">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="section-divider-content">
       <div class="divider-label">Part 2</div>
@@ -496,13 +454,6 @@
 
   <!-- SLIDE 12: Memory Explosion -->
   <div class="slide problem-slide" id="slide-11" data-notes="Memory가 많아지면 어떤 일이 벌어질까? 10개일 때는 괜찮지만, 100개, 1000개, 10000개로 늘어날수록 검색이 어려워집니다. 저장량이 증가할수록 검색 효율이 급격히 떨어집니다. 이것이 Memory 관리가 필요한 이유입니다.">
-    <div class="section-progress">
-      <span class="sec done">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Memory Explosion</div>
     <div class="number-scale">
@@ -528,13 +479,6 @@
 
   <!-- SLIDE 13: The Real Problem -->
   <div class="slide problem-slide" id="slide-12" data-notes="Memory 폭발이 일으키는 실제 문제는 3가지입니다. 검색 불가 — 원하는 정보를 찾지 못합니다. 노이즈 증가 — 관련 없는 정보가 섞입니다. Relevance 감소 — 중요한 정보가 묻힙니다.">
-    <div class="section-progress">
-      <span class="sec done">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Memory의 한계</div>
     <div class="grid-cards cols-2">
@@ -559,13 +503,6 @@
 
   <!-- SLIDE 14: Memory Lifecycle -->
   <div class="slide diagram-slide" id="slide-13" data-notes="Memory는 단순 저장이 아닙니다. 생명주기가 있습니다. Conversation → Extract → Store → Retrieve. 핵심은 Extract와 Retrieve입니다. 모든 것을 저장하는 것이 아니라, 중요한 것만 추출하고, 필요할 때 찾아내는 것입니다.">
-    <div class="section-progress">
-      <span class="sec done">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Memory Lifecycle</div>
     <div class="flow compact">
@@ -580,13 +517,6 @@
 
   <!-- SLIDE 15: Memory Categories -->
   <div class="slide diagram-slide" id="slide-14" data-notes="Memory는 3가지 범주로 분류됩니다. User — 선호도와 환경 설정. Project — 규칙과 구조 컨벤션. System — 상태와 메타데이터. 각각 다른 목적과 생명주기를 가집니다.">
-    <div class="section-progress">
-      <span class="sec done">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Memory Categories</div>
     <div class="category-grid">
@@ -607,13 +537,6 @@
 
   <!-- SLIDE 16: Extract & Filter -->
   <div class="slide example-slide" id="slide-15" data-notes="가장 중요한 단계는 Extract와 Filter입니다. 모든 것을 저장하면 안 됩니다. 무엇이 중요하고, 무엇이 노이즈인지 판단해야 합니다. GPU 서버 사용 — 저장. 오늘 점심 메뉴 — 저장 안함.">
-    <div class="section-progress">
-      <span class="sec done">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Extract &amp; Filter</div>
     <div class="two-col" style="max-width:640px;">
@@ -633,13 +556,6 @@
 
   <!-- SLIDE 17: Retrieval Is Key -->
   <div class="slide diagram-slide" id="slide-16" data-notes="저장보다 검색이 더 중요합니다. 1000개의 Memory가 있어도 찾아내지 못하면 쓸모없습니다. Request → Relevant Memory → Context. 이 흐름이 핵심입니다.">
-    <div class="section-progress">
-      <span class="sec done">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Retrieval Is Key</div>
     <div class="flow compact">
@@ -654,13 +570,6 @@
 
   <!-- SLIDE 18: The Pivot - Memory Alone Is Not Enough -->
   <div class="slide problem-slide" id="slide-17" data-notes="이 슬라이드가 강의의 전환점입니다. Memory를 충분히 쌓았다고 해서 지식이 생기는 것은 아닙니다. 1000개의 기억은 이해가 아닙니다. 기억은 축적됩니다. 이해는 조직화될 때 탄생합니다.">
-    <div class="section-progress">
-      <span class="sec done">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">핵심 전환점</div>
     <div class="not-equal">
@@ -680,13 +589,6 @@
 
   <!-- SLIDE 19: Part 3 Divider — Memory Alone Is Not Enough -->
   <div class="slide section-divider" id="slide-18" data-notes="Part 2에서 Memory 관리 방법을 배웠습니다. 하지만 Memory 관리만으로는 Agent가 진정으로 학습하고 성장할 수 없습니다. Part 3에서는 지식(Knowledge)이 왜 필요한지, Memory와 Knowledge가 어떻게 다른지, 그리고 왜 이 둘을 반드시 분리해야 하는지 설명합니다.">
-    <div class="section-progress">
-      <span class="sec done">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="section-divider-content">
       <div class="divider-label">Part 3</div>
@@ -697,13 +599,6 @@
 
   <!-- SLIDE 20: Knowledge Born -->
   <div class="slide diagram-slide" id="slide-19" data-notes="Memory가 조직화될 때 Knowledge가 탄생합니다. 개별 사실들을 연결하면 패턴이 보입니다. 'TypeScript', 'React', 'Feature Folder' — 이 개별 Memory들이 연결되면 'React = TypeScript + Feature Folder 구조'라는 Knowledge가 됩니다.">
-    <div class="section-progress">
-      <span class="sec done">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Knowledge Born</div>
     <div class="flow compact">
@@ -722,13 +617,6 @@
 
   <!-- SLIDE 21: Memory → Knowledge Flow -->
   <div class="slide diagram-slide" id="slide-20" data-notes="실제 예시로 보여드립니다. 개별 Memory들이 어떻게 Knowledge로 조직화되는지. Memory가 개별 사실이라면, Knowledge는 사실들의 연결고리입니다.">
-    <div class="section-progress">
-      <span class="sec done">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">실제 변환 예시</div>
     <div class="col" style="max-width:480px;margin-bottom:12px;">
@@ -745,13 +633,6 @@
 
   <!-- SLIDE 22: Why Separation Matters -->
   <div class="slide problem-slide" id="slide-21" data-notes="이 슬라이드가 2강의 핵심입니다. 왜 분리해야 하는가? 함께 저장하면 검색 불가, 관계 파괴, 성장 불가. 분리 저장하면 검색 가능, 관계 형성, 지속 성장. 많은 Agent 시스템이 실패하는 이유: Memory와 Knowledge를 구분하지 않기 때문입니다.">
-    <div class="section-progress">
-      <span class="sec done">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Why Separation Matters</div>
     <div class="two-col" style="max-width:640px;">
@@ -776,13 +657,6 @@
 
   <!-- SLIDE 23: Hermes Structure -->
   <div class="slide diagram-slide" id="slide-22" data-notes="Hermes는 어떻게 구현하는가? Conversation → Memory Extract → Knowledge Organization → Intelligent Response. 이 4단계 구조가 Agent OS의 핵심입니다. 검색도 2계층: Memory Layer에서는 사실 검색, Knowledge Layer에서는 패턴 검색.">
-    <div class="section-progress">
-      <span class="sec done">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Hermes Structure</div>
     <div class="flow compact">
@@ -798,13 +672,6 @@
 
   <!-- SLIDE 24: Summary -->
   <div class="slide summary-slide" id="slide-23" data-notes="오늘의 핵심을 정리합니다. Memory는 What을, Knowledge는 Why를, Intelligence는 How를 다룹니다. 단순 기억 ≠ 지능. 조직화된 이해가 지능을 만듭니다.">
-    <div class="section-progress">
-      <span class="sec done">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Summary</div>
     <div class="two-col" style="max-width:600px;margin-bottom:20px;">
@@ -831,13 +698,6 @@
 
   <!-- SLIDE 25: Takeaways -->
   <div class="slide summary-slide" id="slide-24" data-notes="오늘 배운 핵심을 3가지로 요약합니다. (1) Memory와 Knowledge는 다르다 — 사실 저장 vs 구조화된 이해 (2) Memory만으로는 Agent가 성장할 수 없다 — 관리와 조직화가 필요하다 (3) Memory → Knowledge 전환이 Agent OS의 핵심이다.">
-    <div class="section-progress">
-      <span class="sec done">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Takeaways</div>
     <div class="grid-cards" style="grid-template-columns:1fr;max-width:500px;">
@@ -862,13 +722,6 @@
 
   <!-- SLIDE 26: Q&A -->
   <div class="slide summary-slide" id="slide-25" data-notes="Q&A. 청중 질문 예상: Memory와 Knowledge의 실제 경계는 어디인가? 두 레이어가 충돌하면 어떻게 하나? 사실이 구조화되는 기준은? Agent가 스스로 Knowledge를 생성하는가?">
-    <div class="section-progress">
-      <span class="sec done">Memory vs Knowledge</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">Memory 관리</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">Memory만으로 부족</span>
-    </div>
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Q&amp;A</div>
     <div class="big-number" style="margin-bottom:20px;">Questions?</div>
@@ -896,6 +749,15 @@
 <!-- Slide Counter -->
 <div class="slide-counter" id="slideCounter"></div>
 
+<!-- Section Progress Nav -->
+<div class="section-progress" id="sectionProgress">
+  <span class="sec active" data-section="1">Memory vs Knowledge</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future" data-section="2">Memory 관리</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future" data-section="3">Memory만으로 부족</span>
+</div>
+
 <!-- Notes Toggle -->
 <button class="notes-toggle" id="notesToggle">📝 Notes</button>
 <div class="notes-panel" id="notesPanel">
@@ -912,6 +774,9 @@
   const notesPanel = document.getElementById('notesPanel');
   const notesContent = document.getElementById('notesContent');
   const progressBar = document.getElementById('progressBar');
+
+  // Section progress
+  const sectionProgress = document.getElementById('sectionProgress');
 
   // Build nav dots
   slides.forEach((_, i) => {
@@ -940,6 +805,22 @@
     if (currentSlide) {
       notesContent.textContent = currentSlide.dataset.notes || '';
     }
+
+    // Section progress: hide on hero-slide, problem-slide, summary-slide, section-divider
+    const slideClass = currentSlide.className || '';
+    if (slideClass.includes('diagram-slide') || slideClass.includes('example-slide')) {
+      sectionProgress.style.opacity = '1';
+      sectionProgress.style.pointerEvents = 'auto';
+    } else {
+      sectionProgress.style.opacity = '0';
+      sectionProgress.style.pointerEvents = 'none';
+    }
+
+    // Section progress: update active state based on slide index
+    const secs = sectionProgress.querySelectorAll('.sec');
+    if (current < 10) { secs[0].className='sec active'; secs[1].className='sec future'; secs[2].className='sec future'; }
+    else if (current < 18) { secs[0].className='sec done'; secs[1].className='sec active'; secs[2].className='sec future'; }
+    else { secs[0].className='sec done'; secs[1].className='sec done'; secs[2].className='sec active'; }
   }
 
   deck.addEventListener('scroll', update);

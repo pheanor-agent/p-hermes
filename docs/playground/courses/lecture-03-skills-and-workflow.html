@@ -39,24 +39,34 @@
     overflow: hidden;
   }
 
-  /* ── Section Progress top fixed bar ── */
+  /* ── Section Progress bottom fixed bar (between slide-counter and nav) ── */
   .section-progress {
-    position: fixed; top: 0; left: 0; width: 100%; z-index: 50;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
+    position: fixed; bottom: 56px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
     padding: 6px 16px;
+    background: rgba(18,21,28,.85);
+    border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
-    background: var(--bg);
+    border-radius: 100px;
     font-size: 12px;
+    z-index: 100;
     user-select: none;
+    white-space: nowrap;
+    backdrop-filter: blur(8px);
+    max-width: 90vw;
+    transition: opacity 0.25s ease;
   }
   .section-progress .sec {
     display: inline-flex; align-items: center; gap: 5px;
-    padding: 3px 10px; border-radius: 20px;
+    padding: 4px 12px; border-radius: 20px;
     font-weight: 500; color: var(--text-dim);
     transition: all 0.25s ease; white-space: nowrap; font-size: 12px;
   }
   .section-progress .sec.active {
-    background: rgba(240,180,41,0.12); color: var(--gold); font-weight: 600;
+    background: rgba(240,180,41,0.15); color: var(--gold); font-weight: 600;
+  }
+  .section-progress .sec.done {
+    color: #5a6378; opacity: 0.5;
   }
   .section-progress .sec.future {
     color: var(--text-dim); opacity: 0.4;
@@ -247,11 +257,6 @@
   .compare-table .check { color: var(--accent-green); }
   .compare-table .cross { color: var(--accent-red); }
 
-  /* ── Override: Theme slide padding to accommodate fixed section-progress ── */
-  .slide {
-    padding-top: 80px;
-  }
-
   /* ── Course Progress ── */
   .course-progress {
     position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
@@ -308,14 +313,6 @@
 <div class="notes-panel" id="notesPanel">
   <h4>📝 발표자 노트</h4>
   <p id="notesContent">슬라이드를 선택해주세요.</p>
-</div>
-
-<div class="section-progress">
-  <span class="sec active">Knowledge → Skills</span>
-  <span class="sec-arrow">→</span>
-  <span class="sec future">Workflow</span>
-  <span class="sec-arrow">→</span>
-  <span class="sec future">Engine</span>
 </div>
 
 <div class="deck" id="deck">
@@ -902,6 +899,13 @@
   <span class="sep"></span>
   <span class="step dim">04<br><span class="step-label">Core Architecture</span></span>
 </div>
+<div class="section-progress" id="sectionProgress">
+  <span class="sec active" data-section="1">Knowledge → Skills</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future" data-section="2">Workflow</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future" data-section="3">Engine</span>
+</div>
 
 <script>
   const deck = document.getElementById('deck');
@@ -912,6 +916,7 @@
   const notesPanel = document.getElementById('notesPanel');
   const notesContent = document.getElementById('notesContent');
   const progressBar = document.getElementById('progressBar');
+  const sectionProgress = document.getElementById('sectionProgress');
 
   // Build nav dots
   slides.forEach((_, i) => {
@@ -940,6 +945,20 @@
     if (currentSlide) {
       notesContent.textContent = currentSlide.dataset.notes || '';
     }
+
+    // Section progress: hide on intro/outro slides, show on content slides
+    const slideClasses = currentSlide ? currentSlide.className : '';
+    const isHide = slideClasses.includes('hero-slide') ||
+                   slideClasses.includes('problem-slide') ||
+                   slideClasses.includes('summary-slide') ||
+                   slideClasses.includes('section-divider');
+    sectionProgress.style.display = isHide ? 'none' : 'flex';
+
+    // Section progress: update active/done/future states
+    const secs = sectionProgress.querySelectorAll('.sec');
+    if (current < 5) { secs[0].className='sec active'; secs[1].className='sec future'; secs[2].className='sec future'; }
+    else if (current < 18) { secs[0].className='sec done'; secs[1].className='sec active'; secs[2].className='sec future'; }
+    else { secs[0].className='sec done'; secs[1].className='sec done'; secs[2].className='sec active'; }
   }
 
   deck.addEventListener('scroll', update);

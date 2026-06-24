@@ -65,6 +65,36 @@
     font-family: 'JetBrains Mono', monospace;
   }
 
+  /* ── Section Progress Bar ── */
+  .section-progress {
+    position: fixed; bottom: 96px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 8px; z-index: 100;
+    background: rgba(18,21,28,.85); padding: 8px 20px;
+    border-radius: 100px; backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    transition: opacity 300ms ease, visibility 300ms ease;
+  }
+  .section-progress.hidden {
+    opacity: 0; visibility: hidden; pointer-events: none;
+  }
+  .section-progress .sec {
+    font-size: 13px; font-weight: 600; letter-spacing: .5px;
+    color: var(--text-muted); transition: color 300ms ease;
+    white-space: nowrap;
+  }
+  .section-progress .sec.active {
+    color: var(--gold); font-weight: 700;
+  }
+  .section-progress .sec.done {
+    color: var(--text-dim);
+  }
+  .section-progress .sec.future {
+    color: var(--text-muted);
+  }
+  .section-progress .sec-arrow {
+    font-size: 12px; color: var(--text-muted); margin: 0 2px;
+  }
+
   /* ── Header ── */
   .lecture-badge {
     position: absolute; top: 32px; left: 50%; transform: translateX(-50%);
@@ -266,13 +296,6 @@
 
   <!-- Slide 0: Title / Cover -->
   <div class="slide hero-slide" id="slide-0" data-notes="오늘 강의에서는 대부분의 AI Agent가 왜 실패하는지 살펴봅니다. 많은 사람들이 GPT를 Agent라고 부르지만 사실 GPT는 Agent가 아니라 Model입니다. Agent가 되려면 기억, 지식, 절차, 목표가 필요합니다.">
-    <div class="section-progress">
-      <span class="sec active">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="hero">
       <div class="ring">
@@ -288,13 +311,6 @@
 
   <!-- Slide 1: Why This Matters — Goal / Intro -->
   <div class="slide problem-slide" id="slide-1" data-notes="AI Agent가 왜 실패하는지 이해하는 것은 단순한 호기심이 아니라 실전에서 Agent를 구축하는 모든 개발자에게 필수적인 지식입니다. 오늘날 대부분의 AI Agent는 예상보다 훨씬 빠르게 실패합니다. 그 이유는 Model의 성능이 아니라 System 설계 때문입니다.">
-    <div class="section-progress">
-      <span class="sec active">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="goal-section">
       <div class="goal-tag">🎯 오늘 배울 내용</div>
@@ -313,13 +329,6 @@
 
   <!-- Slide 2: Question / Problem 인식 -->
   <div class="slide problem-slide" id="slide-2" data-notes="ChatGPT는 훌륭한 답변 엔진입니다. 하지만 비서는 아닙니다. 왜냐하면 내 프로젝트를 기억하지 못하고, 지난달의 결정을 기억하지 못하기 때문입니다.">
-    <div class="section-progress">
-      <span class="sec active">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">문제 인식</div>
     <div class="question">왜 ChatGPT는 진짜 <span class="hl">비서</span>가 아닐까?</div>
@@ -341,13 +350,6 @@
 
   <!-- Slide 3: Case Study / 사례 연구 -->
   <div class="slide example-slide" id="slide-3" data-notes="퇴근 전에 정리한 회의록을 다음 날 아침 다시 작성해야 한다면? Agent는 매번 대화가 초기화될 때마다 처음부터 모든 걸 다시 설명해야 합니다. 이 피로감이 Agent 실패의 시작입니다.">
-    <div class="section-progress">
-      <span class="sec active">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">사례 연구</div>
     <div class="title" style="font-size:clamp(24px,3vw,36px)">새 직원에게 매일 같은 설명을 한다면?</div>
@@ -372,13 +374,6 @@
 
   <!-- Slide 4: Stateless System / 핵심 문제 -->
   <div class="slide diagram-slide" id="slide-4" data-notes="Stateless 시스템의 핵심 문제는 대화는 기록될 수 있지만, 이해는 쌓이지 않는다는 것입니다. 매번 세션이 초기화되면 이전 대화의 맥락을 완전히 잃습니다. 핵심: 대화 기록과 이해 축적은 다릅니다.">
-    <div class="section-progress">
-      <span class="sec active">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">핵심 문제</div>
     <div class="title" style="font-size:clamp(28px,4vw,44px)">Stateless <span class="hl">System</span></div>
@@ -394,13 +389,6 @@
 
   <!-- Section Divider: 문제 인식 → 4가지 패턴 -->
   <div class="slide section-divider" id="slide-5" data-notes="Part 1에서 LLM Agent의 Stateless 문제를 이해했습니다. Part 2에서는 구체적인 4가지 실패 패턴을 분석합니다.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="section-divider-content">
       <div class="divider-label">Section 2</div>
@@ -411,13 +399,6 @@
 
   <!-- Slide 6: Failure #1 Memory Loss -->
   <div class="slide example-slide" id="slide-6" data-notes="어제 결재 올린 기획서 내용을 오늘 다시 정리해야 한다면 얼마나 짜증날까요? Stateless Agent는 매 세션마다 동일한 맥락을 처음부터 구축해야 합니다. 마치 모든 회의가 첫 미팅인 것처럼요.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">실패 #1</div>
     <div class="failure-header">
@@ -445,13 +426,6 @@
 
   <!-- Slide 7: Failure #2 Knowledge Loss -->
   <div class="slide example-slide" id="slide-7" data-notes="지난달에 처리한 고객 문의와 동일한 유형이 들어와도 Agent는 이를 경험으로 기억하지 못합니다. 마치 신입사원이 매일 똑같은 교육을 받는 것과 같습니다. 경험의 축적이 없다는 게 Knowledge Loss의 핵심입니다.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">실패 #2</div>
     <div class="failure-header">
@@ -479,13 +453,6 @@
 
   <!-- Slide 8: Failure #3 Workflow Loss -->
   <div class="slide example-slide" id="slide-8" data-notes="퇴사한 동료의 업무 노하우가 함께 사라지는 경험, 해보셨나요? Agent도 한 번 실행한 프로세스를 다음 번에 재사용하지 못하고 매번 새로 작성해야 합니다. 지식이 조직에 축적되지 않는 구조적 문제입니다.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">실패 #3</div>
     <div class="failure-header">
@@ -528,13 +495,6 @@
 
   <!-- Slide 9: Failure #4 Goal Drift -->
   <div class="slide example-slide" id="slide-9" data-notes="장기 프로젝트에서 가장 큰 문제는 목표 상실입니다. 세션이 끝나면 원래 무엇을 하려 했는지 잊어버립니다. 마치 한 달 전 회의 결정 사항을 오늘 다시 논의해야 하는 것과 같습니다. 핵심: 세션 경계가 목표를 초기화합니다.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">실패 #4</div>
     <div class="failure-header">
@@ -562,13 +522,6 @@
 
   <!-- Slide 10: Human vs Agent 비교 -->
   <div class="slide diagram-slide" id="slide-10" data-notes="인간과 현재 LLM의 차이를 비교해 보면, 인간은 기억, 경험, 절차, 성장이 있지만 LLM은 컨텍스트만 있습니다. 세션이 끝나면 모든 맥락이 사라집니다. 핵심: LLM은 기억하지 않고 컨텍스트만 유지합니다.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">비교</div>
     <div class="title" style="font-size:clamp(28px,4vw,44px)">Human <span class="hl">vs</span> Agent</div>
@@ -587,13 +540,6 @@
 
   <!-- Slide 11: Failure Taxonomy 분류 -->
   <div class="slide diagram-slide" id="slide-11" data-notes="Agent 실패는 네 가지 패턴입니다. Memory Loss(기억 상실), Knowledge Loss(지식 상실), Skills Loss(스킬 상실), Workflow Loss(워크플로 상실). 하나라도 없으면 생산적일 수 없습니다. 핵심: 네 가지 모두 필요합니다.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec future">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">분류</div>
     <div class="title" style="font-size:clamp(32px,4vw,48px)">Agent Failure <span class="hl">Taxonomy</span></div>
@@ -623,13 +569,6 @@
 
   <!-- Section Divider: 4가지 패턴 → 해결: Agent OS -->
   <div class="slide section-divider" id="slide-12" data-notes="Part 2에서 4가지 실패 패턴을 분석했습니다. Part 3에서는 Agent OS 개념을 통해 이 문제를 해결하는 방향을 알아봅니다.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="section-divider-content">
       <div class="divider-label">Section 3</div>
@@ -640,13 +579,6 @@
 
   <!-- Slide 13: What's Needed - Memory -->
   <div class="slide example-slide" id="slide-13" data-notes="어제 쓴 보고서를 오늘 또 처음부터 쓰고 있다면? Agent에게 Memory는 이전 맥락을 유지하는 핵심 기능입니다. 대화 내역뿐 아니라 프로젝트 이력, 의사결정 이유, 사용자 선호도까지 기억해야 반복 설명이라는 피로감에서 벗어날 수 있습니다.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">해결 #1</div>
     <div class="title" style="font-size:clamp(32px,4vw,48px)">무엇이 필요한가?</div>
@@ -662,13 +594,6 @@
 
   <!-- Slide 14: Knowledge -->
   <div class="slide example-slide" id="slide-14" data-notes="신입사원 교육 때마다 같은 내용을 반복한다면 체계화된 지식이 없기 때문입니다. Knowledge는 단순 기억을 넘어 프로젝트 규칙, 도메인 패턴을 구조화된 형태로 저장하고 활용합니다. 정리된 지식이 조직의 경쟁력입니다.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">해결 #2</div>
     <div class="title" style="font-size:clamp(32px,4vw,48px)">무엇이 필요한가?</div>
@@ -684,13 +609,6 @@
 
   <!-- Slide 15: Skills -->
   <div class="slide example-slide" id="slide-15" data-notes="매일 아침 30분씩 동일한 보고서를 작성한다면? Skills는 반복 작업을 자동화하고 재사용 가능한 단위로 만듭니다. Agent가 스스로 작업을 학습하고 실행할 수 있어야 진정한 생산성 향상이 가능합니다. 반복은 Agent에게, 창의는 사람에게.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">해결 #3</div>
     <div class="title" style="font-size:clamp(32px,4vw,48px)">무엇이 필요한가?</div>
@@ -706,13 +624,6 @@
 
   <!-- Slide 16: Workflow -->
   <div class="slide example-slide" id="slide-16" data-notes="결재 라인이 없는 회사에서 모든 결정을 직접 내리려면 얼마나 비효율적일까요? Workflow는 복잡한 업무를 정의된 단계로 분할하고 실행합니다. 표준화된 절차 없이는 일관된 품질을 기대할 수 없습니다. 이것이 Agent에게 Workflow가 필요한 이유입니다.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">해결 #4</div>
     <div class="title" style="font-size:clamp(32px,4vw,48px)">무엇이 필요한가?</div>
@@ -728,13 +639,6 @@
 
   <!-- Slide 17: Automation -->
   <div class="slide example-slide" id="slide-17" data-notes="매일 아침 같은 알림을 확인하고 같은 보고서를 작성하시나요? Automation은 Agent가 상태를 모니터링하고 정기 작업을 자동 수행하게 합니다. 알림 발송, 상태 체크, 데이터 수집을 Agent에게 위임하면 사람은 더 가치 있는 일에 집중할 수 있습니다.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">해결 #5</div>
     <div class="title" style="font-size:clamp(32px,4vw,48px)">무엇이 필요한가?</div>
@@ -750,13 +654,6 @@
 
   <!-- Slide 18: Agent Operating System -->
   <div class="slide diagram-slide" id="slide-18" data-notes="이 다섯 요소를 따로 구현하면 서로 통신하지 못하고 중복 저장이 발생합니다. Agent Operating System은 Memory, Knowledge, Skills, Workflow, Automation을 하나의 통합 플랫폼으로 제공합니다. 운영체제가 하드웨어를 관리하듯 Agent 자원을 총괄합니다.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">통합</div>
     <div class="title" style="font-size:clamp(28px,4vw,44px)">Agent Operating <span class="hl">System</span></div>
@@ -786,13 +683,6 @@
 
   <!-- Slide 19: Hermes Intro -->
   <div class="slide hero-slide" id="slide-19" data-notes="이 모든 문제를 해결하는 시스템이 Hermes입니다. 다섯 가지 필요 요소를 처음부터 설계에 포함한 Agent Operating System입니다. 다음 강의부터 각 요소가 어떻게 구현되는지 살펴보겠습니다. 지금까지 배운 실패 원인을 기억하며 각 해결책을 이해해 봅시다.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">Hermes</div>
     <div class="question">이 문제를 해결하려면?</div>
@@ -805,13 +695,6 @@
 
   <!-- Slide 20: Hermes Core -->
   <div class="slide diagram-slide" id="slide-20" data-notes="Hermes Core는 이 5가지 요소를 제공합니다. Memory, Knowledge, Skills, Workflow, Automation.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">Core</div>
     <div class="title" style="font-size:clamp(28px,4vw,44px)">Hermes <span class="hl">Core</span></div>
@@ -826,13 +709,6 @@
 
   <!-- Slide 21: P-Hermes -->
   <div class="slide diagram-slide" id="slide-21" data-notes="그리고 P-Hermes는 Knowledge Factory, Content Factory, Project Factory를 제공합니다.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">P-Hermes</div>
     <div class="title" style="font-size:clamp(28px,4vw,44px)">P-<span class="hl">Hermes</span></div>
@@ -845,13 +721,6 @@
 
   <!-- Section Divider: 해결: Agent OS → Wrap-Up -->
   <div class="slide section-divider" id="slide-22" data-notes="지금까지 Agent 실패 원인과 해결 방향을 살펴봤습니다. 이제 오늘 배운 내용을 요약하고 핵심 Takeaways를 정리합니다.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01 · Why Agents Fail</div>
     <div class="section-divider-content">
       <div class="divider-label">Wrap-Up</div>
@@ -862,13 +731,6 @@
 
   <!-- Slide 23: Summary -->
   <div class="slide summary-slide" id="slide-23" data-notes="오늘 배운 핵심 5가지를 요약합니다. Agent는 Memory Loss로 과거를 잊고, Knowledge Loss로 맥락을 이해하지 못하며, Skills Loss로 반복 작업을 자동화하지 못하고, Workflow Loss로 일관된 프로세스를 유지하지 못하고, Automation Loss로 정기 작업을 위임하지 못합니다. Agent OS의 5개 Layer가 이 5가지 문제를 각각 해결합니다. 핵심: 5가지 실패 = 5개 Layer의 부재입니다.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01 · Why Agents Fail</div>
     <div class="inline-section">Summary</div>
     <div class="summary-grid" style="grid-template-columns:repeat(3,1fr);max-width:650px">
@@ -883,13 +745,6 @@
 
   <!-- Slide 24: Takeaways -->
   <div class="slide summary-slide" id="slide-24" data-notes="가장 중요한 인사이트입니다. Agent가 실패하는 이유는 Model의 성능 때문이 아니라 System 설계 때문입니다. 아무리 좋은 Model도 Memory, Knowledge, Skills, Workflow, Automation Layer가 없으면 실패합니다. Agent = Model + System입니다. 핵심: Agent는 Model이 아니라 System입니다.">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01 · Why Agents Fail</div>
     <div class="inline-section">Takeaways</div>
     <div class="big-text" style="font-size:clamp(28px,3.5vw,40px);color:var(--gold);max-width:600px;text-align:center;">Agent는<br><strong>Model</strong>이 아니라 <strong>System</strong>이다</div>
@@ -903,13 +758,6 @@
 
   <!-- Slide 25: Q&A -->
   <div class="slide summary-slide" id="slide-25" data-notes="Q&A. 청중 질문 예상: Model만 좋으면 되지 않나요? 이 구조가 모든 Agent에 적용되나요? 기존 Agent에 Layer를 추가하는 방법은?">
-    <div class="section-progress">
-      <span class="sec done">문제 인식</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec done">4가지 패턴</span>
-      <span class="sec-arrow">→</span>
-      <span class="sec active">해결: Agent OS</span>
-    </div>
     <div class="lecture-badge">Lecture 01 · Why Agents Fail</div>
     <div class="inline-section">Q&A</div>
     <div class="qa-list">
@@ -920,6 +768,15 @@
     <div class="key-message" style="margin-top:20px;">🔜 다음 강의: Memory &amp; Knowledge</div>
   </div>
 
+</div>
+
+<!-- Section Progress (fixed, outside deck) -->
+<div class="section-progress" id="sectionProgress">
+  <span class="sec active" data-section="1">문제 인식</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future" data-section="2">4가지 패턴</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future" data-section="3">해결: Agent OS</span>
 </div>
 
 <!-- Navigation -->
@@ -963,6 +820,24 @@
     const currentSlide = slides[current];
     if (currentSlide) {
       notesContent.textContent = currentSlide.dataset.notes || '';
+    }
+
+    // Section progress bar
+    const sectionProgress = document.getElementById('sectionProgress');
+    const secs = sectionProgress.querySelectorAll('.sec');
+    // Determine current section based on slide index
+    if (current < 5) { secs[0].className='sec active'; secs[1].className='sec future'; secs[2].className='sec future'; }
+    else if (current < 12) { secs[0].className='sec done'; secs[1].className='sec active'; secs[2].className='sec future'; }
+    else { secs[0].className='sec done'; secs[1].className='sec done'; secs[2].className='sec active'; }
+
+    // Hide section-progress on Cover, Goal, Summary, and Section Divider slides
+    // Show only on content slides (diagram-slide, example-slide)
+    const slideTypes = currentSlide ? currentSlide.classList : [];
+    const hideTypes = ['hero-slide', 'problem-slide', 'summary-slide', 'section-divider'];
+    if (slideTypes.some(t => hideTypes.includes(t))) {
+      sectionProgress.classList.add('hidden');
+    } else {
+      sectionProgress.classList.remove('hidden');
     }
   }
 

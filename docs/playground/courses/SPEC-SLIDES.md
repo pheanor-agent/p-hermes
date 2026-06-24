@@ -228,22 +228,25 @@ Q&A
 - 모든 강의는 이 3장 템플릿을 준수해야 함 (MUST)
 - Q&A 없이 Summary로만 끝나는 것 금지
 
-## 10. 내비게이션 바: Section Progress (v1.6)
+## 10. 내비게이션 바: Section Progress (v1.7)
 
 ### 10.1 정의
-모든 슬라이드 상단에 현재 강의의 섹션 진행도를 표시하는 nav bar.
-기존 TOC 슬라이드와 course-progress(4강 전체)를 대체.
+현재 강의의 섹션 진행도를 표시하는 nav bar.
+**하단 고정 위치** — slide-counter와 nav dots 사이에 배치.
 
-### 10.2 HTML 구조
+### 10.2 HTML 구조 (단일 인스턴스)
 ```html
-<div class="section-progress">
-  <span class="sec active">Memory vs Knowledge</span>
+<!-- .deck 외부, 고정 위치 -->
+<div class="section-progress" id="sectionProgress">
+  <span class="sec active" data-section="1">문제 인식</span>
   <span class="sec-arrow">→</span>
-  <span class="sec future">Memory 관리</span>
+  <span class="sec future" data-section="2">4가지 패턴</span>
   <span class="sec-arrow">→</span>
-  <span class="sec future">Memory만으로 부족</span>
+  <span class="sec future" data-section="3">해결: Agent OS</span>
 </div>
 ```
+
+**중요**: `<div class="section-progress">`는 **한 번만** 존재. slide 내부에 포함 금지.
 
 ### 10.3 상태
 | 클래스 | 의미 | 시각 |
@@ -252,16 +255,33 @@ Q&A
 | `sec done` | 지나간 섹션 | 흐릿하게 |
 | `sec future` | 아직 안 온 섹션 | 더 흐릿하게 |
 
-### 10.4 CSS
-`components/slides-components.css` — 모든 강의가 공유.
+### 10.4 표시/숨김 규칙
 
-### 10.5 각 강의별 섹션
+| 슬라이드 템플릿 | Nav Bar |
+|:--------------|:--------|
+| `.hero-slide` (Cover) | ❌ 숨김 |
+| `.problem-slide` (Goal/Intro) | ❌ 숨김 |
+| `.section-divider` | ❌ 숨김 |
+| `.diagram-slide` / `.example-slide` (본문) | ✅ 표시 |
+| `.summary-slide` | ❌ 숨김 |
+
+JS 로직: `currentSlide.classList.contains('hero-slide')` 등 확인 후 토글.
+
+### 10.5 위치
+- `position: fixed; bottom: 48px; left: 50%; transform: translateX(-50%)`
+- slide-counter (`bottom: 24px`) 위
+- nav dots (`bottom: 8px`) 위
+
+### 10.6 각 강의별 섹션
 | 강의 | 섹션 1 | 섹션 2 | 섹션 3 |
 |:----|:-------|:-------|:-------|
 | L01 | 문제 인식 | 4가지 패턴 | 해결: Agent OS |
 | L02 | Memory vs Knowledge | Memory 관리 | Memory만으로 부족 |
 | L03 | Knowledge → Skills | Workflow | Engine |
 | L04 | Architecture | Runtime | SSOT |
+
+### 10.7 CSS
+`components/slides-components.css` — `:root` 변수 + `.section-progress` 스타일 포함.
 
 ## 11. Section Divider (v1.6)
 
