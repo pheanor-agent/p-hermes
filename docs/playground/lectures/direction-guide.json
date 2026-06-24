@@ -1,0 +1,45 @@
+{
+  "version": "1.0",
+  "contentDensity": {
+    "maxCharsPerSlide": 500,
+    "targetCharsPerSlide": "200~350",
+    "maxPointsPerSlide": 4
+  },
+  "cover": {
+    "template": "hero-slide",
+    "ringTextFormat": "{lecture_number:02d}",
+    "allowCoverHeroDiv": false,
+    "requiredClasses": [
+      "hero-slide"
+    ]
+  },
+  "navBar": {
+    "forbiddenTerms": [
+      "SSOT",
+      "TODO"
+    ],
+    "format": "일반명사 위주, 기술 약어 금지"
+  },
+  "validation": [
+    {
+      "rule": "R17",
+      "section": "§15.1",
+      "check": "visible_text_chars_500"
+    },
+    {
+      "rule": "R18",
+      "section": "§14.3",
+      "check": "cover_structure_consistency"
+    },
+    {
+      "rule": "R19",
+      "section": "§10.5",
+      "check": "nav_section_forbidden_terms"
+    },
+    {
+      "rule": "R22",
+      "section": "§14.3",
+      "check": "ring_text_format"
+    }
+  ]
+}

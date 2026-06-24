@@ -1,4 +1,4 @@
-# SPEC-SLIDES — Playground Version (v1.9)
+# SPEC-SLIDES — Playground Version (v2.0)
 
 > **마지막 업데이트**: 2026-06-24
 > **상태**: Active
@@ -241,7 +241,7 @@ Q&A
 - Summary → Q&A 순서로 연속 배치 (MUST)
 - Wrap-Up Divider 불필요 (MUST)
 
-## 10. 내비게이션 바: Section Progress (v1.9)
+## 10. 내비게이션 바: Section Progress (v2.0)
 
 ### 10.1 정의
 현재 강의의 섹션 진행도를 표시하는 nav bar.
@@ -281,7 +281,7 @@ Q&A
 **JS 로직 통일** (MUST):
 
 ```javascript
-// ① currentSlide 반드시 hide check 전에 정의 (MUST)
+// ① currentSlide 반드시 hide check 전에 정의 (MUST, R16 검증)
 const currentSlide = slides[current];
 
 // ② Template class로 숨김 판단
@@ -297,18 +297,21 @@ if (currentSlide && hideTypes.some(t => currentSlide.classList.contains(t))) {
 > ⚠️ `classList.add('hidden')` 방식 금지 — CSS 의존성으로 동작 불일치 발생 (§10.7 참조)
 > ⚠️ `style.opacity = '0'` 방식 금지 — DOM 공간 차지
 
-### 10.5 위치
-- `position: fixed; bottom: 48px; left: 50%; transform: translateX(-50%)`
-- slide-counter (`bottom: 24px`) 위
-- nav dots (`bottom: 8px`) 위
+### 10.5 nav section명 규칙
 
-### 10.6 각 강의별 섹션
+| 규칙 | 내용 | 검증 |
+|:-----|:------|:----:|
+| **기술 약어 금지** | nav section명에 SSOT, TODO 등 기술 약어 사용 금지 (MUST) | R19 |
+| **일반명사 위주** | 기술 약어 대신 일반명사 사용 (SHOULD) | — |
+| **ring-text 형식** | `{강의번호:02d}` 형식 통일 (MUST) | R22 |
+
+### 10.5 위치### 10.6 각 강의별 섹션
 | 강의 | 섹션 1 | 섹션 2 | divider 수 |
 |:----|:-------|:-------|:-----------|
 | L01 | 문제 인식 | 4가지 패턴 + 해결: Agent OS | 1 |
 | L02 | Memory | Knowledge | 2 |
 | L03 | Knowledge → Skills | Hermes Workflow | 2 |
-| L04 | Architecture | Runtime & SSOT | 2 |
+| L04 | Architecture | Runtime | 2 |
 
 ### 10.7 CSS
 `components/slides-components.css` — `:root` 변수 + `.section-progress` 스타일 포함.
@@ -376,7 +379,7 @@ if (currentSlide && hideTypes.some(t => currentSlide.classList.contains(t))) {
 - 하나의 슬라이드는 정확히 하나의 템플릿 (MUST)
 - 신규 템플릿은 SPEC-SLIDES amendment 필요
 
-## 14. CSS Architecture (v1.9)
+## 14. CSS Architecture (v2.0)
 
 ### 14.1 Shared Component Library
 ```css
@@ -416,8 +419,13 @@ docs/playground/lectures/
 ## 15. 레이아웃 규칙 (v1.8)
 
 ### 15.1 overflow-safe 제한
-- 슬라이드당 최대 4개 포인트
+- ### 15.1 content density
+- **visible text ≤500자** (MUST, R17 검증)
+  - data-notes 제외, 슬라이드의 화면상 텍스트 기준
+  - 각 강의 평균 ≤350자 (SHOULD)
+- **슬라이드당 최대 4개 포인트**
 - 4포인트 초과 시 반드시 2장으로 분할 (MUST)
+- 500자 초과 시 반드시 2장으로 분할 (MUST)
 
 ### 15.2 정렬 규칙
 - 모든 콘텐츠 슬라이드: `align-items: center` (SHOULD)
@@ -458,7 +466,8 @@ docs/playground/lectures/
 - **`<div class="compare-table">` + 자식 `<div>`만 허용** (MUST)
 - 2열 비교 → `grid-template-columns: 1fr 1fr` (기본, 공용 CSS)
 - 3열 이상 비교 → 로컬에서 `grid-template-columns: auto 1fr 1fr` 오버라이드 허용 (SHOULD)
-- **공용 CSS에 `.compare-table th, .compare-table td { text-align: center }` 정의**
+- **공용 CSS에 `.compare-table > div { text-align: center; }` 정의 (MUST, R20 검증)
+  - ❌ `th, td` 선택자 사용 금지 — `<div>`에 미매칭**
 
 ### 16.2 올바른 형식
 ```html
@@ -473,7 +482,7 @@ docs/playground/lectures/
 </div>
 ```
 
-## 17. 키보드 내비게이션 (v1.9)
+## 17. 키보드 내비게이션 (v2.0)
 
 ### 17.1 규칙
 
@@ -500,3 +509,21 @@ document.addEventListener('keydown', (e) => {
 ```
 
 > ⚠️ **critical**: `overflow-y: auto`가 `.slide`에 적용되어 있을 때, `e.preventDefault()` 없으면 화살표 키가 수직 스크롤로 소비됨 (JOB-1868 교훈)
+
+
+## 18. SPEC-validate 매핑 테이블 (v2.0)
+
+모든 SPEC (MUST) 규칙은 validate-slides.py RULE과 1:1 매핑되어야 한다.
+
+| § (MUST) | 규칙 내용 | validate RULE | 비고 |
+|:---------|:----------|:-------------:|:-----|
+| §10.4 | currentSlide 정의 위치 | R16 | JOB-1868 L04 bug |
+| §15.1 | visible text ≤500자 | R17 | content overflow 방지 |
+| §14.3 | 모든 강의 동일 cover 구조 | R18 | cover-hero 불일치 방지 |
+| §10.5 | nav section명 기술 약어 금지 | R19 | SSOT 제거 |
+| §16.1 | compare-table > div center | R20 | table 정렬 3회 재요청 |
+| §17 | e.preventDefault() 필수 | R21 | keyboard 4번 재요청 |
+| §14.3 | ring-text 형식 통일 | R22 | L03 ⚡ 문제 |
+
+> **원칙**: validate.py에 없는 (MUST) 규칙은 존재하지 않는 것과 같다.
+> 모든 신규 (MUST)는 반드시 validate RULE을 동시에 추가한다.

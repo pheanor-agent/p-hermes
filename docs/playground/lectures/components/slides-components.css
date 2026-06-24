@@ -496,8 +496,8 @@ html, body {
   color: var(--gold);
   background: rgba(240, 180, 41, 0.05);
 }
-.compare-table th,
-.compare-table td { text-align: center; }
+/* ── Compare Table (center alignment, R20) ── */
+.compare-table > div { text-align: center; }
 
 /* ── Responsive Grids ── */
 @media (max-width: 768px) {

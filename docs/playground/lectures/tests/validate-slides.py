@@ -14,7 +14,7 @@ import re
 import sys
 
 BASE = os.path.join(os.path.dirname(__file__), '..')
-COURSES = os.path.join(BASE, 'playground', 'courses')
+COURSES = BASE
 FILES = [
     'lecture-01-why-agents-fail.html',
     'lecture-02-memory-and-knowledge.html',
@@ -163,6 +163,99 @@ def main():
         # R15: L04 slide count = 25
         if 'lecture-04' in fname:
             check(15, 'L04 슬라이드 수 = 25', len(slides) == 25, lecture)
+        
+        # === R16~R22: JOB-1869 신규 규칙 ===
+        
+        # R16: currentSlide 정의 위치 (hide check 전)
+        script = re.search(r'<script>(.*?)</script>', html, re.DOTALL)
+        if script:
+            js = script.group(1)
+            # Pattern: const currentSlide = slides[current]; BEFORE hide check
+            r16_pattern1 = r'const\s+currentSlide\s*=\s*slides\[current\]'
+            r16_pattern2 = r'hideTypes\.some'
+            r16_match1 = re.search(r16_pattern1, js)
+            r16_match2 = re.search(r16_pattern2, js)
+            if r16_match1 and r16_match2:
+                r16 = js.find(r16_match1.group()) < js.find(r16_match2.group())
+            else:
+                r16 = False
+            check(16, 'currentSlide 정의 위치 (hide check 전)', r16, lecture)
+        
+        # R17: visible text ≤500자
+        visible_texts = []
+        for slide in slides:
+            sid = slide['id']
+            slide_m = re.search(rf'id="{re.escape(sid)}"[^>]*data-notes="[^"]*">(.*?)</div>\s*</div>', html, re.DOTALL)
+            if slide_m:
+                content = slide_m.group(1)
+                # Remove HTML tags and data-notes
+                text = re.sub(r'<[^>]+>', ' ', content)
+                text = re.sub(r'<script>.*?</script>', '', text, flags=re.DOTALL)
+                text = re.sub(r'\s+', ' ', text).strip()
+                if len(text) > 0 and 'section-divider' not in slide['classes'] and 'hero-slide' not in slide['classes']:
+                    visible_texts.append((sid, len(text)))
+        
+        overflow = [(sid, n) for sid, n in visible_texts if n > 500]
+        r17 = len(overflow) == 0
+        if not r17:
+            for sid, n in overflow:
+                print(f'    ↓ slide-{sid.split("-")[1]}: {n}자 (≥500)')
+        check(17, 'visible text ≤500자', r17, lecture)
+        
+        # R18: Cover structure consistency (no cover-hero div, same as L01/L02)
+        slide0_m = re.search(r'id="slide-0"[^>]*>(.*?)</div>\s*</div>', html, re.DOTALL)
+        if slide0_m:
+            slide0_html = slide0_m.group(0)
+            has_cover_hero = 'cover-hero' in slide0_html
+            r18 = not has_cover_hero
+            check(18, 'cover-hero div 없음 (L01/L02와 동일)', r18, lecture)
+        
+        # R19: Nav section명에 금지어(SSOT) 없음
+        section_progress = re.search(r'id="sectionProgress"', html)
+        if section_progress:
+            sp_section = html[section_progress.start():section_progress.start()+500]
+            forbidden = ['SSOT', 'TODO']
+            r19 = all(f not in sp_section for f in forbidden)
+            if not r19:
+                for f in forbidden:
+                    if f in sp_section:
+                        print(f'    ↓ nav section명에 금지어 "{f}" 있음')
+            check(19, 'nav section명 금지어 없음', r19, lecture)
+        
+        # R20: compare-table > div center 정렬
+        compare_section = re.search(r'class="compare-table[^"]*">(.*?)</div>\s*</div>', html, re.DOTALL)
+        if compare_section:
+            ct_html = compare_section.group(0)
+            # Check shared CSS has > div selector
+            css_path = os.path.join(COURSES, 'components', 'slides-components.css')
+            has_center_div = False
+            if os.path.exists(css_path):
+                with open(css_path) as cf:
+                    css = cf.read()
+                    has_center_div = '.compare-table > div' in css and 'text-align: center' in css
+            r20 = has_center_div and '<table' not in ct_html
+            check(20, 'compare-table > div center 정렬', r20, lecture)
+        else:
+            check(20, 'compare-table > div center 정렬', True, lecture)
+        
+        # R21: keyboard e.preventDefault() 존재
+        if script:
+            js = script.group(1)
+            r21 = 'e.preventDefault' in js
+            check(21, 'e.preventDefault() 존재', r21, lecture)
+        else:
+            check(21, 'e.preventDefault() 존재', False, lecture)
+        
+        # R22: ring-text 형식 통일 ({강의번호:02d})
+        ring_text = re.search(r'class="ring-text"[^>]*>(.*?)<', html, re.DOTALL)
+        if ring_text:
+            ring_val = ring_text.group(1).strip()
+            lec_num = fname.split('-')[1] if fname.startswith('lecture-') else ''
+            lec_num = lec_num.zfill(2) if len(lec_num) < 2 else lec_num
+            r22 = ring_val == lec_num
+            check(22, f'ring-text "{lec_num}" 통일', r22, lecture)
+        else:
+            check(22, 'ring-text 존재', False, lecture)
     
     # Summary
     print(f'\n{"="*60}')
