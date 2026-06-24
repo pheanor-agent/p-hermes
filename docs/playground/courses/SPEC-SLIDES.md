@@ -306,25 +306,27 @@ JS 로직: `currentSlide.classList.contains('hero-slide')` 등 확인 후 토글
 ### 11.3 CSS 클래스
 `.slide.section-divider` + 내부 `.section-divider-content` / `.divider-label` / `.divider-title` / `.divider-desc`
 
-## 12. 강의 구조 가이드라인 (v1.6)
+## 12. 강의 구조 가이드라인 (v1.7)
 
-### 12.1 공통 구조 (2페이지 오프닝 고정)
+### 12.1 공통 구조 (2페이지 오프닝 + 2페이지 마무리 고정)
 | 순서 | 역할 | 템플릿 |
 |:----:|:-----|:-------|
 | 0 | **Cover** — 제목 + 한 줄 메시지 | Hero |
 | 1 | **Goal + Intro** — Why + 3 Goals + Part Flow | Problem |
 | 2~N | **Main Content** | Mixed |
 | — | **Section Divider** | Section-divider |
-| N-2 | **Summary** | Summary |
-| N-1 | **Takeaways** | Summary |
+| N-1 | **Summary** | Summary |
 | N | **Q&A** | Summary |
 
 ### 12.2 규칙
 - Cover + Goal/Intro 2페이지 고정 (MUST)
-- Summary + Takeaways + Q&A 각 1장 (MUST)
+- Summary + Q&A 각 1장, 총 2페이지 마무리 (MUST) — §9.1과 일치
+- **Takeaways 슬라이드 불필요** (MUST) — §9.3과 일치
+- Wrap-Up Divider 불필요 (MUST)
 - Section Divider = 섹션 개수와 동일 (SHOULD)
 - TOC 슬라이드 존재 금지 — nav bar가 대체 (MUST)
 - L04: 정규화된 slide-N ID만 사용, 비정규 ID 금지 (MUST)
+- **마지막 2장 외에 summary-slide 사용 금지** (MUST)
 
 ## 13. 템플릿 제약 (v1.6)
 

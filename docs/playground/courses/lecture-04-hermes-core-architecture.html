@@ -9,10 +9,7 @@
   /* ── Lecture-specific content styles ── */
 
   /* h-flow: horizontal flow diagram for architecture visualization */
-  .h-flow{display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap}
-  .h-node{display:flex;flex-direction:column;align-items:center;padding:12px 20px;border-radius:12px;min-width:110px}
   .h-icon{font-size:24px}
-  .h-label{font-size:16px;font-weight:700;margin-top:4px}
   .h-desc{font-size:13px;color:var(--text-dim);margin-top:1px}
   .h-arrow{font-size:20px;color:var(--gold);margin:0 4px}
   .h-node.mem{background:rgba(91,192,235,.12);border:1px solid rgba(91,192,235,.3)}
@@ -23,54 +20,6 @@
   .h-node.glow{box-shadow:0 0 8px rgba(240,180,41,.2)}
 
   /* Goal Section (slide 1) */
-  .goal-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    text-align: center;
-    max-width: 640px;
-  }
-  .goal-tag {
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--gold);
-    background: var(--gold-glow);
-    padding: 8px 24px;
-    border-radius: 100px;
-    border: 1px solid var(--gold-dim);
-  }
-  .goal-why {
-    font-size: clamp(24px,3.5vw,36px);
-    font-weight: 900;
-    line-height: 1.2;
-    color: var(--text);
-  }
-  .goal-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-  }
-  .goal-item {
-    font-size: 18px;
-    padding: 12px 20px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    text-align: center;
-    color: var(--text);
-  }
-  .goal-flow {
-    font-size: 16px;
-    color: var(--accent-cyan);
-    font-family: 'JetBrains Mono', monospace;
-    padding: 8px 20px;
-    border: 1px dashed var(--accent-cyan);
-    border-radius: var(--radius);
-  }
 
   /* Layer Indicator: per-slide layer tracker */
   .layer-indicator {
@@ -82,42 +31,13 @@
   }
 
   /* Notes Toggle & Panel (interactive) */
-  .notes-toggle {
-    position: fixed; bottom: 24px; right: 24px;
-    z-index: 100;
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    padding: 8px 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    font-family: 'JetBrains Mono', monospace;
-    transition: var(--transition);
-  }
-  .notes-toggle:hover { border-color: var(--gold); color: var(--gold); }
 
-  .notes-panel {
-    display: none;
-    position: fixed; bottom: 60px; right: 24px;
-    width: 480px; max-height: 320px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-    overflow-y: auto;
-    z-index: 100;
-    font-size: 16px; line-height: 1.7;
-    color: var(--text-dim);
-  }
-  .notes-panel.visible { display: block; }
   .notes-panel h4 {
     color: var(--gold); margin-bottom: 12px; font-size: 14px;
     font-family: 'JetBrains Mono', monospace;
   }
 
   /* Highlight within notes panel */
-  .highlight { color: var(--gold); }
 </style>
 </head>
 <body>
@@ -783,7 +703,7 @@
                        slideClass.includes('problem-slide') ||
                        slideClass.includes('summary-slide') ||
                        slideClass.includes('section-divider');
-      sectionProgress.classList.toggle('hidden', isHidden);
+      sectionProgress.style.display = isHidden ? 'none' : 'flex';
 
       if (!isHidden) {
         if (current < 15) { secs[0].className='sec active'; secs[1].className='sec future'; }

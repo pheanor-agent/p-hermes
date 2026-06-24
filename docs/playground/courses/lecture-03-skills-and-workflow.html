@@ -26,7 +26,6 @@
   .h-flow .node.red { border-color: var(--accent-red); color: var(--accent-red); }
 
   .col-item.warn { border-left-color: var(--accent-red); }
-  .col-item.ok { border-left-color: var(--accent-green); }
 
   /* ── Scenario Card ── */
   .scenario-card {
@@ -73,15 +72,6 @@
   }
 
   /* ── Example Box ── */
-  .example-box {
-    margin-top: 20px;
-    padding: 16px 24px;
-    background: var(--card);
-    border-left: 3px solid var(--accent-cyan);
-    border-radius: var(--radius);
-    font-size: 18px;
-    max-width: 520px;
-  }
   .example-box .label {
     font-size: 12px; color: var(--text-dim);
     font-family: 'JetBrains Mono', monospace;
@@ -148,10 +138,6 @@
   }
 
   /* ── Compare Table (table-based variant) ── */
-  .compare-table {
-    width: 100%; max-width: 600px; margin: 24px 0;
-    border-collapse: collapse;
-  }
   .compare-table th, .compare-table td {
     padding: 12px 24px;
     border: 1px solid var(--border);
@@ -174,7 +160,6 @@
   .compare-table .check { color: var(--accent-green); }
   .compare-table .cross { color: var(--accent-red); }
 
-  /* ── (course-progress removed per SPEC-SLIDES v1.7) ── */
 </style>
 </head>
 <body>
@@ -655,20 +640,8 @@
     <div class="key-message" style="max-width:480px;font-size:18px;">모든 계층이 협력한다</div>
   </div>
 
-  <!-- SLIDE 21: Part 1 통합 구조 -->
-  <div class="slide summary-slide" id="slide-24" data-notes="L01은 문제 인식, L02는 기억과 지식, L03은 스킬과 워크플로우를 다뤘습니다. 다음 강의 L04에서는 이 모든 요소가 하나의 Architecture로 통합되는 과정을 다룹니다. 핵심: Part 1의 클라이맥스입니다.">
-    <div class="lecture-badge">Lecture 03</div>
-    <div class="inline-section">Part 1 Recap</div>
-    <div class="insight-box" style="max-width:520px;font-size:20px;">
-      L01 Problems <span style="color:var(--text-dim);">→</span> L02 Memory &amp; Knowledge <span style="color:var(--text-dim);">→</span> <span class="highlight">L03 Skills &amp; Workflow</span>
-    </div>
-    <div class="key-message" style="max-width:480px;font-size:18px;">
-      다음 강의: Architecture — 모든 요소의 통합
-    </div>
-  </div>
-
-  <!-- SLIDE 23: Skills+Workflow Before vs After -->
-  <div class="slide diagram-slide" id="slide-25" data-notes="도입 전: 매번 같은 작업을 수동으로, 일관성 없음, 상태 추적 불가. 도입 후: 반복 작업 자동화, 일관된 품질, 모든 상태 추적 가능. 핵심: 변화의 핵심은 일관성과 추적 가능성입니다.">
+  <!-- SLIDE 24: Skills+Workflow Before vs After -->
+  <div class="slide diagram-slide" id="slide-24" data-notes="도입 전: 매번 같은 작업을 수동으로, 일관성 없음, 상태 추적 불가. 도입 후: 반복 작업 자동화, 일관된 품질, 모든 상태 추적 가능. 핵심: 변화의 핵심은 일관성과 추적 가능성입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Before &amp; After</div>
     <div class="two-col" style="max-width:600px;">
@@ -688,8 +661,8 @@
     <div class="key-message" style="max-width:520px;font-size:18px;">일관성 + 추적 가능성 = 생산성</div>
   </div>
 
-  <!-- SLIDE 24: Summary -->
-  <div class="slide summary-slide" id="slide-26" data-notes="오늘 배운 내용을 정리합니다. Knowledge는 무엇(What), Skill은 어떻게(How), Workflow는 언제(When)를 다룹니다. 이 셋이 모여 Agent 생산성을 완성합니다. 핵심: What + How + When = Complete.">
+  <!-- SLIDE 25: Summary -->
+  <div class="slide summary-slide" id="slide-25" data-notes="오늘 배운 내용을 정리합니다. Knowledge는 무엇(What), Skill은 어떻게(How), Workflow는 언제(When)를 다룹니다. 이 셋이 모여 Agent 생산성을 완성합니다. 핵심: What + How + When = Complete.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">오늘의 핵심</div>
     <div class="summary-list">
@@ -711,8 +684,8 @@
     </div>
   </div>
 
-  <!-- SLIDE : Q&A -->
-  <div class="slide summary-slide" id="slide-27" data-notes="Q&amp;A 세션입니다. 오늘 배운 Skills와 Workflow에 대해 자유롭게 질문해주세요. 다음 강의에서는 Hermes Core Architecture를 통해 모든 요소가 어떻게 통합되는지 살펴봅니다.">
+  <!-- SLIDE 26: Q&A -->
+  <div class="slide summary-slide" id="slide-26" data-notes="Q&amp;A 세션입니다. 오늘 배운 Skills와 Workflow에 대해 자유롭게 질문해주세요. 다음 강의에서는 Hermes Core Architecture를 통해 모든 요소가 어떻게 통합되는지 살펴봅니다.">
     <div class="lecture-badge">Lecture 03 · Skills &amp; Workflow</div>
     <div class="inline-section">Q&amp;A</div>
     <div class="key-message" style="margin-top:20px;">🔜 다음 강의: Hermes Core Architecture</div>
@@ -720,9 +693,6 @@
 
 </div>
 
-<div class="nav" id="nav"></div>
-<div class="slide-counter" id="slideCounter"></div>
-<!-- (course-progress removed per SPEC-SLIDES) -->
 <div class="section-progress" id="sectionProgress">
   <span class="sec active" data-section="1">Knowledge → Skills</span>
   <span class="sec-arrow">→</span>
@@ -730,6 +700,9 @@
   <span class="sec-arrow">→</span>
   <span class="sec future" data-section="3">Engine</span>
 </div>
+
+<div class="nav" id="nav"></div>
+<div class="slide-counter" id="slideCounter"></div>
 
 <script>
   const deck = document.getElementById('deck');

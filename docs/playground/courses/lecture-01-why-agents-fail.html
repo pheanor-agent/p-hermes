@@ -10,50 +10,20 @@
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  
-
-  html, body {
-    height: 100%;
-    font-family: 'Inter','Noto Sans KR',system-ui,-apple-system,sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    overflow: hidden;
-  }
-
-  /* ── Navigation ── */
-  
-  
-  .nav a.active, .nav a:hover { background: var(--gold); box-shadow: 0 0 12px var(--gold-glow); }
-
-  
-
   /* ── Section Progress Bar ── */
-  
-  .section-progress.hidden {
-    opacity: 0; visibility: hidden; pointer-events: none;
-  }
-  
-  
-  
-  
-  
+
+
+
+
+
 
   /* ── Header ── */
-  .lecture-badge {
-    position: absolute; top: 32px; left: 50%; transform: translateX(-50%);
-    font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
-    color: var(--gold); background: var(--gold-glow); padding: 8px 24px;
-    border-radius: 100px; border: 1px solid var(--gold-dim);
-    white-space: nowrap;
-  }
 
   /* ── Typography ── */
   .title {
     font-size: clamp(40px,6vw,64px); font-weight: 900;
     letter-spacing: -2px; text-align: center; line-height: 1.1;
   }
-  .title 
   .subtitle {
     font-size: clamp(20px,2.5vw,28px); color: var(--text-dim); margin-top: 16px;
     font-weight: 400; text-align: center;
@@ -96,11 +66,6 @@
     font-size: 13px; font-weight: 700; letter-spacing: 1px;
     text-transform: uppercase;
   }
-  .tag
-  .tag
-  .tag
-  .tag
-  .tag
 
   /* ── Feature List ── */
   .feature-list { display: flex; flex-direction: column; gap: 12px; margin: 24px 0; }
@@ -110,11 +75,6 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 14px; font-weight: 700;
   }
-  .feature-icon
-  .feature-icon
-  .feature-icon
-  .feature-icon
-  .feature-icon
 
   /* ── Code Block ── */
   .code-block {
@@ -137,16 +97,10 @@
 
   /* ── Quote ── */
   .quote { font-size: clamp(24px,4vw,40px); font-weight: 700; text-align: center; line-height: 1.4; color: var(--text); max-width: 800px; }
-  .quote 
 
   /* ── Need Card ── */
   .need-card { display: flex; flex-direction: column; align-items: center; gap: 16px; background: var(--card); border: 2px solid var(--border); border-radius: 24px; padding: 40px 48px; width: 100%; max-width: 600px; margin: 24px auto; position: relative; transition: var(--transition); }
   .need-card:hover { transform: translateY(-4px); }
-  .need-card
-  .need-card
-  .need-card
-  .need-card
-  .need-card
   .need-icon { font-size: 48px; margin-bottom: 8px; }
   .need-number { position: absolute; top: 16px; right: 20px; font-size: 16px; font-weight: 900; color: var(--text-dim); opacity: 0.5; }
   .need-title { font-size: clamp(32px, 5vw, 48px); font-weight: 900; letter-spacing: -1px; }
@@ -157,7 +111,6 @@
   .failure-header { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 16px; }
   .failure-number { font-size: 16px; font-weight: 900; color: var(--accent-red); letter-spacing: 2px; }
   .failure-title { font-size: clamp(32px, 5vw, 48px); font-weight: 900; letter-spacing: -1px; text-align: center; }
-  .failure-title 
   .failure-tag { margin-top: 4px; }
 
   /* ── Failure Scenario ── */
@@ -171,7 +124,6 @@
   .impact-label { font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-red); }
   .impact-flow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
   .impact-node { background: var(--card); border: 2px solid var(--border); padding: 12px 20px; border-radius: 12px; font-size: 16px; font-weight: 700; text-align: center; min-width: 140px; }
-  .impact-node
   .impact-node.warn { border-color: var(--accent-orange); }
   .impact-node.error { border-color: var(--accent-red); }
   .impact-arrow { font-size: 20px; color: var(--text-dim); font-weight: 700; }
@@ -190,25 +142,19 @@
   .taxonomy-icon { font-size: 28px; }
   .taxonomy-title { font-size: 16px; font-weight: 700; color: var(--accent-red); }
   .taxonomy-desc { font-size: 13px; color: var(--text-dim); }
-
-  /* ── Progress Bar ── */
-  
-
   /* ── Inline Section ── */
-  .inline-section { font-size: 14px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 20px; text-align: center; }
 
   /* ── Template Backgrounds ── */
-  
+
   .hero-slide .title { color: var(--text); }
   .hero-slide .subtitle { color: var(--text-dim); }
-  
+
   .problem-slide .title { color: var(--text); }
-  .problem-slide .question 
-  
+
   .diagram-slide .title { color: var(--text); }
   .diagram-slide .flow .node { border-color: var(--accent-cyan); }
-  
-  
+
+
   .summary-slide .title { color: var(--text); }
 
   /* ── Summary Grid ── */

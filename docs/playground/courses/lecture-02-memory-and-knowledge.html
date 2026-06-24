@@ -114,12 +114,6 @@
   }
 
   /* ── Question ── */
-  .question {
-    font-size: clamp(28px,4vw,42px); font-weight: 900;
-    text-align: center; color: var(--text);
-    margin: 20px 0;
-  }
-  .question .hl { color: var(--accent-cyan); }
 
   /* ── Quote ── */
   .quote {
@@ -160,15 +154,6 @@
   .tag-purple { background: rgba(177,151,252,.15); color: var(--accent-purple); }
 
   /* ── Overflow Protection ── */
-  .overflow-safe {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    max-height: calc(100vh - 200px);
-    overflow: hidden;
-  }
   .overflow-safe > * { flex-shrink: 0; }
 
   /* ── Flow compact extension ── */
@@ -595,12 +580,6 @@
 
 </div>
 
-<!-- Nav Dots -->
-<div class="nav" id="nav"></div>
-
-<!-- Slide Counter -->
-<div class="slide-counter" id="slideCounter"></div>
-
 <!-- Section Progress Nav -->
 <div class="section-progress" id="sectionProgress">
   <span class="sec active" data-section="1">Memory vs Knowledge</span>
@@ -609,6 +588,12 @@
   <span class="sec-arrow">→</span>
   <span class="sec future" data-section="3">Memory만으로 부족</span>
 </div>
+
+<!-- Nav Dots -->
+<div class="nav" id="nav"></div>
+
+<!-- Slide Counter -->
+<div class="slide-counter" id="slideCounter"></div>
 
 <!-- Notes Toggle -->
 <button class="notes-toggle" id="notesToggle">📝 Notes</button>
