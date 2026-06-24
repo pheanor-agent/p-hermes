@@ -228,80 +228,119 @@ Q&A
 - 모든 강의는 이 3장 템플릿을 준수해야 함 (MUST)
 - Q&A 없이 Summary로만 끝나는 것 금지
 
-## 10. Progress Indicator (v1.5)
+## 10. 내비게이션 바: Section Progress (v1.6)
 
 ### 10.1 정의
-모든 슬라이드 상단에 전체 코스 경로를 표시하는 고정 바.
-TOC 슬라이드를 대체.
+모든 슬라이드 상단에 현재 강의의 섹션 진행도를 표시하는 nav bar.
+기존 TOC 슬라이드와 course-progress(4강 전체)를 대체.
 
-### 10.2 구조
+### 10.2 HTML 구조
 ```html
-<div class="course-progress">
-  <span class="step dim">01 Why Agents Fail</span>
-  <span class="sep">·</span>
-  <span class="step active">02 Memory & Knowledge</span>
-  <span class="sep">·</span>
-  <span class="step dim">03 Skills & Workflow</span>
-  <span class="sep">·</span>
-  <span class="step dim">04 Core Architecture</span>
+<div class="section-progress">
+  <span class="sec active">Memory vs Knowledge</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future">Memory 관리</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future">Memory만으로 부족</span>
 </div>
 ```
 
-### 10.3 규칙
-- 모든 슬라이드 상단에 위치 (MUST)
-- 현재 강의: `class="step active"`, 나머지: `class="step dim"` (MUST)
-- 구분자: `<span class="sep">·</span>` (MUST)
-- 라벨: `course_metadata.json` SSOT 준수 (SHOULD)
-- CSS only — JS 변경 불필요
+### 10.3 상태
+| 클래스 | 의미 | 시각 |
+|:-------|:-----|:------|
+| `sec active` | 현재 섹션 | 금색 pill 강조 |
+| `sec done` | 지나간 섹션 | 흐릿하게 |
+| `sec future` | 아직 안 온 섹션 | 더 흐릿하게 |
 
-## 11. Section Divider (v1.5)
+### 10.4 CSS
+`components/slides-components.css` — 모든 강의가 공유.
+
+### 10.5 각 강의별 섹션
+| 강의 | 섹션 1 | 섹션 2 | 섹션 3 |
+|:----|:-------|:-------|:-------|
+| L01 | 문제 인식 | 4가지 패턴 | 해결: Agent OS |
+| L02 | Memory vs Knowledge | Memory 관리 | Memory만으로 부족 |
+| L03 | Knowledge → Skills | Workflow | Engine |
+| L04 | Architecture | Runtime | SSOT |
+
+## 11. Section Divider (v1.6)
 
 ### 11.1 정의
-섹션 전환을 표시하는 구분 슬라이드. TOC가 하던 "지금 Part X" 역할.
+섹션 전환을 표시하는 구분 슬라이드.
 
 ### 11.2 구조
-- Gradient 배경 (Hero 변형)
-- 가운데 정렬
-- label + title + description 3층
+```html
+<div class="slide section-divider" id="slide-N">
+  <div class="section-divider-content">
+    <div class="divider-label">Part 2</div>
+    <div class="divider-title">4가지 실패 패턴</div>
+    <div class="divider-desc">구체적인 실패 유형과 그 영향</div>
+  </div>
+</div>
+```
 
-### 11.3 규칙
-- 강의당 최대 4개 (SHOULD)
-- Section Divider는 Hero 템플릿 변형으로 취급
-- 하나의 섹션 = 하나의 Divider (OPTIONAL)
+### 11.3 CSS 클래스
+`.slide.section-divider` + 내부 `.section-divider-content` / `.divider-label` / `.divider-title` / `.divider-desc`
 
-## 12. 강의 구조 가이드라인 (v1.5)
+## 12. 강의 구조 가이드라인 (v1.6)
 
-### 12.1 공통 구조
+### 12.1 공통 구조 (2페이지 오프닝 고정)
 | 순서 | 역할 | 템플릿 |
 |:----:|:-----|:-------|
-| 0 | **Cover** | Hero |
-| 1 | **Why This Matters** | Problem |
-| 2 | **Learning Goal** | Hero |
-| 3~N | **Main Content** | Mixed (Diagram 중심) |
-| — | **Section Divider** | Hero (변형) |
+| 0 | **Cover** — 제목 + 한 줄 메시지 | Hero |
+| 1 | **Goal + Intro** — Why + 3 Goals + Part Flow | Problem |
+| 2~N | **Main Content** | Mixed |
+| — | **Section Divider** | Section-divider |
 | N-2 | **Summary** | Summary |
 | N-1 | **Takeaways** | Summary |
-| N | **[Q&A 선택]** | Summary |
+| N | **Q&A** | Summary |
 
 ### 12.2 규칙
-- Cover + Why + Goal 각 1장씩 (SHOULD)
-- Summary + Takeaways 각 1장 (MUST)
-- Section Divider ≤ 4 (SHOULD)
+- Cover + Goal/Intro 2페이지 고정 (MUST)
+- Summary + Takeaways + Q&A 각 1장 (MUST)
+- Section Divider = 섹션 개수와 동일 (SHOULD)
+- TOC 슬라이드 존재 금지 — nav bar가 대체 (MUST)
+- L04: 정규화된 slide-N ID만 사용, 비정규 ID 금지 (MUST)
 
-## 13. 템플릿 제약 (v1.5)
+## 13. 템플릿 제약 (v1.6)
 
-### 13.1 허용 템플릿 (5종)
+### 13.1 허용 템플릿 (5종 + divider)
 | # | 템플릿 | CSS 클래스 | 용도 |
 |:-:|:-------|:-----------|:------|
-| 1 | **Hero** | `.hero-slide` | Cover, Goal, Section Divider |
-| 2 | **Problem** | `.problem-slide` | Why Matters, 문제 제기 |
+| 1 | **Hero** | `.hero-slide` | Cover |
+| 2 | **Problem** | `.problem-slide` | Goal/Intro |
 | 3 | **Diagram** | `.diagram-slide` | 프로세스/아키텍처 (주력) |
 | 4 | **Example** | `.example-slide` | 사례, 코드 |
 | 5 | **Summary** | `.summary-slide` | Summary, Takeaways, Q&A |
+| 6 | **Divider** | `.section-divider` | 섹션 전환 |
 
 ### 13.2 규칙
 - 하나의 슬라이드는 정확히 하나의 템플릿 (MUST)
 - 신규 템플릿은 SPEC-SLIDES amendment 필요
+
+## 14. CSS Architecture (v1.6)
+
+### 14.1 Shared Component Library
+```css
+/* 모든 강의는 동일한 components/slides-components.css 참조 */
+<link rel="stylesheet" href="components/slides-components.css">
+```
+
+### 14.2 각 HTML 파일
+- `<style>` 블록 최소화 (shared CSS에 없는 강의 고유 스타일만)
+- 공통 스타일은 slides-components.css가 SSOT
+
+### 14.3 파일 위치
+```
+docs/playground/courses/
+├── components/
+│   └── slides-components.css    ← Shared SSOT
+├── lecture-01-why-agents-fail.html
+├── lecture-02-memory-and-knowledge.html
+├── lecture-03-skills-and-workflow.html
+├── lecture-04-hermes-core-architecture.html
+└── SPEC-SLIDES.md
+```
 
 ## 11. 레이아웃 규칙 (v1.3)
 

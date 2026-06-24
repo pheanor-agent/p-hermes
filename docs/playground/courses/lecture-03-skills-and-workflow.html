@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lecture 03: Skills & Workflow — Building an Agent OS with Hermes</title>
+<link rel="stylesheet" href="components/slides-components.css">
 <style>
+  /* ── Lecture-specific styles (not in slides-components.css) ── */
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -37,92 +39,33 @@
     overflow: hidden;
   }
 
-  /* ── Deck ── */
-  .deck {
-    display: flex;
-    height: 100vh;
-    scroll-snap-type: x mandatory;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
+  /* ── Section Progress top fixed bar ── */
+  .section-progress {
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 50;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 6px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    font-size: 12px;
+    user-select: none;
   }
-  .deck::-webkit-scrollbar { display: none; }
-
-  .slide {
-    flex: 0 0 100vw;
-    height: 100vh;
-    scroll-snap-align: start;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 64px 80px;
-    position: relative;
-    overflow: hidden;
-    max-height: 100vh;
+  .section-progress .sec {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 20px;
+    font-weight: 500; color: var(--text-dim);
+    transition: all 0.25s ease; white-space: nowrap; font-size: 12px;
   }
-
-  /* ── Navigation ── */
-  .nav {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 10px; z-index: 100;
-    background: rgba(18,21,28,.8);
-    padding: 8px 16px;
-    border-radius: 100px;
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--border);
+  .section-progress .sec.active {
+    background: rgba(240,180,41,0.12); color: var(--gold); font-weight: 600;
   }
-  .nav a {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: var(--border); transition: var(--transition);
-    display: block;
+  .section-progress .sec.future {
+    color: var(--text-dim); opacity: 0.4;
   }
-  .nav a.active, .nav a:hover { background: var(--gold); box-shadow: 0 0 12px var(--gold-glow); }
-
-  .slide-counter {
-    position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%);
-    font-size: 12px; color: var(--text-dim); z-index: 100;
-    font-family: 'JetBrains Mono', monospace;
+  .section-progress .sec-arrow {
+    color: var(--border); font-size: 13px; flex-shrink: 0;
   }
 
-  /* ── Header ── */
-  .lecture-badge {
-    position: absolute; top: 32px; left: 50%; transform: translateX(-50%);
-    font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
-    color: var(--gold); background: var(--gold-glow); padding: 8px 24px;
-    border-radius: 100px; border: 1px solid var(--gold-dim);
-    white-space: nowrap;
-  }
-
-  /* ── Typography ── */
-  .title {
-    font-size: clamp(40px,6vw,64px); font-weight: 900;
-    letter-spacing: -2px; text-align: center; line-height: 1.1;
-  }
-  .title .hl { color: var(--gold); }
-  .subtitle {
-    font-size: clamp(20px,2.5vw,28px); color: var(--text-dim); margin-top: 16px;
-    font-weight: 400; text-align: center;
-  }
-
-  /* ── Hero ── */
-  .hero { text-align: center; }
-  .hero .ring {
-    width: 200px; height: 200px; border-radius: 50%;
-    border: 3px solid var(--gold); margin: 0 auto 24px;
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-  }
-  .hero .ring::before {
-    content: ''; position: absolute; inset: -8px; border-radius: 50%;
-    border: 1px solid var(--gold-dim); opacity: .4;
-  }
-  .hero .ring-text {
-    font-size: 32px; font-weight: 900; color: var(--gold);
-  }
-
-  /* ── Section Divider ── */
+  /* ── Section Divider (inside slide) ── */
   .section-divider {
     display: flex; flex-direction: column; align-items: center; gap: 16px;
     text-align: center;
@@ -139,44 +82,15 @@
     font-size: clamp(18px,2vw,24px); color: var(--text-dim);
   }
 
-  /* ── Flow ── */
-  .flow {
-    display: flex; flex-direction: column; align-items: center; gap: 12px;
-    margin: 24px 0;
-  }
-  .flow.compact { gap: 8px; margin: 16px 0; }
-  .flow .arrow {
-    font-size: 24px; color: var(--gold); font-weight: 700;
-    line-height: 1;
-  }
-  .flow .node {
-    background: var(--card); border: 1px solid var(--border);
-    padding: 16px 28px; border-radius: var(--radius);
-    font-size: 20px; font-weight: 700;
-    min-width: 200px; text-align: center;
-  }
+  /* ── Flow / H-Flow node coloring ── */
   .flow .node.cyan { border-color: var(--accent-cyan); color: var(--accent-cyan); }
   .flow .node.purple { border-color: var(--accent-purple); color: var(--accent-purple); }
   .flow .node.green { border-color: var(--accent-green); color: var(--accent-green); }
   .flow .node.gold { border-color: var(--gold); color: var(--gold); }
   .flow .node.orange { border-color: var(--accent-orange); color: var(--accent-orange); }
   .flow .node.red { border-color: var(--accent-red); color: var(--accent-red); }
+  .flow.compact { gap: 8px; margin: 16px 0; }
 
-  /* ── Horizontal Flow ── */
-  .h-flow {
-    display: flex; align-items: center; gap: 8px;
-    flex-wrap: wrap; justify-content: center;
-    margin: 20px 0;
-  }
-  .h-flow .arrow {
-    font-size: 22px; color: var(--gold); font-weight: 700;
-  }
-  .h-flow .node {
-    background: var(--card); border: 1px solid var(--border);
-    padding: 12px 20px; border-radius: var(--radius);
-    font-size: 15px; font-weight: 600;
-    text-align: center;
-  }
   .h-flow .node.cyan { border-color: var(--accent-cyan); color: var(--accent-cyan); }
   .h-flow .node.purple { border-color: var(--accent-purple); color: var(--accent-purple); }
   .h-flow .node.green { border-color: var(--accent-green); color: var(--accent-green); }
@@ -184,75 +98,8 @@
   .h-flow .node.orange { border-color: var(--accent-orange); color: var(--accent-orange); }
   .h-flow .node.red { border-color: var(--accent-red); color: var(--accent-red); }
 
-  /* ── Two Column ── */
-  .two-col {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
-    width: 100%; max-width: 640px; margin-top: 24px;
-  }
-  .col {
-    display: flex; flex-direction: column; gap: 12px;
-  }
-  .col-title {
-    font-size: 14px; font-weight: 700; letter-spacing: 2px;
-    text-transform: uppercase; color: var(--gold); margin-bottom: 8px;
-  }
-  .col-item {
-    font-size: 18px; color: var(--text); padding: 10px 16px;
-    background: var(--card); border-radius: 8px;
-    border-left: 3px solid var(--border);
-  }
   .col-item.warn { border-left-color: var(--accent-red); }
   .col-item.ok { border-left-color: var(--accent-green); }
-
-  /* ── Key Message ── */
-  .key-message {
-    margin-top: 24px; padding: 20px 28px;
-    background: var(--gold-glow); border: 1px solid var(--gold-dim);
-    border-radius: var(--radius);
-    font-size: 20px; font-weight: 700; color: var(--gold);
-    text-align: center;
-    max-width: 600px;
-  }
-
-  /* ── Table ── */
-  .compare-table {
-    width: 100%; max-width: 600px; margin: 24px 0;
-    border-collapse: collapse;
-  }
-  .compare-table th, .compare-table td {
-    padding: 12px 24px;
-    border: 1px solid var(--border);
-    font-size: 16px;
-    text-align: center;
-  }
-  .compare-table th {
-    background: var(--card);
-    color: var(--gold);
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
-  .compare-table td:first-child {
-    text-align: center;
-    color: var(--text-dim);
-    font-weight: 500;
-  }
-  .compare-table .check { color: var(--accent-green); }
-  .compare-table .cross { color: var(--accent-red); }
-
-  /* ── Insight Box ── */
-  .insight-box {
-    margin-top: 20px; padding: 16px 24px;
-    background: rgba(177,151,252,.1);
-    border: 1px solid var(--accent-purple);
-    border-radius: var(--radius);
-    font-size: 18px; font-weight: 700;
-    text-align: center;
-    color: var(--accent-purple);
-    max-width: 560px;
-  }
-  .insight-box .highlight { color: var(--gold); }
 
   /* ── Scenario Card ── */
   .scenario-card {
@@ -355,78 +202,6 @@
   .tag-green { background: rgba(0,245,212,.15); color: var(--accent-green); }
   .tag-gold { background: var(--gold-glow); color: var(--gold); }
 
-  /* ── Question ── */
-  .question {
-    font-size: clamp(28px,4vw,42px); font-weight: 900;
-    text-align: center; color: var(--text);
-    margin: 20px 0;
-  }
-  .question .hl { color: var(--accent-cyan); }
-
-  /* ── Inline Section ── */
-  .inline-section {
-    font-size: 14px; font-weight: 700; letter-spacing: 3px;
-    text-transform: uppercase; color: var(--gold);
-    margin-bottom: 20px; text-align: center;
-  }
-
-  /* ── Progress Bar ── */
-  .progress-bar {
-    position: fixed; top: 0; left: 0; height: 3px;
-    background: linear-gradient(90deg, var(--gold), var(--accent-cyan));
-    z-index: 200; transition: width 200ms ease;
-    box-shadow: 0 0 8px var(--gold-glow);
-  }
-
-  /* ── Notes Toggle ── */
-  .notes-toggle {
-    position: fixed; bottom: 24px; right: 24px;
-    z-index: 100;
-    background: var(--card);
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    padding: 8px 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    font-family: 'JetBrains Mono', monospace;
-    transition: var(--transition);
-  }
-  .notes-toggle:hover { border-color: var(--gold); color: var(--gold); }
-
-  .notes-panel {
-    display: none;
-    position: fixed; bottom: 60px; right: 24px;
-    width: 480px; max-height: 320px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-    overflow-y: auto;
-    z-index: 100;
-    font-size: 16px; line-height: 1.7;
-    color: var(--text-dim);
-  }
-  .notes-panel.visible { display: block; }
-  .notes-panel h4 {
-    color: var(--gold); margin-bottom: 12px; font-size: 14px;
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .highlight { color: var(--gold); }
-
-  /* ── Overflow Protection ── */
-  .overflow-safe {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    max-height: calc(100vh - 200px);
-    overflow: hidden;
-  }
-  .overflow-safe > * { flex-shrink: 0; }
-
   /* ── Summary List ── */
   .summary-list {
     display: flex; flex-direction: column; gap: 14px;
@@ -445,7 +220,39 @@
     font-size: 20px;
   }
 
-  /* ── Course Progress Indicator ── */
+  /* ── Compare Table (table-based variant) ── */
+  .compare-table {
+    width: 100%; max-width: 600px; margin: 24px 0;
+    border-collapse: collapse;
+  }
+  .compare-table th, .compare-table td {
+    padding: 12px 24px;
+    border: 1px solid var(--border);
+    font-size: 16px;
+    text-align: center;
+  }
+  .compare-table th {
+    background: var(--card);
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .compare-table td:first-child {
+    text-align: center;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+  .compare-table .check { color: var(--accent-green); }
+  .compare-table .cross { color: var(--accent-red); }
+
+  /* ── Override: Theme slide padding to accommodate fixed section-progress ── */
+  .slide {
+    padding-top: 80px;
+  }
+
+  /* ── Course Progress ── */
   .course-progress {
     position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
     display: flex; align-items: flex-start; gap: 0;
@@ -492,14 +299,6 @@
     margin: 0 6px;
     align-self: center;
   }
-
-  /* ── Template Classes ── */
-  .slide.hero-slide { }
-  .slide.problem-slide { }
-  .slide.diagram-slide { }
-  .slide.example-slide { }
-  .slide.summary-slide { }
-
 </style>
 </head>
 <body>
@@ -511,54 +310,49 @@
   <p id="notesContent">슬라이드를 선택해주세요.</p>
 </div>
 
+<div class="section-progress">
+  <span class="sec active">Knowledge → Skills</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future">Workflow</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future">Engine</span>
+</div>
+
 <div class="deck" id="deck">
 
-  <!-- SLIDE 0: Title -->
+  <!-- SLIDE 0: Cover -->
   <div class="slide hero-slide" id="slide-0" data-notes="L02에서 Knowledge를 배웠습니다. 이제 질문: 안다는 것만으로 충분할까? L03에서는 Knowledge를 실제 행동으로 전환하는 Skills와 Workflow를 다룹니다. 핵심: 아는 것과 실행하는 것은 다릅니다.">
     <div class="lecture-badge">Lecture 03</div>
-    <div class="hero">
-      <div class="ring">
-        <div class="ring-text">03</div>
-      </div>
-    </div>
-    <div class="title">Skills <span class="hl">&amp;</span> Workflow</div>
-    <div class="subtitle">Knowing vs Doing</div>
-    <div style="margin-top:24px">
+    <div class="cover-title">Skills <span class="hl">&amp;</span> Workflow</div>
+    <div class="cover-subtitle">Knowing vs Doing</div>
+    <div style="margin-top:20px">
       <span class="tag tag-gold">Building an Agent OS with Hermes</span>
     </div>
   </div>
 
-  <!-- SLIDE 1: Why This Matters + Learning Goal -->
+  <!-- SLIDE 1: Goal + Intro -->
   <div class="slide problem-slide" id="slide-1" data-notes="Why Skills and Workflow matter: Knowledge alone cannot execute. Goal: understand how Skills and Workflow transform an Agent from a knowledge store into an executable system.">
     <div class="lecture-badge">Lecture 03</div>
-    <div class="inline-section">Why This Matters</div>
-    <div class="question" style="font-size:clamp(22px,3vw,32px);">
-      Knowledge만으로는<br><span class="hl">실행할 수 없다</span>
-    </div>
-    <div class="two-col" style="max-width:600px; margin-top:16px;">
-      <div class="col">
-        <div class="col-title" style="color:var(--accent-cyan);">🎯 Learning Goal</div>
-        <div class="col-item" style="font-size:17px;">Skills가 Knowledge를 행동으로 전환하는 원리 이해</div>
-        <div class="col-item" style="font-size:17px;">Hermes Skills System의 구조와 생애 주기 파악</div>
-        <div class="col-item" style="font-size:17px;">Workflow가 일관성과 품질을 보장하는 메커니즘 학습</div>
+    <div class="goal-section">
+      <div class="goal-tag">🎯 오늘 배울 내용</div>
+      <div class="goal-why">Knowledge만으로는 실행할 수 없다</div>
+      <div class="goal-list">
+        <div class="goal-item"><span class="goal-num">1</span> Knowledge → Skill 전환 이해</div>
+        <div class="goal-item"><span class="goal-num">2</span> Workflow 구조</div>
+        <div class="goal-item"><span class="goal-num">3</span> Engine 통합</div>
       </div>
-      <div class="col">
-        <div class="col-title" style="color:var(--accent-orange);">📋 Today's Journey</div>
-        <div class="col-item" style="font-size:17px;border-left-color:var(--accent-cyan);">🧠 Concepts &mdash; Knowledge → Skill</div>
-        <div class="col-item" style="font-size:17px;border-left-color:var(--accent-green);">⚡ Workflow &mdash; 상태 기계</div>
-        <div class="col-item" style="font-size:17px;border-left-color:var(--gold);">🔧 Engine &mdash; 통합 구조</div>
-      </div>
+      <div class="goal-flow">Concepts <span class="goal-arrow">→</span> Workflow <span class="goal-arrow">→</span> Engine</div>
     </div>
   </div>
 
   
   <!-- SECTION DIVIDER: Concepts -->
-  <div class="slide diagram-slide" id="slide-2" data-notes="Concepts section: understanding the conceptual difference between Knowledge and Skills, defining Skills, and learning their structure.">
+  <div class="slide section-divider" id="slide-2" data-notes="Concepts section: understanding the conceptual difference between Knowledge and Skills, defining Skills, and learning their structure.">
     <div class="lecture-badge">Lecture 03</div>
-    <div class="section-divider">
-      <div class="section-label">Section 1</div>
-      <div class="section-title">🧠 Concepts</div>
-      <div class="section-subtitle">Knowledge → Skills: 개념적 기초</div>
+    <div class="section-divider-content">
+      <div class="divider-label">Section 1</div>
+      <div class="divider-title">🧠 Concepts</div>
+      <div class="divider-desc">Knowledge → Skills: 개념적 기초</div>
     </div>
   </div>
 
@@ -763,12 +557,12 @@
 
   
   <!-- SECTION DIVIDER: Workflow -->
-  <div class="slide diagram-slide" id="slide-13" data-notes="Workflow section: understanding the state machine that defines order and conditions for Skill execution.">
+  <div class="slide section-divider" id="slide-13" data-notes="Workflow section: understanding the state machine that defines order and conditions for Skill execution.">
     <div class="lecture-badge">Lecture 03</div>
-    <div class="section-divider">
-      <div class="section-label">Section 2</div>
-      <div class="section-title">⚡ Workflow</div>
-      <div class="section-subtitle">Skills 실행의 순서와 조건</div>
+    <div class="section-divider-content">
+      <div class="divider-label">Section 2</div>
+      <div class="divider-title">⚡ Workflow</div>
+      <div class="divider-desc">Skills 실행의 순서와 조건</div>
     </div>
   </div>
 
@@ -841,15 +635,15 @@
     <div style="display:flex;flex-direction:column;gap:16px;max-width:520px;margin-top:8px;">
       <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 24px;font-size:20px;">
         <span style="font-size:24px;">🔄</span>
-        <span>일관성 부재 &mdash; 매번 다른 방식으로 처리</span>
+        <span>일관성 부재 — 매번 다른 방식으로 처리</span>
       </div>
       <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 24px;font-size:20px;">
         <span style="font-size:24px;">🔍</span>
-        <span>상태 추적 불가 &mdash; &ldquo;지금 어디까지 진행됐지?&rdquo;</span>
+        <span>상태 추적 불가 — &ldquo;지금 어디까지 진행됐지?&rdquo;</span>
       </div>
       <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 24px;font-size:20px;">
         <span style="font-size:24px;">❌</span>
-        <span>완료 조건 불명확 &mdash; &ldquo;과연 끝난 건가?&rdquo;</span>
+        <span>완료 조건 불명확 — &ldquo;과연 끝난 건가?&rdquo;</span>
       </div>
     </div>
     <div class="key-message" style="max-width:520px;">Workflow는 일관성의 보장</div>
@@ -862,15 +656,15 @@
     <div style="display:flex;flex-direction:column;gap:16px;max-width:520px;margin-top:8px;">
       <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent-green);border-radius:var(--radius);padding:16px 24px;font-size:20px;">
         <span style="font-size:24px;">✅</span>
-        <span>일관된 프로세스 &mdash; 모든 작업이 같은 방식으로</span>
+        <span>일관된 프로세스 — 모든 작업이 같은 방식으로</span>
       </div>
       <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent-green);border-radius:var(--radius);padding:16px 24px;font-size:20px;">
         <span style="font-size:24px;">📊</span>
-        <span>상태 가시성 &mdash; 각 단계의 진행 상황 확인 가능</span>
+        <span>상태 가시성 — 각 단계의 진행 상황 확인 가능</span>
       </div>
       <div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-left:3px solid var(--accent-green);border-radius:var(--radius);padding:16px 24px;font-size:20px;">
         <span style="font-size:24px;">🎯</span>
-        <span>명확한 완료 조건 &mdash; &ldquo;끝&rdquo;이 언제인지 앎</span>
+        <span>명확한 완료 조건 — &ldquo;끝&rdquo;이 언제인지 앎</span>
       </div>
     </div>
     <div class="insight-box" style="max-width:480px;">
@@ -938,12 +732,12 @@
 
   
   <!-- SECTION DIVIDER: Engine -->
-  <div class="slide diagram-slide" id="slide-21" data-notes="Engine section: Memory, Knowledge, Skills, and Workflow integrate into the Agent OS Stack.">
+  <div class="slide section-divider" id="slide-21" data-notes="Engine section: Memory, Knowledge, Skills, and Workflow integrate into the Agent OS Stack.">
     <div class="lecture-badge">Lecture 03</div>
-    <div class="section-divider">
-      <div class="section-label">Section 3</div>
-      <div class="section-title">🔧 Engine</div>
-      <div class="section-subtitle">통합 구조: Memory + Knowledge + Skills + Workflow</div>
+    <div class="section-divider-content">
+      <div class="divider-label">Section 3</div>
+      <div class="divider-title">🔧 Engine</div>
+      <div class="divider-desc">통합 구조: Memory + Knowledge + Skills + Workflow</div>
     </div>
   </div>
 
