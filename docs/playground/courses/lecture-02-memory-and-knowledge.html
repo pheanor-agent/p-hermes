@@ -292,21 +292,20 @@
   <div class="slide diagram-slide" id="slide-9" data-notes="이 슬라이드가 핵심입니다. Memory는 What happened를 기록하고, Knowledge는 Why it matters를 이해합니다. 전자는 사실 저장, 후자는 패턴 인식입니다. 핵심: 무엇(What)과 왜(Why)의 차이가 전부입니다.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Memory vs Knowledge</div>
-    <table class="compare-table">
-      <thead>
-        <tr>
-          <th style="color:var(--accent-cyan);">Memory</th>
-          <th style="color:var(--accent-purple);">Knowledge</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>Fact (사실)</td><td>Pattern (패턴)</td></tr>
-        <tr><td>Static (정적)</td><td>Dynamic (동적)</td></tr>
-        <tr><td>Specific (특정)</td><td>General (일반)</td></tr>
-        <tr><td>Individual (개별)</td><td>Organized (조직화)</td></tr>
-        <tr><td>What happened</td><td>Why it matters</td></tr>
-      </tbody>
-    </table>
+    <div class="compare-table">
+      <div class="header" style="color:var(--accent-cyan);">Memory</div>
+      <div class="header" style="color:var(--accent-purple);">Knowledge</div>
+      <div>Fact (사실)</div>
+      <div>Pattern (패턴)</div>
+      <div>Static (정적)</div>
+      <div>Dynamic (동적)</div>
+      <div>Specific (특정)</div>
+      <div>General (일반)</div>
+      <div>Individual (개별)</div>
+      <div>Organized (조직화)</div>
+      <div>What happened</div>
+      <div>Why it matters</div>
+    </div>
     <div class="insight-box">
       Memory는 <span class="highlight">무엇(What)</span>을 기억한다<br>
       Knowledge는 <span class="highlight">왜(Why)</span> 중요한지 이해한다
@@ -643,14 +642,12 @@
       notesContent.textContent = currentSlide.dataset.notes || '';
     }
 
-    // Section progress: hide on hero-slide, problem-slide, summary-slide, section-divider
-    const slideClass = currentSlide.className || '';
-    if (slideClass.includes('diagram-slide') || slideClass.includes('example-slide')) {
-      sectionProgress.style.opacity = '1';
-      sectionProgress.style.pointerEvents = 'auto';
+    // Section progress: hide on hero, problem, summary slides only
+    const hideTypes = ['hero-slide', 'problem-slide', 'summary-slide'];
+    if (currentSlide && hideTypes.some(t => currentSlide.classList.contains(t))) {
+      sectionProgress.style.display = 'none';
     } else {
-      sectionProgress.style.opacity = '0';
-      sectionProgress.style.pointerEvents = 'none';
+      sectionProgress.style.display = 'flex';
     }
 
     // Section progress: update active state based on slide index

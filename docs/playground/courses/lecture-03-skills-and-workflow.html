@@ -137,14 +137,14 @@
     font-size: 20px;
   }
 
-  /* ── Compare Table (table-based variant) ── */
-  .compare-table th, .compare-table td {
+  /* ── Compare Table (div-based grid variant) ── */
+  .compare-table div {
     padding: 12px 24px;
     border: 1px solid var(--border);
     font-size: 16px;
     text-align: center;
   }
-  .compare-table th {
+  .compare-table .header {
     background: var(--card);
     color: var(--gold);
     font-weight: 700;
@@ -152,7 +152,7 @@
     letter-spacing: 1px;
     text-transform: uppercase;
   }
-  .compare-table td:first-child {
+  .compare-table div:nth-child(2n) {
     text-align: center;
     color: var(--text-dim);
     font-weight: 500;
@@ -298,21 +298,20 @@
   <div class="slide diagram-slide" id="slide-9" data-notes="Knowledge와 Skills는 같은 데이터를 다루지만 목적이 완전히 다릅니다. 지식은 저장되고, 스킬은 실행됩니다. Knowledge는 '무엇을 알아야 하는가'이고, Skill은 '무엇을 할 수 있는가'입니다. 이 차이가 Agent의 생산성을 결정합니다. 핵심: 저장과 실행의 차이.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Knowledge vs Skills</div>
-    <table class="compare-table">
-      <thead>
-        <tr>
-          <th style="color:var(--accent-purple);">🧠 Knowledge</th>
-          <th style="color:var(--accent-cyan);">⚡ Skills</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>저장 (Store)</td><td>실행 (Execute)</td></tr>
-        <tr><td>동적 (Dynamic)</td><td>확장 (Extensible)</td></tr>
-        <tr><td>참조 (Reference)</td><td>적용 (Apply)</td></tr>
-        <tr><td>"알고 있다"</td><td>"할 수 있다"</td></tr>
-        <tr><td>무엇을 알아야 하는가</td><td>무엇을 할 수 있는가</td></tr>
-      </tbody>
-    </table>
+    <div class="compare-table">
+      <div class="header" style="color:var(--accent-purple);">🧠 Knowledge</div>
+      <div class="header" style="color:var(--accent-cyan);">⚡ Skills</div>
+      <div>저장 (Store)</div>
+      <div>실행 (Execute)</div>
+      <div>동적 (Dynamic)</div>
+      <div>확장 (Extensible)</div>
+      <div>참조 (Reference)</div>
+      <div>적용 (Apply)</div>
+      <div>"알고 있다"</div>
+      <div>"할 수 있다"</div>
+      <div>무엇을 알아야 하는가</div>
+      <div>무엇을 할 수 있는가</div>
+    </div>
     <div class="insight-box">저장과 실행의 차이가 생산성을 결정한다</div>
     <div style="margin-top:16px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:16px;line-height:1.7;">
       <div style="font-weight:700;color:var(--gold);margin-bottom:6px;">예시:</div>
@@ -743,13 +742,13 @@
       notesContent.textContent = currentSlide.dataset.notes || '';
     }
 
-    // Section progress: hide on intro/outro slides, show on content slides
-    const slideClasses = currentSlide ? currentSlide.className : '';
-    const isHide = slideClasses.includes('hero-slide') ||
-                   slideClasses.includes('problem-slide') ||
-                   slideClasses.includes('summary-slide') ||
-                   slideClasses.includes('section-divider');
-    sectionProgress.style.display = isHide ? 'none' : 'flex';
+    // Section progress: hide on hero, problem, summary slides only
+    const hideTypes = ['hero-slide', 'problem-slide', 'summary-slide'];
+    if (currentSlide && hideTypes.some(t => currentSlide.classList.contains(t))) {
+      sectionProgress.style.display = 'none';
+    } else {
+      sectionProgress.style.display = 'flex';
+    }
 
     // Section progress: update active/done/future states
     const secs = sectionProgress.querySelectorAll('.sec');

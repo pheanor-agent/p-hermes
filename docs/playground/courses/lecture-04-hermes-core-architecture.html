@@ -469,21 +469,20 @@
     <!-- Merged from Architecture Impact -->
     <div style="margin-top:24px;width:100%;max-width:600px;">
       <div style="font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);text-align:center;margin-bottom:8px;">Architecture Impact</div>
-      <table class="compare-table" style="max-width:560px;">
-      <thead>
-        <tr>
-          <th style="color:var(--accent-green);">✅ With Architecture</th>
-          <th style="color:var(--accent-red);">❌ Without Architecture</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>레이어가 명확히 구분됨</td><td>모든 것이 뒤섞임</td></tr>
-        <tr><td>데이터 흐름 예측 가능</td><td>에러 추적 불가능</td></tr>
-        <tr><td>확장이 쉬움</td><td>확장 불가능</td></tr>
-        <tr><td>팀 협업 용이</td><td>개인 의존성 증가</td></tr>
-        <tr><td>테스트 가능</td><td>테스트 불가능</td></tr>
-      </tbody>
-    </table>
+      <div class="compare-table" style="max-width:560px;">
+      <div class="header" style="color:var(--accent-green);">✅ With Architecture</div>
+      <div class="header" style="color:var(--accent-red);">❌ Without Architecture</div>
+      <div>레이어가 명확히 구분됨</div>
+      <div>모든 것이 뒤섞임</div>
+      <div>데이터 흐름 예측 가능</div>
+      <div>에러 추적 불가능</div>
+      <div>확장이 쉬움</div>
+      <div>확장 불가능</div>
+      <div>팀 협업 용이</div>
+      <div>개인 의존성 증가</div>
+      <div>테스트 가능</div>
+      <div>테스트 불가능</div>
+    </div>
       <div class="key-message">아키텍처는 미래를 위한 투자이다</div>
     </div>
   </div>
@@ -693,22 +692,16 @@
     progressBar.style.width = `${progress}%`;
 
 
-    // Section progress - hide on hero, problem, summary, section-divider slides
+    // Section progress: hide on hero, problem, summary slides only
     const sectionProgress = document.getElementById('sectionProgress');
     const secs = sectionProgress.querySelectorAll('.sec');
-    const currentSlideEl = slides[current];
-    if (currentSlideEl) {
-      const slideClass = currentSlideEl.className;
-      const isHidden = slideClass.includes('hero-slide') ||
-                       slideClass.includes('problem-slide') ||
-                       slideClass.includes('summary-slide') ||
-                       slideClass.includes('section-divider');
-      sectionProgress.style.display = isHidden ? 'none' : 'flex';
-
-      if (!isHidden) {
-        if (current < 15) { secs[0].className='sec active'; secs[1].className='sec future'; }
-        else { secs[0].className='sec done'; secs[1].className='sec active'; }
-      }
+    const hideTypes = ['hero-slide', 'problem-slide', 'summary-slide'];
+    if (currentSlide && hideTypes.some(t => currentSlide.classList.contains(t))) {
+      sectionProgress.style.display = 'none';
+    } else {
+      sectionProgress.style.display = 'flex';
+      if (current < 15) { secs[0].className='sec active'; secs[1].className='sec future'; }
+      else { secs[0].className='sec done'; secs[1].className='sec active'; }
     }
 
     // Notes

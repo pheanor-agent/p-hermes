@@ -415,17 +415,23 @@
     <div class="lecture-badge">Lecture 01</div>
     <div class="inline-section">비교</div>
     <div class="title" style="font-size:clamp(28px,4vw,44px)">Human <span class="hl">vs</span> Agent</div>
-    <table class="compare-table">
-      <thead>
-        <tr><th></th><th>Human</th><th>LLM</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>기억</td><td class="check">✓</td><td class="cross">Context</td></tr>
-        <tr><td>경험</td><td class="check">✓</td><td class="cross">없음</td></tr>
-        <tr><td>절차</td><td class="check">✓</td><td class="cross">없음</td></tr>
-        <tr><td>성장</td><td class="check">✓</td><td class="cross">없음</td></tr>
-      </tbody>
-    </table>
+    <div class="compare-table" style="grid-template-columns: auto 1fr 1fr">
+      <div class="header"></div>
+      <div class="header">Human</div>
+      <div class="header">LLM</div>
+      <div>기억</div>
+      <div class="check">✓</div>
+      <div class="cross">Context</div>
+      <div>경험</div>
+      <div class="check">✓</div>
+      <div class="cross">없음</div>
+      <div>절차</div>
+      <div class="check">✓</div>
+      <div class="cross">없음</div>
+      <div>성장</div>
+      <div class="check">✓</div>
+      <div class="cross">없음</div>
+    </div>
   </div>
 
   <!-- Slide 11: Failure Taxonomy 분류 -->
@@ -692,14 +698,12 @@
     else if (current < 12) { secs[0].className='sec done'; secs[1].className='sec active'; secs[2].className='sec future'; }
     else { secs[0].className='sec done'; secs[1].className='sec done'; secs[2].className='sec active'; }
 
-    // Hide section-progress on Cover, Goal, Summary, and Section Divider slides
-    // Show only on content slides (diagram-slide, example-slide)
-    const slideTypes = currentSlide ? currentSlide.classList : [];
-    const hideTypes = ['hero-slide', 'problem-slide', 'summary-slide', 'section-divider'];
-    if (slideTypes.some(t => hideTypes.includes(t))) {
-      sectionProgress.classList.add('hidden');
+    // Section progress: hide on hero, problem, summary slides only
+    const hideTypes = ['hero-slide', 'problem-slide', 'summary-slide'];
+    if (currentSlide && hideTypes.some(t => currentSlide.classList.contains(t))) {
+      sectionProgress.style.display = 'none';
     } else {
-      sectionProgress.classList.remove('hidden');
+      sectionProgress.style.display = 'flex';
     }
   }
 
