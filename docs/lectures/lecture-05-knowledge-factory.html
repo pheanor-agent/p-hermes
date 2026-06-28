@@ -1,3 +1,4 @@
+<!-- TEMPLATE: lecture-05 Knowledge Factory (v1.9) — 내용 lecture-01 복사, 추후 교체 필요 -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -31,7 +32,19 @@
 
   /* ── Hero ── */
   .hero { text-align: center; }
-    /* v1.9: hero ring CSS moved to shared slides-components.css */
+  .hero .ring {
+    width: 200px; height: 200px; border-radius: 50%;
+    border: 3px solid var(--gold); margin: 0 auto 24px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .hero .ring::before {
+    content: ''; position: absolute; inset: -8px; border-radius: 50%;
+    border: 1px solid var(--gold-dim); opacity: .4;
+  }
+  .hero .ring-text {
+    font-size: 32px; font-weight: 900; color: var(--gold);
+  }
 
   /* ── Timeline ── */
   .timeline {
@@ -134,8 +147,8 @@
 
   /* ── Template Backgrounds ── */
 
-  
-  
+  .hero-slide .title { color: var(--text); }
+  .hero-slide .subtitle { color: var(--text-dim); }
 
   .problem-slide .title { color: var(--text); }
 
@@ -270,7 +283,7 @@
     <div class="lecture-badge">Lecture 01</div>
     <div class="section-divider-content">
       <div class="divider-label">Section 2</div>
-      <div class="divider-title">4가지 패턴</div>
+      <div class="divider-title">4가지 실패 패턴</div>
       <div class="divider-desc">Memory · Knowledge · Workflow · Goal — LLM Agent가 실패하는 4가지 구조적 패턴</div>
     </div>
   </div>
@@ -702,14 +715,10 @@
   // Keyboard navigation
   document.addEventListener('keydown', (e) => {
     const vw = window.innerWidth;
-    const isArrow = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(e.key);
-    if (isArrow) e.preventDefault();
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-      const target = deck.scrollLeft + vw;
-      deck.scrollTo({ left: target, behavior: 'smooth' });
+      deck.scrollBy({ left: vw, behavior: 'smooth' });
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-      const target = deck.scrollLeft - vw;
-      deck.scrollTo({ left: target, behavior: 'smooth' });
+      deck.scrollBy({ left: -vw, behavior: 'smooth' });
     }
   });
 

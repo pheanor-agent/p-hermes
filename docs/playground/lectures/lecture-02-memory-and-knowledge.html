@@ -517,18 +517,18 @@
     </div>
   </div>
 
-  <!-- SLIDE 23: Hermes Structure -->
-  <div class="slide diagram-slide" id="slide-22" data-notes="Hermes는 어떻게 구현하는가? Conversation → Memory Extract → Knowledge Organization → Intelligent Response. 이 4단계 구조가 Agent OS의 핵심입니다. 검색도 2계층: Memory Layer에서는 사실 검색, Knowledge Layer에서는 패턴 검색.">
+  <!-- SLIDE 23: Hermes Structure (4-Layer Stack) -->
+  <div class="slide diagram-slide" id="slide-22" data-notes="Hermes는 Memory→Knowledge→Skills→Workflow 4개 Layer를 Stack으로 구성합니다. 중요한 점: 이 구조는 설계 시의 계층일 뿐, 런타임에는 모든 Layer가 Context에 동시 주입됩니다. 순차 파이프라인이 아닙니다. 검색도 2계층: Memory Layer에서는 사실 검색, Knowledge Layer에서는 패턴 검색.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Hermes Structure</div>
-    <div class="flow compact">
-      <div class="node cyan" style="font-size:16px;">① Conversation</div>
-      <div class="arrow">↓</div>
-      <div class="node green" style="font-size:16px;">② Memory Extract</div>
-      <div class="arrow">↓</div>
-      <div class="node purple" style="font-size:16px;">③ Knowledge</div>
-      <div class="arrow">↓</div>
-      <div class="node gold" style="font-size:16px;">④ Response</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin:20px 0;">
+      <div style="width:280px;padding:14px 20px;border-radius:10px;background:var(--accent-gold);color:var(--text-inverse);text-align:center;font-weight:700;font-size:17px;border:2px solid var(--accent-gold);">🔗 Workflow</div>
+      <div style="width:280px;padding:14px 20px;border-radius:10px;background:var(--accent-green);color:var(--text-inverse);text-align:center;font-weight:700;font-size:17px;border:2px solid var(--accent-green);">⚡ Skills</div>
+      <div style="width:280px;padding:14px 20px;border-radius:10px;background:var(--accent-purple);color:var(--text-inverse);text-align:center;font-weight:700;font-size:17px;border:2px solid var(--accent-purple);">📚 Knowledge</div>
+      <div style="width:280px;padding:14px 20px;border-radius:10px;background:var(--accent-cyan);color:var(--text-inverse);text-align:center;font-weight:700;font-size:17px;border:2px solid var(--accent-cyan);">🧠 Memory</div>
+    </div>
+    <div class="insight-box" style="max-width:420px;">
+      설계는 계층 구조 — 런타임은 동시 Context 주입
     </div>
   </div>
 

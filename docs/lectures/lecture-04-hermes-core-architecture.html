@@ -48,9 +48,9 @@
 <!-- SLIDE 0: Title / Cover -->
   <div class="slide hero-slide" id="slide-0" data-notes="L01에서 문제를, L02에서 기억과 지식을, L03에서 스킬과 워크플로우를 배웠습니다. L04에서는 이 모든 요소가 하나의 Architecture로 통합되는 과정을 다룹니다. 핵심: 부분이 아닌 전체를 봐야 합니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
-    <div class="cover-hero">
+    
       <div class="ring">
-        <div class="ring-text">04</div>
+        <div class="ring-text">04
       </div>
     </div>
     <div class="cover-title">Hermes <span class="hl">Core</span> Architecture</div>
@@ -69,8 +69,7 @@
       <div class="goal-list">
         <div class="goal-item">🏗️ 전체 아키텍처 이해 — 4개 레이어의 계층 구조</div>
         <div class="goal-item">⚡ Runtime 동작 원리 — 실행 환경과 컨텍스트</div>
-        <div class="goal-item">📋 SSOT 구조 — 단일 진실 공급원</div>
-      </div>
+        </div>
       <div class="goal-flow">Architecture → Runtime → SSOT</div>
     </div>
     <div class="question" style="margin-top:20px;">지금까지 배운 것들이 <span class="hl">하나의 시스템</span>이 된다면?</div>
@@ -78,7 +77,7 @@
   </div>
 
   <!-- SLIDE 2: Recap -->
-  <div class="slide diagram-slide" id="slide-2" data-notes="L01은 Agent가 실패하는 4가지 이유를, L02는 Memory와 Knowledge의 차이를, L03은 Skills와 Workflow의 필요성을 다뤘습니다. 핵심: 각 강의가 하나의 레이어입니다.">
+  <div class="slide example-slide" id="slide-2" data-notes="L01은 Agent가 실패하는 4가지 이유를, L02는 Memory와 Knowledge의 차이를, L03은 Skills와 Workflow의 필요성을 다뤘습니다. 핵심: 각 강의가 하나의 레이어입니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="inline-section">지난 강의 복습</div>
     <div class="grid-cards" style="max-width:540px;grid-template-columns:repeat(3,1fr);gap:10px;">
@@ -102,7 +101,7 @@
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="section-divider-content">
       <div class="section-label">Part 1</div>
-      <div class="section-title">🏗️ <span class="hl">Architecture</span></div>
+      <div class="section-title"><span class="hl">Architecture</span></div>
       <div class="section-subtitle">4개 레이어의 전체 구조</div>
     </div>
   </div>
@@ -373,7 +372,7 @@
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="section-divider-content">
       <div class="section-label">Part 2</div>
-      <div class="section-title">⚡ <span class="hl">Runtime</span></div>
+      <div class="section-title"><span class="hl">Runtime</span></div>
       <div class="section-subtitle">실행 환경과 컨텍스트 관리</div>
     </div>
   </div>
@@ -573,9 +572,9 @@
     </div>
     <div class="layer-stack" style="margin-top:12px;">
       <div class="layer" style="background:rgba(240,180,41,.1);border:1px solid var(--gold-dim);color:var(--gold);min-width:280px;">📋 Spec 문서</div>
-      <div class="layer-arrow">↓ 검증</div>
+      <div class="layer-arrow">↑</div>
       <div class="layer" style="background:rgba(91,192,235,.1);border:1px solid var(--accent-cyan);color:var(--accent-cyan);min-width:280px;">⚙️ 구현 (Config / Code)</div>
-      <div class="layer-arrow">↓ 확인</div>
+      <div class="layer-arrow">↑</div>
       <div class="layer" style="background:rgba(0,245,212,.1);border:1px solid var(--accent-green);color:var(--accent-green);min-width:280px;">✅ File System / Runtime</div>
     </div>
     <div class="insight-box" style="max-width:480px;margin-top:12px;">
@@ -610,7 +609,7 @@
   </div>
 
   <!-- SLIDE 23: Summary -->
-  <div class="slide summary-slide" id="slide-23" data-notes="Part 1에서는 Hermes Core의 4개 레이어를 배웠습니다. Part 2에서는 이 Core 위에 구축되는 P-Hermes의 Factory Layer를 다룹니다. Knowledge Factory에서 시작해 Spec-Driven Development까지 이어집니다. 핵심: Core가 준비되었습니다. 이제 공장을 지을 시간입니다.">
+  <div class="slide summary-slide" id="slide-23" data-notes="Hermes Core의 4개 레이어를 배웠습니다: Memory(정적 저장) → Knowledge(동적 관계) → Skills(실행 능력) → Workflow(상태 기반). 이 구조가 Agent OS의 기반이 됩니다. 핵심: 4개 레이어가 계층적으로 상호 의존합니다.">
     <div class="lecture-badge">Lecture 04 · Hermes Core Architecture</div>
     <div class="inline-section">Summary</div>
     <div class="feature-list" style="margin-top:8px;gap:8px;">
@@ -643,7 +642,7 @@
 <div class="section-progress" id="sectionProgress">
   <span class="sec active" data-section="1">Architecture</span>
   <span class="sec-arrow">→</span>
-  <span class="sec future" data-section="2">Runtime &amp; SSOT</span>
+  <span class="sec future" data-section="2">Runtime</span>
 </div>
 
 <!-- Nav Dots -->

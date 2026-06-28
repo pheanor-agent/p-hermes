@@ -176,12 +176,12 @@
   <!-- SLIDE 0: Cover -->
   <div class="slide hero-slide" id="slide-0" data-notes="L02에서 Knowledge를 배웠습니다. 이제 질문: 안다는 것만으로 충분할까? L03에서는 Knowledge를 실제 행동으로 전환하는 Skills와 Workflow를 다룹니다. 핵심: 아는 것과 실행하는 것은 다릅니다.">
     <div class="lecture-badge">Lecture 03</div>
-    <div class="cover-hero">
+    
       <div class="hero">
         <div class="ring">
-          <div class="ring-text">⚡</div>
-        </div>
+          <div class="ring-text">03
       </div>
+    </div>
     </div>
     <div class="cover-title">Skills <span class="hl">&amp;</span> Workflow</div>
     <div class="cover-subtitle">Knowing vs Doing</div>
@@ -211,7 +211,7 @@
     <div class="lecture-badge">Lecture 03</div>
     <div class="section-divider-content">
       <div class="divider-label">Section 1</div>
-      <div class="divider-title">🧠 Concepts</div>
+      <div class="divider-title">Knowledge → Skills</div>
       <div class="divider-desc">Knowledge → Skills: 개념적 기초</div>
     </div>
   </div>
@@ -254,7 +254,7 @@
       </div>
     </div>
     <div class="insight-box" style="max-width:500px;">
-      무엇 + 어떻게 = <span class="highlight">완전한 지능</span>
+      무엇 → 어떻게 = <span class="highlight">완전한 지능</span>
     </div>
   </div>
 
@@ -407,7 +407,7 @@
       </div>
     </div>
     <div class="flow compact" style="margin-top:16px;">
-      <div class="arrow" style="font-size:18px;">Workflow가 둘을 연결한다</div>
+      <div class="arrow" style="font-size:18px;">→</div>
     </div>
     <div class="insight-box" style="max-width:480px;">
       Memory → Skills → <span class="highlight">Workflow</span>
@@ -420,7 +420,7 @@
     <div class="lecture-badge">Lecture 03</div>
     <div class="section-divider-content">
       <div class="divider-label">Section 2</div>
-      <div class="divider-title">⚡ Workflow</div>
+      <div class="divider-title">Workflow</div>
       <div class="divider-desc">Skills 실행의 순서와 조건</div>
     </div>
   </div>
@@ -535,105 +535,32 @@
   <div class="slide diagram-slide" id="slide-19" data-notes="Hermes의 Workflow Engine은 .workflow-state 파일로 각 JOB의 상태를 관리합니다. 9단계 상태 기계 + 원자적 파일 갱신(flock) + 오류 시 롤백이 핵심입니다. 핵심: 파일 하나로 상태를 추적합니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Hermes Workflow Engine</div>
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;max-width:480px;width:100%;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;color:var(--text-dim);text-align:left;margin-top:8px;">
-      <div style="color:var(--accent-green);margin-bottom:4px;"># .workflow-state</div>
-      {<br>
-      &nbsp;&nbsp;"job_id": "JOB-0042",<br>
-      &nbsp;&nbsp;"status": "in_progress",<br>
-      &nbsp;&nbsp;"current_step": 5,<br>
-      &nbsp;&nbsp;"steps": [<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;{"step": "Request", "done": true},<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;{"step": "Investigate", "done": true},<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;{"step": "Design", "done": true},<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;{"step": "Review", "done": true},<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;{"step": "Approve", "done": true},<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;{"step": "Execute", "done": false},<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;{"step": "Test", "done": false},<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;{"step": "Review", "done": false},<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;{"step": "Done", "done": false}<br>
-      &nbsp;&nbsp;],<br>
-      &nbsp;&nbsp;"created": "2026-06-23T09:00:00Z",<br>
-      &nbsp;&nbsp;"updated": "2026-06-23T09:15:30Z"<br>
-      }
+    <div class="h-flow" style="gap:0;max-width:500px;width:100%;">
+      <div class="node" style="flex:1;padding:8px 10px;text-align:center;background:var(--card);border:1px solid var(--border);border-radius:8px 0 0 8px;">
+        <div style="font-size:11px;color:var(--text-dim);">Request</div>
+        <div style="font-size:12px;color:var(--success);">✅</div>
+      </div>
+      <div class="node" style="flex:1;padding:8px 10px;text-align:center;background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+        <div style="font-size:11px;color:var(--text-dim);">Execute</div>
+        <div style="font-size:12px;color:var(--gold);">⏳</div>
+      </div>
+      <div class="node" style="flex:1;padding:8px 10px;text-align:center;background:var(--card);border:1px solid var(--border);border-radius:0 8px 8px 0;">
+        <div style="font-size:11px;color:var(--text-dim);">Done</div>
+        <div style="font-size:12px;color:var(--text-dim);">⬜</div>
+      </div>
     </div>
-    <div style="display:flex;gap:14px;margin-top:10px;font-size:20px;color:var(--text-dim);text-align:center;flex-wrap:wrap;justify-content:center;">
-      <span><strong style="color:var(--accent-cyan);">job_id</strong>: 작업 식별자</span>
-      <span style="color:var(--border);">·</span>
-      <span><strong style="color:var(--accent-green);">status</strong>: 전체 상태</span>
-      <span style="color:var(--border);">·</span>
-      <span><strong style="color:var(--gold);">steps</strong>: 단계별 진행</span>
+    <div class="h-flow" style="gap:12px;margin-top:12px;max-width:500px;width:100%;">
+      <div class="card-mini">📁 <span class="hl">9단계</span> 상태 기계</div>
+      <div class="card-mini">🔒 <span class="hl">flock</span> 원자적 갱신</div>
+      <div class="card-mini">↩️ 오류 시 <span class="hl">롤백</span></div>
     </div>
-    <div class="insight-box" style="max-width:480px;">
+    <div class="insight-box" style="max-width:500px;margin-top:12px;">
       <span class="highlight">파일 하나</span>로 상태를 추적한다
     </div>
   </div>
 
-  <!-- SLIDE 18: Workflow vs Script -->
-  <div class="slide diagram-slide" id="slide-20" data-notes="Workflow와 Script의 차이는 조건부 분기 가능 여부입니다. Script는 정해진 순서대로만 실행되지만, Workflow는 각 단계의 결과에 따라 다음 단계가 결정됩니다. 핵심: Workflow는 살아있는 프로세스입니다.">
-    <div class="lecture-badge">Lecture 03</div>
-    <div class="inline-section">Workflow vs Script</div>
-    <div class="two-col" style="max-width:600px;">
-      <div class="col">
-        <div class="col-title" style="color:var(--accent-red);">📜 Script</div>
-        <div class="col-item warn" style="font-size:16px;">정해진 순서만 실행</div>
-        <div class="col-item warn" style="font-size:16px;">조건 분기 불가</div>
-        <div class="col-item warn" style="font-size:16px;">상태 저장 없음</div>
-      </div>
-      <div class="col">
-        <div class="col-title" style="color:var(--accent-green);">🔄 Workflow</div>
-        <div class="col-item ok" style="font-size:16px;">조건부 분기 가능</div>
-        <div class="col-item ok" style="font-size:16px;">상태 기반 전이</div>
-        <div class="col-item ok" style="font-size:16px;">오류 시 롤백</div>
-      </div>
-    </div>
-    <div class="key-message" style="max-width:480px;">Workflow는 살아있는 프로세스</div>
-  </div>
-
-  
-  <!-- SECTION DIVIDER: Engine -->
-  <div class="slide section-divider" id="slide-21" data-notes="Engine section: Memory, Knowledge, Skills, and Workflow integrate into the Agent OS Stack.">
-    <div class="lecture-badge">Lecture 03</div>
-    <div class="section-divider-content">
-      <div class="divider-label">Section 3</div>
-      <div class="divider-title">🔧 Engine</div>
-      <div class="divider-desc">통합 구조: Memory + Knowledge + Skills + Workflow</div>
-    </div>
-  </div>
-
-  <!-- SLIDE 19: Memory + Knowledge + Skills + Workflow -->
-  <div class="slide overflow-safe diagram-slide" id="slide-22" data-notes="Memory는 사실을, Knowledge는 관계를, Skills는 행동을, Workflow는 순서를 담당합니다. 이 네 가지가 통합될 때 Agent는 단순한 챗봇을 넘어선 운영 체제가 됩니다. 핵심: 하나라도 없으면 Agent는 완전하지 않습니다.">
-    <div class="lecture-badge">Lecture 03</div>
-    <div class="inline-section">Agent OS Stack</div>
-    <div class="h-flow" style="max-width:600px;">
-      <div class="node" style="font-size:14px;padding:8px 16px;">🧠<br>Memory</div>
-      <span class="arrow" style="font-size:18px;">+</span>
-      <div class="node" style="font-size:14px;padding:8px 16px;">📚<br>Knowledge</div>
-      <span class="arrow" style="font-size:18px;">+</span>
-      <div class="node" style="font-size:14px;padding:8px 16px;">⚡<br>Skills</div>
-      <span class="arrow" style="font-size:18px;">+</span>
-      <div class="node" style="font-size:14px;padding:8px 16px;">🔄<br>Workflow</div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%;max-width:640px;margin-top:16px;">
-      <div style="text-align:center;padding:8px;background:var(--card);border-radius:8px;border:1px solid var(--border);">
-        <div style="font-size:12px;color:var(--accent-cyan);font-weight:700;">사실</div>
-      </div>
-      <div style="text-align:center;padding:8px;background:var(--card);border-radius:8px;border:1px solid var(--border);">
-        <div style="font-size:12px;color:var(--accent-purple);font-weight:700;">관계</div>
-      </div>
-      <div style="text-align:center;padding:8px;background:var(--card);border-radius:8px;border:1px solid var(--border);">
-        <div style="font-size:12px;color:var(--accent-green);font-weight:700;">행동</div>
-      </div>
-      <div style="text-align:center;padding:8px;background:var(--card);border-radius:8px;border:1px solid var(--border);">
-        <div style="font-size:12px;color:var(--gold);font-weight:700;">순서</div>
-      </div>
-    </div>
-    <div class="insight-box" style="max-width:520px;">
-      하나라도 없으면 <span class="highlight">Agent는 완전하지 않다</span>
-    </div>
-  </div>
-
   <!-- SLIDE 20: Full Pipeline -->
-  <div class="slide diagram-slide" id="slide-23" data-notes="실제 요청이 처리되는 전체 흐름입니다. 요청이 들어오면 Memory에서 컨텍스트를 찾고, Knowledge에서 관련 지식을 조회하고, 적절한 Skill을 선택하고, Workflow에 따라 실행한 후 응답을 반환합니다. 핵심: 모든 계층이 협력합니다.">
+  <div class="slide diagram-slide" id="slide-20" data-notes="실제 요청이 처리되는 전체 흐름입니다. 요청이 들어오면 Memory에서 컨텍스트를 찾고, Knowledge에서 관련 지식을 조회하고, 적절한 Skill을 선택하고, Workflow에 따라 실행한 후 응답을 반환합니다. 핵심: 모든 계층이 협력합니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Full Pipeline</div>
     <div class="h-flow" style="gap:12px;">
@@ -647,7 +574,7 @@
   </div>
 
   <!-- SLIDE 24: Skills+Workflow Before vs After -->
-  <div class="slide diagram-slide" id="slide-24" data-notes="도입 전: 매번 같은 작업을 수동으로, 일관성 없음, 상태 추적 불가. 도입 후: 반복 작업 자동화, 일관된 품질, 모든 상태 추적 가능. 핵심: 변화의 핵심은 일관성과 추적 가능성입니다.">
+  <div class="slide diagram-slide" id="slide-21" data-notes="도입 전: 매번 같은 작업을 수동으로, 일관성 없음, 상태 추적 불가. 도입 후: 반복 작업 자동화, 일관된 품질, 모든 상태 추적 가능. 핵심: 변화의 핵심은 일관성과 추적 가능성입니다.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">Before &amp; After</div>
     <div class="two-col" style="max-width:600px;">
@@ -664,11 +591,11 @@
         <div class="col-item ok" style="font-size:16px;">모든 상태 추적 가능</div>
       </div>
     </div>
-    <div class="key-message" style="max-width:520px;font-size:18px;">일관성 + 추적 가능성 = 생산성</div>
+    <div class="key-message" style="max-width:520px;font-size:18px;">일관성 → 추적 가능성 = 생산성</div>
   </div>
 
   <!-- SLIDE 25: Summary -->
-  <div class="slide summary-slide" id="slide-25" data-notes="오늘 배운 내용을 정리합니다. Knowledge는 무엇(What), Skill은 어떻게(How), Workflow는 언제(When)를 다룹니다. 이 셋이 모여 Agent 생산성을 완성합니다. 핵심: What + How + When = Complete.">
+  <div class="slide summary-slide" id="slide-22" data-notes="오늘 배운 내용을 정리합니다. Knowledge는 무엇(What), Skill은 어떻게(How), Workflow는 언제(When)를 다룹니다. 이 셋이 모여 Agent 생산성을 완성합니다. 핵심: What + How + When = Complete.">
     <div class="lecture-badge">Lecture 03</div>
     <div class="inline-section">오늘의 핵심</div>
     <div class="summary-list">
@@ -686,12 +613,12 @@
       </div>
     </div>
     <div class="insight-box" style="max-width:480px;">
-      What + How + When = <span class="highlight">Complete</span>
+      What → How → When = <span class="highlight">Complete</span>
     </div>
   </div>
 
   <!-- SLIDE 26: Q&A -->
-  <div class="slide summary-slide" id="slide-26" data-notes="Q&amp;A 세션입니다. 오늘 배운 Skills와 Workflow에 대해 자유롭게 질문해주세요. 다음 강의에서는 Hermes Core Architecture를 통해 모든 요소가 어떻게 통합되는지 살펴봅니다.">
+  <div class="slide summary-slide" id="slide-23" data-notes="Q&amp;A 세션입니다. 오늘 배운 Skills와 Workflow에 대해 자유롭게 질문해주세요. 다음 강의에서는 Hermes Core Architecture를 통해 모든 요소가 어떻게 통합되는지 살펴봅니다.">
     <div class="lecture-badge">Lecture 03 · Skills &amp; Workflow</div>
     <div class="inline-section">Q&amp;A</div>
     <div class="key-message" style="margin-top:20px;">🔜 다음 강의: Hermes Core Architecture</div>

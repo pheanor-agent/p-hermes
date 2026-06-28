@@ -289,6 +289,33 @@ def check_data_notes_length(html, lid):
         issues.append(f"{lid}: data-notes가 80자 미만인 slide {len(short_notes)}개: {','.join(short_notes[:5])}")
     return issues
 
+def check_knowledge_definition(html, lid):
+    """R26: Knowledge 정의 일관성 검증 (SPEC-SLIDES §9.0 MUST — 동적 관계 네트워크)"""
+    slides = re.findall(r'<div class="([^"]*)"\s+id="slide-(\d+)"[^>]*data-notes="([^"]*)"[^>]*>', html)
+    issues = []
+    # Knowledge가 언급되는 모든 슬라이드에서 동적(Dynamic) 속성 확인
+    for tmpl, sid, notes in slides:
+        full_slide = re.search(rf'<div[^>]*id="{re.escape(sid)}"[^>]*>.*?</div>\s*</div>', html, re.DOTALL)
+        if not full_slide:
+            continue
+        content = full_slide.group(0)
+        # Knowledge가 언급되는 슬라이드인지 확인
+        if 'Knowledge' not in content and 'knowledge' not in content:
+            continue
+        # 동적 관계/네트워크 관련 키워드 확인
+        dynamic_keywords = ['동적', 'Dynamic', '관계를', '조직화', 'Organized', '패턴', 'relationship', 'relation']
+        visible_content = re.sub(r'<[^>]+>', ' ', content)
+        visible_content = re.sub(r'&[a-z]+;', ' ', visible_content)
+        has_dynamic = any(kw in visible_content for kw in dynamic_keywords)
+        # Memory/Knowledge 비교 슬라이드에서 Knowledge가 "Static"으로 잘못 표기되었는지
+        if 'Knowledge' in visible_content or 'knowledge' in visible_content:
+            if 'Memory' in visible_content:  # 비교 테이블에서
+                # Knowledge 열에서 Static/정적/Static이 나오면 문제
+                # Simple check: Memory와 Knowledge가 같은 줄에 있고, Knowledge가 Static으로 나옴
+                if re.search(r'Knowledge.*?Static|Knowledge.*?정적', visible_content, re.DOTALL):
+                    issues.append(f"{lid}: {sid} — Knowledge가 Static/정적으로 표기됨 (SPEC §9.0: 동적 관계 네트워크)")
+    return issues
+
 def run():
     spec_path = os.path.join(BASE, "SPEC-SLIDES.md")
     if not os.path.exists(spec_path):
@@ -319,7 +346,7 @@ def run():
         lid_issues.extend(check_section_progress_position(html, lid))
         lid_issues.extend(check_shared_css(html, lid))
 
-        # Check 8-15: 신규 규칙
+        # Check 8-16: 신규 규칙
         lid_issues.extend(check_template_classes(html, lid))
         lid_issues.extend(check_css_conflicts(html, lid))
         lid_issues.extend(check_local_css_size(html, lid))
@@ -327,6 +354,7 @@ def run():
         lid_issues.extend(check_nav_overlap(html, lid))
         lid_issues.extend(check_section_divider_count(html, lid))
         lid_issues.extend(check_data_notes_length(html, lid))
+        lid_issues.extend(check_knowledge_definition(html, lid))
 
         if lid_issues:
             print(f"\n{'='*60}")
