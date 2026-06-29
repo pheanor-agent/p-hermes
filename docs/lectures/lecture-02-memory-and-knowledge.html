@@ -219,11 +219,11 @@
   <div class="slide diagram-slide" id="slide-4" data-notes="인간이 어떻게 학습하는지 생각해봅시다. 경험 → 기억 → 지식 → 스킬. 단순한 단계가 아니라, 하위 단계가 상위 단계의 기반이 됩니다. 지식이 기억 위에 구축됩니다. 이것이 핵심 — Agent도 이 구조를 따라야 합니다.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Human Cognition</div>
-    <div class="flow compact">
+    <div class="flow v-flow compact">
       <div class="node">Experience</div>
-      <div class="arrow">↓</div>
+      <div class="arrow"></div>
       <div class="node cyan">Memory</div>
-      <div class="arrow">↓</div>
+      <div class="arrow"></div>
       <div class="node purple">Knowledge</div>
     </div>
     <div class="key-message">지식은 기억 위에 구축된다</div>
@@ -233,7 +233,7 @@
   <div class="slide example-slide" id="slide-5" data-notes="직접 경험해봅시다. 이 정보 — '사용자는 React 개발자' — 이것이 Memory일까 Knowledge일까? 잠시 생각해보세요. 핵심 단서는 '이 정보가 어떤 형태인가'입니다. 단순 사실인가, 구조를 가진 이해인가?">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">직접 느껴보기</div>
-    <div class="flow compact">
+    <div class="flow h-flow compact">
       <div class="node" style="font-size:18px;">"사용자는 React 개발자다"</div>
     </div>
     <div class="big-q">Memory일까? Knowledge일까?</div>
@@ -257,7 +257,7 @@
   <div class="slide example-slide" id="slide-7" data-notes="두 번째 케이스입니다. '프로젝트는 Feature Folder 구조를 사용한다' — 이것 또한 Memory일까 Knowledge일까? 첫 번째 케이스와 어떤 점이 다른지 생각해보세요.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">직접 느껴보기</div>
-    <div class="flow compact">
+    <div class="flow h-flow compact">
       <div class="node" style="font-size:18px;">"프로젝트는 Feature Folder 구조를 사용한다"</div>
     </div>
     <div class="big-q">이것은?</div>
@@ -340,7 +340,7 @@
   </div>
 
   <!-- SLIDE 13: The Real Problem -->
-  <div class="slide diagram-slide" id="slide-12" data-notes="Memory 폭발이 일으키는 실제 문제는 3가지입니다. 검색 불가 — 원하는 정보를 찾지 못합니다. 노이즈 증가 — 관련 없는 정보가 섞입니다. Relevance 감소 — 중요한 정보가 묻힙니다.">
+  <div class="slide diagram-slide" id="slide-12" data-notes="Memory 폭발이 일으키는 실제 문제는 4가지입니다. 검색 불가 — 원하는 정보를 찾지 못합니다. 노이즈 증가 — 관련 없는 정보가 섞입니다. Relevance 감소 — 중요한 정보가 묻힙니다. 관계 파괴 — 정보 간 연결이 끊겨 맥락을 이해할 수 없습니다. 이 4가지가 동시에 발생하면 Memory는 단순히 불편한 수준을 넘어 시스템의 병목이 됩니다.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Memory의 한계</div>
     <div class="grid-cards cols-2">
@@ -367,11 +367,11 @@
   <div class="slide diagram-slide" id="slide-13" data-notes="Memory는 단순 저장이 아닙니다. 생명주기가 있습니다. Conversation → Extract → Store → Retrieve. 핵심은 Extract와 Retrieve입니다. 모든 것을 저장하는 것이 아니라, 중요한 것만 추출하고, 필요할 때 찾아내는 것입니다.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Memory Lifecycle</div>
-    <div class="flow compact">
+    <div class="flow v-flow compact">
       <div class="node cyan">① Extract</div>
-      <div class="arrow">↓</div>
+      <div class="arrow"></div>
       <div class="node green">② Store</div>
-      <div class="arrow">↓</div>
+      <div class="arrow"></div>
       <div class="node purple">③ Retrieve</div>
     </div>
     <div class="key-message">핵심은 Extract와 Retrieve</div>
@@ -417,21 +417,21 @@
   </div>
 
   <!-- SLIDE 17: Retrieval Is Key -->
-  <div class="slide diagram-slide" id="slide-16" data-notes="저장보다 검색이 더 중요합니다. 1000개의 Memory가 있어도 찾아내지 못하면 쓸모없습니다. Request → Relevant Memory → Context. 이 흐름이 핵심입니다.">
+  <div class="slide diagram-slide" id="slide-16" data-notes="저장보다 검색이 더 중요합니다. 아무리 많은 Memory를 쌓아도 검색이 실패하면 저장은 의미가 없습니다. Request가 들어오면 정확히 일치하는 기억이 아닌 '관련 있는' 기억을 찾아내는 것이 핵심입니다. 이 Relevant Memory가 LLM의 Context에 주입되어야 비로소 저장된 정보가 Agent의 판단에 기여할 수 있습니다. 핵심: 저장량이 아니라 검색 정확도가 Memory 시스템의 품질을 결정합니다.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Retrieval Is Key</div>
-    <div class="flow compact">
+    <div class="flow v-flow compact">
       <div class="node">Request</div>
-      <div class="arrow">↓</div>
+      <div class="arrow"></div>
       <div class="node green">Relevant Memory</div>
-      <div class="arrow">↓</div>
+      <div class="arrow"></div>
       <div class="node gold">Context</div>
     </div>
     <div class="key-message">저장보다 검색이 더 중요하다</div>
   </div>
 
   <!-- SLIDE 18: The Pivot - Memory Alone Is Not Enough -->
-  <div class="slide diagram-slide" id="slide-17" data-notes="이 슬라이드가 강의의 전환점입니다. Memory를 충분히 쌓았다고 해서 지식이 생기는 것은 아닙니다. 1000개의 기억은 이해가 아닙니다. 기억은 축적됩니다. 이해는 조직화될 때 탄생합니다.">
+  <div class="slide diagram-slide" id="slide-17" data-notes="이 슬라이드가 2강의 전환점입니다. 지금까지 Memory 관리 방법을 배웠지만, 기억을 아무리 잘 관리해도 거기서 지식이 자동으로 생기지는 않습니다. 1000개의 기억은 단순한 데이터일 뿐입니다. 이해는 데이터를 연결하고 구조화할 때 비로소 탄생합니다. 여기서 핵심은 '조직화(Organization)'입니다. 개별 사실들이 네트워크로 연결될 때, 단순한 기억에서 추론 가능한 지식으로 도약합니다. Agent 설계에서 이 전환이 일어나지 않으면 아무리 많은 데이터를 저장해도 시스템은 성장하지 않습니다.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">핵심 전환점</div>
     <div class="not-equal">
@@ -463,11 +463,11 @@
   <div class="slide diagram-slide" id="slide-19" data-notes="Memory가 조직화될 때 Knowledge가 탄생합니다. 개별 사실들을 연결하면 패턴이 보입니다. 'TypeScript', 'React', 'Feature Folder' — 이 개별 Memory들이 연결되면 'React = TypeScript + Feature Folder 구조'라는 Knowledge가 됩니다.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Knowledge Born</div>
-    <div class="flow compact">
+    <div class="flow v-flow compact">
       <div class="node cyan">Memory</div>
-      <div class="arrow">↓</div>
+      <div class="arrow"></div>
       <div class="node green">Organization</div>
-      <div class="arrow">↓</div>
+      <div class="arrow"></div>
       <div class="node purple">Knowledge</div>
     </div>
     <div class="example-box" style="border-left-color:var(--accent-purple);max-width:500px;">
@@ -486,7 +486,7 @@
       <div class="col-item ok" style="font-size:16px;">🧠 "AI 모델 자동화 선호"</div>
       <div class="col-item ok" style="font-size:16px;">🧠 "AI 이미지 생성 도구 사용"</div>
     </div>
-    <div class="arrow" style="font-size:24px;color:var(--gold);">↓</div>
+    <div class="arrow" style="font-size:24px;color:var(--gold);"></div>
     <div class="example-box" style="border-left-color:var(--accent-purple);margin-top:12px;max-width:500px;">
       <div class="label" style="color:var(--accent-purple);">KNOWLEDGE</div>
       <strong style="color:var(--accent-purple);">"GPU 서버 + AI 모델 자동화 + AI 이미지 생성 도구 → 이미지 파이프라인"</strong>
@@ -517,18 +517,18 @@
     </div>
   </div>
 
-  <!-- SLIDE 23: Hermes Structure -->
-  <div class="slide diagram-slide" id="slide-22" data-notes="Hermes는 어떻게 구현하는가? Conversation → Memory Extract → Knowledge Organization → Intelligent Response. 이 4단계 구조가 Agent OS의 핵심입니다. 검색도 2계층: Memory Layer에서는 사실 검색, Knowledge Layer에서는 패턴 검색.">
+  <!-- SLIDE 23: Hermes Structure (4-Layer Stack) -->
+  <div class="slide diagram-slide" id="slide-22" data-notes="Hermes는 Memory→Knowledge→Skills→Workflow 4개 Layer를 Stack으로 구성합니다. 중요한 점: 이 구조는 설계 시의 계층일 뿐, 런타임에는 모든 Layer가 Context에 동시 주입됩니다. 순차 파이프라인이 아닙니다. 검색도 2계층: Memory Layer에서는 사실 검색, Knowledge Layer에서는 패턴 검색.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Hermes Structure</div>
-    <div class="flow compact">
-      <div class="node cyan" style="font-size:16px;">① Conversation</div>
-      <div class="arrow">↓</div>
-      <div class="node green" style="font-size:16px;">② Memory Extract</div>
-      <div class="arrow">↓</div>
-      <div class="node purple" style="font-size:16px;">③ Knowledge</div>
-      <div class="arrow">↓</div>
-      <div class="node gold" style="font-size:16px;">④ Response</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin:20px 0;">
+      <div style="width:280px;padding:14px 20px;border-radius:10px;background:var(--accent-gold);color:var(--text-inverse);text-align:center;font-weight:700;font-size:17px;border:2px solid var(--accent-gold);">🔗 Workflow</div>
+      <div style="width:280px;padding:14px 20px;border-radius:10px;background:var(--accent-green);color:var(--text-inverse);text-align:center;font-weight:700;font-size:17px;border:2px solid var(--accent-green);">⚡ Skills</div>
+      <div style="width:280px;padding:14px 20px;border-radius:10px;background:var(--accent-purple);color:var(--text-inverse);text-align:center;font-weight:700;font-size:17px;border:2px solid var(--accent-purple);">📚 Knowledge</div>
+      <div style="width:280px;padding:14px 20px;border-radius:10px;background:var(--accent-cyan);color:var(--text-inverse);text-align:center;font-weight:700;font-size:17px;border:2px solid var(--accent-cyan);">🧠 Memory</div>
+    </div>
+    <div class="insight-box" style="max-width:420px;">
+      설계는 계층 구조 — 런타임은 동시 Context 주입
     </div>
   </div>
 
@@ -548,11 +548,11 @@
         <div class="col-item" style="font-size:16px;">관계를 설명 — Why it matters</div>
       </div>
     </div>
-    <div class="flow compact" style="margin-top:8px;">
+    <div class="flow v-flow compact" style="margin-top:8px;">
       <div class="node cyan" style="font-size:16px;">Memory: What</div>
-      <div class="arrow">↓</div>
+      <div class="arrow"></div>
       <div class="node purple" style="font-size:16px;">Knowledge: Why</div>
-      <div class="arrow">↓</div>
+      <div class="arrow"></div>
       <div class="node green" style="font-size:16px;">Intelligence: How</div>
     </div>
     <div class="key-message" style="margin-top:16px;">Memory는 사실을 저장 — Knowledge는 관계를 설명</div>

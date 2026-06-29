@@ -386,6 +386,7 @@ html, body {
 .deck::-webkit-scrollbar { display: none; }
 
 .slide {
+  box-sizing: border-box;
   flex: 0 0 100vw;
   height: 100vh;
   scroll-snap-align: start;
@@ -393,7 +394,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 40px;
+  padding: 48px 40px;
   position: relative;
   overflow-y: auto;
   gap: 12px;
@@ -414,6 +415,7 @@ html, body {
   font-size: 20px;
   font-weight: 700;
   color: var(--text);
+  text-align: center;
 }
 
 /* ── Grid Cards ── */
@@ -460,6 +462,7 @@ html, body {
   gap: 20px;
   max-width: 640px;
   width: 100%;
+  text-align: center;
 }
 .col-title {
   font-size: 15px;
@@ -496,8 +499,8 @@ html, body {
   color: var(--gold);
   background: rgba(240, 180, 41, 0.05);
 }
-.compare-table th,
-.compare-table td { text-align: center; }
+/* ── Compare Table (center alignment, R20) ── */
+.compare-table > div { text-align: center; }
 
 /* ── Responsive Grids ── */
 @media (max-width: 768px) {
@@ -561,6 +564,9 @@ html, body {
   gap: 12px;
   flex-wrap: wrap;
 }
+/* 방향 변형 */
+.flow.v-flow  { flex-direction: column; }
+.flow.h-flow  { flex-direction: row; }
 .flow .node {
   padding: 10px 18px;
   background: var(--card);
@@ -570,10 +576,41 @@ html, body {
   font-weight: 500;
   color: var(--text);
 }
-.flow .arrow {
+
+/* ── Arrow Components ── */
+/* 공통 arrow 스타일 (모든 variant) */
+.flow .arrow,
+.h-flow .arrow,
+.goal-arrow,
+.sec-arrow,
+.step-arrow,
+.layer-arrow {
   color: var(--gold);
-  font-size: 18px;
+  font-size: 16px;
+  min-width: 1em;
+  text-align: center;
 }
+.flow .arrow  { font-size: 18px; }
+.sec-arrow    { color: var(--border); font-size: 13px; }
+.goal-arrow   { font-size: 16px; }
+.step-arrow   { font-size: 16px; }
+.layer-arrow  { font-size: 16px; color: var(--text); }
+
+/* 자동 방향 설정 (컨테이너 클래스 기반) */
+.flow.v-flow .arrow:empty::before,
+.flow.v-flow .step-arrow:empty::before { content: "↓"; }
+
+.flow.h-flow .arrow:empty::before,
+.flow.h-flow .step-arrow:empty::before,
+.h-flow .arrow:empty::before            { content: "→"; }
+
+.layer-stack .layer-arrow:empty::before { content: "↑"; }
+
+/* 하위 호환성 */
+.arrow:not(:empty)::before,
+.step-arrow:not(:empty)::before,
+.layer-arrow:not(:empty)::before { display: none; }
+
 .flow .label {
   font-size: 11px;
   color: var(--text-dim);
