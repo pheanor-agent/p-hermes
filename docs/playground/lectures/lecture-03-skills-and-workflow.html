@@ -686,8 +686,8 @@
 
     // Section progress: update active/done/future states
     const secs = sectionProgress.querySelectorAll('.sec');
-    if (current < 5) { secs[0].className='sec active'; secs[1].className='sec future'; secs[2].className='sec future'; }
-    else if (current < 18) { secs[0].className='sec done'; secs[1].className='sec active'; secs[2].className='sec future'; }
+    if (current < 13) { secs[0].className='sec active'; secs[1].className='sec future'; secs[2].className='sec future'; }
+    else if (current < 19) { secs[0].className='sec done'; secs[1].className='sec active'; secs[2].className='sec future'; }
     else { secs[0].className='sec done'; secs[1].className='sec done'; secs[2].className='sec active'; }
   }
 
