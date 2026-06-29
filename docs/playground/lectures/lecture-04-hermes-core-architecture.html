@@ -119,11 +119,11 @@
     </div>
     <div class="layer-stack" style="margin-top:16px;">
       <div class="layer" style="background:rgba(91,192,235,.12);border:1px solid var(--accent-cyan);color:var(--accent-cyan);">🧠 Memory Layer</div>
-      <div class="layer-arrow">↑</div>
+      <div class="layer-arrow"></div>
       <div class="layer" style="background:rgba(177,151,252,.12);border:1px solid var(--accent-purple);color:var(--accent-purple);">📚 Knowledge Layer</div>
-      <div class="layer-arrow">↑</div>
+      <div class="layer-arrow"></div>
       <div class="layer" style="background:rgba(0,245,212,.12);border:1px solid var(--accent-green);color:var(--accent-green);">⚡ Skills Layer</div>
-      <div class="layer-arrow">↑</div>
+      <div class="layer-arrow"></div>
       <div class="layer" style="background:var(--gold-glow);border:1px solid var(--gold-dim);color:var(--gold);">🔗 Workflow Layer</div>
     </div>
     <div class="key-message">레이어는 독립적이지만 함께 동작한다</div>
@@ -180,11 +180,11 @@
     </div>
     <div class="inline-section">Layer 1</div>
     <div class="big-text" style="font-size:clamp(40px,5vw,56px);color:var(--accent-cyan);">🧠 Memory Layer</div>
-    <div class="flow compact">
+    <div class="flow h-flow compact">
       <div class="node cyan" style="font-size:16px;min-width:180px;">Save</div>
-      <div class="arrow">→</div>
+      <div class="arrow"></div>
       <div class="node green" style="font-size:16px;min-width:180px;">Index</div>
-      <div class="arrow">→</div>
+      <div class="arrow"></div>
       <div class="node purple" style="font-size:16px;min-width:180px;">Retrieve</div>
     </div>
     <div class="key-message">FTS5가 검색의 핵심이다</div>
@@ -223,11 +223,11 @@
     </div>
     <div class="inline-section">Layer 2</div>
     <div class="big-text" style="font-size:clamp(40px,5vw,56px);color:var(--accent-purple);">📚 Knowledge Layer</div>
-    <div class="flow compact">
+    <div class="flow h-flow compact">
       <div class="node purple" style="font-size:16px;min-width:180px;">Fact</div>
-      <div class="arrow">→</div>
+      <div class="arrow"></div>
       <div class="node gold" style="font-size:16px;min-width:180px;">Relation</div>
-      <div class="arrow">→</div>
+      <div class="arrow"></div>
       <div class="node green" style="font-size:16px;min-width:180px;">Understanding</div>
     </div>
     <div class="key-message">지식은 관계의 네트워크이다</div>
@@ -275,11 +275,11 @@
     </div>
     <div class="inline-section">Layer 3</div>
     <div class="big-text" style="font-size:clamp(40px,5vw,56px);color:var(--accent-green);">⚡ Skills Layer</div>
-    <div class="flow compact">
+    <div class="flow h-flow compact">
       <div class="node green" style="font-size:16px;min-width:180px;">Trigger</div>
-      <div class="arrow">→</div>
+      <div class="arrow"></div>
       <div class="node cyan" style="font-size:16px;min-width:180px;">Execute</div>
-      <div class="arrow">→</div>
+      <div class="arrow"></div>
       <div class="node gold" style="font-size:16px;min-width:180px;">Output</div>
     </div>
     <div class="key-message">스크립트가 Skill의 단위이다</div>
@@ -319,11 +319,11 @@
     </div>
     <div class="inline-section">Layer 4</div>
     <div class="big-text" style="font-size:clamp(40px,5vw,56px);color:var(--gold);">🔗 Workflow Layer</div>
-    <div class="flow compact">
+    <div class="flow h-flow compact">
       <div class="node gold" style="font-size:16px;min-width:180px;">Step N</div>
-      <div class="arrow">→</div>
+      <div class="arrow"></div>
       <div class="node cyan" style="font-size:16px;min-width:180px;">Check Condition</div>
-      <div class="arrow">→</div>
+      <div class="arrow"></div>
       <div class="node green" style="font-size:16px;min-width:180px;">Next Step</div>
     </div>
     <div class="key-message">상태 기계가 Workflow의 심장이다</div>
@@ -343,22 +343,22 @@
     <div class="inline-section">9-Step State Machine</div>
     <div class="lifecycle-row" style="margin-top:8px;flex-wrap:wrap;justify-content:center;">
       <div class="step" style="color:var(--accent-cyan);border-color:var(--accent-cyan);">Request</div>
-      <span class="step-arrow">→</span>
+      <span class="step-arrow"></span>
       <div class="step" style="color:var(--accent-purple);border-color:var(--accent-purple);">Investigate</div>
-      <span class="step-arrow">→</span>
+      <span class="step-arrow"></span>
       <div class="step" style="color:var(--accent-orange);border-color:var(--accent-orange);">Design</div>
-      <span class="step-arrow">→</span>
+      <span class="step-arrow"></span>
       <div class="step" style="color:var(--accent-red);border-color:var(--accent-red);">Review</div>
-      <span class="step-arrow">→</span>
+      <span class="step-arrow"></span>
       <div class="step" style="color:var(--gold);border-color:var(--gold-dim);">Approve</div>
     </div>
     <div class="lifecycle-row" style="margin-top:4px;flex-wrap:wrap;justify-content:center;">
       <div class="step" style="color:var(--accent-green);border-color:var(--accent-green);">Execute</div>
-      <span class="step-arrow">→</span>
+      <span class="step-arrow"></span>
       <div class="step" style="color:var(--accent-cyan);border-color:var(--accent-cyan);">Test</div>
-      <span class="step-arrow">→</span>
+      <span class="step-arrow"></span>
       <div class="step" style="color:var(--accent-purple);border-color:var(--accent-purple);">Review</div>
-      <span class="step-arrow">→</span>
+      <span class="step-arrow"></span>
       <div class="step" style="color:var(--gold);border-color:var(--gold-dim);">Done</div>
     </div>
     <div class="insight-box" style="max-width:480px;font-size:15px;margin-top:12px;">
@@ -572,9 +572,9 @@
     </div>
     <div class="layer-stack" style="margin-top:12px;">
       <div class="layer" style="background:rgba(240,180,41,.1);border:1px solid var(--gold-dim);color:var(--gold);min-width:280px;">📋 Spec 문서</div>
-      <div class="layer-arrow">↑</div>
+      <div class="layer-arrow"></div>
       <div class="layer" style="background:rgba(91,192,235,.1);border:1px solid var(--accent-cyan);color:var(--accent-cyan);min-width:280px;">⚙️ 구현 (Config / Code)</div>
-      <div class="layer-arrow">↑</div>
+      <div class="layer-arrow"></div>
       <div class="layer" style="background:rgba(0,245,212,.1);border:1px solid var(--accent-green);color:var(--accent-green);min-width:280px;">✅ File System / Runtime</div>
     </div>
     <div class="insight-box" style="max-width:480px;margin-top:12px;">
@@ -596,13 +596,13 @@
     <div class="inline-section">Full Stack</div>
     <div class="layer-stack" style="margin-top:8px;">
       <div class="layer" style="background:var(--gold-glow);border:1px solid var(--gold-dim);color:var(--gold);min-width:340px;">🏭 Factory Layer (P-Hermes)</div>
-      <div class="layer-arrow">↑</div>
+      <div class="layer-arrow"></div>
       <div class="layer" style="background:rgba(240,180,41,.08);border:1px solid var(--gold-dim);color:var(--gold);min-width:340px;">🔗 Workflow Layer</div>
-      <div class="layer-arrow">↑</div>
+      <div class="layer-arrow"></div>
       <div class="layer" style="background:rgba(0,245,212,.12);border:1px solid var(--accent-green);color:var(--accent-green);min-width:340px;">⚡ Skills Layer</div>
-      <div class="layer-arrow">↑</div>
+      <div class="layer-arrow"></div>
       <div class="layer" style="background:rgba(177,151,252,.12);border:1px solid var(--accent-purple);color:var(--accent-purple);min-width:340px;">📚 Knowledge Layer</div>
-      <div class="layer-arrow">↑</div>
+      <div class="layer-arrow"></div>
       <div class="layer" style="background:rgba(91,192,235,.12);border:1px solid var(--accent-cyan);color:var(--accent-cyan);min-width:340px;">🧠 Memory Layer</div>
     </div>
     <div class="key-message" style="margin-top:12px;">하위 레이어가 상위 레이어의 품질을 결정한다</div>

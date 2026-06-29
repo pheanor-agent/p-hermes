@@ -316,6 +316,18 @@ def check_knowledge_definition(html, lid):
                     issues.append(f"{lid}: {sid} — Knowledge가 Static/정적으로 표기됨 (SPEC §9.0: 동적 관계 네트워크)")
     return issues
 
+def check_flow_orientation(html, lid):
+    """#17: .flow 컨테이너 orientation 클래스 검증"""
+    issues = []
+    # 모든 .flow 컨테이너 찾기
+    flow_pattern = r'<div\s+class="flow(?:\s+\w+)*"[^>]*>'
+    for match in re.finditer(flow_pattern, html):
+        classes = match.group(0)
+        if 'v-flow' not in classes and 'h-flow' not in classes:
+            pos = html[:match.start()].count('\n') + 1
+            issues.append(f"{lid}: L{pos} — .flow에 orientation(v-flow/h-flow) 누락")
+    return issues
+
 def run():
     spec_path = os.path.join(BASE, "SPEC-SLIDES.md")
     if not os.path.exists(spec_path):
@@ -355,6 +367,9 @@ def run():
         lid_issues.extend(check_section_divider_count(html, lid))
         lid_issues.extend(check_data_notes_length(html, lid))
         lid_issues.extend(check_knowledge_definition(html, lid))
+
+        # Check 17-18: auto-direction arrows
+        lid_issues.extend(check_flow_orientation(html, lid))
 
         if lid_issues:
             print(f"\n{'='*60}")
