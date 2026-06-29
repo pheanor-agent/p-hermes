@@ -461,6 +461,7 @@ html, body {
   gap: 20px;
   max-width: 640px;
   width: 100%;
+  text-align: center;
 }
 .col-title {
   font-size: 15px;
