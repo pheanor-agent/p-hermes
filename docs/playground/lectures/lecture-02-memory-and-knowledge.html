@@ -340,7 +340,7 @@
   </div>
 
   <!-- SLIDE 13: The Real Problem -->
-  <div class="slide diagram-slide" id="slide-12" data-notes="Memory 폭발이 일으키는 실제 문제는 3가지입니다. 검색 불가 — 원하는 정보를 찾지 못합니다. 노이즈 증가 — 관련 없는 정보가 섞입니다. Relevance 감소 — 중요한 정보가 묻힙니다.">
+  <div class="slide diagram-slide" id="slide-12" data-notes="Memory 폭발이 일으키는 실제 문제는 4가지입니다. 검색 불가 — 원하는 정보를 찾지 못합니다. 노이즈 증가 — 관련 없는 정보가 섞입니다. Relevance 감소 — 중요한 정보가 묻힙니다. 관계 파괴 — 정보 간 연결이 끊겨 맥락을 이해할 수 없습니다. 이 4가지가 동시에 발생하면 Memory는 단순히 불편한 수준을 넘어 시스템의 병목이 됩니다.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Memory의 한계</div>
     <div class="grid-cards cols-2">
@@ -417,7 +417,7 @@
   </div>
 
   <!-- SLIDE 17: Retrieval Is Key -->
-  <div class="slide diagram-slide" id="slide-16" data-notes="저장보다 검색이 더 중요합니다. 1000개의 Memory가 있어도 찾아내지 못하면 쓸모없습니다. Request → Relevant Memory → Context. 이 흐름이 핵심입니다.">
+  <div class="slide diagram-slide" id="slide-16" data-notes="저장보다 검색이 더 중요합니다. 아무리 많은 Memory를 쌓아도 검색이 실패하면 저장은 의미가 없습니다. Request가 들어오면 정확히 일치하는 기억이 아닌 '관련 있는' 기억을 찾아내는 것이 핵심입니다. 이 Relevant Memory가 LLM의 Context에 주입되어야 비로소 저장된 정보가 Agent의 판단에 기여할 수 있습니다. 핵심: 저장량이 아니라 검색 정확도가 Memory 시스템의 품질을 결정합니다.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">Retrieval Is Key</div>
     <div class="flow v-flow compact">
@@ -431,7 +431,7 @@
   </div>
 
   <!-- SLIDE 18: The Pivot - Memory Alone Is Not Enough -->
-  <div class="slide diagram-slide" id="slide-17" data-notes="이 슬라이드가 강의의 전환점입니다. Memory를 충분히 쌓았다고 해서 지식이 생기는 것은 아닙니다. 1000개의 기억은 이해가 아닙니다. 기억은 축적됩니다. 이해는 조직화될 때 탄생합니다.">
+  <div class="slide diagram-slide" id="slide-17" data-notes="이 슬라이드가 2강의 전환점입니다. 지금까지 Memory 관리 방법을 배웠지만, 기억을 아무리 잘 관리해도 거기서 지식이 자동으로 생기지는 않습니다. 1000개의 기억은 단순한 데이터일 뿐입니다. 이해는 데이터를 연결하고 구조화할 때 비로소 탄생합니다. 여기서 핵심은 '조직화(Organization)'입니다. 개별 사실들이 네트워크로 연결될 때, 단순한 기억에서 추론 가능한 지식으로 도약합니다. Agent 설계에서 이 전환이 일어나지 않으면 아무리 많은 데이터를 저장해도 시스템은 성장하지 않습니다.">
     <div class="lecture-badge">Lecture 02 · Memory &amp; Knowledge</div>
     <div class="inline-section">핵심 전환점</div>
     <div class="not-equal">
