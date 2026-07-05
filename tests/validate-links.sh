@@ -76,7 +76,7 @@ if [[ -d "$PLAYGROUND_DIR" ]]; then
       target="${link#href=\"}"
       full="$(dirname "$f")/$target"
       [[ -e "$full" ]] || { echo "BROKEN: $f -> $target"; ERRORS=$((ERRORS+1)); }
-    done < <(grep -oP 'href="\./[^"]+' "$f" 2>/dev/null || true)
+    done < <(grep -oP 'href="\./[^\"]+' "$f" 2>/dev/null || true)
 
     # [R2] HTML 상대 경로 링크 검증 (lectures/, archive/, ops/ 등) (JOB-2064)
     while IFS= read -r link; do
@@ -90,7 +90,7 @@ if [[ -d "$PLAYGROUND_DIR" ]]; then
       [[ "$target" == http* ]] && continue
       full="$(dirname "$f")/$target"
       [[ -e "$full" ]] || { echo "BROKEN: $f -> $target"; ERRORS=$((ERRORS+1)); }
-    done < <(grep -oP 'href="(?:lectures/|archive/|ops/)[^"]*"' "$f" 2>/dev/null || true)
+    done < <(grep -oP 'href="[^#/][^"]*"' "$f" 2>/dev/null || true)
 
     # markdown [](./...) 링크 검증
     while IFS= read -r link; do
