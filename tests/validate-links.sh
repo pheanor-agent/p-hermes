@@ -62,6 +62,14 @@ PLAYGROUND_DIR="$PROJECT_DIR/docs/playground"
 if [[ -d "$PLAYGROUND_DIR" ]]; then
   while IFS= read -r f; do
     [[ -z "$f" ]] && continue
+
+    # [R1] HTML href="#" 플레이스홀더 감지 (JOB-2064)
+    while IFS= read -r match; do
+      [[ -z "$match" ]] && continue
+      echo "PLACEHOLDER: $f -> # (link not configured)"
+      ERRORS=$((ERRORS+1))
+    done < <(grep -oP 'href="#"' "$f" 2>/dev/null || true)
+
     # HTML href="./..." 링크 검증
     while IFS= read -r link; do
       [[ -z "$link" ]] && continue
@@ -69,6 +77,21 @@ if [[ -d "$PLAYGROUND_DIR" ]]; then
       full="$(dirname "$f")/$target"
       [[ -e "$full" ]] || { echo "BROKEN: $f -> $target"; ERRORS=$((ERRORS+1)); }
     done < <(grep -oP 'href="\./[^"]+' "$f" 2>/dev/null || true)
+
+    # [R2] HTML 상대 경로 링크 검증 (lectures/, archive/, ops/ 등) (JOB-2064)
+    while IFS= read -r link; do
+      [[ -z "$link" ]] && continue
+      # Remove href=" prefix and trailing quote
+      target=$(echo "$link" | sed 's/^href="//;s/"$//')
+      # CSS/JS/font/CDN 링크 제외
+      [[ "$target" == *.css ]] && continue
+      [[ "$target" == *.js ]] && continue
+      [[ "$target" == https* ]] && continue
+      [[ "$target" == http* ]] && continue
+      full="$(dirname "$f")/$target"
+      [[ -e "$full" ]] || { echo "BROKEN: $f -> $target"; ERRORS=$((ERRORS+1)); }
+    done < <(grep -oP 'href="(?:lectures/|archive/|ops/)[^"]*"' "$f" 2>/dev/null || true)
+
     # markdown [](./...) 링크 검증
     while IFS= read -r link; do
       [[ -z "$link" ]] && continue

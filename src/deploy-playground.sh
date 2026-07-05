@@ -34,7 +34,15 @@ if [[ -f tests/validate-chinese.sh ]]; then
   bash tests/validate-chinese.sh docs/playground/ || { echo "❌ 중국어 문자 발견"; exit 1; }
 fi
 
-# 5. Git commit and push (playground만)
+# 5. [R4] 링크 검증 (JOB-2064)
+echo "  🔗 링크 검증..."
+bash tests/validate-links.sh || { echo "❌ 링크 검증 실패"; exit 1; }
+
+# 6. [R4] 인덱스 데이터 검증 (JOB-2064)
+echo "  📋 인덱스 검증..."
+python3 tests/validate-playground-index.py || { echo "❌ 인덱스 검증 실패"; exit 1; }
+
+# 7. Git commit and push (playground만)
 echo "  📝 Git commit and push..."
 git commit -m "playground: deploy update"
 git push origin main
