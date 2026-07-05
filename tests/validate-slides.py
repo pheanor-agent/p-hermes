@@ -94,10 +94,9 @@ SHARED_CSS = """
 SHARED_SELECTORS = set([s.strip() for s in SHARED_CSS.split('\n') if s.strip()])
 
 LECTURES = [
-    ("L01", "lecture-01-why-agents-fail.html"),
-    ("L02", "lecture-02-memory-and-knowledge.html"),
-    ("L03", "lecture-03-skills-and-workflow.html"),
-    ("L04", "lecture-04-hermes-core-architecture.html"),
+    ("L01", "v4/lecture-a-why-agent-os.html"),
+    ("L02", "v4/lecture-b-memory-knowledge.html"),
+    ("L03", "v4/lecture-c-architecture-runtime.html"),
 ]
 
 def check_ending(html, lid):
@@ -182,7 +181,7 @@ def check_section_progress_position(html, lid):
 
 def check_shared_css(html, lid):
     """Shared CSS 참조 검증"""
-    if 'slides-components.css' not in html:
+    if 'slides-components-v5.css' not in html and 'slides-components.css' not in html:
         return [f"{lid}: slides-components.css 참조 없음"]
     return []
 

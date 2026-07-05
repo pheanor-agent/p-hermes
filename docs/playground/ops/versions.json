@@ -1,0 +1,31 @@
+{
+  "current_version": "v4",
+  "category": "operations",
+  "description": "8개 운영 슬라이드 (Golden Circle 기반)",
+  "versions": [
+    {
+      "id": "v4",
+      "label": "v4 — 운영 덱 Current",
+      "path": "v4/",
+      "commit": "TBD",
+      "releasedAt": "2026-06-23",
+      "summary": "8개 운영 덱 (workflow, cron, knowledge, architecture 등)"
+    },
+    {
+      "id": "v3",
+      "label": "v3 — GC Refined",
+      "path": "v3/gc/",
+      "commit": "5850a13",
+      "releasedAt": "2026-06-20",
+      "summary": "UI/UX 개선 (페이지 분할·중앙 정렬) + 콘텐츠 정정"
+    },
+    {
+      "id": "v2",
+      "label": "v2 — Golden Circle",
+      "path": "v2/gc/",
+      "commit": "ba127e4",
+      "releasedAt": "2026-06-20",
+      "summary": "8개 운영 슬라이드 → Golden Circle 변환"
+    }
+  ]
+}

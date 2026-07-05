@@ -1,0 +1,1262 @@
+/* ============================================================
+   slides-components-v5.css — p-hermes Slide Component Library v5
+   Nord design tokens + 4-layout core
+
+   SSOT for all shared slide component styles (v5).
+   Replaces Gold+Dark theme with Nord palette.
+
+   Components:
+   1. Section Progress (nav bar with breadcrumb) — 하단 배치
+   2. Unified Opening (Cover + Goal/Intro)
+   3. 5-Templates (Hero / Problem / Diagram / Example / Summary)
+   4. Common Layout (deck, slide, grid cards, insight box, etc.)
+   5. Section Divider (Glass / Nord-Ice)
+   6. Navigation (progress-bar, dots, counter)
+
+   Design:
+   - Nord palette (color-bg: #2e3440, color-primary: #88c0d0)
+   - 4-Layout Core: Centered / Two Columns (2fr 3fr) / Diagram Focus / Full Bleed
+   - Nord-Ice: solid semi-transparent (no blur)
+   - Glass Divider: blur(12px) backdrop
+   - Animation: 300ms fade/slide, max 2 simultaneous
+   ============================================================ */
+
+/* ──────────────────────────────────────────────
+   0. CSS VARIABLES (SSOT) — Nord Palette
+   ────────────────────────────────────────────── */
+
+:root {
+  /* ── Colors ── */
+  --color-bg:      #2e3440;
+  --color-surface: #3b4252;
+  --color-card:    #434c5e;
+  --color-border:  #4c566a;
+  --color-muted:   #616e88;
+  --color-text:    #d8dee9;
+  --color-heading: #eceff4;
+  --color-primary: #88c0d0;
+  --color-teal:    #8fbcbb;
+  --color-blue:    #5e81ac;
+  --color-error:   #bf616a;
+  --color-orange:  #d08770;
+  --color-gold:    #88c0d0;  /* v5: primary doubles as "gold" semantic accent */
+  --color-success: #a3be8c;
+  --color-purple:  #b48ead;
+
+  /* ── Typography ── */
+  --text-hero:     40px;
+  --text-section:  28px;
+  --text-title:    22px;
+  --text-takeaway: 18px;
+  --text-body:     16px;
+  --text-caption:  14px;
+  --text-code:     16px/1.5 'JetBrains Mono', monospace;
+
+  /* ── Spacing ── */
+  --space-xs:   4px;
+  --space-sm:   8px;
+  --space-md:   16px;
+  --space-lg:   24px;
+  --space-xl:   32px;
+  --space-2xl:  48px;
+
+  /* ── Radius ── */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  /* ── Legacy aliases (back-compat) ── */
+  --bg:        var(--color-bg);
+  --surface:   var(--color-surface);
+  --card:      var(--color-card);
+  --border:    var(--color-border);
+  --gold:      var(--color-primary);
+  --gold-dim:  var(--color-blue);
+  --gold-glow: rgba(136, 192, 208, 0.15);
+  --text:      var(--color-text);
+  --text-dim:  var(--color-muted);
+  --text-muted:var(--color-muted);
+  --accent-cyan:    var(--color-teal);
+  --accent-magenta: var(--color-purple);
+  --accent-green:   var(--color-success);
+  --accent-red:     var(--color-error);
+  --accent-orange:  var(--color-orange);
+  --accent-purple:  var(--color-purple);
+  --green:    var(--color-success);
+  --red:      var(--color-error);
+  --radius:   var(--radius-lg);
+  --transition: 300ms cubic-bezier(.22, 1, .36, 1);
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', 'Noto Sans KR', system-ui, -apple-system, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  overflow: hidden;
+}
+
+/* ──────────────────────────────────────────────
+   1. SECTION PROGRESS — lecture-internal nav bar
+   Shows current / past / future sections as pills.
+   Fixed at BOTTOM (between slide-counter and nav dots).
+   Hidden on Cover/Goal/Divider/Summary/Takeaways/Q&A.
+   ────────────────────────────────────────────── */
+
+.section-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  background: rgba(59, 66, 82, 0.85);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  font-size: 12px;
+  user-select: none;
+  position: fixed;
+  bottom: 56px;  /* above slide-counter */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+  border-radius: 100px;
+  max-width: 90vw;
+}
+
+/* Hidden state — JS sets style.display='none'/'flex' directly */
+.section-progress.hidden { display: none; }
+
+.section-progress .sec {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: var(--space-xs) 12px;
+  border-radius: 20px;
+  font-weight: 500;
+  color: var(--color-muted);
+  transition: all 250ms ease;
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.section-progress .sec.active {
+  background: rgba(136, 192, 208, 0.15);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.section-progress .sec.done {
+  color: var(--color-muted);
+  opacity: 0.5;
+}
+
+.section-progress .sec.future {
+  color: var(--color-muted);
+  opacity: 0.4;
+}
+
+.section-progress .sec-arrow {
+  color: var(--color-border);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+
+/* ──────────────────────────────────────────────
+   2. UNIFIED OPENING — Cover + Goal/Intro
+   Same format across all lectures.
+   ────────────────────────────────────────────── */
+
+/* slide-0: Cover */
+.cover-title {
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 800;
+  color: var(--color-heading);
+  text-align: center;
+  line-height: 1.2;
+  margin-bottom: var(--space-sm);
+}
+
+.cover-subtitle {
+  font-size: clamp(16px, 2.5vw, 24px);
+  color: var(--color-muted);
+  text-align: center;
+  max-width: 500px;
+  line-height: 1.5;
+}
+
+/* slide-1: Learning Goal + Introduction */
+.goal-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.goal-tag {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-xs);
+}
+
+.goal-why {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-heading);
+  text-align: center;
+  line-height: 1.5;
+  padding: 12px 20px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  width: 100%;
+}
+
+.goal-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-teal);
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+
+.goal-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.goal-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: 15px;
+  color: var(--color-text);
+  transition: var(--transition);
+}
+
+.goal-item:hover {
+  border-color: var(--color-primary);
+}
+
+.goal-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(136, 192, 208, 0.1);
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.goal-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: 10px 20px;
+  font-size: 13px;
+  color: var(--color-muted);
+  font-weight: 500;
+  white-space: nowrap;
+  flex-wrap: wrap;
+}
+
+.goal-arrow {
+  color: var(--color-primary);
+  font-size: 16px;
+}
+
+
+/* ──────────────────────────────────────────────
+   3. FIVE TEMPLATES
+   Each slide must have exactly one template class.
+   ────────────────────────────────────────────── */
+
+.slide.hero-slide {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+/* ── Cover Hero (공통) ── */
+.cover-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-lg);
+}
+
+.hero .ring {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 3px solid var(--color-primary);
+  margin: 0 auto var(--space-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: ring-pulse 4s ease-in-out infinite;
+}
+
+.hero .ring::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1px solid var(--color-primary);
+  opacity: .4;
+}
+
+.hero .ring-text {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--color-primary);
+  letter-spacing: -0.02em;
+}
+
+.hero-slide .title {
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 900;
+  color: var(--color-heading);
+  margin: 0;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.hero-slide .subtitle {
+  font-size: clamp(16px, 2.5vw, 24px);
+  color: var(--color-muted);
+  margin-top: var(--space-sm);
+  font-weight: 400;
+}
+
+@keyframes ring-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.02); opacity: .85; }
+}
+
+.slide.problem-slide {
+  justify-content: center;
+  align-items: center;
+}
+
+.slide.diagram-slide {
+  justify-content: center;
+  align-items: center;
+}
+
+.slide.example-slide {
+  justify-content: center;
+  align-items: center;
+}
+
+.slide.summary-slide {
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* ──────────────────────────────────────────────
+   3.5 GLASS DIVIDER — v5
+   Blur-based visual separator between sections.
+   Uses Glass Divider spec: rgba(136,192,208,0.06) + blur(12px)
+   ────────────────────────────────────────────── */
+
+.slide.section-divider {
+  background: linear-gradient(135deg, var(--color-surface) 0%, rgba(136, 192, 208, 0.03) 100%);
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+/* Glass Divider overlay */
+.glass-divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-lg) var(--space-xl);
+  background: rgba(136, 192, 208, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(136, 192, 208, 0.1);
+  border-radius: var(--radius-md);
+}
+
+.section-divider-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.divider-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.divider-title {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 700;
+  color: var(--color-heading);
+}
+
+.divider-desc {
+  font-size: 15px;
+  color: var(--color-muted);
+  max-width: 450px;
+  line-height: 1.5;
+}
+
+
+/* ──────────────────────────────────────────────
+   4. COMMON LAYOUT — deck, slides, utilities
+   ────────────────────────────────────────────── */
+
+/* ── Deck ── */
+.deck {
+  display: flex;
+  height: 100vh;
+  scroll-snap-type: x mandatory;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+.deck::-webkit-scrollbar { display: none; }
+
+.slide {
+  box-sizing: border-box;
+  flex: 0 0 100vw;
+  height: 100vh;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2xl) 40px;
+  position: relative;
+  overflow-y: auto;
+  gap: var(--space-md);
+}
+
+/* ── Lecture Badge ── */
+.lecture-badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-xs);
+}
+
+/* ── Inline Section Header ── */
+.inline-section {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-heading);
+  text-align: center;
+}
+
+
+/* ═══════════════════════════════════════════════
+   4.1 4-LAYOUT CORE — v5
+   ───────────────────────────────────────────────
+   Every slide uses one of 4 layout containers:
+   - .layout-centered    : max-width 640px, centered
+   - .layout-two-col     : grid 2fr / 3fr
+   - .layout-diagram     : max-width 90vw, full diagram space
+   - .layout-full-bleed  : 100vw, no padding
+   ═══════════════════════════════════════════════ */
+
+.layout-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.layout-two-col {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: var(--space-lg);
+  max-width: 90vw;
+  width: 100%;
+  align-items: start;
+}
+
+.layout-diagram {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  max-width: 90vw;
+  width: 100%;
+}
+
+.layout-full-bleed {
+  width: 100vw;
+  max-width: 100vw;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+
+/* ── Grid Cards ── */
+.grid-cards {
+  display: grid;
+  gap: var(--space-sm);
+  max-width: 600px;
+  width: 100%;
+}
+.grid-cards.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cards.cols-2 { grid-template-columns: repeat(2, 1fr); }
+
+.grid-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-lg);
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  transition: var(--transition);
+}
+.grid-card:hover {
+  border-color: var(--color-primary);
+  background: rgba(136, 192, 208, 0.03);
+}
+.grid-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-heading);
+}
+.grid-card-desc {
+  font-size: 13px;
+  color: var(--color-muted);
+  line-height: 1.4;
+}
+
+/* ── Two-Column Layout (legacy) — now 2fr 3fr ── */
+.two-col {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: var(--space-lg);
+  max-width: 640px;
+  width: 100%;
+  text-align: center;
+}
+.col-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--space-sm);
+}
+.col-item {
+  font-size: 14px;
+  color: var(--color-text);
+  padding: 6px 0;
+}
+.col-item.ok   { color: var(--color-success); }
+.col-item.fail { color: var(--color-error); }
+
+/* ── Comparison Table ── */
+.compare-table {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  max-width: 560px;
+  width: 100%;
+}
+.compare-table > div {
+  padding: 10px 16px;
+  background: var(--color-card);
+  font-size: 13px;
+}
+.compare-table .header {
+  font-weight: 700;
+  color: var(--color-primary);
+  background: rgba(136, 192, 208, 0.05);
+}
+/* Compare Table (center alignment, R20) */
+.compare-table > div { text-align: center; }
+
+/* ── Responsive Grids ── */
+@media (max-width: 768px) {
+  .failure-taxonomy { grid-template-columns: repeat(2, 1fr); }
+  .compare-table { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .failure-taxonomy { grid-template-columns: 1fr; }
+}
+
+
+/* ── Insight Box ── */
+.insight-box {
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(136, 192, 208, 0.05);
+  border: 1px solid rgba(136, 192, 208, 0.2);
+  border-radius: var(--radius-lg);
+  font-size: 15px;
+  color: var(--color-primary);
+  text-align: center;
+  max-width: 500px;
+  line-height: 1.5;
+}
+
+
+/* ── Key Message ── */
+.key-message {
+  font-size: var(--text-title);
+  font-weight: 700;
+  color: var(--color-heading);
+  text-align: center;
+  line-height: 1.4;
+  max-width: 500px;
+}
+
+/* ── Question ── */
+.question {
+  font-size: clamp(24px, 4vw, 40px);
+  font-weight: 800;
+  color: var(--color-heading);
+  text-align: center;
+  line-height: 1.3;
+  max-width: 550px;
+}
+.question .hl { color: var(--color-primary); }
+
+/* ── Section Title (within divider) ── */
+.section-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-heading);
+}
+.section-subtitle {
+  font-size: 15px;
+  color: var(--color-muted);
+}
+
+
+/* ── Flow / Architecture Diagram ── */
+.flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+/* 방향 변형 */
+.flow.v-flow  { flex-direction: column; }
+.flow.h-flow  { flex-direction: row; }
+.flow .node {
+  padding: 10px 18px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+/* ── Arrow Components ── */
+/* 공통 arrow 스타일 (모든 variant) */
+.flow .arrow,
+.h-flow .arrow,
+.goal-arrow,
+.sec-arrow,
+.step-arrow,
+.layer-arrow {
+  color: var(--color-primary);
+  font-size: 16px;
+  min-width: 1em;
+  text-align: center;
+}
+.flow .arrow  { font-size: 18px; }
+.sec-arrow    { color: var(--color-border); font-size: 13px; }
+.goal-arrow   { font-size: 16px; }
+.step-arrow   { font-size: 16px; }
+.layer-arrow  { font-size: 16px; color: var(--color-text); }
+
+/* 자동 방향 설정 (컨테이너 클래스 기반) */
+.flow.v-flow .arrow:empty::before,
+.flow.v-flow .step-arrow:empty::before { content: "↓"; }
+
+.flow.h-flow .arrow:empty::before,
+.flow.h-flow .step-arrow:empty::before,
+.h-flow .arrow:empty::before            { content: "→"; }
+
+.layer-stack .layer-arrow:empty::before { content: "↑"; }
+
+/* 하위 호환성 */
+.arrow:not(:empty)::before,
+.step-arrow:not(:empty)::before,
+.layer-arrow:not(:empty)::before { display: none; }
+
+.flow .label {
+  font-size: 11px;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+/* ── Horizontal Flow ── */
+.h-flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.h-node {
+  padding: 8px 16px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  font-size: 13px;
+  color: var(--color-text);
+}
+.h-node:first-child { border-radius: var(--radius-lg) 0 0 var(--radius-lg); }
+.h-node:last-child { border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+.h-node + .h-node { border-left: none; }
+.h-label {
+  font-size: 10px;
+  color: var(--color-muted);
+  text-align: center;
+  padding: 2px 8px;
+}
+
+
+/* ═══════════════════════════════════════════════
+   4.2 NORD-ICE — v5
+   ───────────────────────────────────────────────
+   Solid semi-transparent card (no blur).
+   Spec: rgba(59,66,82,0.45) + border + shadow
+   ═══════════════════════════════════════════════ */
+
+.nord-ice {
+  background: rgba(59, 66, 82, 0.45);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  /* No backdrop-filter / blur — deliberate spec choice */
+}
+
+
+/* ═══════════════════════════════════════════════
+   4.3 GLASS DIVIDER — v5
+   ───────────────────────────────────────────────
+   Backdrop blur card for section dividers.
+   Spec: rgba(136,192,208,0.06) + blur(12px)
+   ═══════════════════════════════════════════════ */
+
+.glass-panel {
+  background: rgba(136, 192, 208, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(136, 192, 208, 0.1);
+  border-radius: var(--radius-md);
+}
+
+
+/* ── Highlight ── */
+.highlight { color: var(--color-primary); font-weight: 600; }
+.hl { color: var(--color-primary); }
+
+/* ── Color utilities ── */
+.gold   { color: var(--color-primary); }
+.cyan   { color: var(--color-teal); }
+.green  { color: var(--color-success); }
+.purple { color: var(--color-purple); }
+.orange { color: var(--color-orange); }
+.red    { color: var(--color-error); }
+
+/* ── Overflow Safe ── */
+.overflow-safe {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  max-width: 500px;
+}
+
+/* ── Big Number ── */
+.big-number {
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--color-primary);
+  opacity: 0.3;
+}
+
+
+/* ──────────────────────────────────────────────
+   4.4 TYPOGRAPHY UTILITIES — v5
+   ────────────────────────────────────────────── */
+
+.text-hero     { font-size: var(--text-hero); font-weight: 800; line-height: 1.15; }
+.text-section  { font-size: var(--text-section); font-weight: 700; line-height: 1.25; }
+.text-title    { font-size: var(--text-title); font-weight: 700; line-height: 1.3; }
+.text-takeaway { font-size: var(--text-takeaway); font-weight: 600; line-height: 1.4; }
+.text-body     { font-size: var(--text-body); line-height: 1.6; }
+.text-caption  { font-size: var(--text-caption); line-height: 1.5; }
+.text-code     { font-size: 16px; font-weight: 700; line-height: 1.5; font-family: 'JetBrains Mono', monospace; }
+
+
+/* ──────────────────────────────────────────────
+   4.5 ANIMATION UTILITIES — v5
+   ────────────────────────────────────────────── */
+
+/* 300ms fade / slide, max 2 simultaneous */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-left {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slide-right {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.anim-fade {
+  animation: fade-in 300ms ease forwards;
+}
+
+.anim-slide-up {
+  animation: slide-up 300ms ease forwards;
+}
+
+.anim-slide-left {
+  animation: slide-left 300ms ease forwards;
+}
+
+.anim-slide-right {
+  animation: slide-right 300ms ease forwards;
+}
+
+/* Staggered delays for sequential reveals */
+.anim-delay-1 { animation-delay: 150ms; }
+.anim-delay-2 { animation-delay: 300ms; }
+
+/* Max 2 simultaneous: delay chains > 2 items */
+.anim-stagger > *:nth-child(n+3) { animation-delay: 300ms; }
+
+
+/* ──────────────────────────────────────────────
+   4.6 SLIDE GRAMMAR — v5
+   Title + Takeaway + Diagram + Details (Bullet ≤ 5)
+   ────────────────────────────────────────────── */
+
+.slide-grammar-title {
+  font-size: var(--text-title);
+  font-weight: 700;
+  color: var(--color-heading);
+  text-align: center;
+  margin-bottom: var(--space-xs);
+}
+
+.slide-grammar-takeaway {
+  font-size: var(--text-takeaway);
+  font-weight: 600;
+  color: var(--color-primary);
+  text-align: center;
+  max-width: 600px;
+  line-height: 1.4;
+}
+
+.slide-grammar-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  max-width: 560px;
+  width: 100%;
+}
+
+.slide-grammar-details li {
+  font-size: var(--text-body);
+  color: var(--color-text);
+  line-height: 1.5;
+  padding: var(--space-xs) 0;
+  list-style: none;
+  position: relative;
+  padding-left: 18px;
+}
+
+.slide-grammar-details li::before {
+  content: "▸";
+  position: absolute;
+  left: 0;
+  color: var(--color-primary);
+  font-size: 12px;
+}
+
+
+/* ── Notes Toggle ── */
+.notes-toggle {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  padding: 6px 12px;
+  font-size: 11px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-muted);
+  cursor: pointer;
+  z-index: 100;
+}
+.notes-toggle:hover { color: var(--color-text); }
+.notes-panel {
+  display: none;
+  position: fixed;
+  bottom: 48px;
+  right: 12px;
+  width: 300px;
+  max-height: 200px;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: 12px;
+  color: var(--color-muted);
+  line-height: 1.5;
+  z-index: 100;
+  overflow-y: auto;
+}
+.notes-panel.visible { display: block; }
+
+/* ── Slide Counter ── */
+.slide-counter {
+  position: fixed;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: var(--color-muted);
+  z-index: 100;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Button ── */
+.btn {
+  display: inline-block;
+  padding: var(--space-xs) 20px;
+  background: var(--color-primary);
+  color: var(--color-bg);
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+}
+.btn:hover { opacity: 0.9; }
+
+/* ── Ring Icon ── */
+.ring-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+/* ── Small centered badge ── */
+.badge-sm {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-primary);
+  border: 1px solid rgba(136, 192, 208, 0.3);
+  border-radius: 100px;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-xs);
+}
+
+/* ── Check/Cross markers ── */
+.check { color: var(--color-success); }
+.cross { color: var(--color-error); }
+
+/* ── Example Box ── */
+.example-box {
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-teal);
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  color: var(--color-text);
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+/* ──────────────────────────────────────────────
+   5. HOW MECHANISMS — v5
+   M1-M6 arrow-flow / pipeline diagrams
+   ────────────────────────────────────────────── */
+
+/* M1: Memory Search arrow flow */
+.mech-arrow-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+.mech-node {
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+.mech-arrow {
+  color: var(--color-primary);
+  font-size: 18px;
+  font-weight: 700;
+}
+.mech-label {
+  font-size: 11px;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+/* M3/M4: Pipeline (horizontal connected blocks) */
+.mech-pipeline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.mech-pipeline .pipeline-node {
+  padding: 8px 16px;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  font-size: 13px;
+  color: var(--color-text);
+}
+.mech-pipeline .pipeline-node:first-child {
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+}
+.mech-pipeline .pipeline-node:last-child {
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.mech-pipeline .pipeline-node + .pipeline-node {
+  border-left: none;
+}
+
+/* M4: State Machine */
+.state-machine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.state-node {
+  padding: var(--space-xs) var(--space-md);
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+  min-width: 120px;
+  text-align: center;
+}
+.state-arrow {
+  color: var(--color-primary);
+  font-size: 16px;
+}
+
+/* M5: Multi-layer context */
+.multi-layer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  width: 100%;
+  max-width: 500px;
+}
+.layer {
+  width: 100%;
+  padding: 8px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text);
+}
+.layer-budget {
+  background: rgba(136, 192, 208, 0.08);
+  border-color: rgba(136, 192, 208, 0.2);
+  color: var(--color-primary);
+}
+
+/* M6: Spreadsheet-style SSOT */
+.ssot-table {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  width: 100%;
+  max-width: 600px;
+}
+.ssot-table > div {
+  padding: 8px 12px;
+  background: var(--color-card);
+  font-size: 13px;
+  text-align: center;
+}
+.ssot-table .ssot-header {
+  font-weight: 700;
+  color: var(--color-primary);
+  background: rgba(136, 192, 208, 0.05);
+}
+
+
+/* ──────────────────────────────────────────────
+   6. NAVIGATION
+   ────────────────────────────────────────────── */
+
+/* Progress bar (top of screen) */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-teal));
+  z-index: 200;
+  transition: width 200ms ease;
+}
+
+/* Dot navigation (bottom center) */
+.nav {
+  position: fixed;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 100;
+  background: rgba(59, 66, 82, 0.8);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: 100px;
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--color-border);
+}
+
+.nav a {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-border);
+  display: inline-block;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.nav a.active {
+  background: var(--color-primary);
+  box-shadow: 0 0 6px rgba(136, 192, 208, 0.2);
+}
+
+/* ──────────────────────────────────────────────
+   7. SUMMARY CARDS — v5
+   3 Large Number Cards (for Summary slides)
+   ────────────────────────────────────────────── */
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  max-width: 680px;
+  width: 100%;
+}
+
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-lg);
+  background: rgba(59, 66, 82, 0.45);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  transition: var(--transition);
+}
+
+.summary-card:hover {
+  border-color: var(--color-primary);
+}
+
+.summary-card-number {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.summary-card-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-heading);
+}
+
+.summary-card-desc {
+  font-size: 12px;
+  color: var(--color-muted);
+  line-height: 1.4;
+}

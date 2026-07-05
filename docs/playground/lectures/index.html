@@ -1,113 +1,205 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Building an Agent OS with Hermes — Lectures</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  :root{--bg:#0b0d12;--surface:#12151c;--card:#181c28;--border:#262b3a;--gold:#f0b429;--gold-dim:#b8861e;--gold-glow:rgba(240,180,41,.15);--text:#e8edf5;--text-dim:#8892a8;--accent-cyan:#5bc0eb;--accent-magenta:#f15bb5;--accent-green:#00f5d4;--accent-red:#ff6b6b;--accent-purple:#b197fc;--radius:16px;--transition:400ms cubic-bezier(.22,1,.36,1)}
-  html,body{font-family:'Inter','Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-  .container{max-width:900px;margin:0 auto;padding:64px 24px}
-  .hl{color:var(--gold)}
-  .header{text-align:center;margin-bottom:48px}
-  .title{font-size:clamp(32px,5vw,48px);font-weight:900;letter-spacing:-2px;line-height:1.1}
-  .subtitle{font-size:clamp(16px,2vw,22px);color:var(--text-dim);margin-top:8px;font-weight:300}
-  .badge-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
-  .badge{padding:4px 14px;border-radius:100px;font-size:12px;font-weight:700;letter-spacing:1px}
-  .badge-gold{background:var(--gold-glow);color:var(--gold)}
-  .badge-cyan{background:rgba(91,192,235,.15);color:var(--accent-cyan)}
-  .badge-purple{background:rgba(177,151,252,.15);color:var(--accent-purple)}
-  .part{position:relative;margin-bottom:32px}
-  .part-title{font-size:14px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
-  .list{display:grid;gap:10px}
-  .card{display:grid;grid-template-columns:48px 1fr auto;gap:16px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;text-decoration:none;color:var(--text);transition:var(--transition)}
-  .card:hover{border-color:var(--gold);transform:translateY(-1px)}
-  .card.ready{border-left:3px solid var(--accent-green)}
-  .card.new{border-left:3px solid var(--accent-cyan)}
-  .card.pending{opacity:.45;pointer-events:none}
-  .num{width:36px;height:36px;border-radius:50%;background:var(--gold-glow);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900}
-  .info{display:flex;flex-direction:column;gap:2px}
-  .name{font-size:16px;font-weight:700}
-  .desc{font-size:13px;color:var(--text-dim)}
-  .meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-  .tag{padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1px}
-  .tag-slides{background:rgba(91,192,235,.15);color:var(--accent-cyan)}
-  .tag-time{background:rgba(177,151,252,.15);color:var(--accent-purple)}
-  .tag-status{background:rgba(0,245,212,.15);color:var(--accent-green)}
-  .archive-link{margin-top:12px;text-align:center}
-  .archive-link a{color:var(--text-dim);font-size:13px;text-decoration:none;transition:var(--transition)}
-  .archive-link a:hover{color:var(--gold)}
-  .footer{text-align:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--border);color:var(--text-dim);font-size:13px}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>p-hermes 강의 슬라이드 — Version Index</title>
+  <style>
+    .index-page {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 48px 24px;
+      font-family: 'Inter','Noto Sans KR',system-ui,-apple-system,sans-serif;
+      background: #2e3440;
+      color: #d8dee9;
+      min-height: 100vh;
+    }
+    .index-title {
+      font-size: 40px;
+      font-weight: 800;
+      color: #eceff4;
+      margin-bottom: 8px;
+    }
+    .index-subtitle {
+      font-size: 16px;
+      color: #81a1c1;
+      margin-bottom: 32px;
+    }
+    .version-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 24px;
+      background: #3b4252;
+      border: 1px solid #4c566a;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      transition: all 0.3s ease;
+    }
+    .version-card:hover {
+      border-color: #88c0d0;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .version-card.current {
+      border-left: 4px solid #a3be8c;
+    }
+    .version-card.archive {
+      border-left: 4px solid #ebcb8b;
+      opacity: 0.7;
+    }
+    .version-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .version-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #eceff4;
+    }
+    .version-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .version-badge.current {
+      background: rgba(163,190,140,0.15);
+      color: #a3be8c;
+    }
+    .version-badge.archive {
+      background: rgba(235,203,139,0.15);
+      color: #ebcb8b;
+    }
+    .version-stats {
+      display: flex;
+      gap: 16px;
+      font-size: 14px;
+      color: #81a1c1;
+    }
+    .lecture-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .lecture-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: #434c5e;
+      border: 1px solid #4c566a;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #d8dee9;
+      transition: all 0.3s ease;
+    }
+    .lecture-link:hover {
+      border-color: #88c0d0;
+      background: rgba(136,192,208,0.05);
+    }
+    .lecture-title {
+      font-weight: 600;
+    }
+    .lecture-meta {
+      font-size: 13px;
+      color: #81a1c1;
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <div class="title">Building an Agent <span class="hl">OS</span><br>with Hermes</div>
-    <div class="subtitle">From Chatbots to Persistent AI Systems</div>
-    <div class="badge-row">
-      <span class="badge badge-gold">10 Lectures</span>
-      <span class="badge badge-cyan">259 Slides</span>
-      <span class="badge badge-purple">~600 min</span>
+  <div class="index-page">
+    <h1 class="index-title">📚 p-hermes 강의 슬라이드</h1>
+    <p class="index-subtitle">Hermes Agent OS — Lecture Series Index</p>
+    
+    <!-- v4 - Current -->
+    <div class="version-card current">
+      <div class="version-header">
+        <div class="version-title">v4 — Slide Design System</div>
+        <div class="version-badge current">Active</div>
+      </div>
+      <div class="version-stats">
+        <span>3 강</span>
+        <span>55 슬라이드</span>
+        <span>Nord 테마</span>
+      </div>
+      <div class="lecture-list">
+        <a href="v4/lecture-a-why-agent-os.html" class="lecture-link">
+          <span class="lecture-title">Lecture A — 왜 Agent OS인가?</span>
+          <span class="lecture-meta">15장 · SCQA→Golden Circle</span>
+        </a>
+        <a href="v4/lecture-b-memory-knowledge.html" class="lecture-link">
+          <span class="lecture-title">Lecture B — Memory vs Knowledge</span>
+          <span class="lecture-meta">20장 · Progressive Disclosure</span>
+        </a>
+        <a href="v4/lecture-c-architecture-runtime.html" class="lecture-link">
+          <span class="lecture-title">Lecture C — Architecture & Runtime</span>
+          <span class="lecture-meta">20장 · Pyramid Principle</span>
+        </a>
+      </div>
     </div>
-  </div>
-
-  <!-- Part 1 -->
-  <div class="part">
-    <div class="part-title">Part 1 — Hermes Core</div>
-    <div class="list">
-      <a href="lecture-01-why-agents-fail.html" class="card ready">
-        <div class="num">01</div>
-        <div class="info"><div class="name">Why Agents Fail</div><div class="desc">From Chatbots to Agent Operating Systems</div></div>
-        <div class="meta"><span class="tag tag-slides">24장</span><span class="tag tag-time">60분</span><span class="tag tag-status">Ready</span></div>
-      </a>
-      <a href="lecture-02-memory-and-knowledge.html" class="card ready">
-        <div class="num">02</div>
-        <div class="info"><div class="name">Memory &amp; Knowledge</div><div class="desc">Remembering vs Understanding</div></div>
-        <div class="meta"><span class="tag tag-slides">25장</span><span class="tag tag-time">60분</span><span class="tag tag-status">Ready</span></div>
-      </a>
-      <a href="lecture-03-skills-and-workflow.html" class="card new">
-        <div class="num">03</div>
-        <div class="info"><div class="name">Skills &amp; Workflow</div><div class="desc">Knowing vs Doing</div></div>
-        <div class="meta"><span class="tag tag-slides">27장</span><span class="tag tag-time">60분</span><span class="tag tag-status">New</span></div>
-      </a>
-      <a href="lecture-04-hermes-core-architecture.html" class="card new">
-        <div class="num">04</div>
-        <div class="info"><div class="name">Hermes Core Architecture</div><div class="desc">How Everything Fits Together</div></div>
-        <div class="meta"><span class="tag tag-slides">25장</span><span class="tag tag-time">60분</span><span class="tag tag-status">New</span></div>
-      </a>
+    
+    <!-- v1.9 - Archive -->
+    <div class="version-card archive">
+      <div class="version-header">
+        <div class="version-title">v1.9 — 6강 Gold+Dark</div>
+        <div class="version-badge archive">Archive</div>
+      </div>
+      <div class="version-stats">
+        <span>6 강</span>
+        <span>98 슬라이드</span>
+        <span>Gold+Dark 테마</span>
+      </div>
+      <div class="lecture-list">
+        <a href="archive/v1.9/lecture-01-why-agents-fail.html" class="lecture-link">
+          <span class="lecture-title">Lecture 01 — Why Agents Fail</span>
+          <span class="lecture-meta">16장</span>
+        </a>
+        <a href="archive/v1.9/lecture-02-memory-and-knowledge.html" class="lecture-link">
+          <span class="lecture-title">Lecture 02 — Memory & Knowledge</span>
+          <span class="lecture-meta">16장</span>
+        </a>
+        <a href="archive/v1.9/lecture-03-skills-and-workflow.html" class="lecture-link">
+          <span class="lecture-title">Lecture 03 — Skills & Workflow</span>
+          <span class="lecture-meta">16장</span>
+        </a>
+        <a href="archive/v1.9/lecture-04-hermes-core-architecture.html" class="lecture-link">
+          <span class="lecture-title">Lecture 04 — Hermes Core Architecture</span>
+          <span class="lecture-meta">18장</span>
+        </a>
+        <a href="archive/v1.9/lecture-05-knowledge-factory.html" class="lecture-link">
+          <span class="lecture-title">Lecture 05 — Knowledge Factory</span>
+          <span class="lecture-meta">16장</span>
+        </a>
+        <a href="archive/v1.9/lecture-06-content-factory.html" class="lecture-link">
+          <span class="lecture-title">Lecture 06 — Content Factory</span>
+          <span class="lecture-meta">16장</span>
+        </a>
+      </div>
     </div>
-  </div>
-
-  <!-- Part 2 -->
-  <div class="part">
-    <div class="part-title">Part 2 — Factory Layer</div>
-    <div class="list">
-      <div class="card pending"><div class="num">05</div><div class="info"><div class="name">Knowledge Factory</div><div class="desc">From Information to Organizational Intelligence</div></div><div class="meta"><span class="tag tag-slides">24장</span><span class="tag tag-time">60분</span><span class="tag tag-status">In Development</span></div></div>
-      <div class="card pending"><div class="num">06</div><div class="info"><div class="name">Content Factory</div><div class="desc">Turning Knowledge into Output</div></div><div class="meta"><span class="tag tag-slides">25장</span><span class="tag tag-time">60분</span><span class="tag tag-status">In Development</span></div></div>
-      <div class="card pending"><div class="num">07</div><div class="info"><div class="name">Research Factory</div><div class="desc">From Unknown to Knowledge</div></div><div class="meta"><span class="tag tag-slides">26장</span><span class="tag tag-time">60분</span><span class="tag tag-status">In Development</span></div></div>
-      <div class="card pending"><div class="num">08</div><div class="info"><div class="name">Spec-Driven Development</div><div class="desc">From Idea to Implementation</div></div><div class="meta"><span class="tag tag-slides">28장</span><span class="tag tag-time">60분</span><span class="tag tag-status">In Development</span></div></div>
+    
+    <!-- Older Archives -->
+    <div class="version-card archive">
+      <div class="version-header">
+        <div class="version-title">v1.0 ~ v1.8 — 초기 개발 이력</div>
+        <div class="version-badge archive">Archive</div>
+      </div>
+      <div class="version-stats">
+        <span>9개 버전</span>
+        <span>2026-06-23 ~ 2026-06-24</span>
+      </div>
+      <div class="lecture-list">
+        <a href="archive/index.html" class="lecture-link">
+          <span class="lecture-title">아카이브 인덱스</span>
+          <span class="lecture-meta">전체 버전 히스토리</span>
+        </a>
+      </div>
     </div>
+    
+    <p style="font-size: 14px; color: #81a1c1; margin-top: 32px;">
+      마지막으로 업데이트: 2026-07-05
+    </p>
   </div>
-
-  <!-- Part 3 -->
-  <div class="part">
-    <div class="part-title">Part 3 — Production &amp; Operating</div>
-    <div class="list">
-      <div class="card pending"><div class="num">09</div><div class="info"><div class="name">P-Hermes Operating Model</div><div class="desc">How the Whole System Works</div></div><div class="meta"><span class="tag tag-slides">26장</span><span class="tag tag-time">60분</span></div></div>
-      <div class="card pending"><div class="num">10</div><div class="info"><div class="name">Building Your Own Agent OS</div><div class="desc">From Theory to Practice</div></div><div class="meta"><span class="tag tag-slides">30장</span><span class="tag tag-time">60분</span></div></div>
-    </div>
-  </div>
-
-  <div class="archive-link">
-    <a href="archive/">📜 Version History &amp; Archive →</a>
-  </div>
-
-  <div class="footer">
-    <p>Building an Agent OS with Hermes · p-hermes Lectures</p>
-  </div>
-</div>
 </body>
 </html>

@@ -1,6 +1,24 @@
 {
-  "current": "v3",
+  "current": "v4",
   "versions": [
+    {
+      "id": "v4",
+      "label": "v4 — Slide Design System",
+      "path": "v4/",
+      "commit": "TBD",
+      "job": "JOB-2058",
+      "releasedAt": "2026-07-05T16:00:00+09:00",
+      "summary": "Nord 디자인 시스템, 3강(55장), Slide Taxonomy/Grammar/Diagram Rules",
+      "changes": [
+        "Gold+Dark → Nord 테마 (--color-bg, --color-primary 등 의미 기반 naming)",
+        "6강(98장) → 3강(55장) 구조 단순화",
+        "4-Layout Core (Centered, Two Columns, Diagram Focus, Full Bleed)",
+        "Slide Grammar (Title+Takeaway+Diagram+Details, Bullet ≤5)",
+        "Glass Divider 5장 (blur 12px)",
+        "How Mechanisms M1-M6 (Memory Search, Knowledge Search, etc)",
+        "Animation 300ms (fade/slide only)"
+      ]
+    },
     {
       "id": "v3",
       "label": "v3 — GC Refined",
@@ -89,14 +107,46 @@
     "totalSizeV3": 246590,
     "sizeChange": "+69,084 bytes (+38.9%)",
     "decks": [
-      {"name": "workflow-pipeline", "v2Size": 25691, "v3Size": 27847},
-      {"name": "knowledge-system", "v2Size": 9045, "v3Size": 26559},
-      {"name": "cron-system", "v2Size": 16468, "v3Size": 27481},
-      {"name": "architecture-layered", "v2Size": 26358, "v3Size": 29370},
-      {"name": "spec-driven-dev", "v2Size": 32408, "v3Size": 29975},
-      {"name": "content-system", "v2Size": 14238, "v3Size": 41448},
-      {"name": "model-routing", "v2Size": 34132, "v3Size": 34751},
-      {"name": "hermes-overview", "v2Size": 19166, "v3Size": 29159}
+      {
+        "name": "workflow-pipeline",
+        "v2Size": 25691,
+        "v3Size": 27847
+      },
+      {
+        "name": "knowledge-system",
+        "v2Size": 9045,
+        "v3Size": 26559
+      },
+      {
+        "name": "cron-system",
+        "v2Size": 16468,
+        "v3Size": 27481
+      },
+      {
+        "name": "architecture-layered",
+        "v2Size": 26358,
+        "v3Size": 29370
+      },
+      {
+        "name": "spec-driven-dev",
+        "v2Size": 32408,
+        "v3Size": 29975
+      },
+      {
+        "name": "content-system",
+        "v2Size": 14238,
+        "v3Size": 41448
+      },
+      {
+        "name": "model-routing",
+        "v2Size": 34132,
+        "v3Size": 34751
+      },
+      {
+        "name": "hermes-overview",
+        "v2Size": 19166,
+        "v3Size": 29159
+      }
     ]
   }
 }

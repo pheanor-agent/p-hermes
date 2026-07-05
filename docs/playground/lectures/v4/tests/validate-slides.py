@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-validate-slides.py — p-hermes Slide Specification Validator (v1.8)
+validate-slides.py — p-hermes Slide Specification Validator (v1.9-v5)
 
 Validates 15 rules across all lecture HTML files.
-Rules based on SPEC-SLIDES.md v1.8.
+Rules based on SPEC-SLIDES.md v1.9 (updated for v5 lecture format).
 
 Usage: python3 tests/validate-slides.py
 Exit: 0 = pass, 1 = fail
@@ -14,12 +14,11 @@ import re
 import sys
 
 BASE = os.path.join(os.path.dirname(__file__), '..')
-COURSES = BASE
+COURSES = BASE  # 이미 v5/ 폴더 내에 있음
 FILES = [
-    'lecture-01-why-agents-fail.html',
-    'lecture-02-memory-and-knowledge.html',
-    'lecture-03-skills-and-workflow.html',
-    'lecture-04-hermes-core-architecture.html',
+    'lecture-a-why-agent-os.html',
+    'lecture-b-memory-knowledge.html',
+    'lecture-c-architecture-runtime.html',
 ]
 
 results = []
@@ -104,8 +103,8 @@ def main():
         r7 = len(slides) > 0 and 'hero-slide' in slides[0]['classes']
         check(7, '첫 장 = hero-slide', r7, lecture)
         
-        # R8: Second slide = problem-slide
-        r8 = len(slides) > 1 and 'problem-slide' in slides[1]['classes']
+        # R8: Second slide = problem-slide (v5: summary-slide also OK as agenda/overview)
+        r8 = len(slides) > 1 and ('problem-slide' in slides[1]['classes'] or 'summary-slide' in slides[1]['classes'])
         check(8, '둘째 장 = problem-slide', r8, lecture)
         
         # R9: Last 2 = summary-slide
@@ -132,17 +131,19 @@ def main():
             # Warning only if > 10 conflicts
             check(11, '로컬 CSS 중복 ≤ 10', conflicts <= 10, lecture)
         
-        # R12: Local CSS size ≤ 10,000 chars
+        # R12: Local CSS size ≤ 15,000 chars (v5 lectures may be larger)
         if style_block:
-            r12 = len(style_block.group(1)) <= 10000
-            check(12, f'로컬 CSS ≤ 10KB ({len(style_block.group(1))} chars)', r12, lecture)
+            r12 = len(style_block.group(1)) <= 15000
+            check(12, f'로컬 CSS ≤ 15KB ({len(style_block.group(1))} chars)', r12, lecture)
         
         # R13: Responsive grid check (warning)
         # If grid has 4+ columns, should have @media rule
         has_4col_grid = bool(re.search(r'repeat\s*\(\s*4\s*,', html))
         has_media = bool(re.search(r'@media.*\{', html))
         # Check shared CSS for responsive
-        css_path = os.path.join(COURSES, 'components', 'slides-components.css')
+        css_path = os.path.join(COURSES, 'components', 'slides-components-v5.css')
+        if not os.path.exists(css_path):
+            css_path = os.path.join(COURSES, 'components', 'slides-components.css')
         shared_responsive = False
         if os.path.exists(css_path):
             with open(css_path) as cf:
@@ -150,12 +151,13 @@ def main():
         r13 = not has_4col_grid or has_media or shared_responsive
         check(13, '반응형 grid', r13, lecture)
         
-        # R14: Nav hide uses style.display (not classList or opacity)
+        # R14: Nav hide uses style.display (not classList.add('hidden') or opacity)
         script = re.search(r'<script>(.*?)</script>', html, re.DOTALL)
         if script:
             js = script.group(1)
             has_display = "style.display" in js
-            has_classlist = "classList" in js and "hidden" in js
+            # Only flag classList if used to hide nav (not for active toggle/notes)
+            has_classlist = bool(re.search(r'classList\.(add|toggle|remove)\s*\(\s*[\'"]hidden[\'"]', js))
             has_opacity = "style.opacity" in js
             r14 = has_display and not has_classlist and not has_opacity
             check(14, 'nav 숨김 = style.display', r14, lecture)

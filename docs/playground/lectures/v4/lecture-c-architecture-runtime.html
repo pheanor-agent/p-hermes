@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture C: Architecture & Runtime — 4-Layer System, 9-Step State Machine</title>
+<link rel="stylesheet" href="components/slides-components-v5.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── Lecture C specific styles ── */
+
+  /* Pyramid (conclusion-first) */
+  .pyramid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    max-width: 640px;
+    width: 100%;
+    margin: var(--space-md) auto;
+  }
+  .pyramid-level {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border: 1px solid var(--color-border);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-heading);
+    text-align: center;
+    transition: var(--transition);
+    position: relative;
+  }
+  .pyramid-level:hover { transform: scale(1.01); }
+  .pyramid-level .py-icon { margin-right: 8px; font-size: 16px; }
+  .pyramid-level .py-detail { font-size: 11px; font-weight: 400; color: var(--color-muted); margin-left: 10px; }
+  .pyramid-level .py-code { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--color-teal); margin-left: 8px; }
+  .pyramid-top { width: 45%; border-radius: var(--radius-md); background: rgba(136,192,208,0.1); border-color: rgba(136,192,208,0.25); }
+  .pyramid-2   { width: 62%; background: rgba(143,188,187,0.08); border-color: rgba(143,188,187,0.2); border-top: none; }
+  .pyramid-3   { width: 78%; background: rgba(94,129,172,0.08); border-color: rgba(94,129,172,0.2); border-top: none; }
+  .pyramid-4   { width: 90%; border-radius: 0 0 var(--radius-md) var(--radius-md); background: rgba(59,66,82,0.4); border-color: var(--color-border); border-top: none; }
+  .pyramid-support { width: 100%; margin-top: 4px; padding: 6px 0; font-size: 11px; color: var(--color-muted); text-align: center; }
+
+  /* 9-Step State Machine (horizontal) */
+  .state-machine-h {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    max-width: 95vw;
+    margin: var(--space-md) auto;
+  }
+  .sm-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 8px 12px;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    min-width: 80px;
+    text-align: center;
+    transition: var(--transition);
+    font-size: 11px;
+    color: var(--color-text);
+  }
+  .sm-node:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+  .sm-node:last-child  { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+  .sm-node + .sm-node  { border-left: none; }
+  .sm-node:hover { border-color: var(--color-primary); transform: translateY(-2px); }
+  .sm-node .sm-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: rgba(136,192,208,0.12);
+    color: var(--color-primary);
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .sm-node .sm-label { font-size: 11px; font-weight: 600; color: var(--color-heading); }
+  .sm-node .sm-desc  { font-size: 9px; color: var(--color-muted); }
+  .sm-node.gate { border-color: rgba(163,190,140,0.4); background: rgba(163,190,140,0.08); }
+  .sm-node.gate .sm-num { background: rgba(163,190,140,0.2); color: var(--color-success); }
+  .sm-node.final { border-color: rgba(136,192,208,0.3); background: rgba(136,192,208,0.05); }
+  .sm-node.final .sm-num { background: rgba(136,192,208,0.25); color: var(--color-primary); }
+  .sm-arrow {
+    color: var(--color-primary);
+    font-size: 14px;
+    font-weight: 700;
+    padding: 0 1px;
+    flex-shrink: 0;
+  }
+
+  /* 4-Layer Skyline (bottom-up) */
+  .skyline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    max-width: 600px;
+    width: 100%;
+    margin: var(--space-md) auto;
+  }
+  .skyline-layer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 14px 20px;
+    border: 1px solid var(--color-border);
+    transition: var(--transition);
+    position: relative;
+  }
+  .skyline-layer:hover { transform: translateX(4px); }
+  .skyline-layer .sl-icon { font-size: 24px; }
+  .skyline-layer .sl-title { font-size: 16px; font-weight: 700; color: var(--color-heading); }
+  .skyline-layer .sl-desc { font-size: 12px; color: var(--color-muted); }
+  .skyline-layer .sl-points { font-size: 10px; color: var(--color-teal); font-family: 'JetBrains Mono', monospace; text-align: right; }
+  .skyline-layer .sl-dep {
+    position: absolute;
+    left: 50%;
+    bottom: -10px;
+    transform: translateX(-50%);
+    color: var(--color-primary);
+    font-size: 16px;
+    z-index: 2;
+    background: var(--color-bg);
+    padding: 0 6px;
+  }
+  .skyline-workflow  { border-radius: var(--radius-md) var(--radius-md) 0 0; background: rgba(136,192,208,0.08); border-color: rgba(136,192,208,0.2); }
+  .skyline-skills    { background: rgba(163,190,140,0.06); border-color: rgba(163,190,140,0.15); border-top: none; }
+  .skyline-knowledge { background: rgba(180,142,173,0.06); border-color: rgba(180,142,173,0.15); border-top: none; }
+  .skyline-memory    { border-radius: 0 0 var(--radius-md) var(--radius-md); background: rgba(59,66,82,0.4); border-color: var(--color-border); border-top: none; }
+  .skyline-arrow-up {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+    font-size: 18px;
+    padding: 3px 0;
+    width: 100%;
+    background: var(--color-bg);
+  }
+
+  /* Runtime preview box (C.4) */
+  .runtime-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 16px 24px;
+    background: rgba(136,192,208,0.04);
+    border: 1px dashed rgba(136,192,208,0.25);
+    border-radius: var(--radius-md);
+    max-width: 520px;
+    width: 100%;
+  }
+  .runtime-preview-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-primary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .rp-steps {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .rp-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 16px;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    min-width: 100px;
+    text-align: center;
+  }
+  .rp-step-icon { font-size: 18px; }
+  .rp-step-label { font-size: 12px; font-weight: 600; color: var(--color-heading); }
+  .rp-step-desc { font-size: 10px; color: var(--color-muted); }
+  .rp-arrow { color: var(--color-primary); font-size: 16px; font-weight: 700; }
+  .rp-ref {
+    font-size: 11px;
+    color: var(--color-muted);
+    font-style: italic;
+    margin-top: 4px;
+  }
+
+  /* Full pipeline (C.14) — vertical flow */
+  .full-pipeline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    max-width: 500px;
+    width: 100%;
+    margin: var(--space-md) auto;
+  }
+  .fp-node {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 12px 20px;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    width: 100%;
+    transition: var(--transition);
+  }
+  .fp-node:hover { border-color: var(--color-primary); }
+  .fp-node:first-child { border-radius: var(--radius-md) var(--radius-md) 0 0; }
+  .fp-node:last-child  { border-radius: 0 0 var(--radius-md) var(--radius-md); }
+  .fp-node + .fp-node  { border-top: none; }
+  .fp-icon { font-size: 18px; flex-shrink: 0; }
+  .fp-title { font-size: 14px; font-weight: 600; color: var(--color-heading); }
+  .fp-desc { font-size: 11px; color: var(--color-muted); }
+  .fp-arrow-down { color: var(--color-primary); font-size: 16px; width: 100%; text-align: center; padding: 2px 0; }
+  .fp-node.highlight { border-color: rgba(136,192,208,0.3); background: rgba(136,192,208,0.05); }
+
+  /* Integration cards (C.11-13) */
+  .integration-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: 16px 20px;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: var(--transition);
+  }
+  .integration-card:hover { border-color: var(--color-primary); }
+  .ic-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+  .ic-icon { font-size: 20px; }
+  .ic-title { font-size: 15px; font-weight: 700; color: var(--color-heading); }
+  .ic-body { font-size: 13px; color: var(--color-text); line-height: 1.5; }
+  .ic-body code { font-family: 'JetBrains Mono', monospace; color: var(--color-teal); font-size: 11px; background: rgba(59,66,82,0.5); padding: 1px 5px; border-radius: 3px; }
+  .ic-flow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .ic-flow-node {
+    padding: 4px 10px;
+    background: rgba(59,66,82,0.6);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font-size: 11px;
+    color: var(--color-text);
+  }
+  .ic-flow-arrow { color: var(--color-primary); font-size: 12px; }
+
+  /* Feynman block (C.16) */
+  .feynman-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    max-width: 560px;
+    width: 100%;
+    margin: var(--space-md) auto;
+  }
+  .feynman-quote {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-heading);
+    text-align: center;
+    line-height: 1.5;
+    padding: 16px 24px;
+    background: rgba(136,192,208,0.04);
+    border-left: 3px solid var(--color-primary);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    max-width: 500px;
+  }
+  .feynman-chain {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .fc-node {
+    padding: 10px 16px;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    color: var(--color-text);
+    text-align: center;
+    min-width: 100px;
+  }
+  .fc-node strong { color: var(--color-heading); display: block; font-size: 13px; margin-bottom: 2px; }
+  .fc-arrow { color: var(--color-primary); font-size: 16px; font-weight: 700; }
+
+  /* Workflow state detail (C.7) */
+  .ws-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+    max-width: 600px;
+    width: 100%;
+  }
+  .ws-card {
+    padding: 12px 16px;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+  }
+  .ws-card:hover { border-color: var(--color-primary); }
+  .ws-card-title { font-size: 13px; font-weight: 700; color: var(--color-heading); margin-bottom: 4px; }
+  .ws-card-body { font-size: 11px; color: var(--color-muted); line-height: 1.5; }
+  .ws-card-body code { font-family: 'JetBrains Mono', monospace; color: var(--color-teal); font-size: 10px; }
+
+  /* Q&A */
+  .qa-prompt {
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 700;
+    color: var(--color-heading);
+    text-align: center;
+    line-height: 1.4;
+  }
+  .qa-next {
+    font-size: 16px;
+    color: var(--color-muted);
+    text-align: center;
+    margin-top: var(--space-md);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .layout-two-col { grid-template-columns: 1fr; }
+    .state-machine-h { flex-direction: column; gap: 4px; }
+    .sm-node, .sm-node:first-child, .sm-node:last-child { border-radius: var(--radius-sm); border-left: 1px solid var(--color-border); }
+    .sm-node + .sm-node { border-left: 1px solid var(--color-border); }
+    .sm-arrow { transform: rotate(90deg); }
+    .skyline-layer { padding: 10px 14px; }
+    .ws-detail { grid-template-columns: 1fr; }
+    .rp-steps { flex-direction: column; }
+    .rp-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<button class="notes-toggle" id="notesToggle">📝 Notes</button>
+<div class="notes-panel" id="notesPanel">
+  <h4>📝 발표자 노트</h4>
+  <p id="notesContent">슬라이드를 선택해주세요.</p>
+</div>
+
+<div class="deck" id="deck">
+
+  <!-- C.0 Cover: Architecture & Runtime -->
+  <div class="slide hero-slide" id="slide-0" data-notes="Lecture C: Architecture & Runtime. Hermes의 4-Layer 시스템이 어떻게 연결되는지, 9-step state machine이 어떻게 워크플로우를 제어하는지, 그리고 런타임에서 실제로 어떻게 동작하는지를 다룹니다. Pyramid Principle을 사용하여 결론 먼저, 근거 뒤로 설명합니다.">
+    <div class="lecture-badge">Lecture C</div>
+    <div class="cover-hero">
+      <div class="ring">
+        <span class="ring-text">🏗️⚡</span>
+      </div>
+    </div>
+    <h1 class="title">Architecture &amp; Runtime</h1>
+    <p class="subtitle">4-Layer System · 9-Step State Machine · Runtime Pipeline</p>
+  </div>
+
+  <!-- C.1 Goal: 4-Layer 시스템이 어떻게 연결되는가 -->
+  <div class="slide summary-slide" id="slide-1" data-notes="오늘의 학습 목표: ① 4-Layer의 연결 구조 파악 ② 9-Step State Machine 이해 ③ Runtime에서의 실제 동작 확인 ④ Core Hermes와 P-Hermes의 차이를 비교">
+    <div class="lecture-badge">Lecture C</div>
+    <div class="goal-section">
+      <div class="goal-tag">🎯 오늘 배울 내용</div>
+      <div class="goal-why">
+        <span class="goal-label">핵심 질문</span>
+        4-Layer 시스템이 실제로 어떻게 연결되어 작동하는가?
+      </div>
+      <div class="goal-list">
+        <div class="goal-item">
+          <span class="goal-num">1</span>
+          4-Layer 구조 — <strong>Memory → Knowledge → Skills → Workflow</strong>
+        </div>
+        <div class="goal-item">
+          <span class="goal-num">2</span>
+          9-Step State Machine — <strong>request → done까지의 완전한 제어</strong>
+        </div>
+        <div class="goal-item">
+          <span class="goal-num">3</span>
+          Runtime Pipeline — <strong>context→routing→compression의 실제 흐름</strong>
+        </div>
+        <div class="goal-item">
+          <span class="goal-num">4</span>
+          SSOT &amp; Compare — <strong>Single Source of Truth와 비교 분석</strong>
+        </div>
+      </div>
+      <div class="goal-flow">
+        <span>Skills</span><span class="goal-arrow">→</span>
+        <span style="color:var(--color-primary); font-weight:600;">Workflow</span><span class="goal-arrow">→</span>
+        <span>Architecture</span><span class="goal-arrow">→</span>
+        <span>Runtime</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- C.2 [Pyramid]: Skill Structure [PYRAMID] -->
+  <div class="slide diagram-slide" id="slide-2" data-notes="[Pyramid Principle] 결론 먼저: Skill은 단순한 명령 모음이 아닌, 계층화된 구조를 가집니다. Top(Conclusion): Skill Definition이 핵심. Supporting: Condition→Steps→Output의 구조. Evidence: 실제 YAML 구조. 3초 검사를 통해 핵심 구조를 파악할 수 있습니다.">
+    <div class="lecture-badge">Lecture C · Skill Structure</div>
+    <div class="layout-centered">
+      <div class="slide-grammar-title">Skill 구조 — Pyramid Principle</div>
+      <div class="slide-grammar-takeaway">결론 먼저: Skill은 정의(Definition) → 조건(Condition) → 실행(Steps) → 결과(Output)의 4단계 계층</div>
+
+      <div class="pyramid">
+        <div class="pyramid-level pyramid-top">
+          <span class="py-icon">📋</span>
+          Definition
+          <span class="py-detail">Skill의 정체성</span>
+          <span class="py-code">name, description</span>
+        </div>
+        <div class="pyramid-level pyramid-2">
+          <span class="py-icon">✅</span>
+          Condition
+          <span class="py-detail">실행 전제 조건</span>
+          <span class="py-code">when: trigger, guard</span>
+        </div>
+        <div class="pyramid-level pyramid-3">
+          <span class="py-icon">⚙️</span>
+          Steps
+          <span class="py-detail">실행 절차</span>
+          <span class="py-code">steps: [action, cmd, parse]</span>
+        </div>
+        <div class="pyramid-level pyramid-4">
+          <span class="py-icon">📤</span>
+          Output
+          <span class="py-detail">결과 포맷</span>
+          <span class="py-code">format: json, text, raw</span>
+        </div>
+        <div class="pyramid-support">
+          ▸ 하위 단계 없으면 상위 단계 작동 불가 — bottom-up dependency
+        </div>
+      </div>
+
+      <ul class="slide-grammar-details" style="max-width: 500px;">
+        <li><strong>Definition</strong>: Skill의 고유식별 — name + description (catalog.json)</li>
+        <li><strong>Condition</strong>: 언제 실행할지 — trigger pattern + guard check</li>
+        <li><strong>Steps</strong>: 어떻게 실행할지 — action sequence (cmd/parse/handler)</li>
+        <li><strong>Output</strong>: 결과 반환 형태 — structured → LLM 프롬프트로</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- C.3 [PD]: Skill Mechanism -->
+  <div class="slide diagram-slide" id="slide-3" data-notes="[PD] Skill이 실제로 어떻게 매칭되고 실행되는지 — Skill Matching의 3단계: ① LLM이 의도 파악 ② catalog.json에서 패턴 매칭 ③ Condition 체크 후 실행. 이는 M3 Pipeline과 연결됩니다.">
+    <div class="lecture-badge">Lecture C · Skill Mechanism</div>
+    <div class="layout-two-col">
+      <div class="side-panel">
+        <div class="slide-grammar-title" style="text-align: left;">Skill Matching</div>
+        <div style="display:flex; gap: var(--space-sm); margin-bottom: var(--space-xs);">
+          <span class="badge-sm" style="background:rgba(136,192,208,0.12); color:var(--color-primary); border:1px solid rgba(136,192,208,0.25);">PD L2</span>
+        </div>
+
+        <div class="side-panel-title">3단계 매칭</div>
+        <div class="ic-flow" style="margin-bottom: var(--space-sm);">
+          <div class="ic-flow-node">🔍 Intent</div>
+          <div class="ic-flow-arrow">→</div>
+          <div class="ic-flow-node">📖 Catalog</div>
+          <div class="ic-flow-arrow">→</div>
+          <div class="ic-flow-node" style="border-color:rgba(163,190,140,0.3);">✅ Guard</div>
+        </div>
+        <ul class="slide-grammar-details">
+          <li>LLM이 <strong>사용자 의도</strong> 분석</li>
+          <li><code>catalog.json</code>에서 패턴 매칭</li>
+          <li>Condition guard check 통과 시 실행</li>
+        </ul>
+
+        <div class="side-panel-title">실행 컨텍스트</div>
+        <ul class="slide-grammar-details">
+          <li>Memory context 주입</li>
+          <li>Knowledge reference 연결</li>
+          <li>Subprocess → stdout → parse</li>
+        </ul>
+      </div>
+
+      <div class="side-panel">
+        <div class="side-panel-title">실제 예시: lint skill</div>
+        <div class="code-block">
+<span class="cmt"># catalog.json — skill 정의</span>
+{
+  <span class="str">"name"</span>: <span class="str">"lint"</span>,
+  <span class="str">"description"</span>: <span class="str">"Code linting"</span>,
+  <span class="str">"trigger"</span>: <span class="str">"lint|format|check"</span>,
+  <span class="str">"condition"</span>: {
+    <span class="str">"file_exists"</span>: <span class="kw">true</span>,
+    <span class="str">"tool"</span>: <span class="str">"ruff|flake8"</span>
+  },
+  <span class="str">"steps"</span>: [
+    { <span class="str">"cmd"</span>: <span class="str">"ruff check {file}"</span> },
+    { <span class="str">"parse"</span>: <span class="str">"json"</span> }
+  ]
+}
+        </div>
+
+        <div class="side-panel-title" style="margin-top: var(--space-md);">실행 결과</div>
+        <div class="code-block">
+<span class="cmt"># → stdout parsing → structured JSON</span>
+{
+  <span class="str">"status"</span>: <span class="str">"completed"</span>,
+  <span class="str">"errors"</span>: <span class="num">3</span>,
+  <span class="str">"warnings"</span>: <span class="num">1</span>
+}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C.4 [PD]: Workflow Concept + [Runtime Preview] ← 중요: C.15로 연결하는 Preview -->
+  <div class="slide diagram-slide" id="slide-4" data-notes="[PD + Runtime Preview] 워크플로우의 핵심 개념을 먼저 보여주고, 런타임에서의 동작을 미리 3단계로 요약. 이 Preview는 C.15의 Runtime Detail과 직접 연결됩니다 — '예비 보여드린 런타임을 자세히' 흐름. 핵심: Workflow는 단순한 Step 모음이 아닌 State Machine.">
+    <div class="lecture-badge">Lecture C · Workflow Concept</div>
+    <div class="layout-centered">
+      <div class="slide-grammar-title">워크플로우 — 단순 Step이 아닌 State Machine</div>
+      <div class="slide-grammar-takeaway">결론: 워크플로우는 상태 전이가 핵심 — 각 단계에서 Gate가 통과 여부를 결정</div>
+
+      <div class="side-panel-title">워크플로우 핵심 3가지</div>
+      <div class="pd-steps">
+        <div class="pd-step">
+          <div class="pd-step-icon">🔄</div>
+          <div class="pd-step-title">State-based</div>
+          <div class="pd-step-desc">순수 Step이 아닌<br>State 전이 모델</div>
+        </div>
+        <div class="pd-arrow">→</div>
+        <div class="pd-step">
+          <div class="pd-step-icon">🚦</div>
+          <div class="pd-step-title">Gate-controlled</div>
+          <div class="pd-step-desc">각 State에서<br>통과 조건 체크</div>
+        </div>
+        <div class="pd-arrow">→</div>
+        <div class="pd-step">
+          <div class="pd-step-icon">↩️</div>
+          <div class="pd-step-title">Rollback-safe</div>
+          <div class="pd-step-desc">실패 시 이전<br>State로 자동 복귀</div>
+        </div>
+      </div>
+
+      <div class="runtime-preview">
+        <div class="runtime-preview-title">⚡ Runtime Preview (C.15에서 상세)</div>
+        <div class="rp-steps">
+          <div class="rp-step">
+            <div class="rp-step-icon">📥</div>
+            <div class="rp-step-label">Context</div>
+            <div class="rp-step-desc">의도 분석 +<br>Memory 주입</div>
+          </div>
+          <div class="rp-arrow">→</div>
+          <div class="rp-step">
+            <div class="rp-step-icon">🔀</div>
+            <div class="rp-step-label">Routing</div>
+            <div class="rp-step-desc">Skill/Workflow<br>매칭 + 라우팅</div>
+          </div>
+          <div class="rp-arrow">→</div>
+          <div class="rp-step">
+            <div class="rp-step-icon">📦</div>
+            <div class="rp-step-label">Compress</div>
+            <div class="rp-step-desc">Token budget<br>최적화</div>
+          </div>
+        </div>
+        <div class="rp-ref">👉 Slide C.15에서 이 3단계를 자세히 다룹니다 — click ahead!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C.5 Divider: 🔗 Workflow [GLASS] -->
+  <div class="slide section-divider" id="slide-5" data-notes="Section Divider: Workflow 섹션 시작. C.2-4까지의 개념 설명을 마치고, 이제 구체적인 Workflow State Machine과 Mechanism으로 깊이 들어갑니다.">
+    <div class="layout-full-bleed">
+      <div class="glass-divider">
+        <div class="section-divider-content">
+          <div class="divider-label">Section 2</div>
+          <div class="divider-title">🔗 Workflow</div>
+          <div class="divider-desc">9-Step State Machine — request에서 done까지의 완전한 제어 흐름</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C.6 [Pyramid]: 9-Step State Machine -->
+  <div class="slide diagram-slide" id="slide-6" data-notes="[Pyramid] 9-Step State Machine의 전체 구조를 Pyramid로. 결론: 9단계가 단순한 순서라기보다 각 단계에서 Gate가 통제합니다. Supporting: 9단계 목록. Evidence: 각 단계의 gate/rollback 규칙. Gate 단계(review, approval)는 초록색으로 강조.">
+    <div class="lecture-badge">Lecture C · 9-Step State Machine</div>
+    <div class="layout-diagram">
+      <div class="slide-grammar-title">9-Step State Machine — 전체 맵</div>
+      <div class="slide-grammar-takeaway">결론: 9단계는 단순 순서가 아니라, Gate 통제가 있는 상태 전이 모델</div>
+
+      <div class="pyramid" style="max-width: 700px;">
+        <div class="pyramid-level pyramid-top" style="width: 30%; font-size: 12px;">
+          <span class="py-icon">🏁</span>
+          DONE
+          <span class="py-detail">최종 완료</span>
+        </div>
+        <div class="pyramid-level pyramid-2" style="width: 45%; font-size: 12px;">
+          <span class="py-icon">🔍</span>
+          execution_review → test → execution
+          <span class="py-detail">실행 &amp; 검증</span>
+        </div>
+        <div class="pyramid-level pyramid-3 gate" style="width: 62%; border-color: rgba(163,190,140,0.3);">
+          <span class="py-icon">🚦</span>
+          approval → review
+          <span class="py-detail">GATE — 통과 조건 체크</span>
+          <span style="font-size:9px; color:var(--color-success);">● Gate Step</span>
+        </div>
+        <div class="pyramid-level pyramid-4" style="width: 80%; font-size: 12px;">
+          <span class="py-icon">📐</span>
+          design → investigation → request
+          <span class="py-detail">분석 &amp; 설계</span>
+        </div>
+        <div class="pyramid-support">
+          ▸ Gate 통과 실패 시 rollback — execution 실패 시 test로 복귀
+        </div>
+      </div>
+
+      <div style="max-width: 90vw; margin: var(--space-md) auto;">
+        <div class="state-machine-h">
+          <div class="sm-node">
+            <div class="sm-num">1</div>
+            <div class="sm-label">request</div>
+            <div class="sm-desc">요청 수신</div>
+          </div>
+          <div class="sm-arrow">→</div>
+          <div class="sm-node">
+            <div class="sm-num">2</div>
+            <div class="sm-label">investigation</div>
+            <div class="sm-desc">상황 분석</div>
+          </div>
+          <div class="sm-arrow">→</div>
+          <div class="sm-node">
+            <div class="sm-num">3</div>
+            <div class="sm-label">design</div>
+            <div class="sm-desc">해법 설계</div>
+          </div>
+          <div class="sm-arrow">→</div>
+          <div class="sm-node">
+            <div class="sm-num">4</div>
+            <div class="sm-label">review</div>
+            <div class="sm-desc">검토</div>
+          </div>
+          <div class="sm-arrow">→</div>
+          <div class="sm-node gate">
+            <div class="sm-num">5</div>
+            <div class="sm-label">approval</div>
+            <div class="sm-desc">🚦 GATE</div>
+          </div>
+          <div class="sm-arrow">→</div>
+          <div class="sm-node">
+            <div class="sm-num">6</div>
+            <div class="sm-label">execution</div>
+            <div class="sm-desc">실행</div>
+          </div>
+          <div class="sm-arrow">→</div>
+          <div class="sm-node">
+            <div class="sm-num">7</div>
+            <div class="sm-label">test</div>
+            <div class="sm-desc">테스트</div>
+          </div>
+          <div class="sm-arrow">→</div>
+          <div class="sm-node">
+            <div class="sm-num">8</div>
+            <div class="sm-label">exec.review</div>
+            <div class="sm-desc">검증</div>
+          </div>
+          <div class="sm-arrow">→</div>
+          <div class="sm-node final">
+            <div class="sm-num">9</div>
+            <div class="sm-label">done</div>
+            <div class="sm-desc">완료 ✓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C.7 [PD L2]: Workflow Mechanism (.workflow-state + gate) -->
+  <div class="slide diagram-slide" id="slide-7" data-notes="[PD L2] Workflow Mechanism의 상세: .workflow-state 파일 구조와 Gate 동작 원리. .workflow-state는 현재 state를 저장하는 JSON 파일. Gate는 review와 approval 단계에서 통과 조건을 체크. atomistic 실행 + rollback 규칙.">
+    <div class="lecture-badge">Lecture C · Workflow Mechanism</div>
+    <div class="layout-two-col">
+      <div class="side-panel">
+        <div class="slide-grammar-title" style="text-align: left;">Mechanism</div>
+        <span class="badge-sm" style="background:rgba(143,188,187,0.12); color:var(--color-teal); border:1px solid rgba(143,188,187,0.25);">PD L2</span>
+
+        <div class="side-panel-title">.workflow-state</div>
+        <div class="code-block" style="font-size:11px;">
+{
+  <span class="str">"current"</span>: <span class="str">"execution"</span>,
+  <span class="str">"history"</span>: [
+    <span class="str">"request"</span>,
+    <span class="str">"investigation"</span>,
+    <span class="str">"design"</span>,
+    <span class="str">"review"</span>,
+    <span class="str">"approval"</span>
+  ],
+  <span class="str">"gate"</span>: {
+    <span class="str">"review"</span>: <span class="kw">"passed"</span>,
+    <span class="str">"approval"</span>: <span class="kw">"passed"</span>
+  },
+  <span class="str">"rollback_to"</span>: <span class="kw">null</span>
+}
+        </div>
+
+        <div class="side-panel-title" style="margin-top: var(--space-md);">Gate 규칙</div>
+        <div class="ws-detail">
+          <div class="ws-card">
+            <div class="ws-card-title">🚦 Review Gate</div>
+            <div class="ws-card-body">
+              설계안 완성도 체크<br>
+              <code>quality_score >= 0.7</code><br>
+              실패 → design으로 rollback
+            </div>
+          </div>
+          <div class="ws-card">
+            <div class="ws-card-title">🚦 Approval Gate</div>
+            <div class="ws-card-body">
+              사용자 승인 필요<br>
+              <code>user: yes/no</code><br>
+              거부 → investigation
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-panel">
+        <div class="side-panel-title">State 전이 규칙</div>
+        <ul class="slide-grammar-details">
+          <li><strong>Atomic 전이</strong>: 각 state 전이는 원자적 — 부분 실행 불가</li>
+          <li><strong>Gate 체크</strong>: review(4) → approval(5) → 실행 단계</li>
+          <li><strong>Rollback</strong>: 실패 시 정의된 이전 state로 복귀</li>
+          <li><strong>Persistence</strong>: .workflow-state에 전이 기록 저장</li>
+        </ul>
+
+        <div class="side-panel-title" style="margin-top: var(--space-md);">Rollback 규칙</div>
+        <div class="ic-flow" style="margin: var(--space-sm) 0;">
+          <div class="ic-flow-node">test 실패</div>
+          <div class="ic-flow-arrow" style="color:var(--color-error);">→</div>
+          <div class="ic-flow-node" style="border-color:rgba(191,97,106,0.3);">execution</div>
+        </div>
+        <div class="ic-flow" style="margin: var(--space-sm) 0;">
+          <div class="ic-flow-node">review 실패</div>
+          <div class="ic-flow-arrow" style="color:var(--color-error);">→</div>
+          <div class="ic-flow-node" style="border-color:rgba(191,97,106,0.3);">design</div>
+        </div>
+        <div class="ic-flow" style="margin: var(--space-sm) 0;">
+          <div class="ic-flow-node">approval 거부</div>
+          <div class="ic-flow-arrow" style="color:var(--color-error);">→</div>
+          <div class="ic-flow-node" style="border-color:rgba(191,97,106,0.3);">investigation</div>
+        </div>
+
+        <div class="insight-box" style="margin-top: var(--space-md);">
+          🔑 M4 핵심: state machine은 "무조건 전진"이 아니라 "통제된 전진"
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C.8 [Compare]: Before/After [COMPARE TABLE] -->
+  <div class="slide diagram-slide" id="slide-8" data-notes="[Compare] Before/After 워크플로우 비교. Before: 수동 Step-by-step, 상태 추적 불가, 실패 시 전체 재실행. After: State Machine 기반, 자동 상태 추적, Rollback 가능. 6가지 항목으로 비교.">
+    <div class="lecture-badge">Lecture C · Before vs After</div>
+    <div class="layout-centered">
+      <div class="slide-grammar-title">Before → After: 워크플로우 변화</div>
+      <div class="slide-grammar-takeaway">State Machine 도입으로 수동 제어가 자동화된 통제 시스템으로</div>
+
+      <div class="compare-table" style="max-width: 640px; margin: var(--space-md) auto;">
+        <div class="header">Before (수동)</div>
+        <div class="header">After (State Machine)</div>
+        <div>Step-by-step 수동 진행</div>
+        <div>자동 state 전이</div>
+        <div>현재 상태 파악 불가</div>
+        <div>.workflow-state로 추적</div>
+        <div>실패 시 전체 재실행</div>
+        <div>rollback으로 정밀 복귀</div>
+        <div>검토 단계 생략 가능</div>
+        <div>Gate로 강제 통과의사</div>
+        <div>LLM 판단에 의존</div>
+        <div>규칙 기반 + LLM 결합</div>
+        <div>세션 종료 시 상태 손실</div>
+        <div>Persistent 상태 저장</div>
+      </div>
+
+      <div class="insight-box" style="margin-top: var(--space-md);">
+        💡 변화의 핵심: "무작정 실행" → "통제된 전진" — Gate가 품질을 보장
+      </div>
+    </div>
+  </div>
+
+  <!-- C.9 Divider: 🏗️ Architecture + Runtime [GLASS] -->
+  <div class="slide section-divider" id="slide-9" data-notes="Section Divider: Architecture + Runtime 섹션 시작. 이제 4-Layer Skyline 구조와 각 Layer의 통합 방식, 그리고 Runtime의 상세 동작을 다룹니다. C.4에서 미리 보여준 Runtime Preview를 C.15에서 상세화합니다.">
+    <div class="layout-full-bleed">
+      <div class="glass-divider">
+        <div class="section-divider-content">
+          <div class="divider-label">Section 3</div>
+          <div class="divider-title">🏗️ Architecture + Runtime</div>
+          <div class="divider-desc">4-Layer Skyline — 하위 없이 상위 작동 불가. 그리고 런타임에서 실제로 어떻게 흐르는지</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C.10 [Pyramid]: 4-Layer Skyline [DIAGRAM FOCUS] -->
+  <div class="slide diagram-slide" id="slide-10" data-notes="[Pyramid + Diagram Focus] 4-Layer Skyline: Memory(bottom) → Knowledge → Skills → Workflow(top). 핵심: bottom-up dependency — 하위 Layer 없으면 상위 Layer 작동 불가. 각 Layer의 integration points를 표시. Pyramid 구조: Top(Conclusion): 4-Layer는 서로 의존하는 계층 / Supporting: 각 Layer 역할 / Evidence: Integration points.">
+    <div class="lecture-badge">Lecture C · 4-Layer Skyline</div>
+    <div class="layout-diagram">
+      <div class="slide-grammar-title">4-Layer Skyline — Bottom-Up Dependency</div>
+      <div class="slide-grammar-takeaway">결론: 4-Layer는 계층적 의존 구조 — Memory 위에서 Knowledge, Knowledge 위에서 Skills, 모든 계층 위에서 Workflow</div>
+
+      <div class="pyramid" style="max-width: 600px;">
+        <div class="pyramid-level pyramid-top" style="background: rgba(136,192,208,0.1); border-color: rgba(136,192,208,0.25);">
+          <span class="py-icon">🔗</span>
+          Layer 4: Workflow
+          <span class="py-detail">상태 전이 제어</span>
+          <span class="py-code">state machine</span>
+        </div>
+        <div class="pyramid-level pyramid-2" style="background: rgba(163,190,140,0.08); border-color: rgba(163,190,140,0.2);">
+          <span class="py-icon">⚡</span>
+          Layer 3: Skills
+          <span class="py-detail">실행 모듈</span>
+          <span class="py-code">catalog → subprocess</span>
+        </div>
+        <div class="pyramid-level pyramid-3" style="background: rgba(180,142,173,0.08); border-color: rgba(180,142,173,0.2);">
+          <span class="py-icon">📚</span>
+          Layer 2: Knowledge
+          <span class="py-detail">이해 구조</span>
+          <span class="py-code">wiki (T1/T2/T3)</span>
+        </div>
+        <div class="pyramid-level pyramid-4">
+          <span class="py-icon">🧠</span>
+          Layer 1: Memory
+          <span class="py-detail">경험 저장</span>
+          <span class="py-code">FTS5 + BM25</span>
+        </div>
+        <div class="pyramid-support">
+          ▸ Bottom-Up: Layer N 없으면 Layer N+1 작동 불가 — 강한 의존성
+        </div>
+      </div>
+
+      <div class="skyline" style="margin-top: var(--space-lg);">
+        <div class="skyline-layer skyline-workflow">
+          <div class="sl-icon">🔗</div>
+          <div>
+            <div class="sl-title">Workflow</div>
+            <div class="sl-desc">9-Step State Machine · Gate Control</div>
+          </div>
+          <div class="sl-points">→ skills, memory</div>
+        </div>
+        <div class="skyline-arrow-up">↑ 의존</div>
+        <div class="skyline-layer skyline-skills">
+          <div class="sl-icon">⚡</div>
+          <div>
+            <div class="sl-title">Skills</div>
+            <div class="sl-desc">Execution Modules · Subprocess</div>
+          </div>
+          <div class="sl-points">→ knowledge, memory</div>
+        </div>
+        <div class="skyline-arrow-up">↑ 의존</div>
+        <div class="skyline-layer skyline-knowledge">
+          <div class="sl-icon">📚</div>
+          <div>
+            <div class="sl-title">Knowledge</div>
+            <div class="sl-desc">Domain Wiki · T1/T2/T3 Hierarchy</div>
+          </div>
+          <div class="sl-points">→ memory</div>
+        </div>
+        <div class="skyline-arrow-up">↑ 의존</div>
+        <div class="skyline-layer skyline-memory">
+          <div class="sl-icon">🧠</div>
+          <div>
+            <div class="sl-title">Memory</div>
+            <div class="sl-desc">Experience Store · FTS5 + BM25</div>
+          </div>
+          <div class="sl-points">base layer</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C.11 [PD]: Memory Integration -->
+  <div class="slide diagram-slide" id="slide-11" data-notes="[PD] Memory Integration: 모든 Layer의 Foundation. Memory는 다른 Layer에 context를 제공합니다. Memory → Knowledge (context enrichment), Memory → Skills (user preference injection), Memory → Workflow (session history).">
+    <div class="lecture-badge">Lecture C · Memory Integration</div>
+    <div class="layout-two-col">
+      <div class="side-panel">
+        <div class="slide-grammar-title" style="text-align: left;">Memory Integration</div>
+        <span class="badge-sm" style="background:rgba(136,192,208,0.12); color:var(--color-primary); border:1px solid rgba(136,192,208,0.25);">PD L2</span>
+
+        <div class="side-panel-title">🧠 Foundation Layer</div>
+        <ul class="slide-grammar-details">
+          <li>모든 Layer의 <strong>공통 Context Source</strong></li>
+          <li>FTS5 기반 <strong>실시간 검색</strong></li>
+          <li>BM25로 <strong>관련도 점수화</strong></li>
+          <li>Top-K 결과만 상위 Layer로 전달</li>
+        </ul>
+
+        <div class="side-panel-title">Integration Points</div>
+        <div class="ic-flow" style="margin: var(--space-xs) 0;">
+          <div class="ic-flow-node" style="border-color:rgba(136,192,208,0.3);">🧠 Memory</div>
+          <div class="ic-flow-arrow">→</div>
+          <div class="ic-flow-node">📚 Knowledge</div>
+        </div>
+        <div class="ic-flow" style="margin: var(--space-xs) 0;">
+          <div class="ic-flow-node" style="border-color:rgba(136,192,208,0.3);">🧠 Memory</div>
+          <div class="ic-flow-arrow">→</div>
+          <div class="ic-flow-node">⚡ Skills</div>
+        </div>
+        <div class="ic-flow" style="margin: var(--space-xs) 0;">
+          <div class="ic-flow-node" style="border-color:rgba(136,192,208,0.3);">🧠 Memory</div>
+          <div class="ic-flow-arrow">→</div>
+          <div class="ic-flow-node">🔗 Workflow</div>
+        </div>
+      </div>
+
+      <div class="side-panel">
+        <div class="integration-card">
+          <div class="ic-header">
+            <div class="ic-icon">📚</div>
+            <div class="ic-title">→ Knowledge</div>
+          </div>
+          <div class="ic-body">
+            Memory context로 Knowledge 검색 정제.<br>
+            <code>query = knowledge_query + memory_context</code>
+          </div>
+        </div>
+
+        <div class="integration-card">
+          <div class="ic-header">
+            <div class="ic-icon">⚡</div>
+            <div class="ic-title">→ Skills</div>
+          </div>
+          <div class="ic-body">
+            사용자 선호도(Snake_case, PEP8)를 Skill 실행 컨텍스트에 주입.<br>
+            <code>skill_context.user_prefs = memory.search(user_id)</code>
+          </div>
+        </div>
+
+        <div class="integration-card">
+          <div class="ic-header">
+            <div class="ic-icon">🔗</div>
+            <div class="ic-title">→ Workflow</div>
+          </div>
+          <div class="ic-body">
+            세션 히스토리로 State Machine 컨텍스트 보강.<br>
+            <code>workflow.history += memory.session_data</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C.12 [PD]: Knowledge Integration -->
+  <div class="slide diagram-slide" id="slide-12" data-notes="[PD] Knowledge Integration: 도메인 이해를 상위 Layer에 제공. Knowledge → Skills (domain-aware execution), Knowledge → Workflow (informed decision). Wiki의 T1/T2/T3 구조가 다른 Layer에 어떻게 연결되는지 보여줍니다.">
+    <div class="lecture-badge">Lecture C · Knowledge Integration</div>
+    <div class="layout-two-col">
+      <div class="side-panel">
+        <div class="slide-grammar-title" style="text-align: left;">Knowledge Integration</div>
+        <span class="badge-sm" style="background:rgba(180,142,173,0.12); color:var(--color-purple); border:1px solid rgba(180,142,173,0.25);">PD L2</span>
+
+        <div class="side-panel-title">📚 Understanding Layer</div>
+        <ul class="slide-grammar-details">
+          <li>도메인 지식 <strong>T1/T2/T3 계층</strong> 구조</li>
+          <li>Skills에 <strong>context-aware 실행</strong> 제공</li>
+          <li>Workflow의 <strong>design 단계</strong>에 지식 기반</li>
+          <li>Memory를 정제한 <strong>구조화된 정보</strong></li>
+        </ul>
+
+        <div class="side-panel-title">Wiki 구조</div>
+        <div class="code-block" style="font-size:11px;">
+<span class="cmt"># knowledge/wiki/</span>
+python/<span class="fn">  (T1: Domain)</span>
+├── syntax/<span class="fn">   (T2: Topic)</span>
+│  ├── list-comprehension.md
+│  └── decorators.md
+└── best-practices/<span class="fn">  (T2: Topic)</span>
+   └── naming-convention.md
+        </div>
+      </div>
+
+      <div class="side-panel">
+        <div class="integration-card" style="border-color: rgba(180,142,173,0.2);">
+          <div class="ic-header">
+            <div class="ic-icon">⚡</div>
+            <div class="ic-title">→ Skills (Domain-aware)</div>
+          </div>
+          <div class="ic-body">
+            Skill 실행 시 관련 Knowledge 자동 참조.<br>
+            <code>lint skill + python/best-practices → tailored output</code>
+          </div>
+        </div>
+
+        <div class="integration-card" style="border-color: rgba(136,192,208,0.2);">
+          <div class="ic-header">
+            <div class="ic-icon">🔗</div>
+            <div class="ic-title">→ Workflow (Design Phase)</div>
+          </div>
+          <div class="ic-body">
+            design 단계(Step 3)에서 Knowledge 기반 해법 탐색.<br>
+            <code>design.knowledge_refs = wiki.search(domain)</code>
+          </div>
+        </div>
+
+        <div class="insight-box" style="margin-top: var(--space-sm);">
+          💡 Knowledge Layer: Memory의 raw experience → 구조화된 domain understanding
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C.13 [PD]: Skills Integration -->
+  <div class="slide diagram-slide" id="slide-13" data-notes="[PD] Skills Integration: 실행 계층으로서 Workflow에 실제 기능을 제공. Skills → Workflow (execution provider). catalog.json의 role field가 Workflow state와 어떻게 연결되는지 보여줍니다.">
+    <div class="lecture-badge">Lecture C · Skills Integration</div>
+    <div class="layout-two-col">
+      <div class="side-panel">
+        <div class="slide-grammar-title" style="text-align: left;">Skills Integration</div>
+        <span class="badge-sm" style="background:rgba(163,190,140,0.12); color:var(--color-success); border:1px solid rgba(163,190,140,0.25);">PD L2</span>
+
+        <div class="side-panel-title">⚡ Execution Layer</div>
+        <ul class="slide-grammar-details">
+          <li>Workflow의 <strong>execution 단계</strong>에 실제 기능 제공</li>
+          <li><code>catalog.json</code>의 <code>role</code> field로 매핑</li>
+          <li>Subprocess → stdout → parse → 결과 반환</li>
+          <li>Memory + Knowledge context를 함께 받음</li>
+        </ul>
+
+        <div class="side-panel-title">Role → State 매핑</div>
+        <div class="code-block" style="font-size:11px;">
+<span class="cmt"># catalog.json — role field</span>
+{
+  <span class="str">"name"</span>: <span class="str">"git_commit"</span>,
+  <span class="str">"role"</span>: <span class="str">"execution"</span>,
+  <span class="str">"step"</span>: <span class="str">"execution"</span>  <span class="cmt">// Step 6</span>
+}
+
+{
+  <span class="str">"name"</span>: <span class="str">"run_tests"</span>,
+  <span class="str">"role"</span>: <span class="str">"test"</span>,
+  <span class="str">"step"</span>: <span class="str">"test"</span>  <span class="cmt">// Step 7</span>
+}
+        </div>
+      </div>
+
+      <div class="side-panel">
+        <div class="integration-card" style="border-color: rgba(163,190,140,0.2);">
+          <div class="ic-header">
+            <div class="ic-icon">🔗</div>
+            <div class="ic-title">→ Workflow (Execution Provider)</div>
+          </div>
+          <div class="ic-body">
+            Workflow Step 6(execution)에서 실제 Skill 실행.<br>
+            <code>workflow.execute(state) → skill.run()</code><br>
+            Skill 실패 시 Workflow rollback 처리.
+          </div>
+        </div>
+
+        <div class="integration-card">
+          <div class="ic-header">
+            <div class="ic-icon">🔄</div>
+            <div class="ic-title">Full Context Injection</div>
+          </div>
+          <div class="ic-body">
+            Skill 실행 시 3-Layer context 동시 주입(M5).<br>
+            <code>memory_context + knowledge_refs + skill_def</code><br>
+            Token budget 내에서 최적화.
+          </div>
+        </div>
+
+        <div class="insight-box" style="margin-top: var(--space-sm);">
+          💡 Skills = Workflow의 "손" — Workflow가 결정하면 Skills가 실행
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C.14 [Pyramid]: Full Pipeline [DIAGRAM FOCUS] -->
+  <div class="slide diagram-slide" id="slide-14" data-notes="[Pyramid + Diagram Focus] Full Pipeline: 4-Layer가 함께 작동하는 완전한 파이프라인. Pyramid 구조: Top(Conclusion): 하나의 요청이 4-Layer를 통해 처리됨 / Supporting: Layer별 처리 단계 / Evidence: 실제 flow. request → context(Memory) → knowledge(Knowledge) → skill match(Skills) → state machine(Workflow) → done.">
+    <div class="lecture-badge">Lecture C · Full Pipeline</div>
+    <div class="layout-diagram">
+      <div class="slide-grammar-title">Full Pipeline — 4-Layer 통합 흐름</div>
+      <div class="slide-grammar-takeaway">결론: 하나의 요청이 Memory → Knowledge → Skills → Workflow의 4-Layer를 거쳐 완전 처리됨</div>
+
+      <div class="pyramid" style="max-width: 560px;">
+        <div class="pyramid-level pyramid-top" style="background: rgba(136,192,208,0.1);">
+          <span class="py-icon">🏁</span>
+          Workflow: State Machine → done
+        </div>
+        <div class="pyramid-level pyramid-2" style="background: rgba(163,190,140,0.08);">
+          <span class="py-icon">⚡</span>
+          Skills: Match → Execute → Parse
+        </div>
+        <div class="pyramid-level pyramid-3" style="background: rgba(180,142,173,0.08);">
+          <span class="py-icon">📚</span>
+          Knowledge: Wiki Search → Reference
+        </div>
+        <div class="pyramid-level pyramid-4">
+          <span class="py-icon">🧠</span>
+          Memory: Context Search → Top-K
+        </div>
+      </div>
+
+      <div class="full-pipeline" style="margin-top: var(--space-lg);">
+        <div class="fp-node highlight">
+          <div class="fp-icon">📨</div>
+          <div>
+            <div class="fp-title">Request 수신</div>
+            <div class="fp-desc">사용자 요청 → 의도 분석</div>
+          </div>
+        </div>
+        <div class="fp-arrow-down">↓</div>
+        <div class="fp-node">
+          <div class="fp-icon">🧠</div>
+          <div>
+            <div class="fp-title">Memory Layer</div>
+            <div class="fp-desc">FTS5 search → Top-K context 추출</div>
+          </div>
+        </div>
+        <div class="fp-arrow-down">↓</div>
+        <div class="fp-node">
+          <div class="fp-icon">📚</div>
+          <div>
+            <div class="fp-title">Knowledge Layer</div>
+            <div class="fp-desc">Domain wiki 검색 → Reference 수집</div>
+          </div>
+        </div>
+        <div class="fp-arrow-down">↓</div>
+        <div class="fp-node">
+          <div class="fp-icon">⚡</div>
+          <div>
+            <div class="fp-title">Skills Layer</div>
+            <div class="fp-desc">Catalog 매칭 → Condition 체크 → Skill 정렬</div>
+          </div>
+        </div>
+        <div class="fp-arrow-down">↓</div>
+        <div class="fp-node highlight">
+          <div class="fp-icon">🔗</div>
+          <div>
+            <div class="fp-title">Workflow Layer</div>
+            <div class="fp-desc">9-Step State Machine → Gate 통제의 실행</div>
+          </div>
+        </div>
+        <div class="fp-arrow-down">↓</div>
+        <div class="fp-node" style="border-color: rgba(136,192,208,0.3); background: rgba(136,192,208,0.05);">
+          <div class="fp-icon">✅</div>
+          <div>
+            <div class="fp-title">done — 결과 반환</div>
+            <div class="fp-desc">State machine 완료 → 사용자에게 구조화된 결과</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C.15 [PD]: Runtime Detail (context→routing) ← Preview→Detail 흐름 -->
+  <div class="slide diagram-slide" id="slide-15" data-notes="[PD] Runtime Detail — C.4의 Runtime Preview를 상세화. 3단계를 자세히: ① Context: 의도 분석 + Memory 주입 + Knowledge 참조 ② Routing: Skill 매칭 + Workflow state 결정 + priority 계산 ③ Compression: Token budget 최적화 + 결과 압축. 이 부분이 Preview→Detail의 핵심 연결고리.">
+    <div class="lecture-badge">Lecture C · Runtime Detail</div>
+    <div class="layout-two-col">
+      <div class="side-panel">
+        <div class="slide-grammar-title" style="text-align: left;">Runtime Detail</div>
+        <div style="display:flex; gap: var(--space-sm); align-items:center; margin-bottom: var(--space-xs);">
+          <span class="badge-sm" style="background:rgba(136,192,208,0.12); color:var(--color-primary); border:1px solid rgba(136,192,208,0.25);">PD L3 Detail</span>
+          <span style="font-size:10px; color:var(--color-muted);">← C.4 Preview 응답</span>
+        </div>
+
+        <div class="side-panel-title">Step 1: Context Injection (M5)</div>
+        <ul class="slide-grammar-details">
+          <li><strong>의도 분석</strong>: LLM이 요청의 true intent 파악</li>
+          <li><strong>Memory 주입</strong>: FTS5 Top-K → 프롬프트에 삽입</li>
+          <li><strong>Knowledge 참조</strong>: 관련 wiki 문서 자동 연결</li>
+          <li><strong>동시 주입</strong>: 3-Layer context를 한 번에 처리</li>
+        </ul>
+
+        <div class="side-panel-title" style="margin-top: var(--space-md);">Step 2: Routing</div>
+        <ul class="slide-grammar-details">
+          <li><strong>Skill 매칭</strong>: catalog.json trigger 패턴 비교</li>
+          <li><strong>State 결정</strong>: 현재 workflow state 확인</li>
+          <li><strong>Priority 계산</strong>: 여러 skill일 때 우선순위</li>
+        </ul>
+      </div>
+
+      <div class="side-panel">
+        <div class="side-panel-title">Step 3: Compression (Token Budget)</div>
+        <div class="code-block" style="font-size:11px;">
+<span class="cmt">// Runtime Pipeline — M5 Context Injection</span>
+<span class="kw">const</span> context = {
+  <span class="fn">memory</span>:     memory.search(query, { topK: <span class="num">5</span> }),
+  <span class="fn">knowledge</span>:  wiki.search(domain, { depth: <span class="num">2</span> }),
+  <span class="fn">skills</span>:     catalog.match(intent),
+  <span class="fn">budget</span>:     { maxTokens: <span class="num">4096</span>, used: <span class="num">0</span> }
+};
+
+<span class="cmt">// Compression — budget 초과 시 truncation</span>
+<span class="kw">if</span> (context.used > context.budget.maxTokens) {
+  <span class="fn">compress</span>(context, { strategy: <span class="str">"summarize"</span> });
+}
+        </div>
+
+        <div class="side-panel-title" style="margin-top: var(--space-md);">Preview → Detail 연결</div>
+        <div class="runtime-preview" style="margin-top: var(--space-sm);">
+          <div class="rp-steps">
+            <div class="rp-step" style="border-color: rgba(136,192,208,0.3); background: rgba(136,192,208,0.05);">
+              <div class="rp-step-icon">📥</div>
+              <div class="rp-step-label">Context</div>
+              <div class="rp-step-desc">의도 분석<br>Memory + Knowledge<br>동시 주입</div>
+            </div>
+            <div class="rp-arrow">→</div>
+            <div class="rp-step" style="border-color: rgba(136,192,208,0.3); background: rgba(136,192,208,0.05);">
+              <div class="rp-step-icon">🔀</div>
+              <div class="rp-step-label">Routing</div>
+              <div class="rp-step-desc">Skill 매칭<br>State 결정<br>Priority 계산</div>
+            </div>
+            <div class="rp-arrow">→</div>
+            <div class="rp-step" style="border-color: rgba(136,192,208,0.3); background: rgba(136,192,208,0.05);">
+              <div class="rp-step-icon">📦</div>
+              <div class="rp-step-label">Compress</div>
+              <div class="rp-step-desc">Token budget<br>Summarization<br>최적화</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="insight-box" style="margin-top: var(--space-sm);">
+          🔑 C.4 Preview를 L3 깊이의 Detail로 확장 — 같은 3단계, 더 많은 정보
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C.16 [Feynman]: SSOT -->
+  <div class="slide diagram-slide" id="slide-16" data-notes="[Feynman] SSOT (Single Source of Truth): 'master spreadsheet' 비유. catalog.json → config.yaml → filesystem으로 어떻게 동기화되는지. Feynman 원리: '간단한 비유로 복잡한 개념 설명'. M6: SSOT Sync mechanism.">
+    <div class="lecture-badge">Lecture C · SSOT</div>
+    <div class="layout-centered">
+      <div class="slide-grammar-title">SSOT — Single Source of Truth</div>
+      <div class="slide-grammar-takeaway">Feynman 원리: "복잡한 시스템은 하나의 마스터 스프레드시트로 동기화된다"</div>
+
+      <div class="feynman-block">
+        <div class="feynman-quote">
+          "SSOT는 마스터 스프레드시트 —<br>한 곳에서 변경하면 모든 곳에 반영된다"
+        </div>
+
+        <div class="feynman-chain">
+          <div class="fc-node" style="border-color:rgba(136,192,208,0.3);">
+            <strong>📋 catalog.json</strong>
+            마스터 정의 — Skill/Plugin<br>메타데이터
+          </div>
+          <div class="fc-arrow">→</div>
+          <div class="fc-node" style="border-color:rgba(143,188,187,0.3);">
+            <strong>⚙️ config.yaml</strong>
+            설정 변환 — runtime<br>파라미터 적용
+          </div>
+          <div class="fc-arrow">→</div>
+          <div class="fc-node" style="border-color:rgba(163,190,140,0.3);">
+            <strong>📁 filesystem</strong>
+            실제 파일 — 실행 가능한<br>코드/데이터
+          </div>
+        </div>
+
+        <div class="ssot-table" style="margin-top: var(--space-md);">
+          <div class="ssot-header">Source</div>
+          <div class="ssot-header">Target</div>
+          <div class="ssot-header">Sync 방향</div>
+          <div>catalog.json</div>
+          <div>config.yaml</div>
+          <div style="color:var(--color-primary);">→ 단방향 (Master → Config)</div>
+          <div>config.yaml</div>
+          <div>filesystem</div>
+          <div style="color:var(--color-primary);">→ 단방향 (Config → Files)</div>
+          <div>filesystem</div>
+          <div>catalog.json</div>
+          <div style="color:var(--color-error);">✗ 금지 (순환 참조 방지)</div>
+        </div>
+
+        <div class="insight-box" style="margin-top: var(--space-sm);">
+          🔑 M6 핵심: 단방향 동기화로 순환 참조 방지 — Master → Config → Files
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C.17 [Compare]: Core vs P-Hermes [COMPARE TABLE] -->
+  <div class="slide diagram-slide" id="slide-17" data-notes="[Compare] Core Hermes vs P-Hermes 기능 비교. 6가지 항목: Architecture, Workflow, Memory, Knowledge, Skills, SSOT. P-Hermes가 Core Hermes의 모든 기능을 포함하고, 추가로 State Machine, 4-Layer Integration, SSOT Sync 등을 제공합니다.">
+    <div class="lecture-badge">Lecture C · Compare</div>
+    <div class="layout-centered">
+      <div class="slide-grammar-title">Core Hermes vs P-Hermes</div>
+      <div class="slide-grammar-takeaway">P-Hermes = Core Hermes + 4-Layer Architecture + State Machine + SSOT</div>
+
+      <div class="compare-table" style="max-width: 640px; margin: var(--space-md) auto;">
+        <div class="header">기능</div>
+        <div class="header">Core Hermes</div>
+        <div class="header">P-Hermes</div>
+        <div style="font-weight:600;">Architecture</div>
+        <div>Flat 구조</div>
+        <div style="color:var(--color-success);">4-Layer 계층</div>
+        <div style="font-weight:600;">Workflow</div>
+        <div>LLM 판단에만 의존</div>
+        <div style="color:var(--color-success);">9-Step State Machine</div>
+        <div style="font-weight:600;">Memory</div>
+        <div>Session 기반</div>
+        <div style="color:var(--color-success);">Persistent + FTS5</div>
+        <div style="font-weight:600;">Knowledge</div>
+        <div>비existent</div>
+        <div style="color:var(--color-success);">Wiki T1/T2/T3</div>
+        <div style="font-weight:600;">Skills</div>
+        <div>기본 명령만</div>
+        <div style="color:var(--color-success);">Catalog + Subprocess</div>
+        <div style="font-weight:600;">SSOT</div>
+        <div>없음</div>
+        <div style="color:var(--color-success);">M6 Sync Pipeline</div>
+      </div>
+
+      <div class="insight-box" style="margin-top: var(--space-md);">
+        💡 P-Hermes는 Core Hermes의 <strong>기능 확장</strong>이 아닌 <strong>구조적 진화</strong> — 4-Layer + State Machine + SSOT
+      </div>
+    </div>
+  </div>
+
+  <!-- C.18 [Summary]: 3 Large Number Cards -->
+  <div class="slide summary-slide" id="slide-18" data-notes="[Summary] Lecture C 요약: 3개의 핵심 숫자. 4-Layer (Memory/Knowledge/Skills/Workflow), 9-Step State Machine (request→done), 3-Step Runtime (context/routing/compression). 이 숫자들이 Lecture C의 핵심 메시지를 요약합니다.">
+    <div class="lecture-badge">Lecture C · Summary</div>
+    <div class="layout-centered">
+      <div class="slide-grammar-title">핵심 3가지</div>
+      <div class="slide-grammar-takeaway">Lecture C를 숫자로 요약하면?</div>
+
+      <div class="summary-cards" style="margin: var(--space-lg) auto;">
+        <div class="summary-card">
+          <div class="summary-card-number">4</div>
+          <div class="summary-card-label">계층 구조</div>
+          <div class="summary-card-desc">Memory → Knowledge →<br>Skills → Workflow<br><br>Bottom-up dependency</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-number">9</div>
+          <div class="summary-card-label">Step State Machine</div>
+          <div class="summary-card-desc">request → investigation →<br>design → review → approval →<br>execution → test → exec.review → done</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-number">3</div>
+          <div class="summary-card-label">Runtime 단계</div>
+          <div class="summary-card-desc">Context → Routing →<br>Compression<br><br>Token budget 최적화</div>
+        </div>
+      </div>
+
+      <div class="key-message" style="margin-top: var(--space-sm);">
+        4-Layer × 9-Step × 3-Step = 통제된 실행 시스템
+      </div>
+    </div>
+  </div>
+
+  <!-- C.19 [Q&A]: 빈 Q&A -->
+  <div class="slide summary-slide" id="slide-19" data-notes="Q&A 세션입니다. 4-Layer Skyline 구조, 9-Step State Machine, Runtime Pipeline(context→routing→compression), SSOT Sync(M6), Core vs P-Hermes 비교에 대해 자유롭게 질문해주세요.">
+    <div class="lecture-badge">Lecture C · Q&A</div>
+    <div class="layout-centered">
+      <div class="qa-prompt">질문이 있으신가요?</div>
+      <div class="qa-next">
+        🏗️ Architecture &amp; Runtime — 4-Layer, 9-Step, 3-Step Runtime
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Section Progress (fixed, outside deck) -->
+<div class="section-progress" id="sectionProgress">
+  <span class="sec done" data-section="1">① Skills</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec active" data-section="2">② Workflow</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future" data-section="3">③ Architecture</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future" data-section="4">④ Runtime</span>
+</div>
+
+<!-- Navigation -->
+<div class="nav" id="nav"></div>
+<div class="slide-counter" id="slideCounter"></div>
+
+<script>
+  // Navigation
+  const deck = document.getElementById('deck');
+  const slides = deck.querySelectorAll('.slide');
+  const nav = document.getElementById('nav');
+  const counter = document.getElementById('slideCounter');
+  const progressBar = document.getElementById('progressBar');
+  const notesToggle = document.getElementById('notesToggle');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesContent = document.getElementById('notesContent');
+
+  // Build nav dots
+  slides.forEach((_, i) => {
+    const a = document.createElement('a');
+    a.href = `#slide-${i}`;
+    a.dataset.index = i;
+    nav.appendChild(a);
+  });
+
+  // Section progress hide types
+  const hideSectionTypes = ['hero-slide', 'section-divider', 'summary-slide'];
+
+  // Update on scroll
+  function update() {
+    const scrollLeft = deck.scrollLeft;
+    const vw = window.innerWidth;
+    const current = Math.round(scrollLeft / vw);
+    const progress = ((scrollLeft / (deck.scrollWidth - vw)) * 100).toFixed(0);
+
+    document.querySelectorAll('.nav a').forEach((a, i) => {
+      a.classList.toggle('active', i === current);
+    });
+
+    counter.textContent = `${current + 1} / ${slides.length}`;
+    progressBar.style.width = `${progress}%`;
+
+    // Speaker notes
+    const currentSlide = slides[current];
+    if (currentSlide) {
+      notesContent.textContent = currentSlide.dataset.notes || '';
+    }
+
+    // Section progress bar — update sections
+    // 0-1: cover, goal → show ① as active (past from B)
+    // 2-8: Workflow (C.2-C.8, index 2-8) → ② active
+    // 9: divider (C.9)
+    // 10-14: Architecture (C.10-C.14, index 10-14) → ③ active
+    // 15-17: Runtime (C.15-C.17, index 15-17) → ④ active
+    // 18-19: Summary/QA → ④ active
+    const sectionProgress = document.getElementById('sectionProgress');
+    const secs = sectionProgress.querySelectorAll('.sec');
+
+    if (current <= 1) {
+      secs[0].className = 'sec done';
+      secs[1].className = 'sec active';
+      secs[2].className = 'sec future';
+      secs[3].className = 'sec future';
+    } else if (current <= 8) {
+      secs[0].className = 'sec done';
+      secs[1].className = 'sec active';
+      secs[2].className = 'sec future';
+      secs[3].className = 'sec future';
+    } else if (current <= 14) {
+      secs[0].className = 'sec done';
+      secs[1].className = 'sec done';
+      secs[2].className = 'sec active';
+      secs[3].className = 'sec future';
+    } else {
+      secs[0].className = 'sec done';
+      secs[1].className = 'sec done';
+      secs[2].className = 'sec done';
+      secs[3].className = 'sec active';
+    }
+
+    // Hide section progress on certain slide types
+    if (currentSlide && hideSectionTypes.some(t => currentSlide.classList.contains(t))) {
+      sectionProgress.style.display = 'none';
+    } else {
+      sectionProgress.style.display = 'flex';
+    }
+  }
+
+  deck.addEventListener('scroll', update);
+  window.addEventListener('resize', update);
+  update();
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    const vw = window.innerWidth;
+    const isArrow = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(e.key);
+    if (isArrow) e.preventDefault();
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      const target = deck.scrollLeft + vw;
+      deck.scrollTo({ left: target, behavior: 'smooth' });
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      const target = deck.scrollLeft - vw;
+      deck.scrollTo({ left: target, behavior: 'smooth' });
+    }
+  });
+
+  // Notes toggle
+  notesToggle.addEventListener('click', () => {
+    notesPanel.classList.toggle('visible');
+  });
+
+  // Nav click
+  document.querySelectorAll('.nav a').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const idx = parseInt(a.dataset.index);
+      deck.scrollTo({ left: idx * window.innerWidth, behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>

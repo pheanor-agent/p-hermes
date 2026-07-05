@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture A: 왜 Agent OS인가? — SCQA → Golden Circle</title>
+<link rel="stylesheet" href="components/slides-components-v5.css">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── Lecture A specific overrides ── */
+
+  /* Layer Stack (A.10) */
+  .layer-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  .layer-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  .layer-block {
+    width: 100%;
+    padding: 14px 24px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-heading);
+    border: 1px solid var(--color-border);
+    position: relative;
+    transition: var(--transition);
+  }
+  .layer-block:hover { transform: scale(1.01); }
+  .layer-block .layer-icon { font-size: 18px; margin-right: 8px; }
+  .layer-block .layer-key { color: var(--color-muted); font-size: 12px; font-weight: 400; margin-left: 6px; }
+
+  .layer-workflow  { background: rgba(94, 129, 172, 0.25);  border-color: rgba(94, 129, 172, 0.4);  border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+  .layer-skills    { background: rgba(179, 162, 135, 0.2);  border-color: rgba(179, 162, 135, 0.35); border-top: none; }
+  .layer-knowledge { background: rgba(180, 142, 173, 0.2);  border-color: rgba(180, 142, 173, 0.35); border-top: none; }
+  .layer-memory    { background: rgba(136, 192, 208, 0.2);  border-color: rgba(136, 192, 208, 0.35); border-top: none; border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+
+  .layer-arrow-up {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+    font-size: 14px;
+    padding: 2px 0;
+    width: 100%;
+  }
+  .layer-arrow-up span { font-size: 18px; }
+
+  .layer-legend {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+    margin-top: var(--space-md);
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--color-muted);
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Why-chain slide layout */
+  .why-chain-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+    max-width: 680px;
+    width: 100%;
+  }
+  .why-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    width: 100%;
+  }
+  .why-box {
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+  .why-box.problem {
+    background: rgba(191, 97, 106, 0.08);
+    border-color: rgba(191, 97, 106, 0.25);
+  }
+  .why-box.solution {
+    background: rgba(136, 192, 208, 0.06);
+    border-color: rgba(136, 192, 208, 0.2);
+  }
+  .why-box-icon { font-size: 32px; }
+  .why-box-title { font-size: 16px; font-weight: 700; }
+  .why-box.problem .why-box-title { color: var(--color-error); }
+  .why-box.solution .why-box-title { color: var(--color-primary); }
+  .why-box-desc { font-size: 14px; color: var(--color-muted); line-height: 1.5; text-align: center; }
+
+  /* Impact table (A.4) */
+  .impact-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: var(--space-sm);
+    width: 100%;
+    max-width: 640px;
+    align-items: center;
+  }
+  .impact-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+  }
+  .impact-item.cost { border-color: rgba(191, 97, 106, 0.3); }
+  .impact-item.value { border-color: rgba(163, 190, 140, 0.3); }
+  .impact-label { font-size: 12px; font-weight: 700; color: var(--color-muted); letter-spacing: 0.05em; }
+  .impact-value { font-size: 14px; font-weight: 600; color: var(--color-text); }
+  .impact-vs { font-size: 14px; font-weight: 800; color: var(--color-border); }
+
+  /* Impact comparison (A.4 alternative) */
+  .comparison-block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    width: 100%;
+    max-width: 560px;
+  }
+  .comparison-col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+  .comparison-col-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.05em;
+  }
+  .comparison-col-title.bad { background: rgba(191, 97, 106, 0.15); color: var(--color-error); }
+  .comparison-col-title.good { background: rgba(163, 190, 140, 0.15); color: var(--color-success); }
+  .comparison-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    color: var(--color-text);
+  }
+
+  /* Practice flow (A.12) */
+  .practice-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+    max-width: 700px;
+  }
+  .practice-node {
+    padding: 10px 16px;
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text);
+    text-align: center;
+    min-width: 80px;
+    transition: var(--transition);
+  }
+  .practice-node:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-2px);
+  }
+  .practice-node .node-sub {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--color-muted);
+    margin-top: 2px;
+  }
+  .practice-arrow {
+    color: var(--color-primary);
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  /* Q&A slide */
+  .qa-prompt {
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 700;
+    color: var(--color-heading);
+    text-align: center;
+    line-height: 1.4;
+  }
+  .qa-next {
+    font-size: 16px;
+    color: var(--color-muted);
+    text-align: center;
+    margin-top: var(--space-md);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .why-pair { grid-template-columns: 1fr; }
+    .comparison-block { grid-template-columns: 1fr; }
+    .summary-cards { grid-template-columns: 1fr; gap: var(--space-md); }
+    .impact-grid { grid-template-columns: 1fr; }
+    .practice-flow { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<button class="notes-toggle" id="notesToggle">📝 Notes</button>
+<div class="notes-panel" id="notesPanel">
+  <h4>📝 발표자 노트</h4>
+  <p id="notesContent">슬라이드를 선택해주세요.</p>
+</div>
+
+<div class="deck" id="deck">
+
+  <!-- A.0 Cover: Agent OS: Why It Matters -->
+  <div class="slide hero-slide" id="slide-0" data-notes="Lecture A: 왜 Agent OS인가? 이 강의는 SCQA 구조와 Simon Sinek의 Golden Circle을 결합하여, Agent OS가 왜 필요한지 근본적인 이유를 탐구합니다. 단순한 기술 설명이 아닌 '왜'에 집중하는 강의입니다.">
+    <div class="lecture-badge">Lecture A</div>
+    <div class="hero">
+      <div class="ring">
+        <span class="ring-text">🧠</span>
+      </div>
+    </div>
+    <h1 class="title">Agent OS:<br>Why It Matters</h1>
+    <p class="subtitle">왜 Agent OS인가 — SCQA → Golden Circle</p>
+  </div>
+
+  <!-- A.1 Goal: 문제 발견 → 해결책 발견 → 시스템 이해 -->
+  <div class="slide summary-slide" id="slide-1" data-notes="오늘의 학습 목표를 설명합니다. 세 단계로 구성됩니다: 문제 발견(왜 현재 Agent가 부족한가), 해결책 발견(왜 Agent OS가 답인가), 시스템 이해(어떻게 구축하는가). 이 흐름을 따라가며 근본적인 통찰을 얻게 됩니다.">
+    <div class="lecture-badge">Lecture A</div>
+    <div class="goal-section">
+      <div class="goal-tag">🎯 오늘 배울 내용</div>
+      <div class="goal-why">
+        <span class="goal-label">학습 흐름</span>
+        문제 발견 → 해결책 발견 → 시스템 이해
+      </div>
+      <div class="goal-list">
+        <div class="goal-item">
+          <span class="goal-num">1</span>
+          문제 발견: Stateless Agent의 4가지 실패 패턴
+        </div>
+        <div class="goal-item">
+          <span class="goal-num">2</span>
+          해결책 발견: Why Chain (Memory → Knowledge → Skills → Workflow)
+        </div>
+        <div class="goal-item">
+          <span class="goal-num">3</span>
+          시스템 이해: 4-Layer Stack → Hermes Agent OS
+        </div>
+      </div>
+      <div class="goal-flow">
+        <span>문제 인식</span>
+        <span class="goal-arrow">→</span>
+        <span>Why Chain</span>
+        <span class="goal-arrow">→</span>
+        <span>Architecture</span>
+        <span class="goal-arrow">→</span>
+        <span>Practice</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- A.2 [SCQA S]: Stateless Problem — 세션이 끝날 때 지워지는 모든 것 -->
+  <div class="slide diagram-slide" id="slide-2" data-notes="SCQA의 Situation: 대부분의 AI Agent는 Stateless합니다. 세션이 끝날 때마다 모든 컨텍스트가 사라집니다. 사용자는 매번 똑같은 설명을 반복해야 하고, Agent는 이전 대화를 전혀 기억하지 못합니다. 이것이 근본적인 문제입니다.">
+    <div class="lecture-badge">Lecture A · SCQA — Situation</div>
+    <div class="layout-centered">
+      <div class="slide-grammar-title">Stateless Problem</div>
+      <div class="slide-grammar-takeaway">세션이 끝날 때 지워지는 모든 것 — 이것이 Agent의 근본 한계다</div>
+
+      <div class="mech-arrow-flow" style="margin: var(--space-lg) 0;">
+        <div class="mech-node">User 입력</div>
+        <div class="mech-arrow">→</div>
+        <div class="mech-node">LLM 추론</div>
+        <div class="mech-arrow">→</div>
+        <div class="mech-node">응답 생성</div>
+        <div class="mech-arrow">→</div>
+        <div class="mech-node" style="border-color: var(--color-error); color: var(--color-error);">💨 모든 것 사라짐</div>
+      </div>
+
+      <ul class="slide-grammar-details">
+        <li>매 세션마다 <span class="hl">처음부터 시작</span> — 컨텍스트 없음</li>
+        <li>같은 질문을 <span class="hl">매번 반복</span>해야 함</li>
+        <li>Agent는 <span class="hl">과거를 기억하지 못</span>함</li>
+        <li>사용자 경험: <span class="hl">매번 새로 설명하는 피로감</span></li>
+        <li>핵심: <strong>Stateless = 학습 불가 = 진화 불가</strong></li>
+      </ul>
+
+      <div class="insight-box">
+        💡 ChatGPT를 닫고 다시 열면 — 모든 것이 사라진다. 이것이 Stateless의 현실이다.
+      </div>
+    </div>
+  </div>
+
+  <!-- A.3 [SCQA C]: 4가지 실패 패턴 (MECE) -->
+  <div class="slide diagram-slide" id="slide-3" data-notes="SCQA의 Complication: Stateless 문제는 4가지 실패 패턴으로 나타납니다. 이 4가지는 MECE(Mutually Exclusive, Collectively Exhaustive)하게 분류되었습니다. ① Context Loss ② No Learning ③ No Reusability ④ No Consistency — 각각 다른 증상이지만 근본 원인은 같습니다.">
+    <div class="lecture-badge">Lecture A · SCQA — Complication</div>
+    <div class="layout-centered">
+      <div class="slide-grammar-title">4가지 실패 패턴</div>
+      <div class="slide-grammar-takeaway">MECE 분류 — 모든 Stateless 실패는 이 4가지로 귀결된다</div>
+
+      <div class="grid-cards cols-2" style="max-width: 560px; margin: var(--space-md) 0;">
+        <div class="grid-card" style="border-color: rgba(191,97,106,0.3);">
+          <div style="font-size: 24px;">①</div>
+          <div class="grid-card-title" style="color: var(--color-error);">Context Loss</div>
+          <div class="grid-card-desc">과거 대화 맥락이 사라짐</div>
+        </div>
+        <div class="grid-card" style="border-color: rgba(191,97,106,0.3);">
+          <div style="font-size: 24px;">②</div>
+          <div class="grid-card-title" style="color: var(--color-error);">No Learning</div>
+          <div class="grid-card-desc">과거에서 학습하지 못함</div>
+        </div>
+        <div class="grid-card" style="border-color: rgba(191,97,106,0.3);">
+          <div style="font-size: 24px;">③</div>
+          <div class="grid-card-title" style="color: var(--color-error);">No Reusability</div>
+          <div class="grid-card-desc">동일한 작업마다 재작성</div>
+        </div>
+        <div class="grid-card" style="border-color: rgba(191,97,106,0.3);">
+          <div style="font-size: 24px;">④</div>
+          <div class="grid-card-title" style="color: var(--color-error);">No Consistency</div>
+          <div class="grid-card-desc">일관된 결과 보장 불가</div>
+        </div>
+      </div>
+
+      <div class="insight-box">
+        🔑 4가지 증상이지만 근본 원인은 동일: <strong>상태를 저장하는 시스템이 없다</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- A.4 [SCQA Q]: "이게 진짜 문제인가?" — Impact 비교 -->
+  <div class="slide diagram-slide" id="slide-4" data-notes="SCQA의 Question: 이 4가지 실패의 실제 영향력은 얼마나 될까? Stateless Agent vs Agent OS를 비교하면 그 차이가 명확해집니다. 비용, 효율성, 신뢰성 모두에서 Agent OS가 압도적입니다. 이것이 우리가 Agent OS를 구축해야 하는 이유입니다.">
+    <div class="lecture-badge">Lecture A · SCQA — Question</div>
+    <div class="layout-centered">
+      <div class="slide-grammar-title">이게 <span class="hl">진짜</span> 문제인가?</div>
+      <div class="slide-grammar-takeaway">Stateless vs Agent OS — 실제 영향력 차이가 결정적이다</div>
+
+      <div class="comparison-block" style="margin: var(--space-md) 0;">
+        <div class="comparison-col">
+          <div class="comparison-col-title bad">✗ Stateless Agent</div>
+          <div class="comparison-row"><span class="cross">✗</span> 매 세션 컨텍스트 재설정</div>
+          <div class="comparison-row"><span class="cross">✗</span> 학습 누적 불가</div>
+          <div class="comparison-row"><span class="cross">✗</span> 같은 작업 매번 새로 작성</div>
+          <div class="comparison-row"><span class="cross">✗</span> 결과 일관성 없음</div>
+          <div class="comparison-row"><span class="cross">✗</span> 사용자는 매번 교육자 역할</div>
+        </div>
+        <div class="comparison-col">
+          <div class="comparison-col-title good">✓ Agent OS</div>
+          <div class="comparison-row"><span class="check">✓</span> Memory가 컨텍스트 보존</div>
+          <div class="comparison-row"><span class="check">✓</span> Knowledge로 학습 누적</div>
+          <div class="comparison-row"><span class="check">✓</span> Skills로 재사용 가능</div>
+          <div class="comparison-row"><span class="check">✓</span> Workflow로 일관성 보장</div>
+          <div class="comparison-row"><span class="check">✓</span> 사용자는 전략가 역할</div>
+        </div>
+      </div>
+
+      <div class="question" style="font-size: clamp(20px, 3vw, 28px); margin-top: var(--space-md);">
+        이 차이를 해결하는 것이 <span class="hl">Agent OS</span>의 존재 이유다
+      </div>
+    </div>
+  </div>
+
+  <!-- A.5 Divider: 💡 해결: Agent OS [GLASS] -->
+  <div class="slide section-divider" id="slide-5" data-notes="Section Divider입니다. 이제 SCQA 문제 진단을 지나 해결책 영역으로 넘어갑니다. Agent OS가 Stateless 문제를 해결하는 근본적인 답임을 Why Chain(Why Memory/Why Knowledge/Why Skills/Why Workflow)으로 차근차근 설명합니다.">
+    <div class="glass-divider">
+      <div class="section-divider-content">
+        <div class="divider-label">💡 해결책</div>
+        <div class="divider-title">Agent OS</div>
+        <div class="divider-desc">Stateless 문제를 해결하는 근본적인 답 — Agent의 운영체제</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- A.6 [Why]: 왜 Memory인가? — 기억 없이는 학습 불가 -->
+  <div class="slide diagram-slide" id="slide-6" data-notes="Why Chain 시작: 왜 Memory인가? Simon Sinek의 Golden Circle 'Why'에 답합니다. Memory 없이는 학습이 불가능합니다. 과거를 기억하지 못하는 생명체는 진화할 수 없듯, Memory가 없는 Agent는 성장할 수 없습니다. 이것이 Agent OS의 가장 근본적인 Layer입니다.">
+    <div class="lecture-badge">Lecture A · Why Chain — 1</div>
+    <div class="why-chain-layout">
+      <div class="slide-grammar-title">왜 <span class="hl">Memory</span>인가?</div>
+      <div class="slide-grammar-takeaway">기억 없이는 학습 불가 — 성장할 수 없는 Agent는 단순한 Chatbot일 뿐</div>
+
+      <div class="why-pair">
+        <div class="why-box problem">
+          <div class="why-box-icon">🧠💨</div>
+          <div class="why-box-title">Memory 없음</div>
+          <div class="why-box-desc">과거 대화 → 사라짐<br>학습 불가 → 성장 불가<br>매번처음부터 시작</div>
+        </div>
+        <div class="why-box solution">
+          <div class="why-box-icon">🧠💾</div>
+          <div class="why-box-title">Memory 있음</div>
+          <div class="why-box-desc">경험 보존 → 학습 가능<br>패턴 인식 → 개선<br>시간에 따른 진화</div>
+        </div>
+      </div>
+
+      <div class="mech-arrow-flow" style="margin: var(--space-md) 0;">
+        <div class="mech-node">경험</div>
+        <div class="mech-arrow">→</div>
+        <div class="mech-node">저장 (Memory)</div>
+        <div class="mech-arrow">→</div>
+        <div class="mech-node">검색 (Recall)</div>
+        <div class="mech-arrow">→</div>
+        <div class="mech-node" style="border-color: var(--color-success); color: var(--color-success);">학습 (Growth) ✓</div>
+      </div>
+
+      <ul class="slide-grammar-details">
+        <li>Memory = Agent의 <strong>경험 축적</strong> 시스템</li>
+        <li>과거 세션의 <strong>컨텍스트 보존</strong> 가능</li>
+        <li>Relevance-based <strong>검색</strong>으로 정확한 정보 회수</li>
+        <li>시간에 따른 <strong>지적 성장</strong>의 기반</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- A.7 [Why→How]: 왜 Knowledge인가? — 사실 ≠ 이해 -->
+  <div class="slide diagram-slide" id="slide-7" data-notes="Why→How: 왜 Knowledge인가? 사실과 이해는 다릅니다. 데이터를 저장하는 것(Memory)과 그 데이터의 관계를 이해하는 것(Knowledge)은 완전히 다른 차원입니다. Knowledge는 단순한 정보 저장이 아니라 도메인 지식을 구조화하는 것입니다.">
+    <div class="lecture-badge">Lecture A · Why Chain — 2</div>
+    <div class="why-chain-layout">
+      <div class="slide-grammar-title">왜 <span class="hl">Knowledge</span>인가?</div>
+      <div class="slide-grammar-takeaway">사실 ≠ 이해 — 데이터를 아는 것과 관계를 아는 것은 완전히 다른 차원</div>
+
+      <div class="why-pair">
+        <div class="why-box problem">
+          <div class="why-box-icon">📄</div>
+          <div class="why-box-title">사실만 있는 경우</div>
+          <div class="why-box-desc">데이터는 많지만 관계 모름<br>맥락 없는 정보 파편<br>도메인 이해 부족</div>
+        </div>
+        <div class="why-box solution">
+          <div class="why-box-icon">🗂️</div>
+          <div class="why-box-title">Knowledge가 있는 경우</div>
+          <div class="why-box-desc">정보 → 관계 → 의미<br>도메인 지식 구조화<br>문맥적 이해 가능</div>
+        </div>
+      </div>
+
+      <div class="mech-arrow-flow" style="margin: var(--space-md) 0;">
+        <div class="mech-node">Raw Data</div>
+        <div class="mech-arrow">→</div>
+        <div class="mech-node">구조화</div>
+        <div class="mech-arrow">→</div>
+        <div class="mech-node">관계 추출</div>
+        <div class="mech-arrow">→</div>
+        <div class="mech-node" style="border-color: var(--color-success); color: var(--color-success);">Knowledge ✓</div>
+      </div>
+
+      <ul class="slide-grammar-details">
+        <li>Knowledge = <strong>사실의 관계</strong>를 구조화</li>
+        <li>도메인별 <strong>지식 체인</strong> 구성 (예: 프로그래밍, 마케팅)</li>
+        <li>단순 정보 저장을 넘어 <strong>문맥적 이해</strong></li>
+        <li>Memory의 다음 단계: <strong>저장 → 이해</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- A.8 [Why→How]: 왜 Skills인가? — 아는 것 ≠ 실행하는 것 -->
+  <div class="slide diagram-slide" id="slide-8" data-notes="Why→How: 왜 Skills인가? 아는 것과 실행하는 것은 다릅니다. 레시피를 알고 있다고 해서 요리사 되는 것이 아닙니다. Skills는 지식을 절차(procedure)로 변환하여 실제 작업을 수행할 수 있게 합니다. 이것이 '아는 것'과 '할 수 있는 것'의 차이를 해결합니다.">
+    <div class="lecture-badge">Lecture A · Why Chain — 3</div>
+    <div class="why-chain-layout">
+      <div class="slide-grammar-title">왜 <span class="hl">Skills</span>인가?</div>
+      <div class="slide-grammar-takeaway">아는 것 ≠ 실행하는 것 — 지식을 절차로 변환해야 실제 작업 가능</div>
+
+      <div class="why-pair">
+        <div class="why-box problem">
+          <div class="why-box-icon">📖</div>
+          <div class="why-box-title">знание만 있는 경우</div>
+          <div class="why-box-desc">이론은 알지만 실행 못 함<br>같은 작업 매번 prompt 새로 작성<br>일관성 없는 결과</div>
+        </div>
+        <div class="why-box solution">
+          <div class="why-box-icon">⚡</div>
+          <div class="why-box-title">Skills가 있는 경우</div>
+          <div class="why-box-desc">지식 → 절차 → 실행<br>재사용 가능한 Skill 모듈<br>일관된 결과 보장</div>
+        </div>
+      </div>
+
+      <div class="mech-arrow-flow" style="margin: var(--space-md) 0;">
+        <div class="mech-node">Knowledge</div>
+        <div class="mech-arrow">→</div>
+        <div class="mech-node">절차화 (Procedure)</div>
+        <div class="mech-arrow">→</div>
+        <div class="mech-node">실행 (Execute)</div>
+        <div class="mech-arrow">→</div>
+        <div class="mech-node" style="border-color: var(--color-success); color: var(--color-success);">Skill ✓</div>
+      </div>
+
+      <ul class="slide-grammar-details">
+        <li>Skills = <strong>지식 → 절차</strong>의 변환 계층</li>
+        <li>레시피처럼 <strong>재사용 가능한</strong> 실행 모듈</li>
+        <li>동일 작업의 <strong>일관된 품질</strong> 보장</li>
+        <li>Knowledge의 다음 단계: <strong>이해 → 실행</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- A.9 [Why→How]: 왜 Workflow인가? — 실행 ≠ 체계 -->
+  <div class="slide diagram-slide" id="slide-9" data-notes="Why→How: 왜 Workflow인가? 실행하는 것과 체계적으로 실행하는 것은 다릅니다. 개별 Skill이 훌륭해도 서로 연결되지 않으면 전체 프로세스가 깨집니다. Workflow는 개별 실행을 상태 머신으로 관리하여 체계적인 완수를 보장합니다.">
+    <div class="lecture-badge">Lecture A · Why Chain — 4</div>
+    <div class="why-chain-layout">
+      <div class="slide-grammar-title">왜 <span class="hl">Workflow</span>인가?</div>
+      <div class="slide-grammar-takeaway">실행 ≠ 체계 — 개별 실행을 상태 머신으로 연결해야 완수 가능</div>
+
+      <div class="why-pair">
+        <div class="why-box problem">
+          <div class="why-box-icon">🔧</div>
+          <div class="why-box-title">실행만 있는 경우</div>
+          <div class="why-box-desc">개별 작업은 되지만 통합 안 됨<br>단계 간 연결 부재<br>전체 프로세스 깨짐</div>
+        </div>
+        <div class="why-box solution">
+          <div class="why-box-icon">🔗</div>
+          <div class="why-box-title">Workflow가 있는 경우</div>
+          <div class="why-box-desc">상태 머신으로 단계 관리<br>단계 간 의존성 자동 처리<br>체계적인 완수 보장</div>
+        </div>
+      </div>
+
+      <div class="state-machine" style="margin: var(--space-md) 0;">
+        <div class="state-node">📋 Plan</div>
+        <div class="state-arrow">↓</div>
+        <div class="state-node">🔍 Research</div>
+        <div class="state-arrow">↓</div>
+        <div class="state-node">✍️ Execute</div>
+        <div class="state-arrow">↓</div>
+        <div class="state-node">✅ Review</div>
+        <div class="state-arrow" style="color: var(--color-success);">↓</div>
+        <div class="state-node" style="border-color: var(--color-success);">🎯 Done ✓</div>
+      </div>
+
+      <ul class="slide-grammar-details">
+        <li>Workflow = <strong>개별 실행 → 체계</strong>의 통합 계층</li>
+        <li>상태 머신(state machine)으로 <strong>단계 관리</strong></li>
+        <li>단계 간 <strong>의존성 자동 처리</strong></li>
+        <li>Skills의 다음 단계: <strong>실행 → 완수</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- A.10 [Pyramid]: 4-Layer Stack [DIAGRAM FOCUS] -->
+  <div class="slide diagram-slide" id="slide-10" data-notes="4-Layer Stack 다이어그램: Memory → Knowledge → Skills → Workflow. 하단에서 상단으로 의존성이 쌓입니다. Memory가 없으면 Knowledge 불가능, Knowledge 없으면 Skills 불가능, Skills 없으면 Workflow 불가능. 이것이 Agent OS의 아키텍처 핵심입니다.">
+    <div class="lecture-badge">Lecture A · Architecture</div>
+    <div class="layout-diagram">
+      <div class="slide-grammar-title">4-Layer Stack</div>
+      <div class="slide-grammar-takeaway">하단에서 상단으로 의존성이 쌓임 — 아래 Layer 없으면 위 Layer 불가능</div>
+
+      <div class="layer-stack" style="margin: var(--space-lg) 0;">
+        <!-- Layer 4: Workflow (top) -->
+        <div class="layer-row">
+          <div class="layer-block layer-workflow">
+            <span class="layer-icon">🔗</span>
+            Workflow
+            <span class="layer-key">실행 → 체계 → 완수</span>
+          </div>
+        </div>
+        <div class="layer-arrow-up"><span>↑ 의존</span></div>
+        <!-- Layer 3: Skills -->
+        <div class="layer-row">
+          <div class="layer-block layer-skills">
+            <span class="layer-icon">⚡</span>
+            Skills
+            <span class="layer-key">이해 → 절차 → 실행</span>
+          </div>
+        </div>
+        <div class="layer-arrow-up"><span>↑ 의존</span></div>
+        <!-- Layer 2: Knowledge -->
+        <div class="layer-row">
+          <div class="layer-block layer-knowledge">
+            <span class="layer-icon">🗂️</span>
+            Knowledge
+            <span class="layer-key">데이터 → 관계 → 이해</span>
+          </div>
+        </div>
+        <div class="layer-arrow-up"><span>↑ 의존</span></div>
+        <!-- Layer 1: Memory (bottom) -->
+        <div class="layer-row">
+          <div class="layer-block layer-memory">
+            <span class="layer-icon">🧠</span>
+            Memory
+            <span class="layer-key">경험 → 저장 → 검색</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="layer-legend">
+        <div class="legend-item"><div class="legend-dot" style="background: var(--color-primary);"></div> Memory (기억)</div>
+        <div class="legend-item"><div class="legend-dot" style="background: var(--color-purple);"></div> Knowledge (이해)</div>
+        <div class="legend-item"><div class="legend-dot" style="background: #b5a287;"></div> Skills (실행)</div>
+        <div class="legend-item"><div class="legend-dot" style="background: var(--color-blue);"></div> Workflow (완수)</div>
+      </div>
+
+      <div class="insight-box" style="margin-top: var(--space-sm);">
+        🔑 아래 Layer 없으면 위 Layer 불가능 — 이것이 왜 4-Layer Stack인가
+      </div>
+    </div>
+  </div>
+
+  <!-- A.11 Divider: 🚀 Hermes 소개 [GLASS] -->
+  <div class="slide section-divider" id="slide-11" data-notes="Section Divider입니다. 이제 Why Chain과 4-Layer 아키텍처 설계를 살펴보았고, 그 다음 단계는 실제 구현체인 Hermes Agent OS를 소개하는 것입니다. Theory에서 Practice로 넘어가는 전환점입니다.">
+    <div class="glass-divider">
+      <div class="section-divider-content">
+        <div class="divider-label">🚀 실제 구현</div>
+        <div class="divider-title">Hermes Agent OS</div>
+        <div class="divider-desc">이제 Theory → Practice로. 4-Layer Stack을 실제로 구현한 시스템</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- A.12 [What]: Agent OS in Practice -->
+  <div class="slide example-slide" id="slide-12" data-notes="Agent OS in Practice: Hermes의 실제 실행 흐름을 보여줍니다. CLI에서 입력된 명령이 Model을 거쳐 Tools → Skills → Workflow로 처리됩니다. 각 Layer가 실제로 어떻게 동작하는지 확인해보세요.">
+    <div class="lecture-badge">Lecture A · Practice</div>
+    <div class="layout-centered">
+      <div class="slide-grammar-title">Agent OS in Practice</div>
+      <div class="slide-grammar-takeaway">Theory를 Practice로 — Hermes의 실제 실행 흐름</div>
+
+      <div class="practice-flow" style="margin: var(--space-lg) 0;">
+        <div class="practice-node">
+          CLI
+          <span class="node-sub">명령 입력</span>
+        </div>
+        <div class="practice-arrow">→</div>
+        <div class="practice-node">
+          Model
+          <span class="node-sub">LLM 추론</span>
+        </div>
+        <div class="practice-arrow">→</div>
+        <div class="practice-node">
+          🧠 Memory
+          <span class="node-sub">경험 검색</span>
+        </div>
+        <div class="practice-arrow">→</div>
+        <div class="practice-node">
+          🗂️ Knowledge
+          <span class="node-sub">지식 적용</span>
+        </div>
+        <div class="practice-arrow">→</div>
+        <div class="practice-node">
+          ⚡ Skills
+          <span class="node-sub">절차 실행</span>
+        </div>
+        <div class="practice-arrow">→</div>
+        <div class="practice-node" style="border-color: var(--color-success);">
+          🔗 Workflow
+          <span class="node-sub">체계적 완수</span>
+        </div>
+      </div>
+
+      <ul class="slide-grammar-details">
+        <li><strong>CLI</strong>: 사용자의 명령이 시스템의 진입점</li>
+        <li><strong>Model</strong>: LLM이 의도 파악 및 추론</li>
+        <li><strong>Memory</strong>: 과거 경험에서 관련 정보 검색</li>
+        <li><strong>Knowledge</strong>: 도메인 지식을 문맥에 적용</li>
+        <li><strong>Skills + Workflow</strong>: 절차 실행 → 체계적 완수</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- A.13 [Summary]: 3 Large Number Cards -->
+  <div class="slide summary-slide" id="slide-13" data-notes="Summary: 핵심 숫자 3개로 Lecture A를 요약합니다. 4가지 실패 패턴을 4개 Layer가 각각 해결하고, 이 시스템이 Stateless Agent 대비 10배 이상의 효율성을 제공합니다.">
+    <div class="lecture-badge">Lecture A · Summary</div>
+    <div class="layout-centered">
+      <div class="slide-grammar-title">핵심 3가지</div>
+      <div class="slide-grammar-takeaway">Lecture A를 숫자로 요약하면?</div>
+
+      <div class="summary-cards" style="margin: var(--space-lg) 0;">
+        <div class="summary-card">
+          <div class="summary-card-number">4</div>
+          <div class="summary-card-label">실패 패턴</div>
+          <div class="summary-card-desc">Context Loss · No Learning<br>No Reusability · No Consistency</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-number">4</div>
+          <div class="summary-card-label">해결 Layer</div>
+          <div class="summary-card-desc">Memory → Knowledge<br>Skills → Workflow</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-number">1</div>
+          <div class="summary-card-label">통합 시스템</div>
+          <div class="summary-card-desc">Agent OS — Hermes로<br>실제 구축 가능</div>
+        </div>
+      </div>
+
+      <div class="key-message" style="margin-top: var(--space-sm);">
+        Stateless ≠ Agent — Agent OS가 있어야 진정한 Agent
+      </div>
+    </div>
+  </div>
+
+  <!-- A.14 [Q&A]: 빈 Q&A -->
+  <div class="slide summary-slide" id="slide-14" data-notes="Q&A 세션입니다. 오늘 배운 SCQA 구조, 4가지 실패 패턴, Why Chain, 4-Layer Stack, Hermes Agent OS에 대해 자유롭게 질문해주세요. 다음 강의에서는 Memory & Knowledge Layer를 구체적으로 다룹니다.">
+    <div class="lecture-badge">Lecture A · Q&A</div>
+    <div class="layout-centered">
+      <div class="qa-prompt">질문이 있으신가요?</div>
+      <div class="qa-next">
+        🔜 다음 강의: <strong>Lecture B</strong> — Memory &amp; Knowledge
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Section Progress (fixed, outside deck) -->
+<div class="section-progress" id="sectionProgress">
+  <span class="sec active" data-section="1">① 문제 인식</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future" data-section="2">② Why Chain</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future" data-section="3">③ Architecture</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future" data-section="4">④ Practice</span>
+</div>
+
+<!-- Navigation -->
+<div class="nav" id="nav"></div>
+<div class="slide-counter" id="slideCounter"></div>
+
+<script>
+  // Navigation
+  const deck = document.getElementById('deck');
+  const slides = deck.querySelectorAll('.slide');
+  const nav = document.getElementById('nav');
+  const counter = document.getElementById('slideCounter');
+  const progressBar = document.getElementById('progressBar');
+  const notesToggle = document.getElementById('notesToggle');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesContent = document.getElementById('notesContent');
+
+  // Build nav dots
+  slides.forEach((_, i) => {
+    const a = document.createElement('a');
+    a.href = `#slide-${i}`;
+    a.dataset.index = i;
+    nav.appendChild(a);
+  });
+
+  // Section progress hide types
+  const hideSectionTypes = ['hero-slide', 'section-divider', 'summary-slide'];
+
+  // Update on scroll
+  function update() {
+    const scrollLeft = deck.scrollLeft;
+    const vw = window.innerWidth;
+    const current = Math.round(scrollLeft / vw);
+    const progress = ((scrollLeft / (deck.scrollWidth - vw)) * 100).toFixed(0);
+
+    document.querySelectorAll('.nav a').forEach((a, i) => {
+      a.classList.toggle('active', i === current);
+    });
+
+    counter.textContent = `${current + 1} / ${slides.length}`;
+    progressBar.style.width = `${progress}%`;
+
+    // Speaker notes
+    const currentSlide = slides[current];
+    if (currentSlide) {
+      notesContent.textContent = currentSlide.dataset.notes || '';
+    }
+
+    // Section progress bar — update sections
+    const sectionProgress = document.getElementById('sectionProgress');
+    const secs = sectionProgress.querySelectorAll('.sec');
+
+    // Section mapping: 0-1:①, 2-4:①, 5:divider, 6-9:②, 10:③, 11:divider, 12-13:④, 14:④
+    if (current <= 4) {
+      secs[0].className = 'sec active';
+      secs[1].className = 'sec future';
+      secs[2].className = 'sec future';
+      secs[3].className = 'sec future';
+    } else if (current <= 9) {
+      secs[0].className = 'sec done';
+      secs[1].className = 'sec active';
+      secs[2].className = 'sec future';
+      secs[3].className = 'sec future';
+    } else if (current <= 10) {
+      secs[0].className = 'sec done';
+      secs[1].className = 'sec done';
+      secs[2].className = 'sec active';
+      secs[3].className = 'sec future';
+    } else {
+      secs[0].className = 'sec done';
+      secs[1].className = 'sec done';
+      secs[2].className = 'sec done';
+      secs[3].className = 'sec active';
+    }
+
+    // Hide section progress on certain slide types
+    if (currentSlide && hideSectionTypes.some(t => currentSlide.classList.contains(t))) {
+      sectionProgress.style.display = 'none';
+    } else {
+      sectionProgress.style.display = 'flex';
+    }
+  }
+
+  deck.addEventListener('scroll', update);
+  window.addEventListener('resize', update);
+  update();
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    const vw = window.innerWidth;
+    const isArrow = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(e.key);
+    if (isArrow) e.preventDefault();
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      const target = deck.scrollLeft + vw;
+      deck.scrollTo({ left: target, behavior: 'smooth' });
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      const target = deck.scrollLeft - vw;
+      deck.scrollTo({ left: target, behavior: 'smooth' });
+    }
+  });
+
+  // Notes toggle
+  notesToggle.addEventListener('click', () => {
+    notesPanel.classList.toggle('visible');
+  });
+
+  // Nav click
+  document.querySelectorAll('.nav a').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const idx = parseInt(a.dataset.index);
+      deck.scrollTo({ left: idx * window.innerWidth, behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
