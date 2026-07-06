@@ -28,7 +28,7 @@
   .pd-level.l3 { background: rgba(94,129,172,0.15); color: var(--color-blue); border: 1px solid rgba(94,129,172,0.35); }
 
   /* PD step layout */
-  .v6 .h-flow {
+  .h-flow {
     display: flex;
     align-items: stretch;
     gap: var(--space-sm);
@@ -298,7 +298,7 @@
   .tf-highlight { border-color: rgba(136,192,208,0.3); background: rgba(136,192,208,0.05); }
 
   /* Skill pipeline (M3) */
-  .v6 .h-flow {
+  .h-flow {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -410,14 +410,14 @@
   /* Responsive */
   @media (max-width: 768px) {
     .layout-main-aside { grid-template-columns: 1fr; }
-    .v6 .h-flow { flex-direction: column; align-items: center; }
+    .h-flow { flex-direction: column; align-items: center; }
     .pd-arrow { transform: rotate(90deg); }
     .example-grid { grid-template-columns: 1fr; }
     .lifecycle { flex-direction: column; }
     .lc-arrow { transform: rotate(90deg); }
     .scaling-bars { max-width: 100%; }
     .mm-grid { grid-template-columns: 1fr; }
-    .v6 .h-flow { flex-direction: column; }
+    .h-flow { flex-direction: column; }
     .sp-arrow { transform: rotate(90deg); }
   }
 </style>
@@ -435,30 +435,21 @@
 <div class="deck" id="deck">
 
   <!-- B.0 Cover: Memory vs Knowledge -->
-  <div class="slide hero-slide v6" id="slide-0">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B</div>
-</header>
-  <main class="slide-body">
-<div class="cover-hero">
+  <div class="slide hero-slide v6" id="slide-0" data-notes="Lecture B: Memory vs Knowledge. 이 강의는 두 핵심 개념 — Memory와 Knowledge의 차이, 각각의 동작 원리, 그리고 왜 둘이 모두 필요한지를 다룹니다. Progressive Disclosure(PD) 구조로 L1→L2→L3로 단계적으로 깊이 들어갑니다.">
+    <div class="lecture-badge">Lecture B</div>
+    <div class="cover-hero">
       <div class="ring">
         <span class="ring-text">🧠📚</span>
       </div>
     </div>
     <h1 class="title">Memory vs Knowledge</h1>
     <p class="subtitle">Progressive Disclosure · PD Pipelines M1–M3 · Compare Tables</p>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.1 Goal: 두 개념의 차이와 동작 원리 -->
-  <div class="slide summary-slide v6" id="slide-1">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B</div>
-</header>
-  <main class="slide-body">
-<div class="goal-section">
+  <div class="slide summary-slide v6" id="slide-1" data-notes="오늘의 학습 목표: ① Memory와 Knowledge의 명확한 차이 이해 ② 각 Pipeline(M1, M2, M3)의 동작 원리 파악 ③ Progressive Disclosure 패턴으로 단계적 깊이 학습 ④ 실제 사용 판단 기준 — Decision Tree 적용">
+    <div class="lecture-badge">Lecture B</div>
+    <div class="goal-section">
       <div class="goal-tag">🎯 오늘 배울 내용</div>
       <div class="goal-why">
         <span class="goal-label">학습 흐름</span>
@@ -492,22 +483,14 @@
         <span>Summary</span>
       </div>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.2 [Compare]: Memory vs Knowledge -->
-  <div class="slide diagram-slide v6" id="slide-2">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B · Compare</div>
-  <h2 class="slide-title">Memory vs Knowledge</h2>
-  <p class="slide-takeaway">Memory는 경험을 저장하고, Knowledge는 관계를 이해한다 — 둘은 완전히 다른 계층</p>
-</header>
-  <main class="slide-body">
-<div class="layout-centered">
-      
-      
+  <div class="slide diagram-slide v6" id="slide-2" data-notes="Memory와 Knowledge를 5가지 기준으로 직접 비교합니다. Purpose, Storage, Retrieval, Update Frequency, Examples — 이 5가지로 두 개념의 본질적 차이가 명확해집니다. 핵심 인사이트: Memory는 경험, Knowledge는 이해.">
+    <div class="lecture-badge">Lecture B · Compare</div>
+    <div class="layout-centered">
+      <div class="slide-title v6">Memory vs Knowledge</div>
+      <div class="slide-takeaway v6">Memory는 경험을 저장하고, Knowledge는 관계를 이해한다 — 둘은 완전히 다른 계층</div>
 
       <div class="compare-table" style="max-width: 560px; margin: var(--space-md) auto;">
         <!-- Header row -->
@@ -534,25 +517,17 @@
         🔑 핵심: Memory = <strong>무엇이 일어났는지</strong>, Knowledge = <strong>무엇을 의미하는지</strong>
       </div>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.3a [PD L1]: Memory Pipeline — Overview -->
-  <div class="slide diagram-slide v6" id="slide-3">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B · Memory Pipeline</div>
-  <h2 class="slide-title">Memory Pipeline — M1</h2>
-  <p class="slide-takeaway">5단계: 의도에서 Top-K 결과까지의 전체 흐름</p>
-</header>
-  <main class="slide-body">
-<div class="layout-diagram">
+  <div class="slide diagram-slide v6" id="slide-3" data-notes="Progressive Disclosure L1: Memory Pipeline Overview. 5단계 고수준 뷰: Input → Key Extraction → FTS5 Search → BM25 Ranking → Top-K Output. 각 단계의 이름을 보고 전체 흐름을 이해합니다.">
+    <div class="lecture-badge">Lecture B · Memory Pipeline</div>
+    <div class="layout-diagram">
       <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-xs);">
-        
+        <div class="slide-title v6">Memory Pipeline — M1</div>
         <span class="pd-level l1">PD L1 Overview</span>
       </div>
-      
+      <div class="slide-takeaway v6">5단계: 의도에서 Top-K 결과까지의 전체 흐름</div>
 
       <div class="h-flow">
         <div class="pd-step">
@@ -594,22 +569,15 @@
         <li><strong>Top-K Output</strong>: 상위 K개 결과만 반환 (대게 K=5)</li>
       </ul>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.3b [PD L2]: Memory Pipeline — FTS5 detail -->
-  <div class="slide diagram-slide v6" id="slide-4">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B · Memory Pipeline</div>
-  <h2 class="slide-title">FTS5 상세</h2>
-</header>
-  <main class="slide-body">
-<div class="layout-main-aside">
+  <div class="slide diagram-slide v6" id="slide-4" data-notes="PD L2: FTS5 단계 상세. Key Extraction과 FTS5 Search의 세부 구조를 라벨과 설명과 함께 보입니다. Key Extraction이 어떻게 작동하고, FTS5가 어떤 인덱싱을 사용하는지 설명합니다.">
+    <div class="lecture-badge">Lecture B · Memory Pipeline</div>
+    <div class="layout-main-aside">
       <div class="side-panel">
         <div style="display: flex; align-items: center; gap: var(--space-sm);">
-          
+          <div class="slide-title v6" style="text-align: left;">FTS5 상세</div>
           <span class="pd-level l2">PD L2</span>
         </div>
         <div class="side-panel-title">Key Extraction</div>
@@ -664,22 +632,15 @@
         </div>
       </div>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.3c [PD L3]: Memory Pipeline — BM25 -->
-  <div class="slide diagram-slide v6" id="slide-5">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B · Memory Pipeline</div>
-  <h2 class="slide-title">BM25 Ranking</h2>
-</header>
-  <main class="slide-body">
-<div class="layout-main-aside">
+  <div class="slide diagram-slide v6" id="slide-5" data-notes="PD L3: BM25 구현 상세. BM25 점수 계산 공식과 실제 SQL 쿼리 포맷을 보여줍니다. TF-IDF 기반에서 발전한 BM25가 문서 길이 정규화를 어떻게 처리하는지, 실제 시스템에서 Top-K가 어떻게 선택되는지 기술적 상세를 다룹니다.">
+    <div class="lecture-badge">Lecture B · Memory Pipeline</div>
+    <div class="layout-main-aside">
       <div class="side-panel">
         <div style="display: flex; align-items: center; gap: var(--space-sm);">
-          
+          <div class="slide-title v6" style="text-align: left;">BM25 Ranking</div>
           <span class="pd-level l3">PD L3</span>
         </div>
         <div class="side-panel-title">BM25 점수 공식</div>
@@ -755,22 +716,14 @@
         </div>
       </div>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.4 [Gagne]: Memory Lifecycle (Extract→Store→Retrieve) -->
-  <div class="slide diagram-slide v6" id="slide-6">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B · Lifecycle</div>
-  <h2 class="slide-title">Memory Lifecycle</h2>
-  <p class="slide-takeaway">Gagne 모델 적용 — 인상 → 저장 → 검색 → 활용 → 진화의 5단계 사이클</p>
-</header>
-  <main class="slide-body">
-<div class="layout-diagram">
-      
-      
+  <div class="slide diagram-slide v6" id="slide-6" data-notes="Gagne 학습 단계 모델을 Memory Lifecycle에 적용합니다. Extract(인상) → Store(저장) → Retrieve(검색) → Apply(활용) → Evolve(진화) — 5단계 사이클로 Memory가 어떻게 성장하는지 보여줍니다.">
+    <div class="lecture-badge">Lecture B · Lifecycle</div>
+    <div class="layout-diagram">
+      <div class="slide-title v6">Memory Lifecycle</div>
+      <div class="slide-takeaway v6">Gagne 모델 적용 — 인상 → 저장 → 검색 → 활용 → 진화의 5단계 사이클</div>
 
       <div class="lifecycle" style="margin: var(--space-lg) auto;">
         <div class="lc-phase">
@@ -812,22 +765,14 @@
         <li><strong>Evolve</strong>: 자주 쓰인 Memory가 높은 가중치 부여</li>
       </ul>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.5 [Prob-Sol]: Memory Scaling (10→100→1000) -->
-  <div class="slide diagram-slide v6" id="slide-7">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B · Scaling</div>
-  <h2 class="slide-title">Memory Scaling</h2>
-  <p class="slide-takeaway">10개는 쉬워도 1000개에서는 완전히 다른 문제 — Scaling이 핵심</p>
-</header>
-  <main class="slide-body">
-<div class="layout-centered">
-      
-      
+  <div class="slide diagram-slide v6" id="slide-7" data-notes="Memory Scaling 문제와 해결책. Memory가 10개 → 100개 → 1000개로 증가할 때 발생하는 문제(검색 속도, 관련도 저하, 노이즈 증가)와 각 단계별 해결책을 비교합니다.">
+    <div class="lecture-badge">Lecture B · Scaling</div>
+    <div class="layout-centered">
+      <div class="slide-title v6">Memory Scaling</div>
+      <div class="slide-takeaway v6">10개는 쉬워도 1000개에서는 완전히 다른 문제 — Scaling이 핵심</div>
 
       <div class="scaling-bars" style="margin: var(--space-lg) auto;">
         <div class="scale-row">
@@ -867,22 +812,14 @@
         ⚡ 100개 이상이면 FTS5 필수. 1,000개 이상이면 Tag + BM25 조합 필요.
       </div>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.6 [PD]: Memory Management -->
-  <div class="slide diagram-slide v6" id="slide-8">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B · Management</div>
-  <h2 class="slide-title">Memory Management</h2>
-  <p class="slide-takeaway">건강하게 성장한 Memory 시스템의 4가지 관리 전략</p>
-</header>
-  <main class="slide-body">
-<div class="layout-centered">
-      
-      
+  <div class="slide diagram-slide v6" id="slide-8" data-notes="Memory Management 전략: Exposure-based Weighting, TTL, Tag 기반 필터링, Deduplication — Memory 시스템이 오래가며 건강하게 유지되기 위한 4가지 관리 전략.">
+    <div class="lecture-badge">Lecture B · Management</div>
+    <div class="layout-centered">
+      <div class="slide-title v6">Memory Management</div>
+      <div class="slide-takeaway v6">건강하게 성장한 Memory 시스템의 4가지 관리 전략</div>
 
       <div class="mm-grid" style="margin: var(--space-lg) auto;">
         <div class="mm-card">
@@ -922,10 +859,7 @@
         <li><strong>Dedup</strong>: 유사도 0.9 이상의 Memory 자동 병합</li>
       </ul>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
           <div class="divider-title">Knowledge</div>
         <div class="divider-desc">경험 저장(Memory) → 지식 구조화(Knowledge)사실에서 이해로 — 정보의 다음 차원</div>
@@ -934,15 +868,11 @@
   </div>
 
   <!-- B.8 [DIKW]: Knowledge Structure (Wiki T1/T2/T3) -->
-  <div class="slide diagram-slide v6" id="slide-9">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B · Knowledge Structure</div>
-  <h2 class="slide-title">DIKW Pyramid</h2>
-</header>
-  <main class="slide-body">
-<div class="layout-main-aside">
+  <div class="slide diagram-slide v6" id="slide-9" data-notes="DIKW 모델에 기반한 Knowledge 구조. Data → Information → Knowledge의 피라미드와 함께, 실제 Wiki 시스템의 T1/T2/T3 계층 구조를 보여줍니다. T1=Topic(제목), T2=Section(섹션), T3=Content(내용).">
+    <div class="lecture-badge">Lecture B · Knowledge Structure</div>
+    <div class="layout-main-aside">
       <div class="side-panel">
-        
+        <div class="slide-title v6" style="text-align: left;">DIKW Pyramid</div>
         <div class="dikiw-pyramid" style="margin-top: var(--space-md);">
           <div class="dikw-level dikw-knowledge">
             <span class="dikw-icon">🧠</span>Knowledge<span class="dikw-detail">이해, 관계</span>
@@ -985,22 +915,14 @@
         </div>
       </div>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.9 [PD L1→3]: Knowledge Pipeline -->
-  <div class="slide diagram-slide v6" id="slide-10">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B · Knowledge Pipeline</div>
-  <h2 class="slide-title">Knowledge Pipeline — M2</h2>
-  <p class="slide-takeaway">3단계 PD로 Knowledge 검색 파이프라인의 전체-상세-구현을 탐구함</p>
-</header>
-  <main class="slide-body">
-<div class="layout-diagram">
-      
-      
+  <div class="slide diagram-slide v6" id="slide-10" data-notes="Knowledge Pipeline의 3단계 Progressive Disclosure. L1: 전체 5단계 흐름, L2: Chunking과 Summarization의 상세, L3: 실제 chunking 알고리즘과 summarization 템플릿 코드.">
+    <div class="lecture-badge">Lecture B · Knowledge Pipeline</div>
+    <div class="layout-diagram">
+      <div class="slide-title v6">Knowledge Pipeline — M2</div>
+      <div class="slide-takeaway v6">3단계 PD로 Knowledge 검색 파이프라인의 전체-상세-구현을 탐구함</div>
 
       <!-- L1 Overview -->
       <div style="display: flex; align-items: center; gap: var(--space-sm); margin-top: var(--space-sm);">
@@ -1091,22 +1013,14 @@
       
         </div>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.10 [Compare]: M vs K Decision Tree -->
-  <div class="slide diagram-slide v6" id="slide-11">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B · Decision Tree</div>
-  <h2 class="slide-title">M vs K — Decision Tree</h2>
-  <p class="slide-takeaway">3단계 질문으로 Memory와 Knowledge 중 어떤 것을 사용할지 판단</p>
-</header>
-  <main class="slide-body">
-<div class="layout-centered">
-      
-      
+  <div class="slide diagram-slide v6" id="slide-11" data-notes="Memory vs Knowledge Decision Tree: 주어진 상황에서 Memory를 써야 하나, Knowledge를 써야 하나 판단하는 기준. 3가지 질문으로 결정: ① 사용자/세션 관련인가? → Memory. ② 도메인 지식인가? → Knowledge. ③ 둘 다 필요하면 Memory→Knowledge 순서로 조합.">
+    <div class="lecture-badge">Lecture B · Decision Tree</div>
+    <div class="layout-centered">
+      <div class="slide-title v6">M vs K — Decision Tree</div>
+      <div class="slide-takeaway v6">3단계 질문으로 Memory와 Knowledge 중 어떤 것을 사용할지 판단</div>
 
       <div class="decision-tree" style="margin: var(--space-lg) auto;">
         <!-- Root -->
@@ -1151,22 +1065,14 @@
         <li><strong>조합</strong>: Memory(문맥) + Knowledge(지식) = 최적 응답</li>
       </ul>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.11 [DIKW]: Memory→Knowledge Transition -->
-  <div class="slide diagram-slide v6" id="slide-12">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B · Transition</div>
-  <h2 class="slide-title">Memory → Knowledge 전이</h2>
-  <p class="slide-takeaway">반복된 경험은 지식으로 승격 — Memory에서 Knowledge로 자연스럽게 진화</p>
-</header>
-  <main class="slide-body">
-<div class="layout-diagram">
-      
-      
+  <div class="slide diagram-slide v6" id="slide-12" data-notes="Memory에서 Knowledge로의 전이 과정을 보여줍니다. 단순 반복된 Memory 패턴이 추출되어 Knowledge로 승격되는 흐름. 예: 10회 이상 동일한 패턴이 Memory에 기록되면 → LLM이 이를 분석하여 Knowledge Wiki에 추가.">
+    <div class="lecture-badge">Lecture B · Transition</div>
+    <div class="layout-diagram">
+      <div class="slide-title v6">Memory → Knowledge 전이</div>
+      <div class="slide-takeaway v6">반복된 경험은 지식으로 승격 — Memory에서 Knowledge로 자연스럽게 진화</div>
 
       <div class="transition-flow" style="margin: var(--space-lg) auto;">
         <div class="tf-node">
@@ -1208,39 +1114,25 @@
         <li><strong>효과</strong>: Knowledge 검색이 Memory 검색보다 더 정확하고 빠름</li>
       </ul>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.12 Divider: ⚡ Knowledge → Skills [GLASS] -->
-  <div class="slide section-divider v6" id="slide-13">
-<header class="slide-header">
-</header>
-  <main class="slide-body">
-<div class="glass-divider">
+  <div class="slide section-divider v6" id="slide-13" data-notes="Section Divider: Knowledge에서 Skills로. 아는 것과 실행하는 것은 다릅니다. Knowledge가 '무엇을 하는지' 이해한다면, Skills는 '어떻게 실행하는지'를 절차로 변환합니다.">
+    <div class="glass-divider">
       <div class="section-divider-content">
         <div class="divider-label">⚡ 실행 계층</div>
         <div class="divider-title">Knowledge → Skills</div>
         <div class="divider-desc">아는 것 ≠ 실행하는 것지식을 절차로 변환하는 마지막 단계</div>
       </div>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.13 [Feynman]: Skills: 아는 것 ≠ 실행하는 것 -->
-  <div class="slide diagram-slide v6" id="slide-14">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B · Skills</div>
-  <h2 class="slide-title">Skills: 아는 것 ≠ 실행하는 것</h2>
-  <p class="slide-takeaway">Feynman 원리 — 설명할 수 있다면 실행할 수 있어야 한다</p>
-</header>
-  <main class="slide-body">
-<div class="layout-centered">
-      
-      
+  <div class="slide diagram-slide v6" id="slide-14" data-notes="Feynman의 통찰: '네가 설명할 수 없으면 이해한 것이 아니다'를 Skills 관점에서 적용. 지식을 알고 있다고 해서 실행할 수 있는 것은 아닙니다. Skills가 지식을 절차화(procedure)하여 실제 작업 수행을 가능하게 합니다.">
+    <div class="lecture-badge">Lecture B · Skills</div>
+    <div class="layout-centered">
+      <div class="slide-title v6">Skills: 아는 것 ≠ 실행하는 것</div>
+      <div class="slide-takeaway v6">Feynman 원리 — 설명할 수 있다면 실행할 수 있어야 한다</div>
 
       <div class="comparison-block" style="max-width: 560px; margin: var(--space-lg) auto;">
         <div class="comparison-col">
@@ -1263,22 +1155,14 @@
         💡 Feynman: "지식의 척도는 그 지식을 실행으로 옮길 수 있는 능력이다" — Skills Layer는 이 격차를 해결
       </div>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.14 [Gagne]: Skills Pipeline -->
-  <div class="slide diagram-slide v6" id="slide-15">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B · Skills Pipeline</div>
-  <h2 class="slide-title">Skills Pipeline — M3</h2>
-  <p class="slide-takeaway">6단계: Skill 탐지에서 결과 반환까지의 실행 파이프라인</p>
-</header>
-  <main class="slide-body">
-<div class="layout-diagram">
-      
-      
+  <div class="slide diagram-slide v6" id="slide-15" data-notes="Skills Pipeline M3: Input → Skill Matching → Condition Check → Subprocess Execution → Output Parsing → Result. 6단계 파이프라인으로 Skill이 어떻게 탐지되고 실행되는지 보여줍니다.">
+    <div class="lecture-badge">Lecture B · Skills Pipeline</div>
+    <div class="layout-diagram">
+      <div class="slide-title v6">Skills Pipeline — M3</div>
+      <div class="slide-takeaway v6">6단계: Skill 탐지에서 결과 반환까지의 실행 파이프라인</div>
 
       <div class="h-flow" style="margin: var(--space-lg) auto;">
         <div class="sp-node">
@@ -1326,23 +1210,15 @@
         <li><strong>Result</strong>: 파싱된 결과를 LLM 프롬프트로 반환</li>
       </ul>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.15 [Pyramid]: Skill Structure — Pyramid Principle -->
-  <div class="slide diagram-slide v6" id="slide-16">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B · Skill Structure</div>
-  <h2 class="slide-title">Skill 구조 — Pyramid Principle</h2>
-  <p class="slide-takeaway">결론 먼저: Skill은 정의(Definition) → 조건(Condition) → 실행(Steps) → 결과(Output)의 4단계 계층</p>
-</header>
-  <main class="slide-body">
-<div class="layout-main-aside">
+  <div class="slide diagram-slide v6" id="slide-16" data-notes="[From Lecture C] Skill 구조: Pyramid Principle. 결론 먼저: Skill은 단순한 명령 모음이 아닌, 계층화된 구조를 가집니다. Top(Conclusion): Skill Definition이 핵심. Supporting: Condition→Steps→Output의 구조. Evidence: 실제 YAML 구조. Lecture B에서 Skills Layer를 깊이 이해합니다.">
+    <div class="lecture-badge">Lecture B · Skill Structure</div>
+    <div class="layout-main-aside">
       <div class="side-panel">
-        
-        
+        <div class="slide-title" style="text-align: left;">Skill 구조 — Pyramid Principle</div>
+        <div class="slide-takeaway">결론 먼저: Skill은 정의(Definition) → 조건(Condition) → 실행(Steps) → 결과(Output)의 4단계 계층</div>
         <div class="pyramid" style="margin-top: var(--space-md);">
           <div class="pyramid-level pyramid-top">
             <span class="py-icon">📋</span>
@@ -1386,21 +1262,14 @@
         </div>
       </div>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.16 [PD]: Skill Mechanism — Matching & Execution -->
-  <div class="slide diagram-slide v6" id="slide-17">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B · Skill Mechanism</div>
-  <h2 class="slide-title">Skill Matching</h2>
-</header>
-  <main class="slide-body">
-<div class="layout-main-aside">
+  <div class="slide diagram-slide v6" id="slide-17" data-notes="[From Lecture C] Skill Mechanism: Skill이 실제로 어떻게 매칭되고 실행되는지 — Skill Matching의 3단계: ① LLM이 의도 파악 ② catalog.json에서 패턴 매칭 ③ Condition 체크 후 실행. 실제 lint skill 예시를 통해 구조를 이해합니다.">
+    <div class="lecture-badge">Lecture B · Skill Mechanism</div>
+    <div class="layout-main-aside">
       <div class="side-panel">
-        
+        <div class="slide-title" style="text-align: left;">Skill Matching</div>
         <div style="display:flex; gap: var(--space-sm); margin-bottom: var(--space-xs);">
           <span class="badge-sm" style="background:rgba(136,192,208,0.12); color:var(--color-primary); border:1px solid rgba(136,192,208,0.25);">PD L2</span>
         </div>
@@ -1456,22 +1325,14 @@
         </div>
       </div>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.17 [Apply]: Examples -->
-  <div class="slide example-slide v6" id="slide-18">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B · Examples</div>
-  <h2 class="slide-title">실제 사용 예시</h2>
-  <p class="slide-takeaway">Memory, Knowledge, Skills — 각 계층의 실제 활용 시나리오</p>
-</header>
-  <main class="slide-body">
-<div class="layout-centered">
-      
-      
+  <div class="slide example-slide v6" id="slide-18" data-notes="실제 사용 예시 4가지: Memory, Knowledge, Skills, 그리고 조합 케이스. 각각의 실제 시나리오를 보여주어 학습 내용을 실제 상황과 연결합니다.">
+    <div class="lecture-badge">Lecture B · Examples</div>
+    <div class="layout-centered">
+      <div class="slide-title v6">실제 사용 예시</div>
+      <div class="slide-takeaway v6">Memory, Knowledge, Skills — 각 계층의 실제 활용 시나리오</div>
 
       <div class="example-grid" style="margin: var(--space-lg) auto;">
         <div class="example-card" style="border-color: rgba(136,192,208,0.2);">
@@ -1508,22 +1369,14 @@
         </div>
       </div>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.18 [Summary]: 3 Large Number Cards -->
-  <div class="slide summary-slide v6" id="slide-19">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B · Summary</div>
-  <h2 class="slide-title">핵심 3가지</h2>
-  <p class="slide-takeaway">Lecture B를 숫자로 요약하면?</p>
-</header>
-  <main class="slide-body">
-<div class="layout-centered">
-      
-      
+  <div class="slide summary-slide v6" id="slide-19" data-notes="Lecture B 요약: 3개의 핵심 숫자. 3-Layer Architecture (Memory/Knowledge/Skills), 2-Pipeline (M1 Memory Search, M2 Knowledge Search), 5-Step PD (Progressive Disclosure L1→L2→L3로 단계적 깊이).">
+    <div class="lecture-badge">Lecture B · Summary</div>
+    <div class="layout-centered">
+      <div class="slide-title v6">핵심 3가지</div>
+      <div class="slide-takeaway v6">Lecture B를 숫자로 요약하면?</div>
 
       <div class="summary-cards" style="margin: var(--space-lg) auto;">
         <div class="summary-card">
@@ -1547,27 +1400,18 @@
         Memory ≠ Knowledge ≠ Skills — 각 계층이 고유한 가치를 지님
       </div>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
   <!-- B.19 [Q&A]: 빈 Q&A -->
-  <div class="slide summary-slide v6" id="slide-20">
-<header class="slide-header">
-  <div class="lecture-badge">Lecture B · Q&A</div>
-</header>
-  <main class="slide-body">
-<div class="layout-centered">
+  <div class="slide summary-slide v6" id="slide-20" data-notes="Q&A 세션입니다. Memory vs Knowledge의 차이, PD Pipeline(M1/M2/M3) 동작 원리, Decision Tree, Memory→Knowledge 전이, Skills Pipeline에 대해 자유롭게 질문해주세요.">
+    <div class="lecture-badge">Lecture B · Q&A</div>
+    <div class="layout-centered">
       <div class="qa-prompt">질문이 있으신가요?</div>
       <div class="qa-next">
         🔜 다음 강의: <strong>Lecture C</strong> — Skills &amp; Workflow
       </div>
     </div>
-  </main>
-  <footer class="slide-footer">
-  </footer>
-</div>
+  </div>
 
 </div>
 
