@@ -369,22 +369,22 @@
     <div class="layout-centered">
       <div class="side-panel-title">워크플로우 핵심 3가지</div>
       <div class="h-flow">
-        <div class="pd-step">
-          <div class="pd-step-icon">🔄</div>
-          <div class="pd-step-title">State-based</div>
-          <div class="pd-step-desc">순수 Step이 아닌 State 전이 모델</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">🔄</div>
+          <div class="h-flow-node-title">State-based</div>
+          <div class="h-flow-node-desc">순수 Step이 아닌 State 전이 모델</div>
         </div>
-        <div class="pd-arrow">→</div>
-        <div class="pd-step">
-          <div class="pd-step-icon">🚦</div>
-          <div class="pd-step-title">Gate-controlled</div>
-          <div class="pd-step-desc">각 State에서 통과 조건 체크</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">🚦</div>
+          <div class="h-flow-node-title">Gate-controlled</div>
+          <div class="h-flow-node-desc">각 State에서 통과 조건 체크</div>
         </div>
-        <div class="pd-arrow">→</div>
-        <div class="pd-step">
-          <div class="pd-step-icon">↩️</div>
-          <div class="pd-step-title">Rollback-safe</div>
-          <div class="pd-step-desc">실패 시 이전 State로 자동 복귀</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">↩️</div>
+          <div class="h-flow-node-title">Rollback-safe</div>
+          <div class="h-flow-node-desc">실패 시 이전 State로 자동 복귀</div>
         </div>
       </div>
       <div class="runtime-preview">
@@ -567,14 +567,14 @@
           <div class="ws-card">
             <div class="ws-card-title">🚦 Review Gate</div>
             <div class="ws-card-body">
-              설계안 완성도 체크 <code>quality_score >= 0.7</code><br>
+              설계안 완성도 체크 <code>quality_score >= 0.7</code>
               실패 → design으로 rollback
             </div>
           </div>
           <div class="ws-card">
             <div class="ws-card-title">🚦 Approval Gate</div>
             <div class="ws-card-body">
-              사용자 승인 필요 <code>user: yes/no</code><br>
+              사용자 승인 필요 <code>user: yes/no</code>
               거부 → investigation
             </div>
           </div>
@@ -911,7 +911,7 @@ python/<span class="fn">  (T1: Domain)</span>
             <div class="ic-title">→ Workflow (Execution Provider)</div>
           </div>
           <div class="ic-body">
-            Workflow Step 6(execution)에서 실제 Skill 실행. <code>workflow.execute(state) → skill.run()</code><br>
+            Workflow Step 6(execution)에서 실제 Skill 실행. <code>workflow.execute(state) → skill.run()</code>
             Skill 실패 시 Workflow rollback 처리.
           </div>
         </div>
@@ -923,7 +923,7 @@ python/<span class="fn">  (T1: Domain)</span>
             <div class="ic-title">Full Context Injection</div>
           </div>
           <div class="ic-body">
-            Skill 실행 시 3-Layer context 동시 주입(M5). <code>memory_context + knowledge_refs + skill_def</code><br>
+            Skill 실행 시 3-Layer context 동시 주입(M5). <code>memory_context + knowledge_refs + skill_def</code>
             Token budget 내에서 최적화.
           </div>
         </div>
@@ -1057,7 +1057,7 @@ python/<span class="fn">  (T1: Domain)</span>
             <div class="rp-step" style="border-color: rgba(136,192,208,0.3); background: rgba(136,192,208,0.05);">
               <div class="rp-step-icon">📥</div>
               <div class="rp-step-label">Context</div>
-              <div class="rp-step-desc">의도 분석<br>Memory + Knowledge<br>동시 주입</div>
+              <div class="rp-step-desc">의도 분석Memory + Knowledge동시 주입</div>
             </div>
             <div class="rp-arrow">→</div>
             <div class="rp-step" style="border-color: rgba(136,192,208,0.3); background: rgba(136,192,208,0.05);">
@@ -1065,13 +1065,13 @@ python/<span class="fn">  (T1: Domain)</span>
             <footer class="slide-footer">
             </footer>
               <div class="rp-step-label">Routing</div>
-              <div class="rp-step-desc">Skill 매칭<br>State 결정<br>Priority 계산</div>
+              <div class="rp-step-desc">Skill 매칭State 결정Priority 계산</div>
             </div>
             <div class="rp-arrow">→</div>
             <div class="rp-step" style="border-color: rgba(136,192,208,0.3); background: rgba(136,192,208,0.05);">
               <div class="rp-step-icon">📦</div>
               <div class="rp-step-label">Compress</div>
-              <div class="rp-step-desc">Token budget<br>Summarization<br>최적화</div>
+              <div class="rp-step-desc">Token budgetSummarization최적화</div>
             </div>
           </div>
         </div>
@@ -1097,17 +1097,17 @@ python/<span class="fn">  (T1: Domain)</span>
         <footer class="slide-footer">
         </footer>
           <div class="summary-card-label">계층 구조</div>
-          <div class="summary-card-desc">Memory → Knowledge →<br>Skills → Workflow<br><br>Bottom-up dependency</div>
+          <div class="summary-card-desc">Memory → Knowledge →Skills → WorkflowBottom-up dependency</div>
         </div>
         <div class="summary-card">
           <div class="summary-card-number">9</div>
           <div class="summary-card-label">Step State Machine</div>
-          <div class="summary-card-desc">request → investigation →<br>design → review → approval →<br>execution → test → exec.review → done</div>
+          <div class="summary-card-desc">request → investigation →design → review → approval →execution → test → exec.review → done</div>
         </div>
         <div class="summary-card">
           <div class="summary-card-number">3</div>
           <div class="summary-card-label">Runtime 단계</div>
-          <div class="summary-card-desc">Context → Routing →<br>Compression<br><br>Token budget 최적화</div>
+          <div class="summary-card-desc">Context → Routing →CompressionToken budget 최적화</div>
         </div>
       </div>
       <div class="key-message" style="margin-top: var(--space-sm);">

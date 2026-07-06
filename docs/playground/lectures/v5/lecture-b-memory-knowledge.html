@@ -38,7 +38,7 @@
     max-width: 820px;
     margin: var(--space-md) auto;
   }
-  .pd-step {
+  .h-flow-node {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -52,25 +52,25 @@
     transition: var(--transition);
     position: relative;
   }
-  .pd-step:hover {
+  .h-flow-node:hover {
     border-color: var(--color-primary);
     transform: translateY(-2px);
   }
-  .pd-step-icon {
+  .h-flow-node-icon {
     font-size: 22px;
     line-height: 1;
   }
-  .pd-step-title {
+  .h-flow-node-title {
     font-size: 13px;
     font-weight: 700;
     color: var(--color-heading);
   }
-  .pd-step-desc {
+  .h-flow-node-desc {
     font-size: 11px;
     color: var(--color-muted);
     line-height: 1.4;
   }
-  .pd-step-code {
+  .h-flow-node-code {
     font-size: 10px;
     font-family: 'JetBrains Mono', monospace;
     color: var(--color-teal);
@@ -81,7 +81,7 @@
     line-height: 1.4;
     word-break: break-all;
   }
-  .pd-arrow {
+  .h-flow-arrow {
     display: flex;
     align-items: center;
     color: var(--color-primary);
@@ -121,18 +121,7 @@
     width: 100%;
     margin: var(--space-md) auto;
   }
-  .dt-node {
-    padding: 10px 20px;
-    border-radius: var(--radius-md);
-    font-size: 14px;
-    font-weight: 600;
-    text-align: center;
-    border: 1px solid var(--color-border);
-    background: var(--color-card);
-    color: var(--color-heading);
-    min-width: 200px;
-  }
-  .dt-node.question {
+  .h-flow-node.question {
     background: rgba(136,192,208,0.08);
     border-color: rgba(136,192,208,0.25);
     color: var(--color-primary);
@@ -154,7 +143,7 @@
     color: var(--color-muted);
     font-weight: 500;
   }
-  .dt-arrow-down {
+  .h-flow-arrow-down {
     color: var(--color-primary);
     font-size: 18px;
   }
@@ -169,27 +158,14 @@
     max-width: 700px;
     margin: var(--space-md) auto;
   }
-  .lc-phase {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    padding: 14px 20px;
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    min-width: 130px;
-    text-align: center;
-    transition: var(--transition);
-  }
-  .lc-phase:hover {
+  .h-flow-node:hover {
     border-color: var(--color-primary);
     transform: translateY(-2px);
   }
-  .lc-phase-icon { font-size: 24px; }
-  .lc-phase-title { font-size: 14px; font-weight: 700; color: var(--color-heading); }
-  .lc-phase-desc { font-size: 11px; color: var(--color-muted); line-height: 1.4; }
-  .lc-arrow {
+  .h-flow-node-icon { font-size: 24px; }
+  .h-flow-node-title { font-size: 14px; font-weight: 700; color: var(--color-heading); }
+  .h-flow-node-desc { font-size: 11px; color: var(--color-muted); line-height: 1.4; }
+  .h-flow-arrow {
     color: var(--color-primary);
     font-size: 22px;
     font-weight: 700;
@@ -307,28 +283,14 @@
     max-width: 800px;
     margin: var(--space-md) auto;
   }
-  .sp-node {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 10px 16px;
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
-    font-size: 12px;
-    color: var(--color-text);
-    min-width: 90px;
-    text-align: center;
-    transition: var(--transition);
-  }
-  .sp-node:hover { border-color: var(--color-primary); }
-  .sp-node:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
-  .sp-node:last-child { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
-  .sp-node + .sp-node { border-left: none; }
-  .sp-node-icon { font-size: 18px; }
-  .sp-node-title { font-size: 12px; font-weight: 600; color: var(--color-heading); }
-  .sp-node-desc  { font-size: 10px; color: var(--color-muted); }
-  .sp-arrow { color: var(--color-primary); font-size: 16px; font-weight: 700; padding: 0 2px; }
+  .h-flow-node:hover { border-color: var(--color-primary); }
+  .h-flow-node:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
+  .h-flow-node:last-child { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+  .h-flow-node + .h-flow-node { border-left: none; }
+  .h-flow-node-icon { font-size: 18px; }
+  .h-flow-node-title { font-size: 12px; font-weight: 600; color: var(--color-heading); }
+  .h-flow-node-desc  { font-size: 10px; color: var(--color-muted); }
+  .h-flow-arrow { color: var(--color-primary); font-size: 16px; font-weight: 700; padding: 0 2px; }
 
   /* Example cards */
   .example-grid {
@@ -411,14 +373,14 @@
   @media (max-width: 768px) {
     .layout-main-aside { grid-template-columns: 1fr; }
     .v6 .h-flow { flex-direction: column; align-items: center; }
-    .pd-arrow { transform: rotate(90deg); }
+    .h-flow-arrow { transform: rotate(90deg); }
     .example-grid { grid-template-columns: 1fr; }
     .lifecycle { flex-direction: column; }
-    .lc-arrow { transform: rotate(90deg); }
+    .h-flow-arrow { transform: rotate(90deg); }
     .scaling-bars { max-width: 100%; }
     .mm-grid { grid-template-columns: 1fr; }
     .v6 .h-flow { flex-direction: column; }
-    .sp-arrow { transform: rotate(90deg); }
+    .h-flow-arrow { transform: rotate(90deg); }
   }
 </style>
 </head>
@@ -555,34 +517,34 @@
       
 
       <div class="h-flow">
-        <div class="pd-step">
-          <div class="pd-step-icon">📥</div>
-          <div class="pd-step-title">Input</div>
-          <div class="pd-step-desc">사용자 의도 파악</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">📥</div>
+          <div class="h-flow-node-title">Input</div>
+          <div class="h-flow-node-desc">사용자 의도 파악</div>
         </div>
-        <div class="pd-arrow">→</div>
-        <div class="pd-step">
-          <div class="pd-step-icon">🔑</div>
-          <div class="pd-step-title">Key Extraction</div>
-          <div class="pd-step-desc">검색어 추출</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">🔑</div>
+          <div class="h-flow-node-title">Key Extraction</div>
+          <div class="h-flow-node-desc">검색어 추출</div>
         </div>
-        <div class="pd-arrow">→</div>
-        <div class="pd-step">
-          <div class="pd-step-icon">🔍</div>
-          <div class="pd-step-title">FTS5 Search</div>
-          <div class="pd-step-desc">전체 텍스트 검색</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">🔍</div>
+          <div class="h-flow-node-title">FTS5 Search</div>
+          <div class="h-flow-node-desc">전체 텍스트 검색</div>
         </div>
-        <div class="pd-arrow">→</div>
-        <div class="pd-step">
-          <div class="pd-step-icon">📊</div>
-          <div class="pd-step-title">BM25 Ranking</div>
-          <div class="pd-step-desc">관련도 점수화</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">📊</div>
+          <div class="h-flow-node-title">BM25 Ranking</div>
+          <div class="h-flow-node-desc">관련도 점수화</div>
         </div>
-        <div class="pd-arrow">→</div>
-        <div class="pd-step">
-          <div class="pd-step-icon">📤</div>
-          <div class="pd-step-title">Top-K Output</div>
-          <div class="pd-step-desc">상위 결과 반환</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">📤</div>
+          <div class="h-flow-node-title">Top-K Output</div>
+          <div class="h-flow-node-desc">상위 결과 반환</div>
         </div>
       </div>
 
@@ -616,7 +578,7 @@
         <ul class="slide-grammar-details">
           <li>LLM이 <strong>핵심 키워드</strong> 추출</li>
           <li>동사 + 명사 쌍 우선</li>
-          <li>예: "프로젝트 구조 보여줘" → <code class="pd-step-code">project structure</code></li>
+          <li>예: "프로젝트 구조 보여줘" → <code class="h-flow-node-code">project structure</code></li>
         </ul>
         <div class="side-panel-title">FTS5 Index</div>
         <ul class="slide-grammar-details">
@@ -629,25 +591,25 @@
       <div class="side-panel">
         <div class="side-panel-title">FTS5 매칭 전략</div>
         <div class="h-flow" style="flex-direction: column; gap: var(--space-sm); max-width: 100%;">
-          <div class="pd-step" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
-            <div class="pd-step-icon">🔤</div>
+          <div class="h-flow-node" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
+            <div class="h-flow-node-icon">🔤</div>
             <div>
-              <div class="pd-step-title">Term Matching</div>
-              <div class="pd-step-desc">단일 단어 매칭 (AND/OR)</div>
+              <div class="h-flow-node-title">Term Matching</div>
+              <div class="h-flow-node-desc">단일 단어 매칭 (AND/OR)</div>
             </div>
           </div>
-          <div class="pd-step" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
-            <div class="pd-step-icon">📝</div>
+          <div class="h-flow-node" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
+            <div class="h-flow-node-icon">📝</div>
             <div>
-              <div class="pd-step-title">Phrase Matching</div>
-              <div class="pd-step-desc">구문 매칭 ("exact phrase")</div>
+              <div class="h-flow-node-title">Phrase Matching</div>
+              <div class="h-flow-node-desc">구문 매칭 ("exact phrase")</div>
             </div>
           </div>
-          <div class="pd-step" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
-            <div class="pd-step-icon">🔎</div>
+          <div class="h-flow-node" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
+            <div class="h-flow-node-icon">🔎</div>
             <div>
-              <div class="pd-step-title">Prefix Matching</div>
-              <div class="pd-step-desc">접두사 매칭 (term*)</div>
+              <div class="h-flow-node-title">Prefix Matching</div>
+              <div class="h-flow-node-desc">접두사 매칭 (term*)</div>
             </div>
           </div>
         </div>
@@ -731,25 +693,25 @@
         </div>
         <div class="side-panel-title" style="margin-top: var(--space-md);">Top-K 선택 기준</div>
         <div class="h-flow" style="flex-direction: column; gap: var(--space-sm); max-width: 100%;">
-          <div class="pd-step" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
-            <div class="pd-step-icon">①</div>
+          <div class="h-flow-node" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
+            <div class="h-flow-node-icon">①</div>
             <div>
-              <div class="pd-step-title">BM25 점수 정렬</div>
-              <div class="pd-step-desc">관련도 높은 순으로 DESC 정렬</div>
+              <div class="h-flow-node-title">BM25 점수 정렬</div>
+              <div class="h-flow-node-desc">관련도 높은 순으로 DESC 정렬</div>
             </div>
           </div>
-          <div class="pd-step" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
-            <div class="pd-step-icon">②</div>
+          <div class="h-flow-node" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
+            <div class="h-flow-node-icon">②</div>
             <div>
-              <div class="pd-step-title">최신 우선 Tie-break</div>
-              <div class="pd-step-desc">점수 동률 시 최근 데이터 우선</div>
+              <div class="h-flow-node-title">최신 우선 Tie-break</div>
+              <div class="h-flow-node-desc">점수 동률 시 최근 데이터 우선</div>
             </div>
           </div>
-          <div class="pd-step" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
-            <div class="pd-step-icon">③</div>
+          <div class="h-flow-node" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
+            <div class="h-flow-node-icon">③</div>
             <div>
-              <div class="pd-step-title">K=5 반환</div>
-              <div class="pd-step-desc">상위 5개만 LLM 프롬프트에 포함</div>
+              <div class="h-flow-node-title">K=5 반환</div>
+              <div class="h-flow-node-desc">상위 5개만 LLM 프롬프트에 포함</div>
             </div>
           </div>
         </div>
@@ -773,34 +735,34 @@
       
 
       <div class="lifecycle" style="margin: var(--space-lg) auto;">
-        <div class="lc-phase">
-          <div class="lc-phase-icon">📥</div>
-          <div class="lc-phase-title">Extract</div>
-          <div class="lc-phase-desc">세션에서핵심 추출</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">📥</div>
+          <div class="h-flow-node-title">Extract</div>
+          <div class="h-flow-node-desc">세션에서핵심 추출</div>
         </div>
-        <div class="lc-arrow">→</div>
-        <div class="lc-phase">
-          <div class="lc-phase-icon">💾</div>
-          <div class="lc-phase-title">Store</div>
-          <div class="lc-phase-desc">FTS5 인덱스저장</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">💾</div>
+          <div class="h-flow-node-title">Store</div>
+          <div class="h-flow-node-desc">FTS5 인덱스저장</div>
         </div>
-        <div class="lc-arrow">→</div>
-        <div class="lc-phase">
-          <div class="lc-phase-icon">🔍</div>
-          <div class="lc-phase-title">Retrieve</div>
-          <div class="lc-phase-desc">BM25 매칭검색</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">🔍</div>
+          <div class="h-flow-node-title">Retrieve</div>
+          <div class="h-flow-node-desc">BM25 매칭검색</div>
         </div>
-        <div class="lc-arrow">→</div>
-        <div class="lc-phase">
-          <div class="lc-phase-icon">⚙️</div>
-          <div class="lc-phase-title">Apply</div>
-          <div class="lc-phase-desc">LLM 프롬프트에문맥 삽입</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">⚙️</div>
+          <div class="h-flow-node-title">Apply</div>
+          <div class="h-flow-node-desc">LLM 프롬프트에문맥 삽입</div>
         </div>
-        <div class="lc-arrow">→</div>
-        <div class="lc-phase" style="border-color: var(--color-primary);">
-          <div class="lc-phase-icon">🔄</div>
-          <div class="lc-phase-title">Evolve</div>
-          <div class="lc-phase-desc">노출도 기반순환적 성장</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node" style="border-color: var(--color-primary);">
+          <div class="h-flow-node-icon">🔄</div>
+          <div class="h-flow-node-title">Evolve</div>
+          <div class="h-flow-node-desc">노출도 기반순환적 성장</div>
         </div>
       </div>
 
@@ -918,7 +880,7 @@
       <ul class="slide-grammar-details">
         <li><strong>Exposure</strong>: 검색 빈도가 높은 Memory는 BM25 점수에 가중치 추가</li>
         <li><strong>TTL</strong>: 30일 이상 미사용 Memory는 Archive로 이동 (삭제 아님)</li>
-        <li><strong>Tag Filter</strong>: <code class="pd-step-code">WHERE tags MATCH "python"</code>로 검색 범위 축소</li>
+        <li><strong>Tag Filter</strong>: <code class="h-flow-node-code">WHERE tags MATCH "python"</code>로 검색 범위 축소</li>
         <li><strong>Dedup</strong>: 유사도 0.9 이상의 Memory 자동 병합</li>
       </ul>
     </div>
@@ -961,25 +923,25 @@
       <div class="side-panel">
         <div class="slide-title v6" style="text-align: left;">Wiki T1/T2/T3 구조</div>
         <div class="h-flow" style="flex-direction: column; gap: var(--space-sm); max-width: 100%;">
-          <div class="pd-step" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
-            <div class="pd-step-icon">📑</div>
+          <div class="h-flow-node" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
+            <div class="h-flow-node-icon">📑</div>
             <div>
-              <div class="pd-step-title">T1 — Topic (문서)</div>
-              <div class="pd-step-desc">도메인 단위 지식 문서예: "Python 프로그래밍"</div>
+              <div class="h-flow-node-title">T1 — Topic (문서)</div>
+              <div class="h-flow-node-desc">도메인 단위 지식 문서예: "Python 프로그래밍"</div>
             </div>
           </div>
-          <div class="pd-step" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
-            <div class="pd-step-icon">📂</div>
+          <div class="h-flow-node" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
+            <div class="h-flow-node-icon">📂</div>
             <div>
-              <div class="pd-step-title">T2 — Section (섹션)</div>
-              <div class="pd-step-desc">주제 내 하위 카테고리예: "변수", "함수", "클래스"</div>
+              <div class="h-flow-node-title">T2 — Section (섹션)</div>
+              <div class="h-flow-node-desc">주제 내 하위 카테고리예: "변수", "함수", "클래스"</div>
             </div>
           </div>
-          <div class="pd-step" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
-            <div class="pd-step-icon">📝</div>
+          <div class="h-flow-node" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
+            <div class="h-flow-node-icon">📝</div>
             <div>
-              <div class="pd-step-title">T3 — Content (내용)</div>
-              <div class="pd-step-desc">구체적인 지식 단위예: "def keyword로 함수 정의"</div>
+              <div class="h-flow-node-title">T3 — Content (내용)</div>
+              <div class="h-flow-node-desc">구체적인 지식 단위예: "def keyword로 함수 정의"</div>
             </div>
           </div>
         </div>
@@ -1007,34 +969,34 @@
         <span class="pd-level l1">L1 Overview</span>
       </div>
       <div class="h-flow">
-        <div class="pd-step">
-          <div class="pd-step-icon">📄</div>
-          <div class="pd-step-title">Content</div>
-          <div class="pd-step-desc">원본 문서</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">📄</div>
+          <div class="h-flow-node-title">Content</div>
+          <div class="h-flow-node-desc">원본 문서</div>
         </div>
-        <div class="pd-arrow">→</div>
-        <div class="pd-step">
-          <div class="pd-step-icon">✂️</div>
-          <div class="pd-step-title">Chunking</div>
-          <div class="pd-step-desc">512-token 청킹</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">✂️</div>
+          <div class="h-flow-node-title">Chunking</div>
+          <div class="h-flow-node-desc">512-token 청킹</div>
         </div>
-        <div class="pd-arrow">→</div>
-        <div class="pd-step">
-          <div class="pd-step-icon">🔍</div>
-          <div class="pd-step-title">Search</div>
-          <div class="pd-step-desc">Topic 기반 검색</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">🔍</div>
+          <div class="h-flow-node-title">Search</div>
+          <div class="h-flow-node-desc">Topic 기반 검색</div>
         </div>
-        <div class="pd-arrow">→</div>
-        <div class="pd-step">
-          <div class="pd-step-icon">📊</div>
-          <div class="pd-step-title">Summarization</div>
-          <div class="pd-step-desc">LLM 요약</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">📊</div>
+          <div class="h-flow-node-title">Summarization</div>
+          <div class="h-flow-node-desc">LLM 요약</div>
         </div>
-        <div class="pd-arrow">→</div>
-        <div class="pd-step">
-          <div class="pd-step-icon">📤</div>
-          <div class="pd-step-title">Output</div>
-          <div class="pd-step-desc">포맷팅 반환</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">📤</div>
+          <div class="h-flow-node-title">Output</div>
+          <div class="h-flow-node-desc">포맷팅 반환</div>
         </div>
       </div>
 
@@ -1110,13 +1072,13 @@
 
       <div class="decision-tree" style="margin: var(--space-lg) auto;">
         <!-- Root -->
-        <div class="dt-node question">❓ 사용자의 요청은 무엇과 관련되는가?</div>
-        <div class="dt-arrow-down">↓</div>
+        <div class="h-flow-node question">❓ 사용자의 요청은 무엇과 관련되는가?</div>
+        <div class="h-flow-arrow-down">↓</div>
         <!-- Branch -->
         <div class="dt-branch">
           <div class="dt-branch-item">
             <div class="dt-label">← 사용자/세션 관련</div>
-            <div class="dt-node" style="border-color: rgba(136,192,208,0.3); background: rgba(136,192,208,0.05);">
+            <div class="h-flow-node" style="border-color: rgba(136,192,208,0.3); background: rgba(136,192,208,0.05);">
               🧠 Memory 사용
               <span style="font-size: 11px; font-weight: 400; color: var(--color-muted);">
                 "나에 대해 기억해줘"
@@ -1126,7 +1088,7 @@
           </div>
           <div class="dt-branch-item">
             <div class="dt-label">도메인 지식 →</div>
-            <div class="dt-node" style="border-color: rgba(180,142,173,0.3); background: rgba(180,142,173,0.05);">
+            <div class="h-flow-node" style="border-color: rgba(180,142,173,0.3); background: rgba(180,142,173,0.05);">
               📚 Knowledge 사용
               <span style="font-size: 11px; font-weight: 400; color: var(--color-muted);">
                 "Python list comprehension"
@@ -1135,8 +1097,8 @@
             </div>
           </div>
         </div>
-        <div class="dt-arrow-down" style="margin-top: var(--space-xs);">↓ 둘 다 필요?</div>
-        <div class="dt-node question" style="border-color: rgba(163,190,140,0.3); background: rgba(163,190,140,0.05);">
+        <div class="h-flow-arrow-down" style="margin-top: var(--space-xs);">↓ 둘 다 필요?</div>
+        <div class="h-flow-node question" style="border-color: rgba(163,190,140,0.3); background: rgba(163,190,140,0.05);">
           ⚡ Memory → Knowledge 조합
           <span style="font-size: 11px; font-weight: 400; color: var(--color-muted);">
             "내 프로젝트에 Python 최적화 조언해줘"
@@ -1281,40 +1243,40 @@
       
 
       <div class="h-flow" style="margin: var(--space-lg) auto;">
-        <div class="sp-node">
-          <div class="sp-node-icon">📥</div>
-          <div class="sp-node-title">Input</div>
-          <div class="sp-node-desc">요청 수신</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">📥</div>
+          <div class="h-flow-node-title">Input</div>
+          <div class="h-flow-node-desc">요청 수신</div>
         </div>
-        <div class="sp-arrow">→</div>
-        <div class="sp-node">
-          <div class="sp-node-icon">🎯</div>
-          <div class="sp-node-title">Skill Match</div>
-          <div class="sp-node-desc">해당 Skill 탐지</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">🎯</div>
+          <div class="h-flow-node-title">Skill Match</div>
+          <div class="h-flow-node-desc">해당 Skill 탐지</div>
         </div>
-        <div class="sp-arrow">→</div>
-        <div class="sp-node">
-          <div class="sp-node-icon">✅</div>
-          <div class="sp-node-title">Condition</div>
-          <div class="sp-node-desc">실행 조건 확인</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">✅</div>
+          <div class="h-flow-node-title">Condition</div>
+          <div class="h-flow-node-desc">실행 조건 확인</div>
         </div>
-        <div class="sp-arrow">→</div>
-        <div class="sp-node" style="border-color: var(--color-primary); background: rgba(136,192,208,0.05);">
-          <div class="sp-node-icon">⚙️</div>
-          <div class="sp-node-title">Subprocess</div>
-          <div class="sp-node-desc">외부 실행</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node" style="border-color: var(--color-primary); background: rgba(136,192,208,0.05);">
+          <div class="h-flow-node-icon">⚙️</div>
+          <div class="h-flow-node-title">Subprocess</div>
+          <div class="h-flow-node-desc">외부 실행</div>
         </div>
-        <div class="sp-arrow">→</div>
-        <div class="sp-node">
-          <div class="sp-node-icon">🔧</div>
-          <div class="sp-node-title">Parsing</div>
-          <div class="sp-node-desc">결과 구조화</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">🔧</div>
+          <div class="h-flow-node-title">Parsing</div>
+          <div class="h-flow-node-desc">결과 구조화</div>
         </div>
-        <div class="sp-arrow">→</div>
-        <div class="sp-node" style="border-color: var(--color-success);">
-          <div class="sp-node-icon">📤</div>
-          <div class="sp-node-title">Result</div>
-          <div class="sp-node-desc">최종 반환</div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node" style="border-color: var(--color-success);">
+          <div class="h-flow-node-icon">📤</div>
+          <div class="h-flow-node-title">Result</div>
+          <div class="h-flow-node-desc">최종 반환</div>
         </div>
       </div>
 
