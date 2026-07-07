@@ -4,385 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lecture B: Memory vs Knowledge — Progressive Disclosure</title>
-<link rel="stylesheet" href="components/slides-components-v5.css">
-    <link rel="stylesheet" href="components/slides-components-v6.css">
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+<link rel="stylesheet" href="components/slides-components-v6.css">
+    <link rel="stylesheet" href="components/lecture-b.css">
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  /* ── Lecture B specific overrides ── */
-
-  /* Progressive Disclosure level badges */
-  .pd-level {
-    display: inline-block;
-    padding: 2px 10px;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    border-radius: 100px;
-    margin-bottom: var(--space-xs);
-  }
-  .pd-level.l1 { background: rgba(136,192,208,0.12); color: var(--color-primary); border: 1px solid rgba(136,192,208,0.25); }
-  .pd-level.l2 { background: rgba(143,188,187,0.12); color: var(--color-teal); border: 1px solid rgba(143,188,187,0.25); }
-  .pd-level.l3 { background: rgba(94,129,172,0.15); color: var(--color-blue); border: 1px solid rgba(94,129,172,0.35); }
-
-  /* PD step layout */
-  .v6 .h-flow {
-    display: flex;
-    align-items: stretch;
-    gap: var(--space-sm);
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
-    max-width: 820px;
-    margin: var(--space-md) auto;
-  }
-  .h-flow-node {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-xs);
-    padding: 12px 16px;
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    min-width: 120px;
-    text-align: center;
-    transition: var(--transition);
-    position: relative;
-  }
-  .h-flow-node:hover {
-    border-color: var(--color-primary);
-    transform: translateY(-2px);
-  }
-  .h-flow-node-icon {
-    font-size: 22px;
-    line-height: 1;
-  }
-  .h-flow-node-title {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--color-heading);
-  }
-  .h-flow-node-desc {
-    font-size: 11px;
-    color: var(--color-muted);
-    line-height: 1.4;
-  }
-  .h-flow-node-code {
-    font-size: 10px;
-    font-family: 'JetBrains Mono', monospace;
-    color: var(--color-teal);
-    background: rgba(59,66,82,0.6);
-    padding: 2px 8px;
-    border-radius: 4px;
-    text-align: center;
-    line-height: 1.4;
-    word-break: break-all;
-  }
-  .h-flow-arrow {
-    display: flex;
-    align-items: center;
-    color: var(--color-primary);
-    font-size: 20px;
-    font-weight: 700;
-    padding-top: 6px;
-  }
-
-  /* Code block */
-  .code-block {
-    background: rgba(30,35,44,0.8);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    padding: 12px 16px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    line-height: 1.6;
-    color: var(--color-text);
-    max-width: 640px;
-    width: 100%;
-    overflow-x: auto;
-    margin: var(--space-sm) 0;
-  }
-  .code-block .kw { color: var(--color-purple); }
-  .code-block .fn { color: var(--color-teal); }
-  .code-block .str { color: var(--color-success); }
-  .code-block .cmt { color: var(--color-muted); font-style: italic; }
-  .code-block .num { color: var(--color-orange); }
-
-  /* Decision tree */
-  .decision-tree {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-sm);
-    max-width: 600px;
-    width: 100%;
-    margin: var(--space-md) auto;
-  }
-  .h-flow-node.question {
-    background: rgba(136,192,208,0.08);
-    border-color: rgba(136,192,208,0.25);
-    color: var(--color-primary);
-  }
-  .dt-branch {
-    display: flex;
-    gap: var(--space-lg);
-    width: 100%;
-    justify-content: center;
-  }
-  .dt-branch-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-xs);
-  }
-  .dt-label {
-    font-size: 11px;
-    color: var(--color-muted);
-    font-weight: 500;
-  }
-  .h-flow-arrow-down {
-    color: var(--color-primary);
-    font-size: 18px;
-  }
-
-  /* Lifecycle (Gagne) */
-  .lifecycle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    flex-wrap: wrap;
-    max-width: 700px;
-    margin: var(--space-md) auto;
-  }
-  .h-flow-node:hover {
-    border-color: var(--color-primary);
-    transform: translateY(-2px);
-  }
-  .h-flow-node-icon { font-size: 24px; }
-  .h-flow-node-title { font-size: 14px; font-weight: 700; color: var(--color-heading); }
-  .h-flow-node-desc { font-size: 11px; color: var(--color-muted); line-height: 1.4; }
-  .h-flow-arrow {
-    color: var(--color-primary);
-    font-size: 22px;
-    font-weight: 700;
-    padding: 0 4px;
-  }
-
-  /* Scaling bars */
-  .scaling-bars {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-    max-width: 500px;
-    width: 100%;
-    margin: var(--space-md) auto;
-  }
-  .scale-row {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-  }
-  .scale-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--color-heading);
-    min-width: 60px;
-    text-align: right;
-  }
-  .scale-bar-wrap {
-    flex: 1;
-    height: 28px;
-    background: rgba(59,66,82,0.5);
-    border-radius: var(--radius-sm);
-    overflow: hidden;
-    position: relative;
-  }
-  .scale-bar {
-    height: 100%;
-    border-radius: var(--radius-sm);
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding-right: 10px;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--color-heading);
-    transition: width 600ms ease;
-  }
-  .scale-bar.ok { background: rgba(163,190,140,0.3); border: 1px solid rgba(163,190,140,0.4); }
-  .scale-bar.warn { background: rgba(235,203,139,0.3); border: 1px solid rgba(235,203,139,0.4); }
-  .scale-bar.bad { background: rgba(191,97,106,0.3); border: 1px solid rgba(191,97,106,0.4); }
-
-  /* DIKW pyramid */
-  .dikiw-pyramid {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    max-width: 500px;
-    width: 100%;
-    margin: var(--space-md) auto;
-  }
-  .dikw-level {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px;
-    border: 1px solid var(--color-border);
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--color-heading);
-    text-align: center;
-    transition: var(--transition);
-  }
-  .dikw-level:hover { transform: scale(1.01); }
-  .dikw-level .dikw-icon { margin-right: 8px; font-size: 16px; }
-  .dikw-level .dikw-detail { font-size: 11px; font-weight: 400; color: var(--color-muted); margin-left: 8px; }
-  .dikw-knowledge { width: 80%; border-radius: var(--radius-md) var(--radius-md) 0 0; background: rgba(180,142,173,0.15); border-color: rgba(180,142,173,0.3); }
-  .dikw-info      { width: 90%; background: rgba(136,192,208,0.1); border-color: rgba(136,192,208,0.2); border-top: none; }
-  .dikw-data      { width: 100%; border-radius: 0 0 var(--radius-md) var(--radius-md); background: rgba(59,66,82,0.4); border-color: var(--color-border); border-top: none; }
-
-  /* Transition flow */
-  .transition-flow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--space-sm);
-    flex-wrap: wrap;
-    max-width: 700px;
-    margin: var(--space-md) auto;
-  }
-  .tf-node {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 12px 18px;
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    min-width: 100px;
-    text-align: center;
-  }
-  .tf-node-title { font-size: 13px; font-weight: 700; color: var(--color-heading); }
-  .tf-node-desc  { font-size: 10px; color: var(--color-muted); }
-  .tf-arrow { color: var(--color-primary); font-size: 18px; font-weight: 700; }
-  .tf-highlight { border-color: rgba(136,192,208,0.3); background: rgba(136,192,208,0.05); }
-
-  /* Skill pipeline (M3) */
-  .v6 .h-flow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    flex-wrap: wrap;
-    max-width: 800px;
-    margin: var(--space-md) auto;
-  }
-  .h-flow-node:hover { border-color: var(--color-primary); }
-  .h-flow-node:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
-  .h-flow-node:last-child { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
-  .h-flow-node + .h-flow-node { border-left: none; }
-  .h-flow-node-icon { font-size: 18px; }
-  .h-flow-node-title { font-size: 12px; font-weight: 600; color: var(--color-heading); }
-  .h-flow-node-desc  { font-size: 10px; color: var(--color-muted); }
-  .h-flow-arrow { color: var(--color-primary); font-size: 16px; font-weight: 700; padding: 0 2px; }
-
-  /* Example cards */
-  .example-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-md);
-    max-width: 640px;
-    width: 100%;
-    margin: var(--space-md) auto;
-  }
-  .example-card {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-    padding: var(--space-md);
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    transition: var(--transition);
-  }
-  .example-card:hover { border-color: var(--color-primary); }
-  .example-card-title { font-size: 14px; font-weight: 700; color: var(--color-heading); }
-  .example-card-body { font-size: 12px; color: var(--color-text); line-height: 1.5; }
-  .example-card-body code { font-family: 'JetBrains Mono', monospace; color: var(--color-teal); font-size: 11px; background: rgba(59,66,82,0.5); padding: 1px 5px; border-radius: 3px; }
-
-  /* Memory management */
-  .mm-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-sm);
-    max-width: 540px;
-    width: 100%;
-  }
-  .mm-card {
-    padding: var(--space-sm) var(--space-md);
-    background: var(--color-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    transition: var(--transition);
-  }
-  .mm-card:hover { border-color: var(--color-primary); }
-  .mm-icon { font-size: 20px; flex-shrink: 0; }
-  .mm-text { font-size: 13px; color: var(--color-text); line-height: 1.4; }
-  .mm-text strong { color: var(--color-heading); }
-
-  /* Q&A */
-  .qa-prompt {
-    font-size: clamp(24px, 4vw, 36px);
-    font-weight: 700;
-    color: var(--color-heading);
-    text-align: center;
-    line-height: 1.4;
-  }
-  .qa-next {
-    font-size: 16px;
-    color: var(--color-muted);
-    text-align: center;
-    margin-top: var(--space-md);
-  }
-
-  /* Two-col side panels */
-  .side-panel {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-  }
-  .side-panel-title {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--color-primary);
-    margin-bottom: var(--space-xs);
-    padding-bottom: var(--space-xs);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .layout-main-aside { grid-template-columns: 1fr; }
-    .v6 .h-flow { flex-direction: column; align-items: center; }
-    .h-flow-arrow { transform: rotate(90deg); }
-    .example-grid { grid-template-columns: 1fr; }
-    .lifecycle { flex-direction: column; }
-    .h-flow-arrow { transform: rotate(90deg); }
-    .scaling-bars { max-width: 100%; }
-    .mm-grid { grid-template-columns: 1fr; }
-    .v6 .h-flow { flex-direction: column; }
-    .h-flow-arrow { transform: rotate(90deg); }
-  }
-</style>
 </head>
 <body>
 
@@ -397,7 +21,7 @@
 <div class="deck" id="deck">
 
   <!-- B.0 Cover: Memory vs Knowledge -->
-  <div class="slide hero-slide v6" id="slide-0">
+  <div class="slide v6 hero-slide" id="slide-0">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B</div>
 </header>
@@ -415,7 +39,7 @@
 </div>
 
   <!-- B.1 Goal: 두 개념의 차이와 동작 원리 -->
-  <div class="slide summary-slide v6" id="slide-1">
+  <div class="slide v6 summary-slide" id="slide-1">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B</div>
 </header>
@@ -460,7 +84,7 @@
 </div>
 
   <!-- B.2 [Compare]: Memory vs Knowledge -->
-  <div class="slide diagram-slide v6" id="slide-2">
+  <div class="slide v6 diagram-slide" id="slide-2">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B · Compare</div>
   <h2 class="slide-title">Memory vs Knowledge</h2>
@@ -502,7 +126,7 @@
 </div>
 
   <!-- B.3a [PD L1]: Memory Pipeline — Overview -->
-  <div class="slide diagram-slide v6" id="slide-3">
+  <div class="slide v6 diagram-slide" id="slide-3">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B · Memory Pipeline</div>
   <h2 class="slide-title">Memory Pipeline — M1</h2>
@@ -562,7 +186,7 @@
 </div>
 
   <!-- B.3b [PD L2]: Memory Pipeline — FTS5 detail -->
-  <div class="slide diagram-slide v6" id="slide-4">
+  <div class="slide v6 diagram-slide" id="slide-4">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B · Memory Pipeline</div>
   <h2 class="slide-title">FTS5 상세</h2>
@@ -632,7 +256,7 @@
 </div>
 
   <!-- B.3c [PD L3]: Memory Pipeline — BM25 -->
-  <div class="slide diagram-slide v6" id="slide-5">
+  <div class="slide v6 diagram-slide" id="slide-5">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B · Memory Pipeline</div>
   <h2 class="slide-title">BM25 Ranking</h2>
@@ -723,7 +347,7 @@
 </div>
 
   <!-- B.4 [Gagne]: Memory Lifecycle (Extract→Store→Retrieve) -->
-  <div class="slide diagram-slide v6" id="slide-6">
+  <div class="slide v6 diagram-slide" id="slide-6">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B · Lifecycle</div>
   <h2 class="slide-title">Memory Lifecycle</h2>
@@ -780,7 +404,7 @@
 </div>
 
   <!-- B.5 [Prob-Sol]: Memory Scaling (10→100→1000) -->
-  <div class="slide diagram-slide v6" id="slide-7">
+  <div class="slide v6 diagram-slide" id="slide-7">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B · Scaling</div>
   <h2 class="slide-title">Memory Scaling</h2>
@@ -835,7 +459,7 @@
 </div>
 
   <!-- B.6 [PD]: Memory Management -->
-  <div class="slide diagram-slide v6" id="slide-8">
+  <div class="slide v6 diagram-slide" id="slide-8">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B · Management</div>
   <h2 class="slide-title">Memory Management</h2>
@@ -896,7 +520,7 @@
   </div>
 
   <!-- B.8 [DIKW]: Knowledge Structure (Wiki T1/T2/T3) -->
-  <div class="slide diagram-slide v6" id="slide-9">
+  <div class="slide v6 diagram-slide" id="slide-9">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B · Knowledge Structure</div>
   <h2 class="slide-title">DIKW Pyramid</h2>
@@ -953,7 +577,7 @@
 </div>
 
   <!-- B.9 [PD L1→3]: Knowledge Pipeline -->
-  <div class="slide diagram-slide v6" id="slide-10">
+  <div class="slide v6 diagram-slide" id="slide-10">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B · Knowledge Pipeline</div>
   <h2 class="slide-title">Knowledge Pipeline — M2</h2>
@@ -1059,7 +683,7 @@
 </div>
 
   <!-- B.10 [Compare]: M vs K Decision Tree -->
-  <div class="slide diagram-slide v6" id="slide-11">
+  <div class="slide v6 diagram-slide" id="slide-11">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B · Decision Tree</div>
   <h2 class="slide-title">M vs K — Decision Tree</h2>
@@ -1119,7 +743,7 @@
 </div>
 
   <!-- B.11 [DIKW]: Memory→Knowledge Transition -->
-  <div class="slide diagram-slide v6" id="slide-12">
+  <div class="slide v6 diagram-slide" id="slide-12">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B · Transition</div>
   <h2 class="slide-title">Memory → Knowledge 전이</h2>
@@ -1176,7 +800,7 @@
 </div>
 
   <!-- B.12 Divider: ⚡ Knowledge → Skills [GLASS] -->
-  <div class="slide section-divider v6" id="slide-13">
+  <div class="slide v6 section-divider" id="slide-13">
 <header class="slide-header">
 </header>
   <main class="slide-body">
@@ -1193,7 +817,7 @@
 </div>
 
   <!-- B.13 [Feynman]: Skills: 아는 것 ≠ 실행하는 것 -->
-  <div class="slide diagram-slide v6" id="slide-14">
+  <div class="slide v6 diagram-slide" id="slide-14">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B · Skills</div>
   <h2 class="slide-title">Skills: 아는 것 ≠ 실행하는 것</h2>
@@ -1231,7 +855,7 @@
 </div>
 
   <!-- B.14 [Gagne]: Skills Pipeline -->
-  <div class="slide diagram-slide v6" id="slide-15">
+  <div class="slide v6 diagram-slide" id="slide-15">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B · Skills Pipeline</div>
   <h2 class="slide-title">Skills Pipeline — M3</h2>
@@ -1294,7 +918,7 @@
 </div>
 
   <!-- B.15 [Pyramid]: Skill Structure — Pyramid Principle -->
-  <div class="slide diagram-slide v6" id="slide-16">
+  <div class="slide v6 diagram-slide" id="slide-16">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B · Skill Structure</div>
   <h2 class="slide-title">Skill 구조 — Pyramid Principle</h2>
@@ -1354,7 +978,7 @@
 </div>
 
   <!-- B.16 [PD]: Skill Mechanism — Matching & Execution -->
-  <div class="slide diagram-slide v6" id="slide-17">
+  <div class="slide v6 diagram-slide" id="slide-17">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B · Skill Mechanism</div>
   <h2 class="slide-title">Skill Matching</h2>
@@ -1424,7 +1048,7 @@
 </div>
 
   <!-- B.17 [Apply]: Examples -->
-  <div class="slide example-slide v6" id="slide-18">
+  <div class="slide v6 example-slide" id="slide-18">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B · Examples</div>
   <h2 class="slide-title">실제 사용 예시</h2>
@@ -1476,7 +1100,7 @@
 </div>
 
   <!-- B.18 [Summary]: 3 Large Number Cards -->
-  <div class="slide summary-slide v6" id="slide-19">
+  <div class="slide v6 summary-slide" id="slide-19">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B · Summary</div>
   <h2 class="slide-title">핵심 3가지</h2>
@@ -1515,7 +1139,7 @@
 </div>
 
   <!-- B.19 [Q&A]: 빈 Q&A -->
-  <div class="slide summary-slide v6" id="slide-20">
+  <div class="slide v6 summary-slide" id="slide-20">
 <header class="slide-header">
   <div class="lecture-badge">Lecture B · Q&A</div>
 </header>
