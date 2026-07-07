@@ -1,13 +1,13 @@
 ---
 spec_id: SPEC-D05
-version: 1.0.0
+version: 2.0.0
 parent: SPEC-D01
 status: approved
 changed_at: "2026-06-17T00:00:00Z"
 type: design
 title: "p-hermes Slides(HTML) 디자인 스펙"
 domain: design
-tags: [slides, html, css, light-theme, kai-kawasaki]
+tags: [slides, html, css, dark-theme, zone-system, nord]
 ---
 
 # p-hermes Slides(HTML) 디자인 스펙
@@ -39,60 +39,62 @@ tags: [slides, html, css, light-theme, kai-kawasaki]
 
 ## 1. 디자인 철학
 
-p-hermes Slides는 **시각적 압축**과 **기술적 정확성**을 동시에 추구한다. 텍스트는 최소화하고, 다이어그램·그래픽을 중심으로 핵심 메시지를 전달한다.
+p-hermes Slides는 **Zone System** 기반 레이아웃으로 **페이지 간 흐름**과 **가독성**을 동시에 추구한다. Zone-A(B/C) 구조로 맥락 일관성을 보장하고, Zone-B 내부에서 콘텐츠에 맞는 템플릿을 유연하게 선택한다.
 
 | 원칙 | 설명 |
 |------|------|
 | **Progressive Disclosure** | 한 슬라이드, 한 메시지. 청중이 소화할 수 있는 정보 양만 표시 |
 | **10-20-30 Rule** | 최대 10장, 20분 발표, 최소 30pt 본문 |
-| **High Contrast** | 라이트 배경 + 짙은 텍스트, 접근성 WCAG AA 이상 |
+| **High Contrast** | 다크 배경 + 밝은 텍스트, 접근성 WCAG AA 이상 |
 | **Grid-First** | CSS Grid 기반 레이아웃. 콘텐츠 위치는 고정, 크기는 유연 |
 | **No Decorative Noise** | 장식적 그래픽 제거. 모든 시각 요소는 정보 전달에 기여 |
+| **Zone Consistency** | Zone-A/B/C 높이 고정, 슬라이드 간 맥락 끊김 방지 |
+| **Flow Transition** | Zone-B 내부 레이아웃 전환 시 시각적 연결감 유지 |
 
 ---
 
 ## 2. 색상 팔레트
 
-라이트 테마 기반. CSS 커스텀 프로퍼티(CSS 변수)로 전역 관리.
+다크 테마 기반 (Nord palette). CSS 커스텀 프로퍼티(CSS 변수)로 전역 관리.
 
 ### 2.1 색상 정의
 
 ```css
 :root {
   /* === 배경 계층 === */
-  --bg-primary:    #ffffff;  /* 메인 배경 (흰색) */
-  --bg-secondary:  #f6f8fa;  /* 카드/섹션 배경 (GitHub Light) */
-  --bg-tertiary:   #eaeef2;  /* 호버/인터랙션 배경 */
+  --bg-primary:    #2e3440;  /* 메인 배경 (Nord Polar Night 7) */
+  --bg-secondary:  #3b4252;  /* 카드/섹션 배경 (Nord Polar Night 4) */
+  --bg-tertiary:   #434c5e;  /* 호버/인터랙션 배경 (Nord Polar Night 3) */
 
   /* === 텍스트 계층 === */
-  --text-primary:  #1f2328;  /* 본문/타이틀 (대비비 15:1) */
-  --text-secondary:#656d76;  /* 보조 설명/메타 정보 */
-  --text-muted:    #b0b5ba;  /* placeholder/비활성 */
+  --text-primary:  #eceff4;  /* 본문/타이틀 (Nord Snow Storm 0) */
+  --text-secondary:#d8dee9;  /* 보조 설명/메타 정보 (Nord Snow Storm 1) */
+  --text-muted:    #616e88;  /* placeholder/비활성 (Nord Frost 5) */
 
-  /* === 액센트 색상 === */
-  --accent-primary:   #0969da;  /* 블루: 링크, 강조, 핵심 요소 */
-  --accent-secondary: #1a7f37;  /* 그린: 성공, 승인, 완료 */
-  --accent-warning:   #9a6700;  /* 옐로우: 주의, 경고 */
-  --accent-danger:    #cf222e;  /* 레드: 실패, 차단, 오류 */
-  --accent-purple:    #8250df;  /* 퍼플: Mermaid 노드, 차트 */
-  --accent-orange:    #bc4c00;  /* 오렌지: 중간 단계, 진행 중 */
-  --accent-cyan:      #0891b2;  /* 사이안: 데이터 흐름, 연결선 */
+  /* === 액센트 색상 (Nord palette) === */
+  --accent-primary:   #88c0d0;  /* 블루: 링크, 강조, 핵심 요소 (Nord Azure 4) */
+  --accent-secondary: #a3be8c;  /* 그린: 성공, 승인, 완료 (Nord Green 0) */
+  --accent-warning:   #ebcb8b;  /* 옐로우: 주의, 경고 (Nord Yellow 0) */
+  --accent-danger:    #bf616a;  /* 레드: 실패, 차단, 오류 (Nord Red 0) */
+  --accent-purple:    #b48ead;  /* 퍼플: Mermaid 노드, 차트 (Nord Mauve 0) */
+  --accent-orange:    #d08770;  /* 오렌지: 중간 단계, 진행 중 (Nord Flamingo 1) */
+  --accent-cyan:      #8fbcbb;  /* 사이안: 데이터 흐름, 연결선 (Nord Teal 0) */
 
   /* === 테두리/선 === */
-  --border-default:   #d0d7de;
-  --border-accent:    #0969da44;  /* 27% 투명도 */
-  --border-focus:     #0969da;
+  --border-default:   #4c566a;
+  --border-accent:    #88c0d044;  /* 27% 투명도 */
+  --border-focus:     #88c0d0;
 
   /* === 그림자 === */
-  --shadow-sm: 0 1px 2px rgba(31, 35, 40, 0.1);
-  --shadow-md: 0 4px 12px rgba(31, 35, 40, 0.12);
-  --shadow-lg: 0 8px 24px rgba(31, 35, 40, 0.14);
-  --shadow-glow-blue: 0 0 20px rgba(9, 105, 218, 0.12);
-  --shadow-glow-green: 0 0 20px rgba(26, 127, 55, 0.12);
+  --shadow-sm: 0 1px 2px rgba(46, 52, 64, 0.3);
+  --shadow-md: 0 4px 12px rgba(46, 52, 64, 0.4);
+  --shadow-lg: 0 8px 24px rgba(46, 52, 64, 0.5);
+  --shadow-glow-blue: 0 0 20px rgba(136, 192, 208, 0.12);
+  --shadow-glow-green: 0 0 20px rgba(163, 190, 140, 0.12);
 
   /* === 투명도 레이어 === */
-  --overlay-dim:  rgba(255, 255, 255, 0.85);
-  --overlay-mask: rgba(255, 255, 255, 0.95);
+  --overlay-dim:  rgba(46, 52, 64, 0.85);
+  --overlay-mask: rgba(46, 52, 64, 0.95);
 }
 ```
 
@@ -101,9 +103,11 @@ p-hermes Slides는 **시각적 압축**과 **기술적 정확성**을 동시에 
 | 사용처 | 변수 |
 |--------|------|
 | 슬라이드 전체 배경 | `--bg-primary` |
-| 콘텐츠 카드 배경 | `--bg-secondary` |
+| Zone-C 배경 | `--bg-secondary` |
+| 콘텐츠 카드 배경 | `--bg-tertiary` |
 | 타이틀/본문 텍스트 | `--text-primary` |
 | 설명/메타 텍스트 | `--text-secondary` |
+| 라벨/placeholder 텍스트 | `--text-muted` |
 | 액티브 링크/버튼 | `--accent-primary` |
 | 상태: 성공/완료 | `--accent-secondary` |
 | 상태: 진행 중 | `--accent-orange` |
@@ -191,19 +195,42 @@ Guy Kawasaki 10-20-30 Rule의 **30pt**를 최솟값으로, 상대 단위(`rem`)�
 
 ---
 
-## 4. 레이아웃 템플릿 (5종)
+## 4. 레이아웃 템플릿 (Zone System + 5종)
 
-모든 템플릿은 CSS Grid 12컬럼 시스템 기반으로 구현. 슬라이드 컨테이너는 `aspect-ratio: 16/9` 고정.
+Zone-A/B/C 구조 기반. Zone-B 내부에서 5종 템플릿을 콘텐츠에 맞게 선택.
+
+### 4.0 Zone System 구조
+
+```
+┌────────────────────────────────────────┐ ← 여백 60px
+│                                        │
+│  [ZONE-A] 상단 12% (90px)              │
+│  강의명 | 슬라이드 타이틀              │
+│                                        │
+├────────────────────────────────────────┤
+│                                        │
+│  [ZONE-B] 중앙 72% (540px)             │
+│  5종 템플릿 선택 영역                  │
+│                                        │
+├────────────────────────────────────────┤
+│  [ZONE-C] 하단 16% (120px)             │
+│  테이크어웨이 / 발주 / 다음 단계        │
+└────────────────────────────────────────┘
+```
+
+**Zone-A**: 슬라이드 상단 영역. 강의명 + 타이틀. 모든 슬라이드 동일 위치.
+**Zone-B**: 슬라이드 중앙 영역. 5종 템플릿 중 하나 선택.
+**Zone-C**: 슬라이드 하단 영역. 핵심 메시지 (takeaway). 모든 슬라이드 동일 위치.
 
 ### 4.1 타이틀 템플릿
 
 센터얼라이드. 프로젝트명 + 슬라이드 제목 + 부제목.
 
 ```
-┌─────────────────────────────────┐
+┌─────────────────────────────────┐ ← Zone-A: 강의명 | 타이틀
 │                                 │
 │                                 │
-│        p-hermes                 │
+│        p-hermes                 │ ← Zone-B (centered)
 │    (로고/아이콘)                 │
 │                                 │
 │      ───                       │
@@ -216,32 +243,33 @@ Guy Kawasaki 10-20-30 Rule의 **30pt**를 최솟값으로, 상대 단위(`rem`)�
 │                                 │
 │   2026.06  —  v0.16.0          │
 │                                 │
-└─────────────────────────────────┘
-```
+│                                 │
+└─────────────────────────────────┘ ← Zone-C: 부제목/발주
 
-**Grid 구성**: 단일 영역, `place-items: center`
+**Grid 구성**: Zone-B → `zone-b-centered`, `place-items: center`
 
 ```css
-.layout-title {
-  grid-template-rows: 1fr;
+.zone-b-centered {
+  display: grid;
   place-items: center;
   text-align: center;
+  gap: 1.5rem;
 }
-.layout-title .slide-title {
+.zone-b-centered .slide-title {
   font-size: var(--text-h1);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
 }
-.layout-title .slide-subtitle {
+.zone-b-centered .slide-subtitle {
   font-size: var(--text-h3);
   color: var(--text-secondary);
   margin-top: 0.5rem;
 }
-.layout-title .divider {
+.zone-b-centered .divider {
   width: 6rem;
   height: 3px;
   background: var(--accent-primary);
-  margin: 1.5rem auto;
+  margin: 0 auto;
   border-radius: 2px;
 }
 ```
@@ -251,11 +279,10 @@ Guy Kawasaki 10-20-30 Rule의 **30pt**를 최솟값으로, 상대 단위(`rem`)�
 좌측 제목 + 우측 본문. 가장 일반적인 템플릿.
 
 ```
-┌─────────────────────────────────┐
+┌─────────────────────────────────┐ ← Zone-A: 강의명 | 타이틀
 │  WORKFLOW ARCHITECTURE          │
-│                                 │
 │  ┌─────────────────────────┐    │
-│  │ • 9단계 상태 머신        │    │
+│  │ • 9단계 상태 머신        │    │ ← Zone-B (split 60:40)
 │  │ • 원자적 게이트          │    │
 │  │ • 병렬 차단             │    │
 │  │                          │    │
@@ -264,25 +291,25 @@ Guy Kawasaki 10-20-30 Rule의 **30pt**를 최솟값으로, 상대 단위(`rem`)�
 │  │  → approval → execution  │    │
 │  └─────────────────────────┘    │
 │                                 │
-└─────────────────────────────────┘
-```
+└─────────────────────────────────┘ ← Zone-C: 핵심 메시지
 
-**Grid 구성**: `grid-template-columns: 1fr 2fr`
+**Grid 구성**: Zone-B → `zone-b-split`, `grid-template-columns: 6fr 4fr`
 
 ```css
-.layout-content {
-  grid-template-columns: 1fr 2fr;
-  grid-template-rows: auto 1fr;
+.zone-b-split {
+  display: grid;
+  grid-template-columns: 6fr 4fr;
   gap: 2rem;
-  align-items: start;
-  padding-top: 1.5rem;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
 }
-.layout-content .section-header {
+.zone-b-split .section-header {
   grid-column: 1 / -1;
   border-bottom: 2px solid var(--accent-primary);
   padding-bottom: 0.5rem;
 }
-.layout-content .content-body {
+.zone-b-split .content-body {
   font-size: var(--text-body);
   line-height: var(--leading-relaxed);
   color: var(--text-primary);
@@ -291,49 +318,52 @@ Guy Kawasaki 10-20-30 Rule의 **30pt**를 최솟값으로, 상대 단위(`rem`)�
 
 ### 4.3 다이어그램 템플릿
 
-상단 제목 + 하단 Mermaid/그래픽 풀너.
+전체 공간 활용. 아키텍처, 플로우, 상태 머신 등.
 
 ```
-┌─────────────────────────────────┐
-│  STATE TRANSITION PIPELINE      │
+┌─────────────────────────────────┐ ← Zone-A: 강의명 | 타이틀
+│  4-LAYER STACK                  │
 │                                 │
-│  ┌────────────────────────────┐ │
-│  │                            │ │
-│  │    [Mermaid 다이어그램]    │ │
-│  │    (풀너 차지)             │ │
-│  │                            │ │
-│  └────────────────────────────┘ │
+│      ┌─────────────┐            │
+│      │ Application  │            │ ← Zone-B (full)
+│      ├─────────────┤            │
+│      │    Runtime   │            │
+│      ├─────────────┤            │
+│      │  Knowledge   │            │
+│      ├─────────────┤            │
+│      │    Memory    │            │
+│      └─────────────┘            │
 │                                 │
-│  상태 전이: 원자적 flock 기반   │
-└─────────────────────────────────┘
-```
+└─────────────────────────────────┘ ← Zone-C: 설명
 
-**Grid 구성**: `grid-template-rows: auto 1fr auto`
+**Grid 구성**: Zone-B → `zone-b-full`, `width: 100%`
 
 ```css
-.layout-diagram {
-  grid-template-rows: auto 1fr auto;
-  gap: 1rem;
-  padding-top: 1rem;
+.zone-b-full {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
-.layout-diagram .section-header {
+.zone-b-full .section-header {
+  grid-column: 1 / -1;
   border-bottom: 2px solid var(--accent-primary);
   padding-bottom: 0.5rem;
+  text-align: center;
 }
-.layout-diagram .diagram-container {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-default);
-  border-radius: 8px;
-  padding: 1.5rem;
-  overflow: hidden;
+.zone-b-full .diagram-container {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.layout-diagram .diagram-caption {
-  font-size: var(--text-small);
-  color: var(--text-secondary);
+.zone-b-full .diagram-caption {
+  font-size: var(--text-meta);
+  color: var(--text-muted);
   text-align: center;
+  margin-top: 0.5rem;
 }
 ```
 
@@ -342,58 +372,50 @@ Guy Kawasaki 10-20-30 Rule의 **30pt**를 최솟값으로, 상대 단위(`rem`)�
 양쪽 대조형. 두 개념/버전/방안을 나란히 배치.
 
 ```
-┌─────────────────────────────────┐
+┌─────────────────────────────────┐ ← Zone-A: 강의명 | 타이틀
 │  BEFORE vs. AFTER               │
-│                                 │
 │  ┌──────────────┬──────────────┐ │
-│  │   BEFORE     │   AFTER      │ │
+│  │   BEFORE     │   AFTER      │ │ ← Zone-B (split 50:50)
 │  │  ─────────   │  ─────────   │ │
 │  │  수동 승인    │  자동 게이트  │ │
 │  │  직렬 처리    │  병렬 차단    │ │
 │  │  상태 분산    │  중앙 집중    │ │
 │  └──────────────┴──────────────┘ │
 │                                 │
-└─────────────────────────────────┘
-```
+└─────────────────────────────────┘ ← Zone-C: 핵심 차이
 
-**Grid 구성**: `grid-template-columns: 1fr 1fr`, 중앙 구분선 포함
+**Grid 구성**: Zone-B → `zone-b-split`, `grid-template-columns: 1fr 1fr`
 
 ```css
-.layout-comparison {
+.zone-b-comparison {
+  display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto 1fr;
   gap: 0;
-  padding-top: 1.5rem;
+  align-items: center;
 }
-.layout-comparison .section-header {
-  grid-column: 1 / -1;
-  text-align: center;
-  border-bottom: 2px solid var(--border-default);
-  padding-bottom: 0.5rem;
-}
-.layout-comparison .col {
+.zone-b-comparison .col {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
-.layout-comparison .col-before {
+.zone-b-comparison .col-before {
   border-right: 1px solid var(--border-default);
-  background: var(--bg-primary);
-}
-.layout-comparison .col-after {
   background: var(--bg-secondary);
 }
-.layout-comparison .col-label {
+.zone-b-comparison .col-after {
+  background: var(--bg-tertiary);
+}
+.zone-b-comparison .col-label {
   font-size: var(--text-h3);
   font-weight: 700;
   letter-spacing: var(--tracking-wide);
   margin-bottom: 0.5rem;
 }
-.layout-comparison .col-before .col-label {
+.zone-b-comparison .col-before .col-label {
   color: var(--text-muted);
 }
-.layout-comparison .col-after .col-label {
+.zone-b-comparison .col-after .col-label {
   color: var(--accent-primary);
 }
 ```
@@ -403,71 +425,56 @@ Guy Kawasaki 10-20-30 Rule의 **30pt**를 최솟값으로, 상대 단위(`rem`)�
 핵심 포인트 3개 + 액션 아이템. CTA 강조.
 
 ```
-┌─────────────────────────────────┐
+┌─────────────────────────────────┐ ← Zone-A: 강의명 | 타이틀
 │  KEY TAKEAWAYS                  │
-│                                 │
-│  ┌────┐  ┌────┐  ┌────┐       │
+│  ┌────┐  ┌────┐  ┌────┐       │ ← Zone-B (centered cards)
 │  │ 01 │  │ 02 │  │ 03 │       │
 │  │ 상태 │  │ 게이트│  │ 원자성│       │
 │  │ 머신 │  │ 체제 │  │        │       │
 │  └────┘  └────┘  └────┘       │
 │                                 │
-│  ───                           │
-│                                 │
-│  Next: implementation guide     │
-│  [docs/wiki/guides/request-task]│
-│                                 │
-└─────────────────────────────────┘
-```
+└─────────────────────────────────┘ ← Zone-C: Next 단계
 
-**Grid 구성**: `grid-template-rows: auto auto 1fr`, 3컬럼 카드
+**Grid 구성**: Zone-B → `zone-b-centered`, `grid-template-columns: repeat(3, 1fr)`
 
 ```css
-.layout-summary {
-  grid-template-rows: auto auto 1fr;
-  gap: 1.5rem;
-  padding-top: 1.5rem;
-}
-.layout-summary .card-row {
+.zone-b-summary {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
+  align-items: center;
+  width: 100%;
+  max-width: 900px;
 }
-.layout-summary .key-card {
-  background: var(--bg-secondary);
+.zone-b-summary .key-card {
+  background: var(--bg-tertiary);
   border: 1px solid var(--border-default);
   border-radius: 8px;
-  padding: 1.25rem;
+  padding: 1rem;
   text-align: center;
-  transition: border-color 0.2s, box-shadow 0.2s;
 }
-.layout-summary .key-card:hover {
+.zone-b-summary .key-card:hover {
   border-color: var(--accent-primary);
-  box-shadow: var(--shadow-glow-blue);
+  background: var(--bg-secondary);
 }
-.layout-summary .key-number {
-  font-size: var(--text-h1);
-  font-weight: 800;
+.zone-b-summary .key-number {
+  font-size: var(--text-h2);
+  font-weight: 700;
   color: var(--accent-primary);
-  line-height: 1;
 }
-.layout-summary .key-label {
+.zone-b-summary .key-label {
   font-size: var(--text-body);
-  margin-top: 0.5rem;
   color: var(--text-primary);
 }
-.layout-summary .cta-link {
+.zone-b-summary .cta-link {
   display: inline-block;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   color: var(--accent-primary);
-  font-size: var(--text-small);
   text-decoration: none;
-  border-bottom: 1px dashed var(--accent-primary);
 }
 ```
 
 ---
-
 ## 5. 그래픽 요소
 
 ### 5.1 모서리 둥글기
@@ -690,7 +697,7 @@ a:hover, .link:hover {
 
 ---
 
-## 7. 슬라이드 구조 (CSS Grid 기반)
+## 7. 슬라이드 구조 (Zone System 기반)
 
 ### 7.1 전체 페이지 구조
 
@@ -700,16 +707,16 @@ a:hover, .link:hover {
 │  ┌────────────────────────────────────┐  │
 │  │ <div class="slides">               │  │
 │  │   ┌────────────────────────────┐   │  │
-│  │   │ <section class="slide">    │   │  │
-│  │   │  <header> 타이틀          │   │  │
-│  │   │  <main>  콘텐츠           │   │  │
-│  │   │  <footer> 페이지 정보      │   │  │
-│  │   │ </section>                 │   │  │
+│  │   │ <div class="slide v7">    │   │  │
+│  │   │  <header class="zone-a">  │   │  │
+│  │   │  <main class="zone-b">    │   │  │
+│  │   │  <footer class="zone-c">  │   │  │
+│  │   │ </div>                     │   │  │
 │  │   └────────────────────────────┘   │  │
 │  │   ┌────────────────────────────┐   │  │
-│  │   │ <section class="slide">    │   │  │
+│  │   │ <div class="slide v7">    │   │  │
 │  │   │ ...                        │   │  │
-│  │   │ </section>                 │   │  │
+│  │   │ </div>                     │   │  │
 │  │   └────────────────────────────┘   │  │
 │  │ </div>                             │  │
 │  │                                    │  │
@@ -721,58 +728,118 @@ a:hover, .link:hover {
 └──────────────────────────────────────────┘
 ```
 
-### 7.2 슬라이드 컨테이너
+### 7.2 Zone-A (상단 12%)
+
+```css
+.zone-a {
+  flex: 0 0 90px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  border-bottom: 1px solid var(--border-default);
+}
+.zone-a .zone-a-lecture {
+  font-size: var(--text-meta);
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.zone-a .zone-a-title {
+  font-size: var(--text-h2);
+  font-weight: 700;
+  color: var(--text-primary);
+  flex: 1;
+  text-align: center;
+  letter-spacing: var(--tracking-tight);
+}
+```
+
+### 7.3 Zone-B (중앙 72%)
+
+```css
+.zone-b {
+  flex: 0 0 540px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 40px;
+  overflow: hidden;
+}
+
+/* Zone-B 내부 템플릿 선택 */
+.zone-b-centered {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: var(--space-lg, 24px);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.zone-b-split {
+  display: grid;
+  grid-template-columns: 6fr 4fr;
+  gap: var(--space-xl, 32px);
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: center;
+}
+
+.zone-b-full {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+```
+
+### 7.4 Zone-C (하단 16%)
+
+```css
+.zone-c {
+  flex: 0 0 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 40px;
+  border-top: 1px solid var(--border-default);
+  background: var(--bg-secondary);
+}
+.zone-c .zone-c-text {
+  font-size: var(--text-body);
+  color: var(--text-primary);
+  text-align: center;
+  max-width: 800px;
+}
+.zone-c .zone-c-nav {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+```
+
+### 7.5 슬라이드 컨테이너
 
 ```css
 /* 슬라이드 전체: 16:9 비율 고정 */
-.slide {
+.slide.v7 {
   aspect-ratio: 16 / 9;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  grid-template-columns: 1fr;
-  padding: clamp(1.5rem, 3vw, 3rem);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
   background: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-sans);
   position: relative;
   overflow: hidden;
 }
-
-/* 섹션 헤더 */
-.slide > header {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid var(--accent-primary);
-}
-.slide > header h1 {
-  font-size: var(--text-h2);
-  font-weight: 700;
-  letter-spacing: var(--tracking-tight);
-  margin: 0;
-}
-
-/* 메인 콘텐츠 */
-.slide > main {
-  display: grid;
-  gap: 1.5rem;
-  padding: 1rem 0;
-  overflow-y: auto;
-}
-
-/* 푸터: 페이지 번호 */
-.slide > footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: var(--text-meta);
-  color: var(--text-muted);
-}
 ```
 
 ---
-
 ## 8. Mermaid 다이어그램 스타일
 
 ### 8.1 기본 설정
@@ -1143,8 +1210,8 @@ function goToSlide(index) {
       --accent-purple:    #8250df;
       --accent-orange:    #bc4c00;
       --accent-cyan:      #0891b2;
-      --border-default:   #d0d7de;
-      --shadow-glow-blue: 0 0 20px rgba(9, 105, 218, 0.12);
+      --border-default:   #4c566a;
+      --shadow-glow-blue: 0 0 20px rgba(136, 192, 208, 0.12);
     }
   </style>
 </head>
@@ -1401,30 +1468,32 @@ flowchart LR
 
 ```css
 /* ============================================================
- * p-hermes Slides Design Spec — CSS
- * 라이트 테마 기반 | 16:9 | CSS Grid | Mermaid 지원
+ * p-hermes Slides Design Spec v7 — CSS
+ * 다크 테마 (Nord) | 16:9 | Zone System | Mermaid 지원
  * ============================================================ */
 
-/* === 커스텀 프로퍼티 === */
+/* === 커스텀 프로퍼티 (Nord palette) === */
 :root {
-  --bg-primary:   #0d1117;
-  --bg-secondary: #161b22;
-  --bg-tertiary:  #21262d;
-  --text-primary: #e6edf3;
-  --text-secondary:#8b949e;
-  --text-muted:   #484f58;
-  --accent-primary:   #58a6ff;
-  --accent-secondary: #3fb950;
-  --accent-warning:   #d29922;
-  --accent-danger:    #f85149;
-  --accent-purple:    #bc8cff;
-  --accent-orange:    #f0883e;
-  --accent-cyan:      #39d2c0;
-  --border-default:   #30363d;
-  --shadow-sm:        0 1px 2px rgba(0,0,0,0.3);
-  --shadow-md:        0 4px 12px rgba(0,0,0,0.4);
-  --shadow-lg:        0 8px 24px rgba(0,0,0,0.5);
-  --shadow-glow-blue: 0 0 20px rgba(88,166,255,0.15);
+  --bg-primary:   #2e3440;
+  --bg-secondary: #3b4252;
+  --bg-tertiary:  #434c5e;
+  --text-primary: #eceff4;
+  --text-secondary:#d8dee9;
+  --text-muted:   #616e88;
+  --accent-primary:   #88c0d0;
+  --accent-secondary: #a3be8c;
+  --accent-warning:   #ebcb8b;
+  --accent-danger:    #bf616a;
+  --accent-purple:    #b48ead;
+  --accent-orange:    #d08770;
+  --accent-cyan:      #8fbcbb;
+  --border-default:   #4c566a;
+  --border-accent:    #88c0d044;
+  --border-focus:     #88c0d0;
+  --shadow-sm:        0 1px 2px rgba(46,52,64,0.3);
+  --shadow-md:        0 4px 12px rgba(46,52,64,0.4);
+  --shadow-lg:        0 8px 24px rgba(46,52,64,0.5);
+  --shadow-glow-blue: 0 0 20px rgba(136,192,208,0.12);
   --font-sans: 'Inter', 'Noto Sans KR', -apple-system, BlinkMacSystemFont,
                'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Noto Sans Mono KR',
@@ -1432,403 +1501,192 @@ flowchart LR
   --text-h1:   3.0rem;
   --text-h2:   2.25rem;
   --text-h3:   1.75rem;
-  --text-body: 1.25rem;
-  --text-small: 1rem;
-  --text-code: 0.9rem;
-  --text-meta: 0.8rem;
-  --leading-tight:   1.2;
-  --leading-normal:  1.6;
-  --leading-relaxed: 1.8;
-  --tracking-tight:  -0.02em;
-  --tracking-normal: 0;
-  --tracking-wide:   0.05em;
+  --text-body: 1.125rem;
+  --text-meta: 0.875rem;
+  --leading-relaxed: 1.6;
+  --tracking-tight: -0.02em;
+  --tracking-wide: 0.05em;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
 }
 
-/* === 글로벌 === */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
+/* === Zone System === */
+.slide.v7 {
+  aspect-ratio: 16 / 9;
+  display: flex;
+  flex-direction: column;
   background: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-sans);
-  font-size: var(--text-body);
-  line-height: var(--leading-normal);
-  overflow: hidden;
-}
-
-code {
-  font-family: var(--font-mono);
-  font-size: var(--text-code);
-  background: var(--bg-tertiary);
-  padding: 0.15em 0.4em;
-  border-radius: 4px;
-}
-
-/* === 슬라이드 컨테이너 === */
-.slides {
   position: relative;
-  width: 100vw;
-  height: 100vh;
-}
-
-.slide {
-  aspect-ratio: 16 / 9;
-  width: 100%;
-  max-width: 1600px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  padding: clamp(1.5rem, 3vw, 3rem);
-  background: var(--bg-primary);
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transform: translateX(40px);
-  transition: opacity 0.4s cubic-bezier(0.4,0,0.2,1),
-              transform 0.4s cubic-bezier(0.4,0,0.2,1);
-  pointer-events: none;
   overflow: hidden;
 }
 
-.slide--active {
-  opacity: 1;
-  transform: translateX(0);
-  pointer-events: auto;
-}
-
-.slide--prev {
-  transform: translateX(-40px);
-}
-
-.slide > header {
+.zone-a {
+  flex: 0 0 90px;
   display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 2px solid var(--accent-primary);
-}
-
-.slide > header h1 {
-  font-size: var(--text-h2);
-  font-weight: 700;
-  letter-spacing: var(--tracking-tight);
-}
-
-.slide > main {
-  display: grid;
-  gap: 1.5rem;
-  padding: 1rem 0;
-  overflow-y: auto;
-}
-
-.slide > footer {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  font-size: var(--text-meta);
-  color: var(--text-muted);
+  justify-content: space-between;
+  padding: 0 40px;
+  border-bottom: 1px solid var(--border-default);
 }
 
-/* === 템플릿: 타이틀 === */
-.layout-title {
-  place-items: center;
-  text-align: center;
-}
-.layout-title .slide-title {
-  font-size: var(--text-h1);
-  font-weight: 800;
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-}
-.layout-title .slide-subtitle {
-  font-size: var(--text-h3);
-  color: var(--text-secondary);
-  margin-top: 0.5rem;
-}
-.layout-title .project-label {
-  font-size: var(--text-small);
-  color: var(--accent-primary);
-  letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
-  margin-bottom: 1rem;
-}
-.layout-title .divider {
-  width: 6rem;
-  height: 3px;
-  background: var(--accent-primary);
-  margin: 1.5rem auto;
-  border-radius: 2px;
-}
-.layout-title .slide-meta {
-  font-size: var(--text-small);
-  color: var(--text-muted);
-  margin-top: 2rem;
-}
-
-/* === 템플릿: 콘텐츠 === */
-.layout-content {
-  grid-template-columns: 1fr 2fr;
-  grid-template-rows: auto 1fr;
-  gap: 2rem;
-}
-.layout-content .section-header {
-  grid-column: 1 / -1;
-}
-
-/* === 템플릿: 다이어그램 === */
-.layout-diagram {
-  grid-template-rows: auto 1fr auto;
-  gap: 1rem;
-}
-.diagram-container {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-default);
-  border-radius: 8px;
-  padding: 1.5rem;
+.zone-b {
+  flex: 0 0 540px;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0 40px;
   overflow: hidden;
 }
-.diagram-caption {
-  font-size: var(--text-small);
-  color: var(--text-secondary);
-  text-align: center;
-}
 
-/* === 템플릿: 비교 === */
-.layout-comparison {
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto 1fr;
-}
-.layout-comparison .section-header {
-  grid-column: 1 / -1;
-  text-align: center;
-}
-.layout-comparison .col {
-  padding: 1.5rem;
+.zone-c {
+  flex: 0 0 120px;
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-.layout-comparison .col-before {
-  border-right: 1px solid var(--border-default);
-}
-.layout-comparison .col-after {
+  align-items: center;
+  justify-content: center;
+  padding: 0 40px;
+  border-top: 1px solid var(--border-default);
   background: var(--bg-secondary);
 }
-.layout-comparison .col-label {
-  font-size: var(--text-h3);
-  font-weight: 700;
-  letter-spacing: var(--tracking-wide);
-}
-.layout-comparison .col-before .col-label { color: var(--text-muted); }
-.layout-comparison .col-after .col-label { color: var(--accent-primary); }
 
-/* === 템플릿: 요약 === */
-.layout-summary {
-  grid-template-rows: auto auto 1fr;
-  gap: 1.5rem;
-}
-.layout-summary .card-row {
+/* Zone-B 템플릿 */
+.zone-b-centered {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-}
-.key-card {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-default);
-  border-radius: 8px;
-  padding: 1.25rem;
+  place-items: center;
   text-align: center;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  gap: var(--space-lg);
+  max-width: 720px;
+  margin: 0 auto;
 }
-.key-card:hover {
-  border-color: var(--accent-primary);
-  box-shadow: var(--shadow-glow-blue);
+
+.zone-b-split {
+  display: grid;
+  grid-template-columns: 6fr 4fr;
+  gap: var(--space-xl);
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: center;
 }
-.key-number {
-  font-size: var(--text-h1);
-  font-weight: 800;
-  color: var(--accent-primary);
-  line-height: 1;
+
+.zone-b-full {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.key-label {
+
+/* Zone-C 텍스트 */
+.zone-c-text {
   font-size: var(--text-body);
-  margin-top: 0.5rem;
+  color: var(--text-primary);
+  text-align: center;
+  max-width: 800px;
 }
-.cta-link {
-  display: inline-block;
-  margin-top: 1rem;
-  color: var(--accent-primary);
-  text-decoration: none;
-  border-bottom: 1px dashed var(--accent-primary);
-  transition: color 0.15s;
+
+/* === Zone-A 컴포넌트 === */
+.zone-a-lecture {
+  font-size: var(--text-meta);
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
-.cta-link:hover {
+.zone-a-title {
+  font-size: var(--text-h2);
+  font-weight: 700;
+  color: var(--text-primary);
+  flex: 1;
+  text-align: center;
+  letter-spacing: var(--tracking-tight);
+}
+
+/* === Typography === */
+.slide-title {
+  font-size: var(--text-h1);
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+  margin: 0;
+}
+.slide-subtitle {
+  font-size: var(--text-h3);
+  color: var(--text-secondary);
+}
+.content-body {
+  font-size: var(--text-body);
+  line-height: var(--leading-relaxed);
   color: var(--text-primary);
 }
 
-/* === 애니메이션 === */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+/* === 그래픽 요소 === */
+.card {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
 }
-.stagger-item {
-  opacity: 0;
-  animation: fadeInUp 0.5s cubic-bezier(0.4,0,0.2,1) forwards;
-}
-.stagger-item:nth-child(1) { animation-delay: 0.1s; }
-.stagger-item:nth-child(2) { animation-delay: 0.2s; }
-.stagger-item:nth-child(3) { animation-delay: 0.3s; }
-.stagger-item:nth-child(4) { animation-delay: 0.4s; }
-.stagger-item:nth-child(5) { animation-delay: 0.5s; }
-.stagger-item:nth-child(6) { animation-delay: 0.6s; }
-
-.reveal-item {
-  opacity: 0;
-  transform: translateX(-12px);
-  transition: opacity 0.35s ease, transform 0.35s ease;
-}
-.reveal-item.revealed {
-  opacity: 1;
-  transform: translateX(0);
+.card:hover {
+  border-color: var(--accent-primary);
+  background: var(--bg-secondary);
+  box-shadow: var(--shadow-md);
 }
 
-/* === 아이콘 === */
-.icon {
-  display: inline-block;
-  vertical-align: middle;
-  flex-shrink: 0;
-  width: 1.2em;
-  height: 1.2em;
-}
-.icon--check  { color: var(--accent-secondary); }
-.icon--alert  { color: var(--accent-warning); }
-.icon--arrow  { color: var(--accent-primary); }
-.icon--danger { color: var(--accent-danger); }
-
-/* === 배지 === */
 .badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.2em 0.6em;
-  border-radius: 6px;
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-sm);
   font-size: var(--text-meta);
   font-weight: 600;
   letter-spacing: var(--tracking-wide);
-  text-transform: uppercase;
 }
-.badge--success { background: #23863626; color: var(--accent-secondary); }
-.badge--warning { background: #d2992226; color: var(--accent-warning); }
-.badge--danger  { background: #f8514926; color: var(--accent-danger); }
-.badge--info    { background: #58a6ff26; color: var(--accent-primary); }
+.badge-primary { background: var(--accent-primary); color: var(--bg-primary); }
+.badge-success { background: var(--accent-secondary); color: var(--bg-primary); }
+.badge-warning { background: var(--accent-warning); color: var(--bg-primary); }
+.badge-danger  { background: var(--accent-danger); color: var(--bg-primary); }
 
-/* === 진행 바 === */
-.progress-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--bg-tertiary);
-  z-index: 100;
-}
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--accent-primary), var(--accent-purple));
-  transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
-  border-radius: 0 2px 2px 0;
-}
-
-/* === 사이드바 네비게이션 === */
-.sidebar {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 4px;
-  height: 100vh;
+/* === 다이어그램 === */
+.diagram-container {
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 4px 0;
-  z-index: 100;
-  background: var(--bg-tertiary);
+  align-items: center;
+  justify-content: center;
 }
-.sidebar-dot {
-  flex: 1;
-  border-radius: 2px;
-  background: var(--border-default);
-  cursor: pointer;
-  transition: background 0.2s, box-shadow 0.2s;
-}
-.sidebar-dot:hover { background: var(--accent-primary); }
-.sidebar-dot.active {
-  background: var(--accent-primary);
-  box-shadow: 0 0 6px var(--accent-primary);
+.diagram-caption {
+  font-size: var(--text-meta);
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 0.5rem;
 }
 
-/* === 페이지 번호 === */
-.page-number {
-  font-variant-numeric: tabular-nums;
+/* === Mermaid === */
+.mermaid {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
 }
-.page-number::before {
-  content: '';
-  display: inline-block;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--accent-primary);
-  margin-right: 0.5rem;
-  vertical-align: middle;
-}
+.mermaid text { fill: var(--text-primary); }
+.mermaid rect, .mermaid rect:not([class]) { fill: var(--bg-tertiary); stroke: var(--accent-primary); }
 
-/* === 반응형 === */
-@media (max-width: 1024px) {
-  .slide { padding: 1.5rem; }
-  .layout-comparison {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-  }
-  .layout-comparison .col-before {
-    border-right: none;
-    border-bottom: 1px solid var(--border-default);
-  }
-  .layout-summary .card-row {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .slide > header h1 { font-size: var(--text-h3); }
+/* === 애니메이션 === */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
-@media (max-width: 768px) {
-  .slide {
-    aspect-ratio: unset;
-    min-height: 100vh;
-    padding: 1rem;
-  }
-  .layout-content, .layout-comparison {
-    grid-template-columns: 1fr;
-  }
-  .layout-summary .card-row { grid-template-columns: 1fr; }
-  .slide > header h1 { font-size: var(--text-h3); }
-  .diagram-container { overflow-x: auto; }
-  .mermaid svg { max-width: 100%; height: auto; }
-}
-
-/* === 접근성: 움직임 감소 === */
-@media (prefers-reduced-motion: reduce) {
-  .slide, .stagger-item, .reveal-item,
-  .key-card, .progress-fill, .sidebar-dot {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-    animation-delay: 0ms !important;
-  }
+.slide.v7 {
+  animation: slideIn var(--transition-normal);
 }
 ```
-
----
-
 ## 12. 링크 경로 규칙 (GitHub Pages 배포용)
 
 Slides는 HTML 파일로 GitHub Pages를 통해 배포됩니다. 링크 경로는 다음과 같이 통일합니다.
@@ -1925,6 +1783,7 @@ Slides는 HTML 파일로 GitHub Pages를 통해 배포됩니다. 링크 경로�
 |------|------|------|
 | 1.0 | 2026-06-16 | 초안 작성: 라이트 테마 기반 슬라이드 디자인 스펙 전체 정의 |
 | 1.1 | 2026-06-16 | 문서 간 링크 규칙 추가 (GitHub Pages 배포용) |
+| 2.0 | 2026-07-07 | Zone System 도입, 다크 테마 전환, 5종 템플릿 + Zone A/B/C 구조 |
 
 ## 관련 문서
 
@@ -1944,11 +1803,13 @@ contract:
   postcondition:
     - HTML Slides 24개 (8도메인×3매체) 렌더링 성공
     - 16:9 비율 유지
+    - Zone-A/B/C 구조 적용 확인
     - 키보드 네비게이션 동작 확인
   invariant:
     - 16:9 비율 고정 (aspect-ratio: 16/9)
-    - 라이트 테마 강제 (다크 테마 금지)
+    - 다크 테마 강제 (Nord palette)
     - Guy Kawasaki 10-20-30 Rule 준수
+    - Zone-A 높이 90px (12%), Zone-B 높이 540px (72%), Zone-C 높이 120px (16%)
 
 ### Preconditions
 - GitHub Pages 환경 설정 완료
@@ -1958,46 +1819,53 @@ contract:
 ### Postconditions
 - HTML Slides 24개 (8도메인×3매체) 렌더링 성공
 - 16:9 비율 유지
+- Zone-A/B/C 구조 적용 확인 (3종 Zone-B 레이아웃)
 - 키보드 네비게이션 동작 확인
 
 ### Invariants
 - 16:9 비율 고정 (aspect-ratio: 16/9)
-- 라이트 테마 강제 (다크 테마 금지)
+- 다크 테마 강제 (Nord palette)
 - Guy Kawasaki 10-20-30 Rule 준수
+- Zone-A 높이 90px (12%), Zone-B 높이 540px (72%), Zone-C 높이 120px (16%)
 
 ## Examples
 
 examples:
   - name: 타이틀 슬라이드
     command: cat > slide.html << 'EOF' && cat slide.html
-<section class="slide layout-title slide--active">...</section>
+<div class="slide v7 zone-b-centered">...</div>
 EOF
   - name: 다이어그램 슬라이드
     command: cat > slide.html << 'EOF' && cat slide.html
-<section class="slide layout-diagram">...mermaid...</section>
+<div class="slide v7 zone-b-full">...mermaid...</div>
 EOF
 
 ### Example 1: 타이틀 슬라이드
 ```html
-<section class="slide layout-title slide--active">
-  <div class="title-content">
-    <p class="project-label">p-hermes</p>
+<div class="slide v7">
+  <header class="zone-a">
+    <span class="zone-a-lecture">p-hermes</span>
+    <h1 class="zone-a-title">Workflow Redefined</h1>
+  </header>
+  <main class="zone-b zone-b-centered">
     <div class="divider"></div>
-    <h1 class="slide-title">Workflow Redefined</h1>
+    <h2 class="slide-title">Workflow Redefined</h2>
     <p class="slide-subtitle">핵심 워크플로우 시스템 재정의</p>
-  </div>
-  <footer>
-    <span class="slide-id">DOC-A1-slides</span>
-    <span class="page-number">1 / 10</span>
+  </main>
+  <footer class="zone-c">
+    <span class="zone-c-text">v0.16.0 — 2026.06</span>
   </footer>
-</section>
+</div>
 ```
 
 ### Example 2: 다이어그램 슬라이드 (Mermaid)
 ```html
-<section class="slide layout-diagram">
-  <header><h1>상태 전이 파이프라인</h1></header>
-  <main>
+<div class="slide v7">
+  <header class="zone-a">
+    <span class="zone-a-lecture">Lecture B</span>
+    <h1 class="zone-a-title">상태 전이 파이프라인</h1>
+  </header>
+  <main class="zone-b zone-b-full">
     <div class="diagram-container">
       <div class="mermaid">
 flowchart LR
@@ -2007,10 +1875,13 @@ flowchart LR
       </div>
     </div>
   </main>
-</section>
+  <footer class="zone-c">
+    <span class="zone-c-text">9단계 상태 전이 = 원자적 작업 처리 보장</span>
+  </footer>
+</div>
 ```
 
 ## Acceptance Criteria
 Given: HTML Slides 24개 작성 완료
 When: 브라우저에서 렌더링 확인
-Then: 16:9 비율 유지 + 키보드 네비게이션 동작 + Mermaid 다이어그램 렌더링 성공
+Then: 16:9 비율 유지 + Zone-A/B/C 구조 적용 + 다크 테마 렌더링 + 키보드 네비게이션 동작 + Mermaid 다이어그램 렌더링 성공
