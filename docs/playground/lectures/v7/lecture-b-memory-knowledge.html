@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture B: Memory vs Knowledge — Progressive Disclosure</title>
+<link rel="stylesheet" href="components/slides-components-v7.css">
+    <link rel="stylesheet" href="components/lecture-b.css">
+
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<button class="notes-toggle" id="notesToggle">📝 Notes</button>
+<div class="notes-panel" id="notesPanel">
+  <h4>📝 발표자 노트</h4>
+  <p id="notesContent">슬라이드를 선택해주세요.</p>
+</div>
+
+<div class="deck" id="deck">
+
+  <!-- B.0 Cover: Memory vs Knowledge -->
+  <div class="slide v7 hero-slide" id="slide-0">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B</div>
+</header>
+  <main class="zone-b">
+<div class="cover-hero">
+      <div class="ring">
+        <span class="ring-text">🧠📚</span>
+      </div>
+    </div>
+    <h1 class="title">Memory vs Knowledge</h1>
+    <p class="subtitle">Progressive Disclosure · PD Pipelines M1–M3 · Compare Tables</p>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.1 Goal: 두 개념의 차이와 동작 원리 -->
+  <div class="slide v7 summary-slide" id="slide-1">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B</div>
+</header>
+  <main class="zone-b">
+<div class="goal-section">
+      <div class="goal-tag">🎯 오늘 배울 내용</div>
+      <div class="goal-why">
+        <span class="goal-label">학습 흐름</span>
+        Memory 차이 → Pipeline 동작 → Knowledge → Skills → 통합
+      </div>
+      <div class="goal-list">
+        <div class="goal-item">
+          <span class="goal-num">1</span>
+          Memory vs Knowledge — <strong>두 개념의 명확한 차이</strong>
+        </div>
+        <div class="goal-item">
+          <span class="goal-num">2</span>
+          PD Pipelines M1–M3 — <strong>동작 원리 (L1→L3)</strong>
+        </div>
+        <div class="goal-item">
+          <span class="goal-num">3</span>
+          Decision Tree — <strong>언제 어떤 것을 사용할지</strong>
+        </div>
+        <div class="goal-item">
+          <span class="goal-num">4</span>
+          Skills Pipeline — <strong>아는 것 ≠ 실행하는 것</strong>
+        </div>
+      </div>
+      <div class="goal-flow">
+        <span>Memory</span>
+        <span class="goal-arrow">→</span>
+        <span>Knowledge</span>
+        <span class="goal-arrow">→</span>
+        <span>Skills</span>
+        <span class="goal-arrow">→</span>
+        <span>Summary</span>
+      </div>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.2 [Compare]: Memory vs Knowledge -->
+  <div class="slide v7 diagram-slide" id="slide-2">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B · Compare</div>
+  <h2 class="slide-title">Memory vs Knowledge</h2>
+  <p class="slide-takeaway">Memory는 경험을 저장하고, Knowledge는 관계를 이해한다 — 둘은 완전히 다른 계층</p>
+</header>
+  <main class="zone-b">
+<div class="zone-b-centered">
+      
+      
+
+      <div class="compare-table" style="max-width: 560px; margin: var(--space-md) auto;">
+        <!-- Header row -->
+        <div class="header">Memory</div>
+        <div class="header">Knowledge</div>
+        <!-- Row 1: Purpose -->
+        <div>목적: 경험/컨텍스트 보존</div>
+        <div>목적: 도메인 지식 구조화</div>
+        <!-- Row 2: Storage -->
+        <div>저장: FTS5 (SQLite)</div>
+        <div>저장: Wiki (T1/T2/T3)</div>
+        <!-- Row 3: Retrieval -->
+        <div>검색: BM25 기반 키워드 매칭</div>
+        <div>검색: Topic/Domain 기반 검색</div>
+        <!-- Row 4: Update Freq -->
+        <div>업데이트: 매 세션 (실시간)</div>
+        <div>업데이트: 수동/주기적</div>
+        <!-- Row 5: Examples -->
+        <div>예: "사용자가 Python 선호"</div>
+        <div>예: "Python 문법 레퍼런스"</div>
+      </div>
+
+      <div class="insight-box">
+        🔑 핵심: Memory = <strong>무엇이 일어났는지</strong>, Knowledge = <strong>무엇을 의미하는지</strong>
+      </div>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.3a [PD L1]: Memory Pipeline — Overview -->
+  <div class="slide v7 diagram-slide" id="slide-3">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B · Memory Pipeline</div>
+  <h2 class="slide-title">Memory Pipeline — M1</h2>
+  <p class="slide-takeaway">5단계: 의도에서 Top-K 결과까지의 전체 흐름</p>
+</header>
+  <main class="zone-b">
+<div class="zone-b-full">
+      <div style="display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-xs);">
+        
+        <span class="pd-level l1">PD L1 Overview</span>
+      </div>
+      
+
+      <div class="h-flow">
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">📥</div>
+          <div class="h-flow-node-title">Input</div>
+          <div class="h-flow-node-desc">사용자 의도 파악</div>
+        </div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">🔑</div>
+          <div class="h-flow-node-title">Key Extraction</div>
+          <div class="h-flow-node-desc">검색어 추출</div>
+        </div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">🔍</div>
+          <div class="h-flow-node-title">FTS5 Search</div>
+          <div class="h-flow-node-desc">전체 텍스트 검색</div>
+        </div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">📊</div>
+          <div class="h-flow-node-title">BM25 Ranking</div>
+          <div class="h-flow-node-desc">관련도 점수화</div>
+        </div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">📤</div>
+          <div class="h-flow-node-title">Top-K Output</div>
+          <div class="h-flow-node-desc">상위 결과 반환</div>
+        </div>
+      </div>
+
+      <ul class="slide-grammar-details">
+        <li><strong>Input</strong>: 사용자의 질문/의도를 시스템에 입력</li>
+        <li><strong>Key Extraction</strong>: 핵심 검색어 추출 (LLM 또는 규칙 기반)</li>
+        <li><strong>FTS5 Search</strong>: SQLite FTS5로 전체 텍스트 매칭</li>
+        <li><strong>BM25 Ranking</strong>: 관련도 점수로 정렬</li>
+        <li><strong>Top-K Output</strong>: 상위 K개 결과만 반환 (대게 K=5)</li>
+      </ul>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.3b [PD L2]: Memory Pipeline — FTS5 detail -->
+  <div class="slide v7 diagram-slide" id="slide-4">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B · Memory Pipeline</div>
+  <h2 class="slide-title">FTS5 상세</h2>
+</header>
+  <main class="zone-b">
+<div class="zone-b-split">
+      <div class="side-panel">
+        <div style="display: flex; align-items: center; gap: var(--space-sm);">
+          
+          <span class="pd-level l2">PD L2</span>
+        </div>
+        <div class="side-panel-title">Key Extraction</div>
+        <ul class="slide-grammar-details">
+          <li>LLM이 <strong>핵심 키워드</strong> 추출</li>
+          <li>동사 + 명사 쌍 우선</li>
+          <li>예: "프로젝트 구조 보여줘" → <code class="h-flow-node-code">project structure</code></li>
+        </ul>
+        <div class="side-panel-title">FTS5 Index</div>
+        <ul class="slide-grammar-details">
+          <li>SQLite FTS5 가상 테이블</li>
+          <li>Inverted Index 기반</li>
+          <li>전체 텍스트 매칭</li>
+          <li>Prefix, Phrase 검색 지원</li>
+        </ul>
+      </div>
+      <div class="side-panel">
+        <div class="side-panel-title">FTS5 매칭 전략</div>
+        <div class="h-flow" style="flex-direction: column; gap: var(--space-sm); max-width: 100%;">
+          <div class="h-flow-node" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
+            <div class="h-flow-node-icon">🔤</div>
+            <div>
+              <div class="h-flow-node-title">Term Matching</div>
+              <div class="h-flow-node-desc">단일 단어 매칭 (AND/OR)</div>
+            </div>
+          </div>
+          <div class="h-flow-node" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
+            <div class="h-flow-node-icon">📝</div>
+            <div>
+              <div class="h-flow-node-title">Phrase Matching</div>
+              <div class="h-flow-node-desc">구문 매칭 ("exact phrase")</div>
+            </div>
+          </div>
+          <div class="h-flow-node" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
+            <div class="h-flow-node-icon">🔎</div>
+            <div>
+              <div class="h-flow-node-title">Prefix Matching</div>
+              <div class="h-flow-node-desc">접두사 매칭 (term*)</div>
+            </div>
+          </div>
+        </div>
+        <div class="code-block">
+
+          <span class="cmt">-- FTS5 인덱싱</span>
+
+          <span class="kw">CREATE VIRTUAL TABLE</span> <span class="fn">memories_fts</span>
+
+          &nbsp;&nbsp;<span class="kw">USING fts5</span>(content, tags,
+
+          &nbsp;&nbsp;tokenize=<span class="str">"trigram"</span>);
+        
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.3c [PD L3]: Memory Pipeline — BM25 -->
+  <div class="slide v7 diagram-slide" id="slide-5">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B · Memory Pipeline</div>
+  <h2 class="slide-title">BM25 Ranking</h2>
+</header>
+  <main class="zone-b">
+<div class="zone-b-split">
+      <div class="side-panel">
+        <div style="display: flex; align-items: center; gap: var(--space-sm);">
+          
+          <span class="pd-level l3">PD L3</span>
+        </div>
+        <div class="side-panel-title">BM25 점수 공식</div>
+        <div class="code-block">
+
+          <span class="cmt"># BM25 Scoring</span>
+
+          <span class="fn">score</span>(d, q) =
+
+          &nbsp;&nbsp;<span class="kw">Σ</span> <span class="fn">IDF</span>(qi) × <span class="fn">TF</span>(qi, d)
+
+          &nbsp;&nbsp;&nbsp;&nbsp;/ (TF + k₁·(1-b+b·|d|/avgdl))
+
+
+          <span class="cmt"># 파라미터</span>
+
+          k₁ = <span class="num">1.2</span>  <span class="cmt"># TF 상한</span>
+
+          b  = <span class="num">0.75</span> <span class="cmt"># 길이 정규화</span>
+        
+        </div>
+        <ul class="slide-grammar-details">
+          <li><strong>TF</strong>: 단어 출현 빈도</li>
+          <li><strong>IDF</strong>: 희귀 단어 가중치 ↑</li>
+          <li><strong>k₁</strong>: TF saturating 파라미터</li>
+          <li><strong>b</strong>: 문서 길이 정규화 계수</li>
+        </ul>
+      </div>
+      <div class="side-panel">
+        <div class="side-panel-title">실제 쿼리 포맷</div>
+        <div class="code-block">
+
+          <span class="cmt">-- 실제 FTS5 + BM25 쿼리</span>
+
+          <span class="kw">SELECT</span> rowid, content, tags,
+
+          &nbsp;&nbsp;<span class="fn">rank</span> <span class="kw">AS</span> bm25_score
+
+          <span class="kw">FROM</span> memories_fts
+
+          <span class="kw">WHERE</span> memories_fts <span class="kw">MATCH</span>
+
+          &nbsp;&nbsp;<span class="str">"project AND structure"</span>
+
+          <span class="kw">ORDER BY</span> rank
+
+          <span class="kw">LIMIT</span> <span class="num">5</span>;
+        
+        </div>
+        <div class="side-panel-title" style="margin-top: var(--space-md);">Top-K 선택 기준</div>
+        <div class="h-flow" style="flex-direction: column; gap: var(--space-sm); max-width: 100%;">
+          <div class="h-flow-node" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
+            <div class="h-flow-node-icon">①</div>
+            <div>
+              <div class="h-flow-node-title">BM25 점수 정렬</div>
+              <div class="h-flow-node-desc">관련도 높은 순으로 DESC 정렬</div>
+            </div>
+          </div>
+          <div class="h-flow-node" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
+            <div class="h-flow-node-icon">②</div>
+            <div>
+              <div class="h-flow-node-title">최신 우선 Tie-break</div>
+              <div class="h-flow-node-desc">점수 동률 시 최근 데이터 우선</div>
+            </div>
+          </div>
+          <div class="h-flow-node" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
+            <div class="h-flow-node-icon">③</div>
+            <div>
+              <div class="h-flow-node-title">K=5 반환</div>
+              <div class="h-flow-node-desc">상위 5개만 LLM 프롬프트에 포함</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.4 [Gagne]: Memory Lifecycle (Extract→Store→Retrieve) -->
+  <div class="slide v7 diagram-slide" id="slide-6">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B · Lifecycle</div>
+  <h2 class="slide-title">Memory Lifecycle</h2>
+  <p class="slide-takeaway">Gagne 모델 적용 — 인상 → 저장 → 검색 → 활용 → 진화의 5단계 사이클</p>
+</header>
+  <main class="zone-b">
+<div class="zone-b-full">
+      
+      
+
+      <div class="lifecycle" style="margin: var(--space-lg) auto;">
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">📥</div>
+          <div class="h-flow-node-title">Extract</div>
+          <div class="h-flow-node-desc">세션에서핵심 추출</div>
+        </div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">💾</div>
+          <div class="h-flow-node-title">Store</div>
+          <div class="h-flow-node-desc">FTS5 인덱스저장</div>
+        </div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">🔍</div>
+          <div class="h-flow-node-title">Retrieve</div>
+          <div class="h-flow-node-desc">BM25 매칭검색</div>
+        </div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">⚙️</div>
+          <div class="h-flow-node-title">Apply</div>
+          <div class="h-flow-node-desc">LLM 프롬프트에문맥 삽입</div>
+        </div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node" style="border-color: var(--color-primary);">
+          <div class="h-flow-node-icon">🔄</div>
+          <div class="h-flow-node-title">Evolve</div>
+          <div class="h-flow-node-desc">노출도 기반순환적 성장</div>
+        </div>
+      </div>
+
+      <ul class="slide-grammar-details">
+        <li><strong>Extract</strong>: 세션 종료 시 LLM이 핵심 사실/선호도 추출</li>
+        <li><strong>Store</strong>: FTS5 가상 테이블에 인덱싱 저장</li>
+        <li><strong>Retrieve</strong>: 다음 세션에서 BM25로 관련 Memory 검색</li>
+        <li><strong>Apply</strong>: 검색 결과를 LLM system prompt에 문맥으로 삽입</li>
+        <li><strong>Evolve</strong>: 자주 쓰인 Memory가 높은 가중치 부여</li>
+      </ul>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.5 [Prob-Sol]: Memory Scaling (10→100→1000) -->
+  <div class="slide v7 diagram-slide" id="slide-7">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B · Scaling</div>
+  <h2 class="slide-title">Memory Scaling</h2>
+  <p class="slide-takeaway">10개는 쉬워도 1000개에서는 완전히 다른 문제 — Scaling이 핵심</p>
+</header>
+  <main class="zone-b">
+<div class="zone-b-centered">
+      
+      
+
+      <div class="scaling-bars" style="margin: var(--space-lg) auto;">
+        <div class="scale-row">
+          <div class="scale-label">10개</div>
+          <div class="scale-bar-wrap">
+            <div class="scale-bar ok" style="width: 15%;">✓ O(10)</div>
+          </div>
+        </div>
+        <div class="scale-row">
+          <div class="scale-label">100개</div>
+          <div class="scale-bar-wrap">
+            <div class="scale-bar warn" style="width: 55%;">⚠ FTS5 필요</div>
+          </div>
+        </div>
+        <div class="scale-row">
+          <div class="scale-label">1,000개</div>
+          <div class="scale-bar-wrap">
+            <div class="scale-bar bad" style="width: 95%;">✗ Tag 기반 필터링 필요</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="compare-table" style="max-width: 560px; margin: var(--space-md) auto;">
+        <div class="header">Memory 수</div>
+        <div class="header">해결 전략</div>
+        <div>~10개</div>
+        <div>전체 검색 OK (O(n) 충분)</div>
+        <div>10~100개</div>
+        <div>FTS5 + BM25 (자동 정렬)</div>
+        <div>100~1,000개</div>
+        <div>Tag 필터링 + BM25 조합</div>
+        <div>1,000개+</div>
+        <div>카테고리 기반 분할 + 캐싱</div>
+      </div>
+
+      <div class="insight-box">
+        ⚡ 100개 이상이면 FTS5 필수. 1,000개 이상이면 Tag + BM25 조합 필요.
+      </div>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.6 [PD]: Memory Management -->
+  <div class="slide v7 diagram-slide" id="slide-8">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B · Management</div>
+  <h2 class="slide-title">Memory Management</h2>
+  <p class="slide-takeaway">건강하게 성장한 Memory 시스템의 4가지 관리 전략</p>
+</header>
+  <main class="zone-b">
+<div class="zone-b-centered">
+      
+      
+
+      <div class="mm-grid" style="margin: var(--space-lg) auto;">
+        <div class="mm-card">
+          <div class="mm-icon">⚖️</div>
+          <div class="mm-text">
+            <strong>Exposure-based Weighting</strong>
+            자주 검색된 Memory는 가중치 ↑ → 높은 순위
+          </div>
+        </div>
+        <div class="mm-card">
+          <div class="mm-icon">⏱️</div>
+          <div class="mm-text">
+            <strong>TTL (Time-To-Live)</strong>
+            30일 미접근 Memory 자동 아카이브
+          </div>
+        </div>
+        <div class="mm-card">
+          <div class="mm-icon">🏷️</div>
+          <div class="mm-text">
+            <strong>Tag-based Filtering</strong>
+            도메인/프로젝트/유저별 태그로 필터
+          </div>
+        </div>
+        <div class="mm-card">
+          <div class="mm-icon">🔄</div>
+          <div class="mm-text">
+            <strong>Deduplication</strong>
+            유사 Memory 병합 + 중복 제거
+          </div>
+        </div>
+      </div>
+
+      <ul class="slide-grammar-details">
+        <li><strong>Exposure</strong>: 검색 빈도가 높은 Memory는 BM25 점수에 가중치 추가</li>
+        <li><strong>TTL</strong>: 30일 이상 미사용 Memory는 Archive로 이동 (삭제 아님)</li>
+        <li><strong>Tag Filter</strong>: <code class="h-flow-node-code">WHERE tags MATCH "python"</code>로 검색 범위 축소</li>
+        <li><strong>Dedup</strong>: 유사도 0.9 이상의 Memory 자동 병합</li>
+      </ul>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+          <div class="divider-title">Knowledge</div>
+        <div class="divider-desc">경험 저장(Memory) → 지식 구조화(Knowledge)사실에서 이해로 — 정보의 다음 차원</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B.8 [DIKW]: Knowledge Structure (Wiki T1/T2/T3) -->
+  <div class="slide v7 diagram-slide" id="slide-9">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B · Knowledge Structure</div>
+  <h2 class="slide-title">DIKW Pyramid</h2>
+</header>
+  <main class="zone-b">
+<div class="zone-b-split">
+      <div class="side-panel">
+        
+        <div class="dikiw-pyramid" style="margin-top: var(--space-md);">
+          <div class="dikw-level dikw-knowledge">
+            <span class="dikw-icon">🧠</span>Knowledge<span class="dikw-detail">이해, 관계</span>
+          </div>
+          <div class="dikw-level dikw-info">
+            <span class="dikw-icon">📋</span>Information<span class="dikw-detail">맥락, 정리</span>
+          </div>
+          <div class="dikw-level dikw-data">
+            <span class="dikw-icon">🔢</span>Data<span class="dikw-detail">원시, 사실</span>
+          </div>
+        </div>
+        <div class="insight-box" style="margin-top: var(--space-md);">
+          🔑 Data는 '무엇', Information은 '어떻게', Knowledge는 '왜'
+        </div>
+      </div>
+      <div class="side-panel">
+        <div class="slide-title v6" style="text-align: left;">Wiki T1/T2/T3 구조</div>
+        <div class="h-flow" style="flex-direction: column; gap: var(--space-sm); max-width: 100%;">
+          <div class="h-flow-node" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
+            <div class="h-flow-node-icon">📑</div>
+            <div>
+              <div class="h-flow-node-title">T1 — Topic (문서)</div>
+              <div class="h-flow-node-desc">도메인 단위 지식 문서예: "Python 프로그래밍"</div>
+            </div>
+          </div>
+          <div class="h-flow-node" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
+            <div class="h-flow-node-icon">📂</div>
+            <div>
+              <div class="h-flow-node-title">T2 — Section (섹션)</div>
+              <div class="h-flow-node-desc">주제 내 하위 카테고리예: "변수", "함수", "클래스"</div>
+            </div>
+          </div>
+          <div class="h-flow-node" style="width: 100%; flex-direction: row; justify-content: flex-start; text-align: left; min-width: unset;">
+            <div class="h-flow-node-icon">📝</div>
+            <div>
+              <div class="h-flow-node-title">T3 — Content (내용)</div>
+              <div class="h-flow-node-desc">구체적인 지식 단위예: "def keyword로 함수 정의"</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.9 [PD L1→3]: Knowledge Pipeline -->
+  <div class="slide v7 diagram-slide" id="slide-10">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B · Knowledge Pipeline</div>
+  <h2 class="slide-title">Knowledge Pipeline — M2</h2>
+  <p class="slide-takeaway">3단계 PD로 Knowledge 검색 파이프라인의 전체-상세-구현을 탐구함</p>
+</header>
+  <main class="zone-b">
+<div class="zone-b-full">
+      
+      
+
+      <!-- L1 Overview -->
+      <div style="display: flex; align-items: center; gap: var(--space-sm); margin-top: var(--space-sm);">
+        <span class="pd-level l1">L1 Overview</span>
+      </div>
+      <div class="h-flow">
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">📄</div>
+          <div class="h-flow-node-title">Content</div>
+          <div class="h-flow-node-desc">원본 문서</div>
+        </div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">✂️</div>
+          <div class="h-flow-node-title">Chunking</div>
+          <div class="h-flow-node-desc">512-token 청킹</div>
+        </div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">🔍</div>
+          <div class="h-flow-node-title">Search</div>
+          <div class="h-flow-node-desc">Topic 기반 검색</div>
+        </div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">📊</div>
+          <div class="h-flow-node-title">Summarization</div>
+          <div class="h-flow-node-desc">LLM 요약</div>
+        </div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">📤</div>
+          <div class="h-flow-node-title">Output</div>
+          <div class="h-flow-node-desc">포맷팅 반환</div>
+        </div>
+      </div>
+
+      <!-- L2 Annotated -->
+      <div style="display: flex; align-items: center; gap: var(--space-sm); margin-top: var(--space-sm);">
+        <span class="pd-level l2">L2 Annotated</span>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); max-width: 640px; width: 100%; margin: var(--space-sm) auto;">
+        <div style="padding: 10px 14px; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius-sm);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--color-teal); margin-bottom: 4px;">✂️ Chunking</div>
+          <div style="font-size: 12px; color: var(--color-muted); line-height: 1.5;">
+            - 최대 512 token
+            - 문장 경계에서 분할
+            - 50 token overlap
+            - 메타데이터 보존
+          </div>
+        </div>
+        <div style="padding: 10px 14px; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius-sm);">
+          <div style="font-size: 13px; font-weight: 700; color: var(--color-blue); margin-bottom: 4px;">📊 Summarization</div>
+          <div style="font-size: 12px; color: var(--color-muted); line-height: 1.5;">
+            - LLM 기반 요약
+            - 핵심 사실 3~5개 추출
+            - 관련도 점수 포함
+            - 프롬프트 템플릿 사용
+          </div>
+        </div>
+      </div>
+
+      <!-- L3 Implementation -->
+      <div style="display: flex; align-items: center; gap: var(--space-sm); margin-top: var(--space-sm);">
+        <span class="pd-level l3">L3 Implementation</span>
+      </div>
+      <div class="code-block">
+
+        <span class="cmt"># Chunking 알고리즘</span>
+
+        <span class="kw">def</span> <span class="fn">chunk_text</span>(text, max_tokens=<span class="num">512</span>, overlap=<span class="num">50</span>):
+
+        &nbsp;&nbsp;chunks = []
+
+        &nbsp;&nbsp;<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">0</span>, len(text), max_tokens - overlap):
+
+        &nbsp;&nbsp;&nbsp;&nbsp;chunk = text[i:i + max_tokens]
+
+        &nbsp;&nbsp;&nbsp;&nbsp;chunks.append({
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"text"</span>: chunk,
+
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="str">"meta"</span>: {<span class="str">"source"</span>: src, <span class="str">"index"</span>: len(chunks)}
+
+        &nbsp;&nbsp;&nbsp;&nbsp;})
+
+        &nbsp;&nbsp;<span class="kw">return</span> chunks
+      
+        </div>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.10 [Compare]: M vs K Decision Tree -->
+  <div class="slide v7 diagram-slide" id="slide-11">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B · Decision Tree</div>
+  <h2 class="slide-title">M vs K — Decision Tree</h2>
+  <p class="slide-takeaway">3단계 질문으로 Memory와 Knowledge 중 어떤 것을 사용할지 판단</p>
+</header>
+  <main class="zone-b">
+<div class="zone-b-centered">
+      
+      
+
+      <div class="decision-tree" style="margin: var(--space-lg) auto;">
+        <!-- Root -->
+        <div class="h-flow-node question">❓ 사용자의 요청은 무엇과 관련되는가?</div>
+        <div class="h-flow-arrow-down">↓</div>
+        <!-- Branch -->
+        <div class="dt-branch">
+          <div class="dt-branch-item">
+            <div class="dt-label">← 사용자/세션 관련</div>
+            <div class="h-flow-node" style="border-color: rgba(136,192,208,0.3); background: rgba(136,192,208,0.05);">
+              🧠 Memory 사용
+              <span style="font-size: 11px; font-weight: 400; color: var(--color-muted);">
+                "나에 대해 기억해줘"
+                "이전에 한 말 참조"
+              </span>
+            </div>
+          </div>
+          <div class="dt-branch-item">
+            <div class="dt-label">도메인 지식 →</div>
+            <div class="h-flow-node" style="border-color: rgba(180,142,173,0.3); background: rgba(180,142,173,0.05);">
+              📚 Knowledge 사용
+              <span style="font-size: 11px; font-weight: 400; color: var(--color-muted);">
+                "Python list comprehension"
+                "HTTP 상태 코드 설명"
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="h-flow-arrow-down" style="margin-top: var(--space-xs);">↓ 둘 다 필요?</div>
+        <div class="h-flow-node question" style="border-color: rgba(163,190,140,0.3); background: rgba(163,190,140,0.05);">
+          ⚡ Memory → Knowledge 조합
+          <span style="font-size: 11px; font-weight: 400; color: var(--color-muted);">
+            "내 프로젝트에 Python 최적화 조언해줘"
+            (Memory: 내 프로젝트 정보 → Knowledge: Python 지식)
+          </span>
+        </div>
+      </div>
+
+      <ul class="slide-grammar-details">
+        <li><strong>Memory 선택</strong>: 사용자 선호도, 과거 대화, 프로젝트 컨텍스트</li>
+        <li><strong>Knowledge 선택</strong>: 도메인 지식, 기술 레퍼런스, 객관적 사실</li>
+        <li><strong>조합</strong>: Memory(문맥) + Knowledge(지식) = 최적 응답</li>
+      </ul>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.11 [DIKW]: Memory→Knowledge Transition -->
+  <div class="slide v7 diagram-slide" id="slide-12">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B · Transition</div>
+  <h2 class="slide-title">Memory → Knowledge 전이</h2>
+  <p class="slide-takeaway">반복된 경험은 지식으로 승격 — Memory에서 Knowledge로 자연스럽게 진화</p>
+</header>
+  <main class="zone-b">
+<div class="zone-b-full">
+      
+      
+
+      <div class="transition-flow" style="margin: var(--space-lg) auto;">
+        <div class="tf-node">
+          <div class="tf-node-title">🧠 Memory</div>
+          <div class="tf-node-desc">단일 경험</div>
+        </div>
+        <div class="tf-arrow">→</div>
+        <div class="tf-node">
+          <div class="tf-node-title">🔁 패턴 인식</div>
+          <div class="tf-node-desc">10+ 회 반복</div>
+        </div>
+        <div class="tf-arrow">→</div>
+        <div class="tf-node">
+          <div class="tf-node-title">🤖 LLM 분석</div>
+          <div class="tf-node-desc">패턴 일반화</div>
+        </div>
+        <div class="tf-arrow">→</div>
+        <div class="tf-node tf-highlight">
+          <div class="tf-node-title">📝 Knowledge</div>
+          <div class="tf-node-desc">Wiki에 승격</div>
+        </div>
+        <div class="tf-arrow">→</div>
+        <div class="tf-node" style="border-color: var(--color-success);">
+          <div class="tf-node-title">✅ 구조화된 지식</div>
+          <div class="tf-node-desc">재사용 가능</div>
+        </div>
+      </div>
+
+      <div class="example-box" style="margin: var(--space-md) auto;">
+        <strong>예시:</strong> Memory에서 "Python 가상환경 설정이 15회 반복" →
+        LLM이 패턴을 추출 → Wiki T1: "Python 환경 설정 가이드" 생성 →
+        Knowledge로 승격. 다음부터는 Memory가 아닌 Knowledge에서 검색.
+      </div>
+
+      <ul class="slide-grammar-details">
+        <li><strong>트리거</strong>: 동일한 Memory가 10회 이상 검색되면 전이 후보</li>
+        <li><strong>분석</strong>: LLM이 반복 패턴을 일반화한 Knowledge 생성</li>
+        <li><strong>승격</strong>: Memory는 원본 유지, Knowledge에 Wiki 문서 추가</li>
+        <li><strong>효과</strong>: Knowledge 검색이 Memory 검색보다 더 정확하고 빠름</li>
+      </ul>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.12 Divider: ⚡ Knowledge → Skills [GLASS] -->
+  <div class="slide v7 section-divider" id="slide-13">
+<header class="zone-a">
+</header>
+  <main class="zone-b">
+<div class="glass-divider">
+      <div class="section-divider-content">
+        <div class="divider-label">⚡ 실행 계층</div>
+        <div class="divider-title">Knowledge → Skills</div>
+        <div class="divider-desc">아는 것 ≠ 실행하는 것지식을 절차로 변환하는 마지막 단계</div>
+      </div>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.13 [Feynman]: Skills: 아는 것 ≠ 실행하는 것 -->
+  <div class="slide v7 diagram-slide" id="slide-14">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B · Skills</div>
+  <h2 class="slide-title">Skills: 아는 것 ≠ 실행하는 것</h2>
+  <p class="slide-takeaway">Feynman 원리 — 설명할 수 있다면 실행할 수 있어야 한다</p>
+</header>
+  <main class="zone-b">
+<div class="zone-b-centered">
+      
+      
+
+      <div class="comparison-block" style="max-width: 560px; margin: var(--space-lg) auto;">
+        <div class="comparison-col">
+          <div class="comparison-col-title bad">✗ Knowledge만 있는 경우</div>
+          <div class="comparison-row"><span class="cross">✗</span> 이론만 알고 실행 못 함</div>
+          <div class="comparison-row"><span class="cross">✗</span> 매번 prompt 새로 작성</div>
+          <div class="comparison-row"><span class="cross">✗</span> 결과 품질 일관성 없음</div>
+          <div class="comparison-row"><span class="cross">✗</span> 복잡한 작업은 실패</div>
+        </div>
+        <div class="comparison-col">
+          <div class="comparison-col-title good">✓ Skills가 있는 경우</div>
+          <div class="comparison-row"><span class="check">✓</span> 절차화된 실행 모듈</div>
+          <div class="comparison-row"><span class="check">✓</span> Skill 정의로 재사용</div>
+          <div class="comparison-row"><span class="check">✓</span> 일관된 결과 품질</div>
+          <div class="comparison-row"><span class="check">✓</span> 복잡한 작업도 체계적</div>
+        </div>
+      </div>
+
+      <div class="insight-box" style="margin-top: var(--space-md);">
+        💡 Feynman: "지식의 척도는 그 지식을 실행으로 옮길 수 있는 능력이다" — Skills Layer는 이 격차를 해결
+      </div>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.14 [Gagne]: Skills Pipeline -->
+  <div class="slide v7 diagram-slide" id="slide-15">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B · Skills Pipeline</div>
+  <h2 class="slide-title">Skills Pipeline — M3</h2>
+  <p class="slide-takeaway">6단계: Skill 탐지에서 결과 반환까지의 실행 파이프라인</p>
+</header>
+  <main class="zone-b">
+<div class="zone-b-full">
+      
+      
+
+      <div class="h-flow" style="margin: var(--space-lg) auto;">
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">📥</div>
+          <div class="h-flow-node-title">Input</div>
+          <div class="h-flow-node-desc">요청 수신</div>
+        </div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">🎯</div>
+          <div class="h-flow-node-title">Skill Match</div>
+          <div class="h-flow-node-desc">해당 Skill 탐지</div>
+        </div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">✅</div>
+          <div class="h-flow-node-title">Condition</div>
+          <div class="h-flow-node-desc">실행 조건 확인</div>
+        </div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node" style="border-color: var(--color-primary); background: rgba(136,192,208,0.05);">
+          <div class="h-flow-node-icon">⚙️</div>
+          <div class="h-flow-node-title">Subprocess</div>
+          <div class="h-flow-node-desc">외부 실행</div>
+        </div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node">
+          <div class="h-flow-node-icon">🔧</div>
+          <div class="h-flow-node-title">Parsing</div>
+          <div class="h-flow-node-desc">결과 구조화</div>
+        </div>
+        <div class="h-flow-arrow">→</div>
+        <div class="h-flow-node" style="border-color: var(--color-success);">
+          <div class="h-flow-node-icon">📤</div>
+          <div class="h-flow-node-title">Result</div>
+          <div class="h-flow-node-desc">최종 반환</div>
+        </div>
+      </div>
+
+      <ul class="slide-grammar-details">
+        <li><strong>Skill Match</strong>: LLM이 요청을 Skill catalog과 매칭</li>
+        <li><strong>Condition</strong>: Skill 실행 전 환경/권한/의존성 확인</li>
+        <li><strong>Subprocess</strong>: 실제 실행 — Python, Shell, CLI 등</li>
+        <li><strong>Parsing</strong>: raw stdout/stderr → 구조화된 JSON</li>
+        <li><strong>Result</strong>: 파싱된 결과를 LLM 프롬프트로 반환</li>
+      </ul>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.15 [Pyramid]: Skill Structure — Pyramid Principle -->
+  <div class="slide v7 diagram-slide" id="slide-16">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B · Skill Structure</div>
+  <h2 class="slide-title">Skill 구조 — Pyramid Principle</h2>
+  <p class="slide-takeaway">결론 먼저: Skill은 정의(Definition) → 조건(Condition) → 실행(Steps) → 결과(Output)의 4단계 계층</p>
+</header>
+  <main class="zone-b">
+<div class="zone-b-split">
+      <div class="side-panel">
+        
+        
+        <div class="pyramid" style="margin-top: var(--space-md);">
+          <div class="pyramid-level pyramid-top">
+            <span class="py-icon">📋</span>
+            Definition
+            <span class="py-detail">Skill의 정체성</span>
+            <span class="py-code">name, description</span>
+          </div>
+          <div class="pyramid-level pyramid-2">
+            <span class="py-icon">✅</span>
+            Condition
+            <span class="py-detail">실행 전제 조건</span>
+            <span class="py-code">when: trigger, guard</span>
+          </div>
+          <div class="pyramid-level pyramid-3">
+            <span class="py-icon">⚙️</span>
+            Steps
+            <span class="py-detail">실행 절차</span>
+            <span class="py-code">steps: [action, cmd, parse]</span>
+          </div>
+          <div class="pyramid-level pyramid-4">
+            <span class="py-icon">📤</span>
+            Output
+            <span class="py-detail">결과 포맷</span>
+            <span class="py-code">format: json, text, raw</span>
+          </div>
+          <div class="pyramid-support">
+            ▸ 하위 단계 없으면 상위 단계 작동 불가 — bottom-up dependency
+          </div>
+        </div>
+      </div>
+      <div class="side-panel">
+        <div class="side-panel-title">4단계 구조</div>
+        <ul class="slide-grammar-details">
+          <li><strong>Definition</strong>: Skill의 고유식별 — name + description (catalog.json)</li>
+          <li><strong>Condition</strong>: 언제 실행할지 — trigger pattern + guard check</li>
+          <li><strong>Steps</strong>: 어떻게 실행할지 — action sequence (cmd/parse/handler)</li>
+          <li><strong>Output</strong>: 결과 반환 형태 — structured → LLM 프롬프트로</li>
+        </ul>
+        <div class="insight-box" style="margin-top: var(--space-md);">
+          💡 Skills = Knowledge의 실행화 — 아는 것(Knowledge)이 아닌, 실행하는 구조(Skills)
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.16 [PD]: Skill Mechanism — Matching & Execution -->
+  <div class="slide v7 diagram-slide" id="slide-17">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B · Skill Mechanism</div>
+  <h2 class="slide-title">Skill Matching</h2>
+</header>
+  <main class="zone-b">
+<div class="zone-b-split">
+      <div class="side-panel">
+        
+        <div style="display:flex; gap: var(--space-sm); margin-bottom: var(--space-xs);">
+          <span class="badge-sm" style="background:rgba(136,192,208,0.12); color:var(--color-primary); border:1px solid rgba(136,192,208,0.25);">PD L2</span>
+        </div>
+        <div class="side-panel-title">3단계 매칭</div>
+        <div class="ic-flow" style="margin-bottom: var(--space-sm);">
+          <div class="ic-flow-node">🔍 Intent</div>
+          <div class="ic-flow-arrow">→</div>
+          <div class="ic-flow-node">📖 Catalog</div>
+          <div class="ic-flow-arrow">→</div>
+          <div class="ic-flow-node" style="border-color:rgba(163,190,140,0.3);">✅ Guard</div>
+        </div>
+        <ul class="slide-grammar-details">
+          <li>LLM이 <strong>사용자 의도</strong> 분석</li>
+          <li><code>catalog.json</code>에서 패턴 매칭</li>
+          <li>Condition guard check 통과 시 실행</li>
+        </ul>
+        <div class="side-panel-title">실행 컨텍스트</div>
+        <ul class="slide-grammar-details">
+          <li>Memory context 주입</li>
+          <li>Knowledge reference 연결</li>
+          <li>Subprocess → stdout → parse</li>
+        </ul>
+      </div>
+      <div class="side-panel">
+        <div class="side-panel-title">실제 예시: lint skill</div>
+        <div class="code-block">
+<span class="cmt"># catalog.json — skill 정의</span>
+{
+  <span class="str">"name"</span>: <span class="str">"lint"</span>,
+  <span class="str">"description"</span>: <span class="str">"Code linting"</span>,
+  <span class="str">"trigger"</span>: <span class="str">"lint|format|check"</span>,
+  <span class="str">"condition"</span>: {
+    <span class="str">"file_exists"</span>: <span class="kw">true</span>,
+    <span class="str">"tool"</span>: <span class="str">"ruff|flake8"</span>
+  },
+  <span class="str">"steps"</span>: [
+    { <span class="str">"cmd"</span>: <span class="str">"ruff check {file}"</span> },
+    { <span class="str">"parse"</span>: <span class="str">"json"</span> }
+  ]
+}
+        </div>
+        <div class="side-panel-title" style="margin-top: var(--space-md);">실행 결과</div>
+        <div class="code-block">
+<span class="cmt"># → stdout parsing → structured JSON</span>
+{
+  <span class="str">"status"</span>: <span class="str">"completed"</span>,
+  <span class="str">"errors"</span>: <span class="num">3</span>,
+  <span class="str">"warnings"</span>: <span class="num">1</span>
+}
+        </div>
+        <div class="insight-box" style="margin-top: var(--space-sm);">
+          🔗 M3 Pipeline 연결: Skill Match → Condition → Subprocess → Parsing → Result
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.17 [Apply]: Examples -->
+  <div class="slide v7 example-slide" id="slide-18">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B · Examples</div>
+  <h2 class="slide-title">실제 사용 예시</h2>
+  <p class="slide-takeaway">Memory, Knowledge, Skills — 각 계층의 실제 활용 시나리오</p>
+</header>
+  <main class="zone-b">
+<div class="zone-b-centered">
+      
+      
+
+      <div class="example-grid" style="margin: var(--space-lg) auto;">
+        <div class="example-card" style="border-color: rgba(136,192,208,0.2);">
+          <div class="example-card-title">🧠 Memory</div>
+          <div class="example-card-body">
+            <strong>요청:</strong> "내 코드 스타일에 맞춰줘"
+
+            <strong>동작:</strong> Memory에서 "사용자 → PEP8 준수, snake_case 선호" 검색 → 프롬프트에 문맥 삽입
+          </div>
+        </div>
+        <div class="example-card" style="border-color: rgba(180,142,173,0.2);">
+          <div class="example-card-title">📚 Knowledge</div>
+          <div class="example-card-body">
+            <strong>요청:</strong> "list comprehension 설명해줘"
+
+            <strong>동작:</strong> Wiki T1 "Python" → T2 "문법" → T3 "list comprehension" 검색 → 요약 반환
+          </div>
+        </div>
+        <div class="example-card" style="border-color: rgba(163,190,140,0.2);">
+          <div class="example-card-title">⚡ Skills</div>
+          <div class="example-card-body">
+            <strong>요청:</strong> "이 파일 lint 해줘"
+
+            <strong>동작:</strong> Skill "lint" 매칭 → ruff 실행 → stdout parsing → 결과 포맷 반환
+          </div>
+        </div>
+        <div class="example-card" style="border-color: rgba(136,192,208,0.2);">
+          <div class="example-card-title">⚡ 조합</div>
+          <div class="example-card-body">
+            <strong>요청:</strong> "내 프로젝트에 최적화 조언해줘"
+
+            <strong>동작:</strong> Memory(프로젝트 정보) + Knowledge(최적화 지식) + Skill(benchmark 실행)
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.18 [Summary]: 3 Large Number Cards -->
+  <div class="slide v7 summary-slide" id="slide-19">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B · Summary</div>
+  <h2 class="slide-title">핵심 3가지</h2>
+  <p class="slide-takeaway">Lecture B를 숫자로 요약하면?</p>
+</header>
+  <main class="zone-b">
+<div class="zone-b-centered">
+      
+      
+
+      <div class="summary-cards" style="margin: var(--space-lg) auto;">
+        <div class="summary-card">
+          <div class="summary-card-number">3</div>
+          <div class="summary-card-label">계층</div>
+          <div class="summary-card-desc">Memory (경험) →Knowledge (이해) →Skills (실행)</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-number">2</div>
+          <div class="summary-card-label">Pipeline</div>
+          <div class="summary-card-desc">M1: FTS5 + BM25M2: Chunking + SummarizationM3: Skill → Subprocess</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-number">5</div>
+          <div class="summary-card-label">PD 단계</div>
+          <div class="summary-card-desc">L1 Overview →L2 Annotated →L3 Implementation</div>
+        </div>
+      </div>
+
+      <div class="key-message" style="margin-top: var(--space-sm);">
+        Memory ≠ Knowledge ≠ Skills — 각 계층이 고유한 가치를 지님
+      </div>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+  <!-- B.19 [Q&A]: 빈 Q&A -->
+  <div class="slide v7 summary-slide" id="slide-20">
+<header class="zone-a">
+  <div class="lecture-badge">Lecture B · Q&A</div>
+</header>
+  <main class="zone-b">
+<div class="zone-b-centered">
+      <div class="qa-prompt">질문이 있으신가요?</div>
+      <div class="qa-next">
+        🔜 다음 강의: <strong>Lecture C</strong> — Skills &amp; Workflow
+      </div>
+    </div>
+  </main>
+  <footer class="zone-c">
+  </footer>
+</div>
+
+</div>
+
+<!-- Section Progress (fixed, outside deck) -->
+<div class="section-progress" id="sectionProgress">
+  <span class="sec active" data-section="1">① Memory</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future" data-section="2">② Knowledge</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future" data-section="3">③ Skills</span>
+  <span class="sec-arrow">→</span>
+  <span class="sec future" data-section="4">④ Summary</span>
+</div>
+
+<!-- Navigation -->
+<div class="nav" id="nav"></div>
+<div class="slide-counter v6" id="slideCounter"></div>
+
+<script>
+  // Navigation
+  const deck = document.getElementById('deck');
+  const slides = deck.querySelectorAll('.slide');
+  const nav = document.getElementById('nav');
+  const counter = document.getElementById('slideCounter');
+  const progressBar = document.getElementById('progressBar');
+  const notesToggle = document.getElementById('notesToggle');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesContent = document.getElementById('notesContent');
+
+  // Build nav dots
+  slides.forEach((_, i) => {
+    const a = document.createElement('a');
+    a.href = `#slide-${i}`;
+    a.dataset.index = i;
+    nav.appendChild(a);
+  });
+
+  // Section progress hide types
+  const hideSectionTypes = ['hero-slide', 'section-divider', 'summary-slide'];
+
+  // Update on scroll
+  function update() {
+    const scrollLeft = deck.scrollLeft;
+    const vw = window.innerWidth;
+    const current = Math.round(scrollLeft / vw);
+    const progress = ((scrollLeft / (deck.scrollWidth - vw)) * 100).toFixed(0);
+
+    document.querySelectorAll('.nav a').forEach((a, i) => {
+      a.classList.toggle('active', i === current);
+    });
+
+    counter.textContent = `${current + 1} / ${slides.length}`;
+    progressBar.style.width = `${progress}%`;
+
+    // Speaker notes
+    const currentSlide = slides[current];
+    if (currentSlide) {
+      notesContent.textContent = currentSlide.dataset.notes || '';
+    }
+
+    // Section progress bar — update sections
+    // Section mapping:
+    // 0-1: none (cover, goal)
+    // 2-8: ① Memory (slides B.2~B.6, index 2-8)
+    // 9-12: ② Knowledge (slides B.8~B.11, index 9-12)
+    // 13: divider (B.12, Knowledge→Skills)
+    // 14-18: ③ Skills (slides B.13~B.18, index 14-18)
+    // 19-20: ④ Summary (slides B.19~B.20, index 19-20)
+    const sectionProgress = document.getElementById('sectionProgress');
+    const secs = sectionProgress.querySelectorAll('.sec');
+
+    if (current <= 1) {
+      secs[0].className = 'sec active';
+      secs[1].className = 'sec future';
+      secs[2].className = 'sec future';
+      secs[3].className = 'sec future';
+    } else if (current <= 8) {
+      secs[0].className = 'sec active';
+      secs[1].className = 'sec future';
+      secs[2].className = 'sec future';
+      secs[3].className = 'sec future';
+    } else if (current <= 12) {
+      secs[0].className = 'sec done';
+      secs[1].className = 'sec active';
+      secs[2].className = 'sec future';
+      secs[3].className = 'sec future';
+    } else if (current <= 18) {
+      secs[0].className = 'sec done';
+      secs[1].className = 'sec done';
+      secs[2].className = 'sec active';
+      secs[3].className = 'sec future';
+    } else {
+      secs[0].className = 'sec done';
+      secs[1].className = 'sec done';
+      secs[2].className = 'sec done';
+      secs[3].className = 'sec active';
+    }
+
+    // Hide section progress on certain slide types
+    if (currentSlide && hideSectionTypes.some(t => currentSlide.classList.contains(t))) {
+      sectionProgress.style.display = 'none';
+    } else {
+      sectionProgress.style.display = 'flex';
+    }
+  }
+
+  deck.addEventListener('scroll', update);
+  window.addEventListener('resize', update);
+  update();
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    const vw = window.innerWidth;
+    const isArrow = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(e.key);
+    if (isArrow) e.preventDefault();
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      const target = deck.scrollLeft + vw;
+      deck.scrollTo({ left: target, behavior: 'smooth' });
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      const target = deck.scrollLeft - vw;
+      deck.scrollTo({ left: target, behavior: 'smooth' });
+    }
+  });
+
+  // Notes toggle
+  notesToggle.addEventListener('click', () => {
+    notesPanel.classList.toggle('visible');
+  });
+
+  // Nav click
+  document.querySelectorAll('.nav a').forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const idx = parseInt(a.dataset.index);
+      deck.scrollTo({ left: idx * window.innerWidth, behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>

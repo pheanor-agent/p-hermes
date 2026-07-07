@@ -1,16 +1,71 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>p-hermes 슬라이드 강의</title></head><body>
-<h1>p-hermes 슬라이드</h1>
-<div class="version"><h3>v5 latest - 슬라이드 재구성</h3>
-<p>2026-07-06 - 3분할 구조, .h-flow 수정</p>
-<p><a href="v5/lecture-a-why-agent-os.html">Lecture A</a>
-<a href="v5/lecture-b-memory-knowledge.html">Lecture B</a>
-<a href="v5/lecture-c-architecture-runtime.html">Lecture C</a></p></div>
-<div class="version"><h3>v4 - 기존 구조</h3>
-<p><a href="v4/lecture-a-why-agent-os.html">Lecture A</a>
-<a href="v4/lecture-b-memory-knowledge.html">Lecture B</a>
-<a href="v4/lecture-c-architecture-runtime.html">Lecture C</a></p></div>
+<head>
+<meta charset="UTF-8">
+<title>p-hermes slide</title>
+<style>
+  body { font-family: sans-serif; background: #2e3440; color: #eceff4;
+         max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+  h1 { font-size: 2rem; font-weight: 800; border-bottom: 2px solid #88c0d0;
+       padding-bottom: 1rem; }
+  .desc { font-size: 0.9rem; color: #616e88; margin-bottom: 2rem; }
+  .version { background: #3b4252; border: 1px solid #4c566a;
+             border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+  .version.current { border-color: #88c0d0; box-shadow: 0 0 12px rgba(136,192,208,0.15); }
+  .version h3 { font-size: 1.1rem; font-weight: 700; color: #88c0d0; margin: 0 0 0.3rem; }
+  .version .meta { font-size: 0.8rem; color: #616e88; margin-bottom: 0.5rem; }
+  .version .summary { font-size: 0.85rem; color: #d8dee9; margin-bottom: 0.75rem; }
+  .lectures { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+  .lectures a { display: block; padding: 0.6rem; background: #434c5e;
+                border: 1px solid #4c566a; border-radius: 8px; color: #eceff4;
+                text-decoration: none; text-align: center; font-size: 0.85rem; }
+  .lectures a:hover { border-color: #88c0d0; background: rgba(136,192,208,0.08); }
+  .lectures .count { font-size: 0.7rem; color: #616e88; display: block; margin-top: 0.2rem; }
+  .archive { margin-top: 1.5rem; padding: 1rem; background: rgba(59,66,82,0.5);
+             border-radius: 12px; border: 1px solid #4c566a; }
+  .archive h3 { color: #616e88; font-size: 0.95rem; }
+  .archive a { color: #88c0d0; text-decoration: none; font-size: 0.85rem; }
+</style></head>
+<body>
+<h1>p-hermes slide</h1>
+<p class="desc">Lecture A: Agent OS | Lecture B: Memory and Knowledge | Lecture C: Architecture</p>
+<div class="version current">
+  <h3>v7 - Zone System (current)</h3>
+  <div class="meta">2026-07-07 | JOB-2104</div>
+  <div class="summary">Zone System (Zone-A/B/C), dark theme redesign</div>
+  <div class="lectures">
+    <a href="v7/lecture-a-why-agent-os.html">Lecture A<span class="count">13, SCQA</span></a>
+    <a href="v7/lecture-b-memory-knowledge.html">Lecture B<span class="count">21, Progressive</span></a>
+    <a href="v7/lecture-c-architecture-runtime.html">Lecture C<span class="count">16, Pyramid</span></a>
+  </div>
+</div>
+<div class="version">
+  <h3>v5 - slide reorg</h3>
+  <div class="meta">2026-07-06 | JOB-2096</div>
+  <div class="summary">3-split, .h-flow fix, components separation</div>
+  <div class="lectures">
+    <a href="v5/lecture-a-why-agent-os.html">Lecture A<span class="count">13</span></a>
+    <a href="v5/lecture-b-memory-knowledge.html">Lecture B<span class="count">21</span></a>
+    <a href="v5/lecture-c-architecture-runtime.html">Lecture C<span class="count">16</span></a>
+  </div>
+</div>
+<div class="version">
+  <h3>v4 - Slide Design System</h3>
+  <div class="meta">2026-07-05 | JOB-2058</div>
+  <div class="summary">Nord theme, Slide Taxonomy/Grammar/Diagram Rules</div>
+  <div class="lectures">
+    <a href="v4/lecture-a-why-agent-os.html">Lecture A<span class="count">15</span></a>
+    <a href="v4/lecture-b-memory-knowledge.html">Lecture B<span class="count">20</span></a>
+    <a href="v4/lecture-c-architecture-runtime.html">Lecture C<span class="count">20</span></a>
+  </div>
+</div>
+<div class="archive">
+  <h3>Archive</h3>
+  <ul>
+    <li><a href="archive/v1.9/">v1.9 - 6 Gold+Dark</a> (2026-06-29)</li>
+    <li><a href="archive/v1.8/">v1.8 - early</a></li>
+    <li><a href="archive/v1.1/">v1.1 - expansion</a></li>
+    <li><a href="archive/v1.0/">v1.0 - draft</a></li>
+  </ul>
+</div>
 </body></html>

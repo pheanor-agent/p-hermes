@@ -1,0 +1,1338 @@
+/* ============================================================
+   slides-components-v6.css — p-hermes Slide Component Library v6
+   Spatial Design System + 3-Layout Core + Height Budget
+
+   Based on design-v5.md (§7 Layout Grid, §8.5 Spatial System,
+   §11 HTML Contract, §12 Height Budget).
+
+   Key upgrades from v5:
+   1. 3-Layout Core: .layout-centered / .layout-main-aside (7fr 3fr) / .layout-diagram
+   2. overflow:hidden on .slide (v5 used overflow-y:auto)
+   3. .h-flow standardisation — single unified class replaces 6 custom pipeline classes
+   4. .aside-panel — new supporting panel
+   5. Height Budget: Header 120 / Body 760 / Footer 60
+   6. Width Tier system: narrow / medium / wide / full
+   7. Density system: sparse / balanced / dense
+   8. Spatial System: Visual Center, Whitespace Budget, Component Size Tokens
+
+   Design tokens from v5 (CSS vars) are reused — no redefinition needed.
+   Load AFTER slides-components-v5.css in the HTML <head>.
+   ============================================================ */
+
+/* ──────────────────────────────────────────────
+   0. VERSION BADGE — ink stamp for debugging
+   ────────────────────────────────────────────── */
+
+
+
+/* ──────────────────────────────────────────────
+   1. SLIDE OVERRIDE — overflow:hidden
+   Replaces v5's overflow-y:auto on .slide.
+   v6 slides clip content; if content exceeds the
+   Height Budget the Validator catches it.
+   ────────────────────────────────────────────── */
+
+.slide.v6 {
+  overflow: hidden;           /* v6: clip instead of scroll */
+  padding: 0;                 /* padding delegated to header/body/footer */
+}
+
+/* ──────────────────────────────────────────────
+   2. HEIGHT BUDGET — Header 120 / Body 760 / Footer 60
+   See design-v5.md §12.1 Budget Breakdown
+   ────────────────────────────────────────────── */
+
+.slide.v6 {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  gap: 0;                     /* gaps handled by internal padding/margins */
+}
+
+.v6 .slide-header {
+  flex: 0 0 120px;            /* Header budget: 120px */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 40px 0;
+  gap: 4px;
+  min-height: 0;              /* allow flex shrink if needed (should not) */
+}
+
+.v6 .slide-body {
+  flex: 0 0 760px;            /* Body budget: 760px */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 40px;
+  gap: var(--space-md, 16px);
+  min-height: 0;
+  overflow: hidden;           /* body-level clip */
+}
+
+.v6 .slide-footer {
+  flex: 0 0 60px;             /* Footer budget: 60px */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  font-size: var(--text-caption, 14px);
+  color: var(--color-muted, #616e88);
+  border-top: 1px solid var(--color-border, #4c566a);
+}
+
+/* ═══════════════════════════════════════════════
+   3. 3-LAYOUT CORE — v6
+   ───────────────────────────────────────────────
+   Replaces v5's 4-layout core (.layout-full-bleed dropped).
+   Every slide uses one of these 3 layout containers
+   inside .slide-body.
+
+   - .layout-centered    : flex column, centered, max-width narrow
+   - .layout-main-aside  : grid 7fr / 3fr (main + aside panel)
+   - .layout-diagram     : flex column, full diagram space
+   ═══════════════════════════════════════════════ */
+
+.v6 .layout-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md, 16px);
+  width: 100%;
+  max-width: 720px;           /* Narrow width tier default */
+  margin: 0 auto;
+  text-align: center;
+}
+
+.v6 .layout-main-aside {
+  display: grid;
+  grid-template-columns: 7fr 3fr;
+  gap: var(--space-lg, 24px);
+  width: 100%;
+  max-width: 1600px;          /* Wide width tier */
+  margin: 0 auto;
+  align-items: start;
+}
+
+.v6 .layout-diagram {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md, 16px);
+  width: 100%;
+  max-width: 1600px;          /* Wide width tier */
+  margin: 0 auto;
+}
+
+/* ──────────────────────────────────────────────
+   3a. ASIDE PANEL — new in v6
+   Supporting content panel for .layout-main-aside.
+   Placed in the 3fr column.
+   ────────────────────────────────────────────── */
+
+.v6 .aside-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm, 8px);
+  padding: var(--space-md, 16px);
+  background: var(--color-card, #434c5e);
+  border: 1px solid var(--color-border, #4c566a);
+  border-radius: var(--radius-md, 12px);
+  font-size: var(--text-caption, 14px);
+  color: var(--color-muted, #616e88);
+  line-height: 1.5;
+}
+
+.v6 .aside-panel-title {
+  font-size: var(--text-body, 16px);
+  font-weight: 700;
+  color: var(--color-heading, #eceff4);
+  margin-bottom: var(--space-xs, 4px);
+}
+
+.v6 .aside-panel-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs, 4px);
+  padding: var(--space-xs, 4px) 0;
+  border-bottom: 1px solid rgba(76, 86, 106, 0.3);
+}
+
+.v6 .aside-panel-item:last-child {
+  border-bottom: none;
+}
+
+.v6 .aside-panel-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--color-primary, #88c0d0);
+}
+
+/* ═══════════════════════════════════════════════
+   4. H-FLOW STANDARDISATION — v6
+   ───────────────────────────────────────────────
+   Single unified .h-flow replaces the 6+ custom
+   pipeline/flow classes from v5:
+     .mech-pipeline, .mech-arrow-flow, .flow.h-flow,
+     .h-flow (v5), .pipeline, .workflow
+
+   Usage: <div class="h-flow">...</div>
+   Steps/nodes use .h-flow-node, arrows use .h-flow-arrow.
+   ═══════════════════════════════════════════════ */
+
+.v6 .h-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;                     /* nodes touch at borders */
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.v6 .h-flow-node {
+  padding: 10px 20px;
+  background: var(--color-card, #434c5e);
+  border: 1px solid var(--color-border, #4c566a);
+  font-size: var(--text-body, 16px);
+  font-weight: 500;
+  color: var(--color-text, #d8dee9);
+  text-align: center;
+  white-space: nowrap;
+  transition: var(--transition, 300ms ease);
+}
+
+/* Connected node styling: first/last radius, no double borders */
+.v6 .h-flow-node:first-child {
+  border-radius: var(--radius-md, 12px) 0 0 var(--radius-md, 12px);
+}
+
+.v6 .h-flow-node:last-child {
+  border-radius: 0 var(--radius-md, 12px) var(--radius-md, 12px) 0;
+}
+
+.v6 .h-flow-node + .h-flow-node {
+  border-left: none;
+}
+
+.v6 .h-flow-node.active {
+  background: rgba(136, 192, 208, 0.12);
+  border-color: var(--color-primary, #88c0d0);
+  color: var(--color-primary, #88c0d0);
+  font-weight: 700;
+}
+
+.v6 .h-flow-node.done {
+  opacity: 0.6;
+}
+
+.v6 .h-flow-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary, #88c0d0);
+  font-size: 18px;
+  font-weight: 700;
+  min-width: 1.2em;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Arrow content via pseudo-element (keeps HTML clean) */
+.v6 .h-flow-arrow:empty::before {
+  content: "→";
+}
+
+.v6 .h-flow-label {
+  font-size: var(--text-caption, 14px);
+  color: var(--color-muted, #616e88);
+  text-align: center;
+  width: 100%;
+  margin-top: var(--space-xs, 4px);
+}
+
+/* Vertical variant */
+.v6 .h-flow.v-flow {
+  flex-direction: column;
+  gap: var(--space-xs, 4px);
+}
+
+.v6 .h-flow.v-flow .h-flow-node {
+  border-radius: var(--radius-md, 12px);
+  width: 100%;
+}
+
+.v6 .h-flow.v-flow .h-flow-node + .h-flow-node {
+  border-left: 1px solid var(--color-border, #4c566a);
+  border-top: none;
+}
+
+.v6 .h-flow.v-flow .h-flow-arrow:empty::before {
+  content: "\2193";
+}
+
+/* ═══════════════════════════════════════════════
+   5. WIDTH TIER SYSTEM — v6
+   ───────────────────────────────────────────────
+   See design-v5.md §8.5.1 Width Tier.
+   Applied to the layout container (or .slide-body).
+
+   - .width-narrow  : 720~900px   → Definition, Quote
+   - .width-medium  : 1000~1200px → general slides
+   - .width-wide    : 1400~1600px → Diagram, Main-Aside
+   - .width-full    : 1760px      → Hero, Full Bleed
+   ═══════════════════════════════════════════════ */
+
+.v6 .width-narrow {
+  max-width: 720px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.v6 .width-medium {
+  max-width: 1000px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.v6 .width-wide {
+  max-width: 1400px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.v6 .width-full {
+  max-width: 1760px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ═══════════════════════════════════════════════
+   6. DENSITY SYSTEM — v6
+   ───────────────────────────────────────────────
+   See design-v5.md §8.5.2 Density Spec.
+   Controls vertical/horizontal spacing within a layout.
+
+   - .density-sparse    : 50%+ whitespace → Hero, Divider
+   - .density-balanced  : 35-50% whitespace → general explanation
+   - .dense             : 20-35% whitespace → Reference, Comparison
+   ═══════════════════════════════════════════════ */
+
+.v6 .density-sparse {
+  gap: var(--space-xl, 32px);
+  padding-top: var(--space-2xl, 48px);
+  padding-bottom: var(--space-2xl, 48px);
+}
+
+.v6 .density-sparse > * {
+  margin-bottom: var(--space-lg, 24px);
+}
+
+.v6 .density-sparse > *:last-child {
+  margin-bottom: 0;
+}
+
+.v6 .density-balanced {
+  gap: var(--space-md, 16px);
+  padding-top: var(--space-lg, 24px);
+  padding-bottom: var(--space-lg, 24px);
+}
+
+.v6 .density-balanced > * {
+  margin-bottom: var(--space-sm, 8px);
+}
+
+.v6 .density-balanced > *:last-child {
+  margin-bottom: 0;
+}
+
+.v6 .dense {
+  gap: var(--space-xs, 4px);
+  padding-top: var(--space-sm, 8px);
+  padding-bottom: var(--space-sm, 8px);
+}
+
+.v6 .dense > * {
+  margin-bottom: var(--space-xs, 4px);
+}
+
+.v6 .dense > *:last-child {
+  margin-bottom: 0;
+}
+
+/* ═══════════════════════════════════════════════
+   7. SPATIAL SYSTEM — v6
+   ───────────────────────────────────────────────
+   See design-v5.md §8.5.3–§8.5.7.
+   Visual Center, Whitespace Budget, Component Size Tokens.
+   ═══════════════════════════════════════════════ */
+
+/* --- 7a. Visual Center ------------------------
+   See §8.5.3. Centers content within the central 60% zone.
+   Usage: <div class="visual-center"> ... </div>
+   ---------------------------------------------- */
+
+.v6 .visual-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 60%;                  /* central 60% zone */
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* --- 7b. Whitespace Budget --------------------
+   See §8.5.5.
+   .ws-generic   : 65% content / 35% whitespace
+   .ws-diagram   : 60% content / 40% whitespace
+   .ws-hero      : 40% content / 60% whitespace
+
+   Applied to .slide-body to enforce ratio.
+   ---------------------------------------------- */
+
+.v6 .ws-generic {
+  padding: 60px 40px;          /* ~35% whitespace */
+}
+
+.v6 .ws-diagram {
+  padding: 80px 40px;          /* ~40% whitespace */
+}
+
+.v6 .ws-hero {
+  padding: 120px 40px;         /* ~60% whitespace */
+}
+
+/* --- 7c. Component Size Tokens -----------------
+   See §8.5.7. Standard component heights.
+   ---------------------------------------------- */
+
+.v6 .component-pipeline {
+  height: 320px;
+  max-height: 320px;
+  overflow: hidden;
+}
+
+.v6 .component-diagram {
+  height: 480px;
+  max-height: 480px;
+  overflow: hidden;
+}
+
+.v6 .component-metric-card {
+  height: 220px;
+  max-height: 220px;
+}
+
+.v6 .component-callout {
+  height: 180px;
+  max-height: 180px;
+}
+
+.v6 .component-table-row {
+  height: 48px;
+  max-height: 48px;
+}
+
+/* --- 7d. Eye Path ------------------------------
+   See §8.5.6. Natural reading flow containers.
+   Usage: .eye-path > .eye-step-1, .eye-step-2, etc.
+   ---------------------------------------------- */
+
+.v6 .eye-path {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md, 16px);
+  width: 100%;
+}
+
+.v6 .eye-step-1 { order: 1; }  /* Title -- Top Center */
+.v6 .eye-step-2 { order: 2; }  /* Diagram -- Center */
+.v6 .eye-step-3 { order: 3; }  /* Takeaway -- Below Diagram */
+.v6 .eye-step-4 { order: 4; }  /* Detail -- Bottom */
+
+/* ═══════════════════════════════════════════════
+   8. HTML CONTRACT COMPONENTS — v6
+   See design-v5.md §11 HTML Contract.
+   ------------------------------------------------
+   The v6 slide uses this structure:
+
+   <section class="slide v6" data-slide="N" data-role="..." data-topic="...">
+     <header class="slide-header">
+       <h2 class="slide-title">Title</h2>
+       <p class="slide-takeaway">Takeaway</p>
+     </header>
+     <main class="slide-body">
+       <div class="layout-centered width-medium density-balanced">
+         <!-- content -->
+       </div>
+     </main>
+     <footer class="slide-footer">
+       <span class="slide-number">N/total</span>
+       <span class="section-label">Part X: Name</span>
+     </footer>
+   </section>
+   ═══════════════════════════════════════════════ */
+
+.v6 .slide-title {
+  font-size: var(--text-section, 28px);
+  font-weight: 700;
+  color: var(--color-heading, #eceff4);
+  text-align: center;
+  line-height: 1.2;
+  max-width: 90%;
+}
+
+.v6 .slide-takeaway {
+  font-size: var(--text-takeaway, 18px);
+  font-weight: 500;
+  color: var(--color-primary, #88c0d0);
+  text-align: center;
+  line-height: 1.4;
+  max-width: 80%;
+}
+
+.v6 .slide-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--color-muted, #616e88);
+}
+
+.v6 .section-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-muted, #616e88);
+}
+
+/* --- 8a. Fragment -- Progressive Disclosure ---
+   See §11.4 Fragment Pattern
+   ---------------------------------------------- */
+
+.v6 .fragment {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+
+.v6 .fragment.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* --- 8b. Diagram Wrapper -- §11.5 ------------- */
+
+.v6 .diagram-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 456px;               /* 760px body x 60% = 456px */
+  max-height: 456px;
+  overflow: hidden;
+}
+
+.v6 .diagram-wrapper > .diagram {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ═══════════════════════════════════════════════
+   9. COMPOSITION PATTERNS — v6
+   See design-v5.md §8.5.8.
+   ═══════════════════════════════════════════════ */
+
+/* Hero: Full Width, Centered -- for Cover slides */
+.v6 .composition-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md, 16px);
+  width: 100%;
+  min-height: 100%;
+  text-align: center;
+}
+
+/* Explain: Main-Aside (7:3) -- for explanation slides */
+.v6 .composition-explain {
+  display: grid;
+  grid-template-columns: 7fr 3fr;
+  gap: var(--space-lg, 24px);
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+/* Compare: Split (50:50) -- for comparison slides */
+.v6 .composition-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg, 24px);
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+/* Architecture: Full Width Diagram -- for structure slides */
+.v6 .composition-architecture {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md, 16px);
+  width: 100%;
+}
+
+/* ═══════════════════════════════════════════════
+   10. UTILITY CLASSES — v6
+   ------------------------------------------------
+   Grid occupancy helpers (§8.5.4)
+   ═══════════════════════════════════════════════ */
+
+.v6 .grid-12 { grid-column: span 12; }
+.v6 .grid-10 { grid-column: span 10; }
+.v6 .grid-8  { grid-column: span 8; }
+.v6 .grid-6  { grid-column: span 6; }
+.v6 .grid-4  { grid-column: span 4; }
+
+/* BFC + truncation helpers */
+.v6 .overflow-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.v6 .line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.v6 .line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════
+   11. BACK-COMPAT MIGRATION HELPERS — v6
+   ------------------------------------------------
+   These allow gradual adoption: v5 classes still work
+   when wrapped inside a .v6 slide.
+   ═══════════════════════════════════════════════ */
+
+/* If a v5 .layout-two-col is used inside v6, treat as main-aside */
+.v6 .layout-two-col {
+  display: grid;
+  grid-template-columns: 7fr 3fr;      /* upgraded ratio */
+  gap: var(--space-lg, 24px);
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+/* v5 .layout-full-bleed maps to .layout-diagram in v6 */
+.v6 .layout-full-bleed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md, 16px);
+  width: 100%;
+}
+
+/* v5 .mech-arrow-flow alias */
+.v6 .mech-arrow-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm, 8px);
+  flex-wrap: wrap;
+}
+
+/* ═══════════════════════════════════════════════
+   v5 SELECTORS PORTED TO v6 (ported 2026-07-07)
+   Classes that were previously in v5.css and are
+   still used in the slide HTML.
+   ═══════════════════════════════════════════════ */
+
+.v6 .badge-sm {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-primary, #88c0d0);
+  border: 1px solid rgba(136, 192, 208, 0.3);
+  border-radius: 100px;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-xs, 4px);
+}
+
+.v6 .check { color: var(--color-success, #a3be8c); font-weight: 700; }
+
+.v6 .col-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-primary, #88c0d0);
+  margin-bottom: var(--space-sm, 8px);
+}
+
+.v6 .compare-table {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--color-border, #4c566a);
+  border-radius: var(--radius-lg, 16px);
+  overflow: hidden;
+  max-width: 560px;
+  width: 100%;
+}
+.v6 .compare-table > div {
+  padding: 10px 16px;
+  background: var(--color-card, #434c5e);
+  font-size: 13px;
+  text-align: center;
+}
+.v6 .compare-table .header {
+  font-weight: 700;
+  color: var(--color-primary, #88c0d0);
+  background: rgba(136, 192, 208, 0.05);
+}
+
+.v6 .cover-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-lg, 24px);
+}
+
+.v6 .cross { color: var(--color-error, #bf616a); font-weight: 700; }
+
+.v6 .deck {
+  display: flex;
+  height: 100vh;
+  scroll-snap-type: x mandatory;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+.v6 .deck::-webkit-scrollbar { display: none; }
+
+.v6.slide.diagram-slide,
+.v6.diagram-slide {
+  justify-content: center;
+  align-items: center;
+}
+
+.v6 .divider-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary, #88c0d0);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.v6 .divider-title {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 700;
+  color: var(--color-heading, #eceff4);
+}
+.v6 .divider-desc {
+  font-size: 15px;
+  color: var(--color-muted, #616e88);
+  max-width: 450px;
+  line-height: 1.5;
+}
+
+.v6 .example-box {
+  padding: var(--space-sm, 8px) var(--space-md, 16px);
+  background: var(--color-card, #434c5e);
+  border: 1px solid var(--color-border, #4c566a);
+  border-left: 3px solid var(--color-teal, #8fbcbb);
+  border-radius: var(--radius-lg, 16px);
+  font-size: 14px;
+  color: var(--color-text, #d8dee9);
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+.v6 .glass-divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs, 4px);
+  padding: var(--space-lg, 24px) var(--space-xl, 32px);
+  background: rgba(136, 192, 208, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(136, 192, 208, 0.1);
+  border-radius: var(--radius-md, 12px);
+}
+
+.v6 .goal-arrow { color: var(--color-primary, #88c0d0); font-size: 16px; }
+
+.v6 .goal-flow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm, 8px);
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--color-muted, #616e88);
+}
+
+.v6 .goal-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md, 16px);
+  padding: var(--space-sm, 8px) var(--space-md, 16px);
+  background: var(--color-card, #434c5e);
+  border: 1px solid var(--color-border, #4c566a);
+  border-radius: var(--radius-md, 12px);
+  font-size: 14px;
+  color: var(--color-text, #d8dee9);
+}
+
+.v6 .goal-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-muted, #616e88);
+  margin-bottom: 4px;
+}
+
+.v6 .goal-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm, 8px);
+  width: 100%;
+}
+
+.v6 .goal-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-primary, #88c0d0);
+  color: var(--color-bg, #2e3440);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.v6 .goal-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md, 16px);
+  width: 100%;
+  max-width: 600px;
+}
+
+.v6 .goal-tag {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-primary, #88c0d0);
+  letter-spacing: 0.05em;
+}
+
+.v6 .goal-why {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-heading, #eceff4);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.v6 .grid-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm, 8px);
+  padding: var(--space-lg, 24px);
+  background: var(--color-card, #434c5e);
+  border: 1px solid var(--color-border, #4c566a);
+  border-radius: var(--radius-lg, 16px);
+  text-align: center;
+}
+.v6 .grid-card-title { font-size: 16px; font-weight: 700; color: var(--color-heading, #eceff4); }
+.v6 .grid-card-desc { font-size: 13px; color: var(--color-muted, #616e88); line-height: 1.4; }
+
+.v6 .grid-cards {
+  display: grid;
+  gap: var(--space-md, 16px);
+  width: 100%;
+}
+
+.v6 .header {
+  font-weight: 700;
+  color: var(--color-primary, #88c0d0);
+  font-size: 15px;
+  text-align: center;
+}
+
+.v6.slide.hero-slide,
+.v6.hero-slide {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.v6 .hero-slide .title {
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 900;
+  color: var(--color-heading, #eceff4);
+  margin: 0;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+.v6 .hero-slide .subtitle {
+  font-size: clamp(16px, 2.5vw, 24px);
+  color: var(--color-muted, #616e88);
+  margin-top: var(--space-sm, 8px);
+  font-weight: 400;
+}
+
+.v6 .highlight { color: var(--color-primary, #88c0d0); font-weight: 600; }
+
+.v6 .hl { color: var(--color-primary, #88c0d0); font-weight: 700; }
+
+.v6 .insight-box {
+  font-size: 14px;
+  color: var(--color-primary, #88c0d0);
+  text-align: center;
+  padding: var(--space-sm, 8px) var(--space-md, 16px);
+  border: 1px solid rgba(136, 192, 208, 0.2);
+  border-radius: var(--radius-md, 12px);
+  background: rgba(136, 192, 208, 0.06);
+  max-width: 600px;
+  width: 100%;
+}
+
+.v6 .key-message {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-primary, #88c0d0);
+  text-align: center;
+}
+
+.v6 .label {
+  font-size: 11px;
+  color: var(--color-muted, #616e88);
+  text-align: center;
+}
+
+.v6 .layer {
+  width: 100%;
+  padding: 8px 16px;
+  border: 1px solid var(--color-border, #4c566a);
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text, #d8dee9);
+}
+
+.v6 .layer-arrow { color: var(--color-primary, #88c0d0); font-size: 16px; }
+
+.v6 .layer-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.v6 .lecture-badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary, #88c0d0);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-xs, 4px);
+}
+
+.v6 .nav {
+  position: fixed;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 100;
+  background: rgba(59, 66, 82, 0.8);
+  padding: var(--space-sm, 8px) var(--space-md, 16px);
+  border-radius: 100px;
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--color-border, #4c566a);
+}
+.v6 .nav a {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-border, #4c566a);
+  display: inline-block;
+  transition: 300ms ease;
+  cursor: pointer;
+}
+.v6 .nav a.active {
+  background: var(--color-primary, #88c0d0);
+  box-shadow: 0 0 6px rgba(136, 192, 208, 0.2);
+}
+
+.v6 .notes-panel {
+  display: none;
+  position: fixed;
+  bottom: 48px;
+  right: 12px;
+  width: 300px;
+  max-height: 200px;
+  padding: var(--space-sm, 8px) var(--space-md, 16px);
+  background: var(--color-card, #434c5e);
+  border: 1px solid var(--color-border, #4c566a);
+  border-radius: var(--radius-lg, 16px);
+  font-size: 12px;
+  color: var(--color-muted, #616e88);
+  line-height: 1.5;
+  z-index: 100;
+  overflow-y: auto;
+}
+.v6 .notes-panel.visible { display: block; }
+
+.v6 .notes-toggle {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  padding: 6px 12px;
+  font-size: 11px;
+  background: var(--color-card, #434c5e);
+  border: 1px solid var(--color-border, #4c566a);
+  border-radius: var(--radius-lg, 16px);
+  color: var(--color-muted, #616e88);
+  cursor: pointer;
+  z-index: 100;
+}
+.v6 .notes-toggle:hover { color: var(--color-text, #d8dee9); }
+
+.v6 .overflow-safe {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm, 8px);
+  max-width: 500px;
+}
+
+.v6 .progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary, #88c0d0), var(--color-teal, #8fbcbb));
+  z-index: 200;
+  transition: width 200ms ease;
+}
+
+.v6 .question {
+  font-weight: 700;
+  color: var(--color-heading, #eceff4);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.v6 .ring {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--color-primary, #88c0d0);
+  color: var(--color-primary, #88c0d0);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.v6 .ring-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-primary, #88c0d0);
+}
+
+.v6 .sec {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: var(--space-xs, 4px) 12px;
+  border-radius: 20px;
+  font-weight: 500;
+  color: var(--color-muted, #616e88);
+  transition: all 250ms ease;
+  white-space: nowrap;
+  font-size: 12px;
+}
+.v6 .sec.active {
+  background: rgba(136, 192, 208, 0.15);
+  color: var(--color-primary, #88c0d0);
+  font-weight: 600;
+}
+.v6 .sec.done { opacity: 0.5; }
+.v6 .sec.future { opacity: 0.4; }
+
+.v6 .sec-arrow {
+  color: var(--color-border, #4c566a);
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.v6.slide.section-divider,
+.v6.section-divider {
+  background: linear-gradient(135deg, var(--color-surface, #3b4252) 0%, rgba(136, 192, 208, 0.03) 100%);
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.v6 .section-divider-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs, 4px);
+}
+
+.v6 .section-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs, 4px);
+  padding: var(--space-xs, 4px) var(--space-md, 16px);
+  background: rgba(59, 66, 82, 0.85);
+  border-top: 1px solid var(--color-border, #4c566a);
+  border-bottom: 1px solid var(--color-border, #4c566a);
+  font-size: 12px;
+  user-select: none;
+  position: fixed;
+  bottom: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+  border-radius: 100px;
+  max-width: 90vw;
+}
+.v6 .section-progress.hidden { display: none; }
+
+.v6 .slide-counter {
+  position: fixed;
+  bottom: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: var(--color-muted, #616e88);
+  z-index: 100;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.v6 .slide-grammar-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs, 4px);
+  max-width: 560px;
+  width: 100%;
+}
+.v6 .slide-grammar-details li {
+  font-size: var(--text-body, 16px);
+  color: var(--color-text, #d8dee9);
+  line-height: 1.5;
+  padding: var(--space-xs, 4px) 0;
+  list-style: none;
+  position: relative;
+  padding-left: 18px;
+}
+.v6 .slide-grammar-details li::before {
+  content: "\25B8";
+  position: absolute;
+  left: 0;
+  color: var(--color-primary, #88c0d0);
+  font-size: 12px;
+}
+
+.v6 .subtitle {
+  font-size: clamp(16px, 2.5vw, 24px);
+  color: var(--color-muted, #616e88);
+  font-weight: 400;
+}
+
+.v6 .summary-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs, 4px);
+  padding: var(--space-lg, 24px);
+  background: rgba(59, 66, 82, 0.45);
+  border: 1px solid var(--color-border, #4c566a);
+  border-radius: var(--radius-md, 12px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  transition: 300ms ease;
+}
+.v6 .summary-card:hover { border-color: var(--color-primary, #88c0d0); }
+.v6 .summary-card-number {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--color-primary, #88c0d0);
+  line-height: 1;
+}
+.v6 .summary-card-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-heading, #eceff4);
+}
+.v6 .summary-card-desc {
+  font-size: 12px;
+  color: var(--color-muted, #616e88);
+  line-height: 1.4;
+}
+
+.v6 .summary-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg, 24px);
+  width: 100%;
+  max-width: 700px;
+}
+
+.v6 .title {
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 900;
+  color: var(--color-heading, #eceff4);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+.v6 .two-col {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: var(--space-lg, 24px);
+  max-width: 640px;
+  width: 100%;
+  text-align: center;
+}
+
+/* ──────────────────────────────────────────────
+   1. SLIDE v7 — Zone System (replaces v6)
+   Zone-A: 12% (90px) / Zone-B: 72% (540px) / Zone-C: 16% (120px)
+   ══════════════════════════════════════════════ */
+
+.slide.v7 {
+  aspect-ratio: 16 / 9;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg, #2e3440);
+  color: var(--color-text, #d8dee9);
+  font-family: var(--font-sans, 'Inter', 'Noto Sans KR', sans-serif);
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* Zone-A: 상단 12% */
+.v7 .zone-a {
+  flex: 0 0 12%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  border-bottom: 1px solid var(--color-border, #4c566a);
+}
+.v7 .zone-a .zone-a-lecture {
+  font-size: 11px;
+  color: var(--color-muted, #616e88);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.v7 .zone-a .zone-a-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-heading, #eceff4);
+  flex: 1;
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+.v7 .zone-a .zone-a-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--color-muted, #616e88);
+}
+
+/* Zone-B: 중앙 72% — 3종 레이아웃 */
+.v7 .zone-b {
+  flex: 0 0 72%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 40px;
+  overflow: hidden;
+}
+
+.v7 .zone-b-centered {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: var(--space-lg, 24px);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.v7 .zone-b-split {
+  display: grid;
+  grid-template-columns: 6fr 4fr;
+  gap: var(--space-xl, 32px);
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: center;
+}
+
+.v7 .zone-b-full {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Zone-C: 하단 16% */
+.v7 .zone-c {
+  flex: 0 0 16%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 40px;
+  border-top: 1px solid var(--color-border, #4c566a);
+  background: var(--color-surface, #3b4252);
+}
+.v7 .zone-c .zone-c-text {
+  font-size: 16px;
+  color: var(--color-text, #d8dee9);
+  text-align: center;
+  max-width: 800px;
+}

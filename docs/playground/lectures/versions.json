@@ -1,8 +1,34 @@
 {
-  "current_version": "v4",
+  "current_version": "v7",
   "category": "lectures",
   "description": "학습용 강의 시리즈 (Slide Design System)",
   "versions": [
+    {
+      "id": "v7",
+      "label": "v7 — Zone System",
+      "path": "v7/",
+      "job": "JOB-2104",
+      "releasedAt": "2026-07-07",
+      "summary": "Zone System 도입 (Zone-A/B/C), 다크 테마 유지",
+      "lectures": [
+        {"id": "A", "title": "왜 Agent OS인가?", "slides": 13, "framework": "SCQA→Golden Circle"},
+        {"id": "B", "title": "Memory vs Knowledge", "slides": 21, "framework": "Progressive Disclosure"},
+        {"id": "C", "title": "Architecture & Runtime", "slides": 16, "framework": "Pyramid Principle"}
+      ]
+    },
+    {
+      "id": "v5",
+      "label": "v5 — 슬라이드 재구성",
+      "path": "v5/",
+      "job": "JOB-2096",
+      "releasedAt": "2026-07-06",
+      "summary": "3분할 구조, .h-flow 수정, components 분리",
+      "lectures": [
+        {"id": "A", "title": "왜 Agent OS인가?", "slides": 13, "framework": "SCQA→Golden Circle"},
+        {"id": "B", "title": "Memory vs Knowledge", "slides": 21, "framework": "Progressive Disclosure"},
+        {"id": "C", "title": "Architecture & Runtime", "slides": 16, "framework": "Pyramid Principle"}
+      ]
+    },
     {
       "id": "v4",
       "label": "v4 — Slide Design System",
