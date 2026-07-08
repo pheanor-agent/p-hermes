@@ -266,6 +266,58 @@
     margin-top: var(--space-md);
   }
 
+  /* Code block */
+  .code-block {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--color-text);
+    line-height: 1.6;
+    overflow-x: auto;
+  }
+
+  /* Request flow (vertical) */
+  .request-flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-sm);
+    max-width: 600px;
+    width: 100%;
+  }
+  .request-flow .h-flow-node {
+    width: 100%;
+    text-align: left;
+    padding-left: 24px;
+  }
+  .request-flow .h-flow-arrow {
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    padding: 4px;
+  }
+
+  /* Horizontal overflow for sm-node flows */
+  .sm-flow {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 4px 0;
+    align-items: center;
+  }
+
+  /* Spacing utilities */
+  .mt-sm { margin-top: var(--space-sm); }
+  .mt-md { margin-top: var(--space-md); }
+
+  /* Gate-highlight pyramid level */
+  .pyramid-gate {
+    border-color: rgba(163,190,140,0.3) !important;
+    background: rgba(163,190,140,0.06);
+  }
+
   /* Responsive */
   @media (max-width: 768px) {
     .layout-main-aside { grid-template-columns: 1fr; }

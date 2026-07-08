@@ -5,611 +5,579 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lecture A: 왜 Agent OS인가? — SCQA → Golden Circle</title>
 <link rel="stylesheet" href="components/slides-components-v7.css">
-    <link rel="stylesheet" href="components/lecture-a.css">
-
+<link rel="stylesheet" href="components/lecture-a.css">
 </head>
 <body>
-
 <div class="progress-bar" id="progressBar"></div>
-
 <button class="notes-toggle" id="notesToggle">📝 Notes</button>
 <div class="notes-panel" id="notesPanel">
   <h4>📝 발표자 노트</h4>
   <p id="notesContent">슬라이드를 선택해주세요.</p>
 </div>
-
 <div class="deck" id="deck">
 
-  <!-- ================================================================
-       A.0 Cover — Agent OS: Why It Matters
-       ================================================================ -->
-  <div class="slide v7 hero-slide" id="slide-0" data-slide="0" data-notes="Lecture A: 왜 Agent OS인가? 이 강의는 SCQA 구조와 Simon Sinek의 Golden Circle을 결합하여, Agent OS가 왜 필요한지 근본적인 이유를 탐구합니다. 단순한 기술 설명이 아닌 '왜'에 집중하는 강의입니다.">
-    <header class="zone-a">
-      <h2 class="slide-title">Agent OS — Why It Matters</h2>
-      <p class="slide-takeaway">왜 Agent OS인가 — 근본적인 이유를 탐구한다</p>
-    </header>
-    <main class="zone-b">
-      <div class="composition-hero">
-        <div class="lecture-badge">Lecture A</div>
-        <div class="hero">
-          <div class="ring">
-            <span class="ring-text">🧠</span>
-          </div>
-        </div>
-        <p class="subtitle">SCQA → Golden Circle</p>
-      </div>
-    </main>
-    <footer class="zone-c">
-      <span class="slide-number">1/13</span>
-      <span class="section-label">Lecture A: Why Agent OS</span>
-    </footer>
+<!-- ================================================================
+     A.0 Cover — Agent OS: 왜 필요한가?
+     ================================================================ -->
+<div class="slide v7" id="slide-0" data-slide="0"
+  data-notes="[커버] Lecture A: 왜 Agent OS인가? 본 강의는 SCQA(Situation → Complication → Question → Answer) 구조에 Simon Sinek의 Golden Circle(Why → How → What)을 결합합니다. 단순한 기술 설명이 아닌 '왜 Agent OS가 필요한가'라는 근본적인 질문에 답합니다. 13개의 슬라이드를 통해 문제 인식 → Why Chain → Architecture → Practice의 흐름을 따라갑니다.">
+  <div class="zone-a">
+    <span class="zone-a-lecture">Lecture A</span>
+    <span class="zone-a-title">왜 Agent OS인가?</span>
+    <span class="zone-a-number">0/13</span>
   </div>
-
-  <!-- ================================================================
-       A.1 Goal — 문제 발견 → 해결책 발견 → 시스템 이해
-       ================================================================ -->
-  <div class="slide v7 summary-slide" id="slide-1" data-slide="1" data-notes="오늘의 학습 목표를 설명합니다. 세 단계로 구성됩니다: 문제 발견(왜 현재 Agent가 부족한가), 해결책 발견(왜 Agent OS가 답인가), 시스템 이해(어떻게 구축하는가). 이 흐름을 따라가며 근본적인 통찰을 얻게 됩니다.">
-    <header class="zone-a">
-      <h2 class="slide-title">학습 목표</h2>
-      <p class="slide-takeaway">문제 발견 → 해결책 발견 → 시스템 이해의 3단계 학습 흐름</p>
-    </header>
-    <main class="zone-b">
-      <div class="zone-b-centered width-medium density-balanced">
-        <div class="goal-section">
-          <div class="goal-tag">🎯 오늘 배울 내용</div>
-          <div class="goal-why">
-            <span class="goal-label">학습 흐름</span>
-            문제 발견 → 해결책 발견 → 시스템 이해
-          </div>
-          <div class="goal-list">
-            <div class="goal-item">
-              <span class="goal-num">1</span>
-              문제 발견: Stateless Agent의 4가지 실패 패턴
-            </div>
-            <div class="goal-item">
-              <span class="goal-num">2</span>
-              해결책 발견: Why Chain (Memory → Knowledge → Skills → Workflow)
-            </div>
-            <div class="goal-item">
-              <span class="goal-num">3</span>
-              시스템 이해: 4-Layer Stack → Hermes Agent OS
-            </div>
-          </div>
-          <div class="goal-flow">
-            <span>문제 인식</span>
-            <span class="goal-arrow">→</span>
-            <span>Why Chain</span>
-            <span class="goal-arrow">→</span>
-            <span>Architecture</span>
-            <span class="goal-arrow">→</span>
-            <span>Practice</span>
-          </div>
+  <div class="zone-b">
+    <div class="zone-b-centered">
+      <div class="lecture-badge">SCQA → Golden Circle</div>
+      <div class="hero">
+        <div class="ring">
+          <span class="ring-text">🧠</span>
         </div>
       </div>
-    </main>
-    <footer class="zone-c">
-      <span class="slide-number">2/13</span>
-      <span class="section-label">Lecture A · Goal</span>
-    </footer>
+      <h2 class="title">Agent OS</h2>
+      <p class="subtitle">Stateless Agent를 넘어선 진화</p>
+    </div>
   </div>
+  <div class="zone-c">
+    <span class="zone-c-text">Agent의 한계를 근본적으로 해결하는 시스템을 구축한다</span>
+  </div>
+</div>
 
-  <!-- ================================================================
-       A.2 [SCQA S] — Stateless Problem
-       ================================================================ -->
-  <div class="slide v7 diagram-slide" id="slide-2" data-slide="2" data-notes="SCQA의 Situation: 대부분의 AI Agent는 Stateless합니다. 세션이 끝날 때마다 모든 컨텍스트가 사라집니다. 사용자는 매번 똑같은 설명을 반복해야 하고, Agent는 이전 대화를 전혀 기억하지 못합니다. 이것이 근본적인 문제입니다.">
-    <header class="zone-a">
-      <h2 class="slide-title">Stateless Problem</h2>
-      <p class="slide-takeaway">세션이 끝날 때 지워지는 모든 것 — 이것이 Agent의 근본 한계다</p>
-    </header>
-    <main class="zone-b">
-      <div class="zone-b-centered width-medium density-balanced">
-        <div class="lecture-badge">Lecture A · SCQA — Situation</div>
-
-        <div class="h-flow" style="margin: var(--space-md) 0;">
-          <div class="h-flow-node">User 입력</div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node">LLM 추론</div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node">응답 생성</div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node" style="border-color: var(--color-error); color: var(--color-error);">💨 모든 것 사라짐</div>
+<!-- ================================================================
+     A.1 학습 목표
+     ================================================================ -->
+<div class="slide v7" id="slide-1" data-slide="1"
+  data-notes="[목표] 오늘 3단계로 학습합니다: ① 문제 발견 — Stateless Agent가 왜 실패하는지 4가지 패턴으로 파악합니다 ② 해결책 발견 — Why Chain을 통해 Memory, Knowledge, Skills, Workflow가 각각 어떤 문제를 해결하는지 이해합니다 ③ 시스템 이해 — 4-Layer Stack을 Agent OS로 통합하는 아키텍처를 살펴보겠습니다. 이 흐름이 바로 SCQA + Golden Circle입니다.">
+  <div class="zone-a">
+    <span class="zone-a-lecture">Lecture A</span>
+    <span class="zone-a-title">학습 목표</span>
+    <span class="zone-a-number">1/13</span>
+  </div>
+  <div class="zone-b">
+    <div class="zone-b-centered">
+      <div class="goal-section">
+        <div class="goal-tag">🎯 오늘 학습 흐름</div>
+        <div class="goal-why">
+          <span class="goal-label">3단계</span>
+          문제 발견 → 해결책 발견 → 시스템 이해
         </div>
-
-        <ul class="slide-grammar-details">
-          <li>매 세션마다 <span class="hl">처음부터 시작</span> — 컨텍스트 없음</li>
-          <li>같은 질문을 <span class="hl">매번 반복</span>해야 함</li>
-          <li>Agent는 <span class="hl">과거를 기억하지 못</span>함</li>
-          <li>사용자 경험: <span class="hl">매번 새로 설명하는 피로감</span></li>
-          <li>핵심: <strong>Stateless = 학습 불가 = 진화 불가</strong></li>
-        </ul>
-
-        <div class="insight-box">
-          💡 ChatGPT를 닫고 다시 열면 — 모든 것이 사라진다. 이것이 Stateless의 현실이다.
+        <div class="goal-list">
+          <div class="goal-item">
+            <span class="goal-num">1</span>
+            Stateless Agent의 4가지 실패 패턴 파악
+          </div>
+          <div class="goal-item">
+            <span class="goal-num">2</span>
+            Why Chain: Memory → Knowledge → Skills → Workflow
+          </div>
+          <div class="goal-item">
+            <span class="goal-num">3</span>
+            4-Layer Stack → Hermes Agent OS 아키텍처
+          </div>
+        </div>
+        <div class="goal-flow">
+          <span>문제 인식</span>
+          <span class="goal-arrow">→</span>
+          <span>Why Chain</span>
+          <span class="goal-arrow">→</span>
+          <span>아키텍처</span>
+          <span class="goal-arrow">→</span>
+          <span>실습</span>
         </div>
       </div>
-    </main>
-    <footer class="zone-c">
-      <span class="slide-number">3/13</span>
-      <span class="section-label">Lecture A · SCQA — Situation</span>
-    </footer>
+    </div>
   </div>
+  <div class="zone-c">
+    <span class="zone-c-text">한 슬라이드 한 메시지 — 오늘도 하나의 통찰을 목표로 합니다</span>
+  </div>
+</div>
 
-  <!-- ================================================================
-       A.3 [SCQA C] — 4가지 실패 패턴 (MECE)
-       ================================================================ -->
-  <div class="slide v7 diagram-slide" id="slide-3" data-slide="3" data-notes="SCQA의 Complication: Stateless 문제는 4가지 실패 패턴으로 나타납니다. 이 4가지는 MECE(Mutually Exclusive, Collectively Exhaustive)하게 분류되었습니다. ① Context Loss ② No Learning ③ No Reusability ④ No Consistency — 각각 다른 증상이지만 근본 원인은 같습니다.">
-    <header class="zone-a">
-      <h2 class="slide-title">4가지 실패 패턴</h2>
-      <p class="slide-takeaway">MECE 분류 — 모든 Stateless 실패는 이 4가지로 귀결된다</p>
-    </header>
-    <main class="zone-b">
-      <div class="zone-b-centered width-medium density-balanced">
-        <div class="lecture-badge">Lecture A · SCQA — Complication</div>
+<!-- ================================================================
+     A.2 [SCQA S] — Stateless Problem
+     ================================================================ -->
+<div class="slide v7" id="slide-2" data-slide="2"
+  data-notes="[SCQA Situation] 지금 우리가 직면한 상황은 이렇습니다: 모든 AI Agent가 Stateless입니다. 세션이 끝나면 대화 내용, 컨텍스트, 모든 것이 사라집니다. 완벽한 기억력을 가진 사람이 매번 기억을 지워지는 것과 같습니다. ChatGPT를 닫고 다시 열어보세요 — 모든 것이 초기화됩니다. Stateless가 단순한 기술적 선택이 아닌 근본적인 제약임을 먼저 인정해야 합니다.">
+  <div class="zone-a">
+    <span class="zone-a-lecture">Lecture A</span>
+    <span class="zone-a-title">Stateless Problem</span>
+    <span class="zone-a-number">2/13</span>
+  </div>
+  <div class="zone-b">
+    <div class="zone-b-centered">
+      <div class="lecture-badge">SCQA — Situation</div>
+      <div class="h-flow">
+        <div class="h-flow-node">User 입력</div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node">LLM 추론</div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node">응답 생성</div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node">💨 사라짐</div>
+      </div>
+      <ul class="slide-grammar-details">
+        <li>매 세션마다 <span class="hl">처음부터 시작</span> — 컨텍스트 없음</li>
+        <li>같은 질문을 <span class="hl">매번 반복</span>해야 함</li>
+        <li>Agent는 <span class="hl">과거를 기억하지 못</span>함</li>
+        <li>Stateless = 학습 불가 = <strong>진화 불가</strong></li>
+      </ul>
+      <div class="insight-box">
+        💡 ChatGPT를 닫고 다시 열면 — 모든 것이 사라진다. 이것이 Stateless의 현실이다.
+      </div>
+    </div>
+  </div>
+  <div class="zone-c">
+    <span class="zone-c-text">세션이 끝날 때 지워지는 모든 것 — 이것이 Agent의 근본 한계다</span>
+  </div>
+</div>
 
-        <div class="grid-cards cols-2" style="max-width: 560px; margin: var(--space-md) 0;">
-          <div class="grid-card" style="border-color: rgba(191,97,106,0.3);">
-            <div style="font-size: 24px;">①</div>
-            <div class="grid-card-title" style="color: var(--color-error);">Context Loss</div>
-            <div class="grid-card-desc">과거 대화 맥락이 사라짐</div>
-          </div>
-          <div class="grid-card" style="border-color: rgba(191,97,106,0.3);">
-            <div style="font-size: 24px;">②</div>
-            <div class="grid-card-title" style="color: var(--color-error);">No Learning</div>
-            <div class="grid-card-desc">과거에서 학습하지 못함</div>
-          </div>
-          <div class="grid-card" style="border-color: rgba(191,97,106,0.3);">
-            <div style="font-size: 24px;">③</div>
-            <div class="grid-card-title" style="color: var(--color-error);">No Reusability</div>
-            <div class="grid-card-desc">동일한 작업마다 재작성</div>
-          </div>
-          <div class="grid-card" style="border-color: rgba(191,97,106,0.3);">
-            <div style="font-size: 24px;">④</div>
-            <div class="grid-card-title" style="color: var(--color-error);">No Consistency</div>
-            <div class="grid-card-desc">일관된 결과 보장 불가</div>
-          </div>
+<!-- ================================================================
+     A.3 [SCQA C] — 4가지 실패 패턴 (MECE)
+     ================================================================ -->
+<div class="slide v7" id="slide-3" data-slide="3"
+  data-notes="[SCQA Complication] Stateless의 문제는 4가지 실패 패턴으로 구체적으로 나타납니다. MECE(Mutually Exclusive, Collectively Exhaustive)하게 분류했습니다: ① Context Loss — 과거 대화 맥락이 사라져 매번 처음부터 설명해야 함 ② No Learning — 경험을 축적하지 못해 똑같은 실수를 반복 ③ No Reusability — 동일한 작업마다 매번 새로 Prompt 작성 ④ No Consistency — 같은 입력에도 결과가 달라 신뢰할 수 없음. 근본 원인은 하나: 상태를 저장하는 시스템이 없습니다.">
+  <div class="zone-a">
+    <span class="zone-a-lecture">Lecture A</span>
+    <span class="zone-a-title">4가지 실패 패턴</span>
+    <span class="zone-a-number">3/13</span>
+  </div>
+  <div class="zone-b">
+    <div class="zone-b-centered">
+      <div class="lecture-badge">SCQA — Complication</div>
+      <div class="grid-cards cols-2">
+        <div class="grid-card">
+          <div class="grid-card-title">① Context Loss</div>
+          <div class="grid-card-desc">과거 대화 맥락이 사라져 매번 처음부터 설명해야 한다</div>
         </div>
-
-        <div class="insight-box">
-          🔑 4가지 증상이지만 근본 원인은 동일: <strong>상태를 저장하는 시스템이 없다</strong>
+        <div class="grid-card">
+          <div class="grid-card-title">② No Learning</div>
+          <div class="grid-card-desc">경험을 축적하지 못해 똑같은 실수를 반복한다</div>
+        </div>
+        <div class="grid-card">
+          <div class="grid-card-title">③ No Reusability</div>
+          <div class="grid-card-desc">동일한 작업마다 매번 새로 Prompt를 작성해야 한다</div>
+        </div>
+        <div class="grid-card">
+          <div class="grid-card-title">④ No Consistency</div>
+          <div class="grid-card-desc">같은 입력에도 결과가 달라 신뢰할 수 없다</div>
         </div>
       </div>
-    </main>
-    <footer class="zone-c">
-      <span class="slide-number">4/13</span>
-      <span class="section-label">Lecture A · SCQA — Complication</span>
-    </footer>
+      <div class="insight-box">
+        🔑 4가지 증상이지만 근본 원인은 동일: <strong>상태를 저장하는 시스템이 없다</strong>
+      </div>
+    </div>
   </div>
+  <div class="zone-c">
+    <span class="zone-c-text">MECE 분류 — 모든 Stateless 실패는 이 4가지로 귀결된다</span>
+  </div>
+</div>
 
-  <!-- ================================================================
-       A.4 [SCQA Q] — Impact 비교 (Stateless vs Agent OS)
-       ================================================================ -->
-  <div class="slide v7 diagram-slide" id="slide-4" data-slide="4" data-notes="SCQA의 Question: 이 4가지 실패의 실제 영향력은 얼마나 될까? Stateless Agent vs Agent OS를 비교하면 그 차이가 명확해집니다. 비용, 효율성, 신뢰성 모두에서 Agent OS가 압도적입니다. 이것이 우리가 Agent OS를 구축해야 하는 이유입니다.">
-    <header class="zone-a">
-      <h2 class="slide-title">이게 <span class="hl">진짜</span> 문제인가?</h2>
-      <p class="slide-takeaway">Stateless vs Agent OS — 실제 영향력 차이가 결정적이다</p>
-    </header>
-    <main class="zone-b">
-      <div class="zone-b-centered width-medium density-balanced">
-        <div class="lecture-badge">Lecture A · SCQA — Question</div>
-
-        <div class="comparison-block" style="margin: var(--space-md) 0;">
-          <div class="comparison-col">
-            <div class="comparison-col-title bad">✗ Stateless Agent</div>
-            <div class="comparison-row"><span class="cross">✗</span> 매 세션 컨텍스트 재설정</div>
-            <div class="comparison-row"><span class="cross">✗</span> 학습 누적 불가</div>
-            <div class="comparison-row"><span class="cross">✗</span> 같은 작업 매번 새로 작성</div>
-            <div class="comparison-row"><span class="cross">✗</span> 결과 일관성 없음</div>
-            <div class="comparison-row"><span class="cross">✗</span> 사용자는 매번 교육자 역할</div>
-          </div>
-          <div class="comparison-col">
-            <div class="comparison-col-title good">✓ Agent OS</div>
-            <div class="comparison-row"><span class="check">✓</span> Memory가 컨텍스트 보존</div>
-            <div class="comparison-row"><span class="check">✓</span> Knowledge로 학습 누적</div>
-            <div class="comparison-row"><span class="check">✓</span> Skills로 재사용 가능</div>
-            <div class="comparison-row"><span class="check">✓</span> Workflow로 일관성 보장</div>
-            <div class="comparison-row"><span class="check">✓</span> 사용자는 전략가 역할</div>
-          </div>
+<!-- ================================================================
+     A.4 [SCQA Q] — Impact 비교 (Stateless vs Agent OS)
+     ================================================================ -->
+<div class="slide v7" id="slide-4" data-slide="4"
+  data-notes="[SCQA Question] 이 4가지 실패의 실제 영향력은 얼마나 될까요? Stateless Agent와 Agent OS를 직접 비교하면 그 차이가 명확해집니다. Stateless Agent는 매 세션 컨텍스트 재설정이 필요하고, 학습이 누적되지 않으며, 같은 작업을 매번 새로 작성해야 하고, 결과의 일관성도 없습니다. 사용자는 매번 교육자 역할을 해야 합니다. 반면 Agent OS는 Memory로 컨텍스트를 보존하고, Knowledge로 학습을 누적하며, Skills로 재사용하고, Workflow로 일관성을 보장합니다. 사용자는 전략가로 바뀝니다.">
+  <div class="zone-a">
+    <span class="zone-a-lecture">Lecture A</span>
+    <span class="zone-a-title">이게 진짜 문제인가?</span>
+    <span class="zone-a-number">4/13</span>
+  </div>
+  <div class="zone-b">
+    <div class="zone-b-centered">
+      <div class="lecture-badge">SCQA — Question</div>
+      <div class="comparison-block">
+        <div class="comparison-col">
+          <div class="comparison-col-title bad">✗ Stateless Agent</div>
+          <div class="comparison-row"><span class="cross">✗</span> 매 세션 컨텍스트 재설정</div>
+          <div class="comparison-row"><span class="cross">✗</span> 학습 누적 불가</div>
+          <div class="comparison-row"><span class="cross">✗</span> 같은 작업 매번 새로 작성</div>
+          <div class="comparison-row"><span class="cross">✗</span> 결과 일관성 없음</div>
+          <div class="comparison-row"><span class="cross">✗</span> 사용자는 매번 교육자</div>
         </div>
-
-        <div class="question" style="font-size: clamp(20px, 3vw, 28px); margin-top: var(--space-md);">
-          이 차이를 해결하는 것이 <span class="hl">Agent OS</span>의 존재 이유다
+        <div class="comparison-col">
+          <div class="comparison-col-title good">✓ Agent OS</div>
+          <div class="comparison-row"><span class="check">✓</span> Memory로 컨텍스트 보존</div>
+          <div class="comparison-row"><span class="check">✓</span> Knowledge로 학습 누적</div>
+          <div class="comparison-row"><span class="check">✓</span> Skills로 재사용 가능</div>
+          <div class="comparison-row"><span class="check">✓</span> Workflow로 일관성</div>
+          <div class="comparison-row"><span class="check">✓</span> 사용자는 전략가</div>
         </div>
       </div>
-    </main>
-    <footer class="zone-c">
-      <span class="slide-number">5/13</span>
-      <span class="section-label">Lecture A · SCQA — Question</span>
-    </footer>
-  </div>
-
-  <!-- ================================================================
-       A.5 [Why] — Why Memory? 기억 없이는 학습 불가
-       ================================================================ -->
-  <div class="slide v7 diagram-slide" id="slide-5" data-slide="5" data-notes="Why Chain 시작: 왜 Memory인가? Simon Sinek의 Golden Circle 'Why'에 답합니다. Memory 없이는 학습이 불가능합니다. 과거를 기억하지 못하는 생명체는 진화할 수 없듯, Memory가 없는 Agent는 성장할 수 없습니다. 이것이 Agent OS의 가장 근본적인 Layer입니다.">
-    <header class="zone-a">
-      <h2 class="slide-title">왜 <span class="hl">Memory</span>인가?</h2>
-      <p class="slide-takeaway">기억 없이는 학습 불가 — 성장할 수 없는 Agent는 단순한 Chatbot일 뿐</p>
-    </header>
-    <main class="zone-b">
-      <div class="zone-b-centered width-medium density-balanced">
-        <div class="lecture-badge">Lecture A · Why Chain — 1</div>
-
-        <div class="why-pair" style="margin: var(--space-md) 0;">
-          <div class="why-box problem">
-            <div class="why-box-icon">🧠💨</div>
-            <div class="why-box-title">Memory 없음</div>
-            <div class="why-box-desc">과거 대화가 사라지고 학습이 불가능해 매번 처음부터 시작해야 한다</div>
-          </div>
-          <div class="why-box solution">
-            <div class="why-box-icon">🧠💾</div>
-            <div class="why-box-title">Memory 있음</div>
-            <div class="why-box-desc">경험을 보존하여 학습 가능하고 패턴 인식을 통해 시간에 따라 진화한다</div>
-          </div>
-        </div>
-
-        <div class="h-flow" style="margin: var(--space-md) 0;">
-          <div class="h-flow-node">경험</div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node">저장 (Memory)</div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node">검색 (Recall)</div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node" style="border-color: var(--color-success); color: var(--color-success);">학습 (Growth) ✓</div>
-        </div>
-
-        <ul class="slide-grammar-details">
-          <li>Memory = Agent의 <strong>경험 축적</strong> 시스템</li>
-          <li>과거 세션의 <strong>컨텍스트 보존</strong> 가능</li>
-          <li>Relevance-based <strong>검색</strong>으로 정확한 정보 회수</li>
-          <li>시간에 따른 <strong>지적 성장</strong>의 기반</li>
-        </ul>
+      <div class="question">
+        이 차이를 해결하는 것이 <span class="hl">Agent OS</span>의 존재 이유다
       </div>
-    </main>
-    <footer class="zone-c">
-      <span class="slide-number">6/13</span>
-      <span class="section-label">Lecture A · Why Chain — 1</span>
-    </footer>
+    </div>
   </div>
-
-  <!-- ================================================================
-       A.6 [Why→How] — Why Knowledge? 사실 ≠ 이해
-       ================================================================ -->
-  <div class="slide v7 diagram-slide" id="slide-6" data-slide="6" data-notes="Why→How: 왜 Knowledge인가? 사실과 이해는 다릅니다. 데이터를 저장하는 것(Memory)과 그 데이터의 관계를 이해하는 것(Knowledge)은 완전히 다른 차원입니다. Knowledge는 단순한 정보 저장이 아니라 도메인 지식을 구조화하는 것입니다.">
-    <header class="zone-a">
-      <h2 class="slide-title">왜 <span class="hl">Knowledge</span>인가?</h2>
-      <p class="slide-takeaway">사실 ≠ 이해 — 데이터를 아는 것과 관계를 아는 것은 완전히 다른 차원</p>
-    </header>
-    <main class="zone-b">
-      <div class="zone-b-centered width-medium density-balanced">
-        <div class="lecture-badge">Lecture A · Why Chain — 2</div>
-
-        <div class="why-pair" style="margin: var(--space-md) 0;">
-          <div class="why-box problem">
-            <div class="why-box-icon">📄</div>
-            <div class="why-box-title">사실만 있는 경우</div>
-            <div class="why-box-desc">데이터는 많지만 관계를 모르고 맥락 없는 정보 파편에 머문다</div>
-          </div>
-          <div class="why-box solution">
-            <div class="why-box-icon">🗂️</div>
-            <div class="why-box-title">Knowledge가 있는 경우</div>
-            <div class="why-box-desc">정보를 관계와 의미로 연결하여 도메인 지식을 구조화한다</div>
-          </div>
-        </div>
-
-        <div class="h-flow" style="margin: var(--space-md) 0;">
-          <div class="h-flow-node">Raw Data</div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node">구조화</div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node">관계 추출</div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node" style="border-color: var(--color-success); color: var(--color-success);">Knowledge ✓</div>
-        </div>
-
-        <ul class="slide-grammar-details">
-          <li>Knowledge = <strong>사실의 관계</strong>를 구조화</li>
-          <li>도메인별 <strong>지식 체인</strong> 구성 (예: 프로그래밍, 마케팅)</li>
-          <li>단순 정보 저장을 넘어 <strong>문맥적 이해</strong></li>
-          <li>Memory의 다음 단계: <strong>저장 → 이해</strong></li>
-        </ul>
-      </div>
-    </main>
-    <footer class="zone-c">
-      <span class="slide-number">7/13</span>
-      <span class="section-label">Lecture A · Why Chain — 2</span>
-    </footer>
+  <div class="zone-c">
+    <span class="zone-c-text">Stateless ≠ Agent — Agent OS가 있어야 진정한 Agent다</span>
   </div>
+</div>
 
-  <!-- ================================================================
-       A.7 [Why→How] — Why Skills? 아는 것 ≠ 실행하는 것
-       ================================================================ -->
-  <div class="slide v7 diagram-slide" id="slide-7" data-slide="7" data-notes="Why→How: 왜 Skills인가? 아는 것과 실행하는 것은 다릅니다. 레시피를 알고 있다고 해서 요리사 되는 것이 아닙니다. Skills는 지식을 절차(procedure)로 변환하여 실제 작업을 수행할 수 있게 합니다. 이것이 '아는 것'과 '할 수 있는 것'의 차이를 해결합니다.">
-    <header class="zone-a">
-      <h2 class="slide-title">왜 <span class="hl">Skills</span>인가?</h2>
-      <p class="slide-takeaway">아는 것 ≠ 실행하는 것 — 지식을 절차로 변환해야 실제 작업 가능</p>
-    </header>
-    <main class="zone-b">
-      <div class="zone-b-centered width-medium density-balanced">
-        <div class="lecture-badge">Lecture A · Why Chain — 3</div>
-
-        <div class="why-pair" style="margin: var(--space-md) 0;">
-          <div class="why-box problem">
-            <div class="why-box-icon">📖</div>
-            <div class="why-box-title">지식만 있는 경우</div>
-            <div class="why-box-desc">이론은 알지만 실행하지 못하고 같은 작업마다 매번 Prompt를 새로 작성해야 한다</div>
-          </div>
-          <div class="why-box solution">
-            <div class="why-box-icon">⚡</div>
-            <div class="why-box-title">Skills가 있는 경우</div>
-            <div class="why-box-desc">지식을 절차로 변환하여 재사용 가능한 Skill 모듈로 일관된 결과를 보장한다</div>
-          </div>
-        </div>
-
-        <div class="h-flow" style="margin: var(--space-md) 0;">
-          <div class="h-flow-node">Knowledge</div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node">절차화 (Procedure)</div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node">실행 (Execute)</div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node" style="border-color: var(--color-success); color: var(--color-success);">Skill ✓</div>
-        </div>
-
-        <ul class="slide-grammar-details">
-          <li>Skills = <strong>지식 → 절차</strong>의 변환 계층</li>
-          <li>레시피처럼 <strong>재사용 가능한</strong> 실행 모듈</li>
-          <li>동일 작업의 <strong>일관된 품질</strong> 보장</li>
-          <li>Knowledge의 다음 단계: <strong>이해 → 실행</strong></li>
-        </ul>
-      </div>
-    </main>
-    <footer class="zone-c">
-      <span class="slide-number">8/13</span>
-      <span class="section-label">Lecture A · Why Chain — 3</span>
-    </footer>
+<!-- ================================================================
+     A.5 [Why] — 왜 Memory인가?
+     ================================================================ -->
+<div class="slide v7" id="slide-5" data-slide="5"
+  data-notes="[Golden Circle — Why 1] 이제 Why Chain을 시작합니다. Simon Sinek의 Golden Circle처럼 'Why'부터 묻습니다. 왜 Memory인가? 기억이 없는 생명체는 진화할 수 없습니다. 아밀로이드 플라크로 기억을 잃는 알츠하이머 환자의 고통을 생각해보세요 — 과거의 모든 경험이 사라집니다. Agent도 마찬가지입니다. Memory가 없으면 과거 대화는 없고, 과거가 없으면 학습이 불가능하며, 학습이 없으면 성장할 수 없습니다. 성장할 수 없는 Agent는 단순한 Chatbot일 뿐입니다.">
+  <div class="zone-a">
+    <span class="zone-a-lecture">Lecture A</span>
+    <span class="zone-a-title">왜 Memory인가?</span>
+    <span class="zone-a-number">5/13</span>
   </div>
-
-  <!-- ================================================================
-       A.8 [Why→How] — Why Workflow? 실행 ≠ 체계
-       ================================================================ -->
-  <div class="slide v7 diagram-slide" id="slide-8" data-slide="8" data-notes="Why→How: 왜 Workflow인가? 실행하는 것과 체계적으로 실행하는 것은 다릅니다. 개별 Skill이 훌륭해도 서로 연결되지 않으면 전체 프로세스가 깨집니다. Workflow는 개별 실행을 상태 머신으로 관리하여 체계적인 완수를 보장합니다.">
-    <header class="zone-a">
-      <h2 class="slide-title">왜 <span class="hl">Workflow</span>인가?</h2>
-      <p class="slide-takeaway">실행 ≠ 체계 — 개별 실행을 상태 머신으로 연결해야 완수 가능</p>
-    </header>
-    <main class="zone-b">
-      <div class="zone-b-centered width-medium density-balanced">
-        <div class="lecture-badge">Lecture A · Why Chain — 4</div>
-
-        <div class="why-pair" style="margin: var(--space-md) 0;">
-          <div class="why-box problem">
-            <div class="why-box-icon">🔧</div>
-            <div class="why-box-title">실행만 있는 경우</div>
-            <div class="why-box-desc">개별 작업은 가능하지만 통합되지 않아 단계 간 연결이 없고 전체 프로세스가 깨진다</div>
-          </div>
-          <div class="why-box solution">
-            <div class="why-box-icon">🔗</div>
-            <div class="why-box-title">Workflow가 있는 경우</div>
-            <div class="why-box-desc">상태 머신으로 단계를 관리하고 의존성을 자동 처리하여 체계적인 완수를 보장한다</div>
-          </div>
+  <div class="zone-b">
+    <div class="zone-b-centered">
+      <div class="lecture-badge">Why Chain — 1</div>
+      <div class="why-pair">
+        <div class="why-box problem">
+          <div class="why-box-icon">🧠💨</div>
+          <div class="why-box-title">Memory 없음</div>
+          <div class="why-box-desc">과거 대화가 사라지고 학습이 불가능해 매번 처음부터 시작한다</div>
         </div>
-
-        <div class="h-flow v-flow" style="margin: var(--space-md) 0; max-width: 400px;">
-          <div class="h-flow-node">📋 Plan</div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node">🔍 Research</div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node">✍️ Execute</div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node">✅ Review</div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node" style="border-color: var(--color-success);">🎯 Done ✓</div>
-        </div>
-
-        <ul class="slide-grammar-details">
-          <li>Workflow = <strong>개별 실행 → 체계</strong>의 통합 계층</li>
-          <li>상태 머신(state machine)으로 <strong>단계 관리</strong></li>
-          <li>단계 간 <strong>의존성 자동 처리</strong></li>
-          <li>Skills의 다음 단계: <strong>실행 → 완수</strong></li>
-        </ul>
-      </div>
-    </main>
-    <footer class="zone-c">
-      <span class="slide-number">9/13</span>
-      <span class="section-label">Lecture A · Why Chain — 4</span>
-    </footer>
-  </div>
-
-  <!-- ================================================================
-       A.9 [Pyramid] — 4-Layer Stack
-       ================================================================ -->
-  <div class="slide v7 diagram-slide" id="slide-9" data-slide="9" data-notes="4-Layer Stack 다이어그램: Memory → Knowledge → Skills → Workflow. 하단에서 상단으로 의존성이 쌓입니다. Memory가 없으면 Knowledge 불가능, Knowledge 없으면 Skills 불가능, Skills 없으면 Workflow 불가능. 이것이 Agent OS의 아키텍처 핵심입니다.">
-    <header class="zone-a">
-      <h2 class="slide-title">4-Layer Stack</h2>
-      <p class="slide-takeaway">하단에서 상단으로 의존성이 쌓임 — 아래 Layer 없으면 위 Layer 불가능</p>
-    </header>
-    <main class="zone-b">
-      <div class="zone-b-full width-wide density-balanced">
-        <div class="lecture-badge">Lecture A · Architecture</div>
-
-        <div class="layer-stack" style="margin: var(--space-sm) 0;">
-          <!-- Layer 4: Workflow (top) -->
-          <div class="layer-row">
-            <div class="layer-block layer-workflow">
-              <span class="layer-icon">🔗</span>
-              Workflow
-              <span class="layer-key">실행 → 체계 → 완수</span>
-            </div>
-          </div>
-          <div class="layer-arrow-up"><span>↑ 의존</span></div>
-          <!-- Layer 3: Skills -->
-          <div class="layer-row">
-            <div class="layer-block layer-skills">
-              <span class="layer-icon">⚡</span>
-              Skills
-              <span class="layer-key">이해 → 절차 → 실행</span>
-            </div>
-          </div>
-          <div class="layer-arrow-up"><span>↑ 의존</span></div>
-          <!-- Layer 2: Knowledge -->
-          <div class="layer-row">
-            <div class="layer-block layer-knowledge">
-              <span class="layer-icon">🗂️</span>
-              Knowledge
-              <span class="layer-key">데이터 → 관계 → 이해</span>
-            </div>
-          </div>
-          <div class="layer-arrow-up"><span>↑ 의존</span></div>
-          <!-- Layer 1: Memory (bottom) -->
-          <div class="layer-row">
-            <div class="layer-block layer-memory">
-              <span class="layer-icon">🧠</span>
-              Memory
-              <span class="layer-key">경험 → 저장 → 검색</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="layer-legend">
-          <div class="legend-item"><div class="legend-dot" style="background: var(--color-primary);"></div> Memory (기억)</div>
-          <div class="legend-item"><div class="legend-dot" style="background: var(--color-purple);"></div> Knowledge (이해)</div>
-          <div class="legend-item"><div class="legend-dot" style="background: #b5a287;"></div> Skills (실행)</div>
-          <div class="legend-item"><div class="legend-dot" style="background: var(--color-blue);"></div> Workflow (완수)</div>
-        </div>
-
-        <div class="insight-box" style="margin-top: var(--space-sm);">
-          🔑 아래 Layer 없으면 위 Layer 불가능 — 이것이 왜 4-Layer Stack인가
+        <div class="why-box solution">
+          <div class="why-box-icon">🧠💾</div>
+          <div class="why-box-title">Memory 있음</div>
+          <div class="why-box-desc">경험을 보존하여 학습 가능하고 패턴 인식을 통해 시간에 따라 진화한다</div>
         </div>
       </div>
-    </main>
-    <footer class="zone-c">
-      <span class="slide-number">10/13</span>
-      <span class="section-label">Lecture A · Architecture</span>
-    </footer>
-  </div>
-
-  <!-- ================================================================
-       A.10 [What] — Agent OS in Practice
-       ================================================================ -->
-  <div class="slide v7 example-slide" id="slide-10" data-slide="10" data-notes="Agent OS in Practice: Hermes의 실제 실행 흐름을 보여줍니다. CLI에서 입력된 명령이 Model을 거쳐 Memory → Knowledge → Skills → Workflow로 처리됩니다. 각 Layer가 실제로 어떻게 동작하는지 확인해보세요.">
-    <header class="zone-a">
-      <h2 class="slide-title">Agent OS in Practice</h2>
-      <p class="slide-takeaway">Theory를 Practice로 — Hermes의 실제 실행 흐름</p>
-    </header>
-    <main class="zone-b">
-      <div class="zone-b-centered width-medium density-balanced">
-        <div class="lecture-badge">Lecture A · Practice</div>
-
-        <div class="h-flow" style="margin: var(--space-md) 0;">
-          <div class="h-flow-node has-sub">
-            CLI
-            <span class="node-sub">명령 입력</span>
-          </div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node has-sub">
-            Model
-            <span class="node-sub">LLM 추론</span>
-          </div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node has-sub">
-            🧠 Memory
-            <span class="node-sub">경험 검색</span>
-          </div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node has-sub">
-            🗂️ Knowledge
-            <span class="node-sub">지식 적용</span>
-          </div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node has-sub">
-            ⚡ Skills
-            <span class="node-sub">절차 실행</span>
-          </div>
-          <span class="h-flow-arrow"></span>
-          <div class="h-flow-node has-sub" style="border-color: var(--color-success);">
-            🔗 Workflow
-            <span class="node-sub">체계적 완수</span>
-          </div>
-        </div>
-
-        <ul class="slide-grammar-details">
-          <li><strong>CLI</strong>: 사용자의 명령이 시스템의 진입점</li>
-          <li><strong>Model</strong>: LLM이 의도 파악 및 추론</li>
-          <li><strong>Memory</strong>: 과거 경험에서 관련 정보 검색</li>
-          <li><strong>Knowledge</strong>: 도메인 지식을 문맥에 적용</li>
-          <li><strong>Skills + Workflow</strong>: 절차 실행 → 체계적 완수</li>
-        </ul>
+      <div class="h-flow">
+        <div class="h-flow-node">경험</div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node">저장</div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node">검색</div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node">학습 ✓</div>
       </div>
-    </main>
-    <footer class="zone-c">
-      <span class="slide-number">11/13</span>
-      <span class="section-label">Lecture A · Practice</span>
-    </footer>
+      <ul class="slide-grammar-details">
+        <li>Memory = Agent의 <strong>경험 축적</strong> 시스템</li>
+        <li>과거 세션의 <strong>컨텍스트 보존</strong></li>
+        <li>Relevance-based <strong>검색</strong>으로 정확한 회수</li>
+        <li>시간에 따른 <strong>지적 성장</strong>의 기반</li>
+      </ul>
+    </div>
   </div>
+  <div class="zone-c">
+    <span class="zone-c-text">기억 없이는 학습 불가 — 성장할 수 없는 Agent는 단순 Chatbot일 뿐</span>
+  </div>
+</div>
 
-  <!-- ================================================================
-       A.11 [Summary] — 핵심 3가지
-       ================================================================ -->
-  <div class="slide v7 summary-slide" id="slide-11" data-slide="11" data-notes="Summary: 핵심 숫자 3개로 Lecture A를 요약합니다. 4가지 실패 패턴을 4개 Layer가 각각 해결하고, 이 시스템이 Stateless Agent 대비 10배 이상의 효율성을 제공합니다.">
-    <header class="zone-a">
-      <h2 class="slide-title">핵심 3가지</h2>
-      <p class="slide-takeaway">Lecture A를 숫자로 요약하면 — 4가지 실패 → 4개 Layer → 1개 시스템</p>
-    </header>
-    <main class="zone-b">
-      <div class="zone-b-centered width-medium density-balanced">
-        <div class="lecture-badge">Lecture A · Summary</div>
-
-        <div class="summary-cards" style="margin: var(--space-md) 0;">
-          <div class="summary-card">
-            <div class="summary-card-number">4</div>
-            <div class="summary-card-label">실패 패턴</div>
-            <div class="summary-card-desc">Context Loss, No Learning, No Reusability, No Consistency</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-card-number">4</div>
-            <div class="summary-card-label">해결 Layer</div>
-            <div class="summary-card-desc">Memory → Knowledge → Skills → Workflow</div>
-          </div>
-          <div class="summary-card">
-            <div class="summary-card-number">1</div>
-            <div class="summary-card-label">통합 시스템</div>
-            <div class="summary-card-desc">Agent OS — Hermes로 실제 구축 가능</div>
-          </div>
+<!-- ================================================================
+     A.6 [Why→How] — 왜 Knowledge인가?
+     ================================================================ -->
+<div class="slide v7" id="slide-6" data-slide="6"
+  data-notes="[Golden Circle — Why→How 2] 왜 Knowledge인가? 사실과 이해는 다릅니다. 백과사전을 다 외운 사람이 전문가가 되지는 않습니다 — 정보가 관계로 연결되지 않으면 단순한 사실 나열에 불과합니다. Knowledge는 단순 정보 저장이 아닙니다. 도메인 지식을 구조화하고, 사실들 간의 관계를 파악하며, 문맥적 이해를 제공합니다. 프로그래밍 지식을 예로 들면: '함수라는 것이 있다'는 Memory지만, '이 상황에서 어떤 함수가 적합하고 왜 그런지'는 Knowledge입니다.">
+  <div class="zone-a">
+    <span class="zone-a-lecture">Lecture A</span>
+    <span class="zone-a-title">왜 Knowledge인가?</span>
+    <span class="zone-a-number">6/13</span>
+  </div>
+  <div class="zone-b">
+    <div class="zone-b-centered">
+      <div class="lecture-badge">Why Chain — 2</div>
+      <div class="why-pair">
+        <div class="why-box problem">
+          <div class="why-box-icon">📄</div>
+          <div class="why-box-title">사실만 있는 경우</div>
+          <div class="why-box-desc">데이터는 많지만 관계를 모르고 맥락 없는 정보 파편에 머문다</div>
         </div>
-
-        <div class="key-message" style="margin-top: var(--space-sm);">
-          Stateless ≠ Agent — Agent OS가 있어야 진정한 Agent
+        <div class="why-box solution">
+          <div class="why-box-icon">🗂️</div>
+          <div class="why-box-title">Knowledge가 있는 경우</div>
+          <div class="why-box-desc">정보를 관계와 의미로 연결하여 도메인 지식을 구조화한다</div>
         </div>
       </div>
-    </main>
-    <footer class="zone-c">
-      <span class="slide-number">12/13</span>
-      <span class="section-label">Lecture A · Summary</span>
-    </footer>
+      <div class="h-flow">
+        <div class="h-flow-node">Raw Data</div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node">구조화</div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node">관계 추출</div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node">Knowledge ✓</div>
+      </div>
+      <ul class="slide-grammar-details">
+        <li>Knowledge = <strong>사실의 관계</strong>를 구조화</li>
+        <li>도메인별 <strong>지식 체인</strong> 구성</li>
+        <li>단순 저장을 넘어 <strong>문맥적 이해</strong></li>
+        <li>Memory의 다음 단계: <strong>저장 → 이해</strong></li>
+      </ul>
+    </div>
   </div>
+  <div class="zone-c">
+    <span class="zone-c-text">사실 ≠ 이해 — 데이터를 아는 것과 관계를 아는 것은 다른 차원이다</span>
+  </div>
+</div>
 
-  <!-- ================================================================
-       A.12 [Q&A]
-       ================================================================ -->
-  <div class="slide v7 summary-slide" id="slide-12" data-slide="12" data-notes="Q&A 세션입니다. 오늘 배운 SCQA 구조, 4가지 실패 패턴, Why Chain, 4-Layer Stack, Hermes Agent OS에 대해 자유롭게 질문해주세요. 다음 강의에서는 Memory & Knowledge Layer를 구체적으로 다룹니다.">
-    <header class="zone-a">
-      <h2 class="slide-title">Q&A</h2>
-      <p class="slide-takeaway">오늘 배운 내용을 되돌아보며 질문해보세요 — 다음 강의에서 더 깊게 다룹니다</p>
-    </header>
-    <main class="zone-b">
-      <div class="zone-b-centered">
-        <div class="lecture-badge">Lecture A · Q&A</div>
-        <div class="qa-prompt">질문이 있으신가요?</div>
-        <div class="qa-next">
-          🔜 다음 강의: <strong>Lecture B</strong> — Memory &amp; Knowledge
+<!-- ================================================================
+     A.7 [Why→How] — 왜 Skills인가?
+     ================================================================ -->
+<div class="slide v7" id="slide-7" data-slide="7"
+  data-notes="[Golden Circle — Why→How 3] 왜 Skills인가? 아는 것과 실행하는 것은 완전히 다릅니다. 레시피를 다 읽은 사람이 요리사가 되지는 않습니다 — 지식을 절차(procedure)로 변환해야 실제 작업을 수행할 수 있습니다. Skills는 그 변환 계층입니다. 지식을 재사용 가능한 실행 모듈로 만들고, 동일한 작업에 일관된 품질을 보장합니다. 예를 들어: 'Git의 rebase 명령어를 안다'는 Knowledge지만, '코드 리뷰 시 branch 전략을 자동으로 적용한다'는 Skill입니다.">
+  <div class="zone-a">
+    <span class="zone-a-lecture">Lecture A</span>
+    <span class="zone-a-title">왜 Skills인가?</span>
+    <span class="zone-a-number">7/13</span>
+  </div>
+  <div class="zone-b">
+    <div class="zone-b-centered">
+      <div class="lecture-badge">Why Chain — 3</div>
+      <div class="why-pair">
+        <div class="why-box problem">
+          <div class="why-box-icon">📖</div>
+          <div class="why-box-title">지식만 있는 경우</div>
+          <div class="why-box-desc">이론은 알지만 실행하지 못하고 매번 Prompt를 새로 작성해야 한다</div>
+        </div>
+        <div class="why-box solution">
+          <div class="why-box-icon">⚡</div>
+          <div class="why-box-title">Skills가 있는 경우</div>
+          <div class="why-box-desc">지식을 절차로 변환하여 재사용 가능한 모듈로 일관된 결과를 보장한다</div>
         </div>
       </div>
-    </main>
-    <footer class="zone-c">
-      <span class="slide-number">13/13</span>
-      <span class="section-label">Lecture A · Q&A</span>
-    </footer>
+      <div class="h-flow">
+        <div class="h-flow-node">Knowledge</div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node">절차화</div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node">실행</div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node">Skill ✓</div>
+      </div>
+      <ul class="slide-grammar-details">
+        <li>Skills = <strong>지식 → 절차</strong>의 변환 계층</li>
+        <li>레시피처럼 <strong>재사용 가능한</strong> 실행 모듈</li>
+        <li>동일 작업의 <strong>일관된 품질</strong> 보장</li>
+        <li>Knowledge의 다음 단계: <strong>이해 → 실행</strong></li>
+      </ul>
+    </div>
   </div>
+  <div class="zone-c">
+    <span class="zone-c-text">아는 것 ≠ 실행하는 것 — 지식을 절차로 변환해야 실제 작업 가능</span>
+  </div>
+</div>
+
+<!-- ================================================================
+     A.8 [Why→How] — 왜 Workflow인가?
+     ================================================================ -->
+<div class="slide v7" id="slide-8" data-slide="8"
+  data-notes="[Golden Circle — Why→How 4] 왜 Workflow인가? 실행하는 것과 체계적으로 완수하는 것은 다릅니다. 훌륭한 요리사가 있다고 해서 레스토랑 운영이 되는 것은 아닙니다 — 단계를 관리하고, 의존성을 처리하고, 전체 프로세스를 완수하는 체계가 필요합니다. Workflow는 상태 머신(state machine)으로 개별 실행을 연결합니다. Plan → Research → Execute → Review → Done. 각 단계가 언제 시작하고, 언제 완료되며, 어떤 단계에 의존하는지를 자동 관리합니다.">
+  <div class="zone-a">
+    <span class="zone-a-lecture">Lecture A</span>
+    <span class="zone-a-title">왜 Workflow인가?</span>
+    <span class="zone-a-number">8/13</span>
+  </div>
+  <div class="zone-b">
+    <div class="zone-b-centered">
+      <div class="lecture-badge">Why Chain — 4</div>
+      <div class="why-pair">
+        <div class="why-box problem">
+          <div class="why-box-icon">🔧</div>
+          <div class="why-box-title">실행만 있는 경우</div>
+          <div class="why-box-desc">개별 작업은 가능하지만 통합되지 않아 전체 프로세스가 깨진다</div>
+        </div>
+        <div class="why-box solution">
+          <div class="why-box-icon">🔗</div>
+          <div class="why-box-title">Workflow가 있는 경우</div>
+          <div class="why-box-desc">상태 머신으로 단계를 관리하고 의존성을 처리하여 체계적인 완수를 보장한다</div>
+        </div>
+      </div>
+      <div class="h-flow">
+        <div class="h-flow-node">📋 Plan</div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node">🔍 Research</div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node">✍️ Execute</div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node">✅ Review</div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node">🎯 Done</div>
+      </div>
+      <ul class="slide-grammar-details">
+        <li>Workflow = <strong>개별 실행 → 체계</strong>의 통합 계층</li>
+        <li>상태 머신(state machine)으로 <strong>단계 관리</strong></li>
+        <li>단계 간 <strong>의존성 자동 처리</strong></li>
+        <li>Skills의 다음 단계: <strong>실행 → 완수</strong></li>
+      </ul>
+    </div>
+  </div>
+  <div class="zone-c">
+    <span class="zone-c-text">실행 ≠ 체계 — 개별 실행을 상태 머신으로 연결해야 완수 가능</span>
+  </div>
+</div>
+
+<!-- ================================================================
+     A.9 [Pyramid] — 4-Layer Stack
+     ================================================================ -->
+<div class="slide v7" id="slide-9" data-slide="9"
+  data-notes="[Architecture — 4-Layer Stack] 이제 4-Layer Stack 전체를 한눈에 보여드립니다. Memory → Knowledge → Skills → Workflow. 핵심 규칙은 하나입니다: 아래 Layer 없으면 위 Layer가 불가능합니다. Memory가 없으면 Knowledge를 구축할 수 없고, Knowledge가 없으면 Skills를 만들 수 없으며, Skills가 없으면 Workflow를 운영할 수 없습니다. 이것이 의존성입니다. Memory는 경험을 저장하고 검색하며, Knowledge는 사실의 관계를 구조화하고, Skills는 지식을 절차로 실행하며, Workflow는 개별 실행을 체계로 완수합니다.">
+  <div class="zone-a">
+    <span class="zone-a-lecture">Lecture A</span>
+    <span class="zone-a-title">4-Layer Stack</span>
+    <span class="zone-a-number">9/13</span>
+  </div>
+  <div class="zone-b">
+    <div class="zone-b-full">
+      <div class="layer-stack">
+        <div class="layer-row">
+          <div class="layer-block layer-workflow">
+            <span class="layer-icon">🔗</span>
+            Workflow
+            <span class="layer-key">실행 → 체계 → 완수</span>
+          </div>
+        </div>
+        <div class="layer-arrow-up"><span>↑ 의존</span></div>
+        <div class="layer-row">
+          <div class="layer-block layer-skills">
+            <span class="layer-icon">⚡</span>
+            Skills
+            <span class="layer-key">이해 → 절차 → 실행</span>
+          </div>
+        </div>
+        <div class="layer-arrow-up"><span>↑ 의존</span></div>
+        <div class="layer-row">
+          <div class="layer-block layer-knowledge">
+            <span class="layer-icon">🗂️</span>
+            Knowledge
+            <span class="layer-key">데이터 → 관계 → 이해</span>
+          </div>
+        </div>
+        <div class="layer-arrow-up"><span>↑ 의존</span></div>
+        <div class="layer-row">
+          <div class="layer-block layer-memory">
+            <span class="layer-icon">🧠</span>
+            Memory
+            <span class="layer-key">경험 → 저장 → 검색</span>
+          </div>
+        </div>
+      </div>
+      <div class="insight-box">
+        🔑 아래 Layer 없으면 위 Layer 불가능 — 이것이 왜 4-Layer Stack인가
+      </div>
+    </div>
+  </div>
+  <div class="zone-c">
+    <span class="zone-c-text">하단에서 상단으로 의존성이 쌓임 — 아래 Layer 없으면 위 Layer 불가능</span>
+  </div>
+</div>
+
+<!-- ================================================================
+     A.10 [What] — Agent OS in Practice
+     ================================================================ -->
+<div class="slide v7" id="slide-10" data-slide="10"
+  data-notes="[What — Practice] 이론을 실습으로 연결합니다. Hermes Agent OS에서 명령이 어떻게 처리되는지 실제 흐름을 추적해보세요. 사용자의 CLI 명령이 진입점으로 들어오면, Model(LLM)이 의도를 파악하고 추론합니다. 그리고 4-Layer가 연이어 작동합니다: Memory는 과거 경험에서 관련 정보를 검색하고, Knowledge는 도메인 지식을 문맥에 적용하며, Skills는 절차 모듈을 실행하고, Workflow는 전체 프로세스를 체계적으로 완수합니다. 이 흐름이 Theory가 아닌 Practice입니다.">
+  <div class="zone-a">
+    <span class="zone-a-lecture">Lecture A</span>
+    <span class="zone-a-title">Agent OS in Practice</span>
+    <span class="zone-a-number">10/13</span>
+  </div>
+  <div class="zone-b">
+    <div class="zone-b-centered">
+      <div class="lecture-badge">What — Practice</div>
+      <div class="h-flow">
+        <div class="h-flow-node has-sub">
+          CLI
+          <span class="node-sub">명령 입력</span>
+        </div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node has-sub">
+          Model
+          <span class="node-sub">LLM 추론</span>
+        </div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node has-sub">
+          🧠 Memory
+          <span class="node-sub">경험 검색</span>
+        </div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node has-sub">
+          🗂️ Knowledge
+          <span class="node-sub">지식 적용</span>
+        </div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node has-sub">
+          ⚡ Skills
+          <span class="node-sub">절차 실행</span>
+        </div>
+        <span class="h-flow-arrow"></span>
+        <div class="h-flow-node has-sub">
+          🔗 Workflow
+          <span class="node-sub">체계적 완수</span>
+        </div>
+      </div>
+      <ul class="slide-grammar-details">
+        <li><strong>CLI</strong>: 사용자의 명령이 시스템의 진입점</li>
+        <li><strong>Model</strong>: LLM이 의도 파악 및 추론</li>
+        <li><strong>Memory</strong>: 과거 경험에서 관련 정보 검색</li>
+        <li><strong>Knowledge</strong>: 도메인 지식을 문맥에 적용</li>
+        <li><strong>Skills + Workflow</strong>: 절차 실행 → 체계적 완수</li>
+      </ul>
+    </div>
+  </div>
+  <div class="zone-c">
+    <span class="zone-c-text">Theory를 Practice로 — Hermes의 실제 실행 흐름을 추적한다</span>
+  </div>
+</div>
+
+<!-- ================================================================
+     A.11 [Summary] — 핵심 3가지
+     ================================================================ -->
+<div class="slide v7" id="slide-11" data-slide="11"
+  data-notes="[Summary] Lecture A를 3가지 핵심 숫자로 요약합니다: ① 4가지 실패 패턴 — Context Loss, No Learning, No Reusability, No Consistency. 이것이 Stateless Agent가 직면한 근본 문제입니다 ② 4개 해결 Layer — Memory, Knowledge, Skills, Workflow. 각 Layer가 각각의 실패 패턴을 해결합니다 ③ 1개 통합 시스템 — Agent OS. 이 4개 Layer를 통합한 것이 바로 Hermes Agent OS입니다. Stateless는 Agent가 아닙니다. Agent OS가 있어야 진정한 Agent라고 할 수 있습니다.">
+  <div class="zone-a">
+    <span class="zone-a-lecture">Lecture A</span>
+    <span class="zone-a-title">핵심 3가지</span>
+    <span class="zone-a-number">11/13</span>
+  </div>
+  <div class="zone-b">
+    <div class="zone-b-centered">
+      <div class="lecture-badge">Summary</div>
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="summary-card-number">4</div>
+          <div class="summary-card-label">실패 패턴</div>
+          <div class="summary-card-desc">Context Loss, No Learning, No Reusability, No Consistency</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-number">4</div>
+          <div class="summary-card-label">해결 Layer</div>
+          <div class="summary-card-desc">Memory → Knowledge → Skills → Workflow</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-number">1</div>
+          <div class="summary-card-label">통합 시스템</div>
+          <div class="summary-card-desc">Agent OS — Hermes로 실제 구축 가능</div>
+        </div>
+      </div>
+      <div class="key-message">
+        Stateless ≠ Agent — Agent OS가 있어야 진정한 Agent
+      </div>
+    </div>
+  </div>
+  <div class="zone-c">
+    <span class="zone-c-text">4가지 실패 → 4개 Layer → 1개 시스템</span>
+  </div>
+</div>
+
+<!-- ================================================================
+     A.12 [Q&A]
+     ================================================================ -->
+<div class="slide v7" id="slide-12" data-slide="12"
+  data-notes="[Q&A] 오늘 배운 내용을 정리하며 질문을 받습니다. SCQA 구조 — Situation(Stateless Problem), Complication(4가지 실패 패턴), Question(실제 영향력 비교), Answer(4-Layer Stack) — 이 프레임워크를 통해 왜 Agent OS가 필요한지 근본적인 이유를 탐구했습니다. Simon Sinek의 Golden Circle — Why(Memory, Knowledge, Skills, Workflow), How(4-Layer Stack 아키텍처), What(Hermes Agent OS in Practice) — 이 흐름이 바로 '왜 Agent OS인가'에 대한 답입니다. 다음 강의 Lecture B에서는 Memory & Knowledge Layer를 구체적으로 다룹니다.">
+  <div class="zone-a">
+    <span class="zone-a-lecture">Lecture A</span>
+    <span class="zone-a-title">Q&A</span>
+    <span class="zone-a-number">12/13</span>
+  </div>
+  <div class="zone-b">
+    <div class="zone-b-centered">
+      <div class="lecture-badge">Lecture A · 마무리</div>
+      <div class="qa-prompt">질문이 있으신가요?</div>
+      <div class="qa-next">
+        🔜 다음 강의: <strong>Lecture B</strong> — Memory &amp; Knowledge
+      </div>
+    </div>
+  </div>
+  <div class="zone-c">
+    <span class="zone-c-text">오늘 배운 내용을 되돌아보며 질문해보세요 — 다음 강의에서 더 깊게 다룹니다</span>
+  </div>
+</div>
 
 </div>
 
@@ -629,7 +597,6 @@
 <div class="slide-counter" id="slideCounter"></div>
 
 <script>
-  // Navigation
   const deck = document.getElementById('deck');
   const slides = deck.querySelectorAll('.slide');
   const nav = document.getElementById('nav');
@@ -648,9 +615,8 @@
   });
 
   // Section progress hide types
-  const hideSectionTypes = ['hero-slide', 'section-divider', 'summary-slide'];
+  const hideSectionTypes = ['hero-slide', 'section-divider'];
 
-  // Update on scroll
   function update() {
     const scrollLeft = deck.scrollLeft;
     const vw = window.innerWidth;
@@ -670,12 +636,10 @@
       notesContent.textContent = currentSlide.dataset.notes || '';
     }
 
-    // Section progress bar — update sections
+    // Section progress bar
     const sectionProgress = document.getElementById('sectionProgress');
     const secs = sectionProgress.querySelectorAll('.sec');
 
-    // Section mapping (13 slides, 0-12):
-    // 0: cover (hide), 1-4: section ①, 5-8: section ②, 9: section ③, 10-11: section ④, 12: Q&A (hide)
     if (current <= 4) {
       secs[0].className = 'sec active';
       secs[1].className = 'sec future';
@@ -698,7 +662,6 @@
       secs[3].className = 'sec active';
     }
 
-    // Hide section progress on certain slide types
     if (currentSlide && hideSectionTypes.some(t => currentSlide.classList.contains(t))) {
       sectionProgress.style.display = 'none';
     } else {
@@ -716,11 +679,9 @@
     const isArrow = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].includes(e.key);
     if (isArrow) e.preventDefault();
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-      const target = deck.scrollLeft + vw;
-      deck.scrollTo({ left: target, behavior: 'smooth' });
+      deck.scrollTo({ left: deck.scrollLeft + vw, behavior: 'smooth' });
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-      const target = deck.scrollLeft - vw;
-      deck.scrollTo({ left: target, behavior: 'smooth' });
+      deck.scrollTo({ left: deck.scrollLeft - vw, behavior: 'smooth' });
     }
   });
 
