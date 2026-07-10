@@ -762,24 +762,25 @@ function switchTab(tabId) {
 updateSlide();
 
 // ── Mouse hover + click: 포커스 관리 ──
-slides.forEach(slide => {
-  const focusables = slide.querySelectorAll('[data-focusable]');
-  focusables.forEach((el, idx) => {
-    el.addEventListener('mouseenter', () => {
-      slide.classList.add('mouse-hovering');
-    });
-    el.addEventListener('mouseleave', () => {
-      slide.classList.remove('mouse-hovering');
-      updateFocus(); // 마지막 포커스 위치 표시
-    });
-    // 클릭 시 currentFocus 업데이트 + 이펙트
-    el.addEventListener('click', () => {
-      currentFocus = idx;
-      updateFocus();
-      // 클릭 이펙트
-      el.classList.remove('click-effect');
-      void el.offsetWidth; // reflow
-      el.classList.add('click-effect');
+// DOM 완전히 렌더링 후 이벤트 등록
+requestAnimationFrame(() => {
+  slides.forEach(slide => {
+    const focusables = slide.querySelectorAll('[data-focusable]');
+    focusables.forEach((el, idx) => {
+      el.addEventListener('mouseenter', () => {
+        slide.classList.add('mouse-hovering');
+      });
+      el.addEventListener('mouseleave', () => {
+        slide.classList.remove('mouse-hovering');
+        updateFocus();
+      });
+      el.addEventListener('click', () => {
+        currentFocus = idx;
+        updateFocus();
+        el.classList.remove('click-effect');
+        void el.offsetWidth;
+        el.classList.add('click-effect');
+      });
     });
   });
 });
