@@ -362,6 +362,28 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 .callout-text { font-size: 15px; line-height: 1.6; }
 .callout-text strong { color: var(--memory); }
 
+/* ── Click Effect: 화려한 클릭 이펙트 ── */
+[data-focusable].click-effect {
+  animation: click-pulse 0.8s ease-out, click-glow 1.2s ease-out, click-ripple 0.6s ease-out;
+}
+@keyframes click-pulse {
+  0% { transform: scale(1); }
+  15% { transform: scale(0.96); }
+  30% { transform: scale(1.04); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+@keyframes click-glow {
+  0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.6), 0 0 0 0 rgba(245, 158, 11, 0.3); }
+  40% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.2), 0 0 0 16px rgba(245, 158, 11, 0.1); }
+  100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0), 0 0 0 0 rgba(245, 158, 11, 0); }
+}
+@keyframes click-ripple {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(1.15); }
+  100% { filter: brightness(1); }
+}
+
 /* ── Mouse hover: .in-focus 효과 일시 숨김 ── */
 .slide.mouse-hovering [data-focusable].in-focus {
   box-shadow: none !important;
@@ -739,18 +761,25 @@ function switchTab(tabId) {
 // 초기화
 updateSlide();
 
-// ── Mouse hover: 포커스 일시 숨김 ──
-// 마우스를 쓰지 못하는 상황을 위해 키보드 포커스를 기본으로 하되,
-// 마우스 호버 시 키보드 포커스 효과 숨기고 호버 효과만 보임
+// ── Mouse hover + click: 포커스 관리 ──
 slides.forEach(slide => {
-  // 마우스가 focusable 요소 위에 오면 slide에 mouse-hovering 추가
-  slide.querySelectorAll('[data-focusable]').forEach(el => {
+  const focusables = slide.querySelectorAll('[data-focusable]');
+  focusables.forEach((el, idx) => {
     el.addEventListener('mouseenter', () => {
       slide.classList.add('mouse-hovering');
     });
     el.addEventListener('mouseleave', () => {
       slide.classList.remove('mouse-hovering');
-      updateFocus(); // 마지막 포커스 위치 복원
+      updateFocus(); // 마지막 포커스 위치 표시
+    });
+    // 클릭 시 currentFocus 업데이트 + 이펙트
+    el.addEventListener('click', () => {
+      currentFocus = idx;
+      updateFocus();
+      // 클릭 이펙트
+      el.classList.remove('click-effect');
+      void el.offsetWidth; // reflow
+      el.classList.add('click-effect');
     });
   });
 });
