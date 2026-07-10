@@ -362,26 +362,30 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 .callout-text { font-size: 15px; line-height: 1.6; }
 .callout-text strong { color: var(--memory); }
 
-/* ── Click Effect: 화려한 클릭 이펙트 ── */
-[data-focusable].click-effect {
-  animation: click-pulse 0.8s ease-out, click-glow 1.2s ease-out, click-ripple 0.6s ease-out;
+/* ── Click Ripple: 클릭 시 확산 이펙트 ── */
+.click-ripple-effect {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1000;
+  animation: ripple-expand 1s ease-out forwards;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.5) 0%, rgba(245, 158, 11, 0.2) 40%, transparent 70%);
 }
-@keyframes click-pulse {
-  0% { transform: scale(1); }
-  15% { transform: scale(0.96); }
-  30% { transform: scale(1.04); }
-  50% { transform: scale(1.02); }
-  100% { transform: scale(1); }
-}
-@keyframes click-glow {
-  0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.6), 0 0 0 0 rgba(245, 158, 11, 0.3); }
-  40% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.2), 0 0 0 16px rgba(245, 158, 11, 0.1); }
-  100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0), 0 0 0 0 rgba(245, 158, 11, 0); }
-}
-@keyframes click-ripple {
-  0% { filter: brightness(1); }
-  50% { filter: brightness(1.15); }
-  100% { filter: brightness(1); }
+@keyframes ripple-expand {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(8);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(16);
+    opacity: 0;
+  }
 }
 
 /* ── Mouse hover: .in-focus 효과 일시 숨김 ── */
@@ -762,28 +766,52 @@ function switchTab(tabId) {
 updateSlide();
 
 // ── Mouse hover + click: 포커스 관리 ──
-// DOM 완전히 렌더링 후 이벤트 등록
 requestAnimationFrame(() => {
   slides.forEach(slide => {
     const focusables = slide.querySelectorAll('[data-focusable]');
+    let lastHoveredIdx = -1;
+
     focusables.forEach((el, idx) => {
       el.addEventListener('mouseenter', () => {
+        lastHoveredIdx = idx;
         slide.classList.add('mouse-hovering');
       });
       el.addEventListener('mouseleave', () => {
         slide.classList.remove('mouse-hovering');
+        if (lastHoveredIdx >= 0) {
+          currentFocus = lastHoveredIdx;
+        }
         updateFocus();
       });
       el.addEventListener('click', () => {
         currentFocus = idx;
         updateFocus();
-        el.classList.remove('click-effect');
-        void el.offsetWidth;
-        el.classList.add('click-effect');
+        // 클릭 이펙트: slide 전체에 ripple
+        triggerClickRipple(slide, el);
       });
+    });
+
+    // slide 전체 클릭 시 ripple 이펙트
+    slide.addEventListener('click', (e) => {
+      triggerClickRipple(slide, e.target);
     });
   });
 });
+
+function triggerClickRipple(slide, target) {
+  // 기존 ripple 제거
+  const old = slide.querySelector('.click-ripple-effect');
+  if (old) old.remove();
+
+  const rect = slide.getBoundingClientRect();
+  const ripple = document.createElement('div');
+  ripple.className = 'click-ripple-effect';
+  ripple.style.left = (target.getBoundingClientRect().left - rect.left + target.getBoundingClientRect().width / 2) + 'px';
+  ripple.style.top = (target.getBoundingClientRect().top - rect.top + target.getBoundingClientRect().height / 2) + 'px';
+  slide.appendChild(ripple);
+
+  setTimeout(() => ripple.remove(), 1200);
+}
 </script>
 </body>
 </html>
