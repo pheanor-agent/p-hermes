@@ -14,7 +14,7 @@ git add docs/playground/
 
 # 2. 변경 범위 확인 (playground 외 포함 여부 검증)
 STAGED_FILES=$(git diff --cached --name-only)
-NON_PLAYGROUND=$(echo "$STAGED_FILES" | grep -v "\^docs/playground/" || true)
+NON_PLAYGROUND=$(echo "$STAGED_FILES" | grep -v "docs/playground/" || true)
 if [[ -n "$NON_PLAYGROUND" ]]; then
   echo "❌ playground 외 파일이 포함되었습니다:"
   echo "$NON_PLAYGROUND"

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>v8 Design System — Sample Slides</title>
+<link rel="stylesheet" href="components/slides-v8.css">
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="deck" id="deck">
+
+<!-- ================================================================
+     SLIDE 0 — Hero Cover
+     ================================================================ -->
+<div class="slide v8 hero-slide" id="slide-0" data-slide="0"
+  data-notes="[커버] v8 디자인 시스템 샘플 — 4가지 핵심 기능 강의의 커버 슬라이드입니다. Hero Icon + Title + Subtitle 구조로, 다크 배경 위에 흰 텍스트가 배치됩니다.">
+  <div class="zone-a">
+    <div class="zone-a-left">
+      <span class="zone-a-lecture">Lecture A</span>
+      <span class="zone-a-title">4가지 핵심 기능</span>
+    </div>
+    <div class="zone-a-right">
+      <span class="zone-a-number">0/40</span>
+    </div>
+  </div>
+  <div class="zone-b">
+    <div class="zone-b-centered">
+      <div class="hero-icon">🧠</div>
+      <h1 class="hero-title">Hermes Agent의<br>4가지 핵심 기능</h1>
+      <p class="hero-subtitle">기억 · 지식 · 능력 · 규칙 — Agent가 진화하는 방식</p>
+    </div>
+  </div>
+  <div class="zone-c">
+    <span class="zone-c-text">Stateless Agent를 Stateful Agent OS로</span>
+  </div>
+</div>
+
+<!-- ================================================================
+     SLIDE 1 — Concept Overview with Cards
+     ================================================================ -->
+<div class="slide v8" id="slide-1" data-slide="1"
+  data-notes="[개념 소개] Hermes Agent의 4가지 핵심 기능을 카드 4개로 소개합니다. 각 카드는 색상 코딩으로 구분되며, 아이콘 + 제목 + 설명의 구조를 가집니다. Memory는 기억, Knowledge는 지혜, Skill은 능력, Workflow는 규칙입니다.">
+  <div class="zone-a">
+    <div class="zone-a-left">
+      <span class="zone-a-lecture">Lecture A</span>
+      <span class="zone-a-title">핵심 기능</span>
+    </div>
+    <div class="zone-a-right">
+      <span class="zone-a-number">1/40</span>
+    </div>
+  </div>
+  <div class="zone-b">
+    <div class="zone-b-main">
+      <h2 class="slide-heading">Agent가 갖추는 4가지 능력</h2>
+      <p class="slide-body" style="margin-bottom: 24px;">매일 새로운 대화만 하는 Agent는 성장할 수 없습니다. 4가지 기능이 Stateful OS를 만듭니다.</p>
+      <div class="zone-b-grid">
+        <div class="card memory">
+          <span class="card-icon">🧠</span>
+          <h3 class="card-title">Memory</h3>
+          <p class="card-body">기억<br>어제 한 일을 잊지 않습니다</p>
+        </div>
+        <div class="card knowledge">
+          <span class="card-icon">📚</span>
+          <h3 class="card-title">Knowledge</h3>
+          <p class="card-body">지식<br>정보를 연결하고 의미를 만듭니다</p>
+        </div>
+        <div class="card skill">
+          <span class="card-icon">⚡</span>
+          <h3 class="card-title">Skill</h3>
+          <p class="card-body">능력<br>새로운 작업을 스스로 수행합니다</p>
+        </div>
+        <div class="card workflow">
+          <span class="card-icon">🔄</span>
+          <h3 class="card-title">Workflow</h3>
+          <p class="card-body">규칙<br>일관된 품질로 작업을 진행합니다</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="zone-c">
+    <span class="zone-c-text">4가지 기능이 함께 작동할 때 Agent는 진정한 파트너가 됩니다</span>
+  </div>
+</div>
+
+<!-- ================================================================
+     SLIDE 2 — Memory Deep Dive with Interactive Components
+     ================================================================ -->
+<div class="slide v8" id="slide-2" data-slide="2"
+  data-notes="[Memory 심화] Memory의 3가지 유형을 인터랙티브 탭으로 보여줍니다. User Memory는 사용자 선호, Session Memory는 대화 이력, Workspace Memory는 작업 공간 기록입니다. 탭을 클릭하면 유형별 설명이 전환됩니다.">
+  <div class="zone-a">
+    <div class="zone-a-left">
+      <span class="zone-a-lecture">Lecture A</span>
+      <span class="zone-a-title">Memory: 기억의 힘</span>
+      <span class="concept-badge memory">Memory</span>
+    </div>
+    <div class="zone-a-right">
+      <span class="zone-a-number">2/40</span>
+    </div>
+  </div>
+  <div class="zone-b">
+    <div class="zone-b-main">
+      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 8px;">
+        <span style="font-size: 48px;">🧠</span>
+        <div>
+          <h2 class="slide-heading" style="margin-bottom: 4px;">Memory — Agent의 기억</h2>
+          <p class="slide-small">인간이 어제 일을 기억하듯, Agent도 과거를 기억해야 합니다</p>
+        </div>
+      </div>
+      
+      <!-- Interactive Tabs -->
+      <div class="tab-container">
+        <div class="tab-header">
+          <button class="tab-btn active" onclick="switchTab(this, 0)">사용자 기억</button>
+          <button class="tab-btn" onclick="switchTab(this, 1)">대화 기록</button>
+          <button class="tab-btn" onclick="switchTab(this, 2)">작업 기록</button>
+        </div>
+        
+        <div class="tab-panel active" data-tab="0">
+          <div class="metaphor-card">
+            <div class="metaphor-icon">👤</div>
+            <div class="metaphor-text">
+              <h3>User Memory — 사용자 기억</h3>
+              <p>당신의 이름, 선호하는 프로그래밍 스타일, 자주 사용하는 도구. 마치 개인 비서가 당신을 알고 있듯이, Agent도 사용자에 대해 기억합니다.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="tab-panel" data-tab="1">
+          <div class="metaphor-card">
+            <div class="metaphor-icon">💬</div>
+            <div class="metaphor-text">
+              <h3>Session Memory — 대화 기록</h3>
+              <p>지금까지 어떤 대화를 나눴는지. "아까 말씀드린 것처럼..." — 이 '아까'가 가능하게 합니다. FTS5 검색으로 수백 세션 중 관련 대사를 찾아냅니다.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="tab-panel" data-tab="2">
+          <div class="metaphor-card">
+            <div class="metaphor-icon">📁</div>
+            <div class="metaphor-text">
+              <h3>Workspace Memory — 작업 기록</h3>
+              <p>어떤 파일을 수정했는지, 어떤 결정을 내렸는지. 마치 작업 일지처럼 프로젝트 진행 상황을 추적합니다. 다음 세션에서도 이어서 작업할 수 있습니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Callout -->
+      <div class="callout info" style="margin-top: 16px;">
+        <span class="callout-icon">💡</span>
+        <span class="callout-content"><strong>비유:</strong> Memory는 Agent의 '개인 일기'입니다. 매일 새로운 일기를 쓰면, 과거의 내가 무엇을 했는지 잊지 않습니다.</span>
+      </div>
+    </div>
+  </div>
+  <div class="zone-c">
+    <span class="zone-c-text">Memory 3가지 유형 — 탭을 클릭하면 유형별 설명이 전환됩니다</span>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- Notes Panel -->
+<button class="notes-toggle" id="notesToggle">📝 Notes</button>
+<div class="notes-panel" id="notesPanel">
+  <h4>📝 발표자 노트</h4>
+  <p id="notesContent">슬라이드를 선택해주세요.</p>
+</div>
+
+<script>
+// ── Slide Navigation ──
+const slides = document.querySelectorAll('.slide.v8');
+const progressBar = document.getElementById('progressBar');
+const notesToggle = document.getElementById('notesToggle');
+const notesPanel = document.getElementById('notesPanel');
+const notesContent = document.getElementById('notesContent');
+let current = 0;
+
+function update() {
+  current = Math.max(0, Math.min(current, slides.length - 1));
+  const pct = ((current + 1) / slides.length) * 100;
+  progressBar.style.width = pct + '%';
+  notesContent.textContent = slides[current].dataset.notes || '';
+}
+
+function go(n) { current = n; update(); }
+
+document.addEventListener('keydown', (e) => {
+  if (['ArrowRight', 'ArrowDown', ' '].includes(e.key)) { e.preventDefault(); current++; update(); }
+  if (['ArrowLeft', 'ArrowUp'].includes(e.key)) { e.preventDefault(); current--; update(); }
+});
+
+// ── Notes Toggle ──
+notesToggle.addEventListener('click', () => {
+  notesPanel.classList.toggle('visible');
+});
+
+// ── Tab Switching ──
+function switchTab(btn, tabId) {
+  const container = btn.closest('.tab-container');
+  container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  container.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  container.querySelector(`.tab-panel[data-tab="${tabId}"]`).classList.add('active');
+}
+
+// ── Expand Cards ──
+document.querySelectorAll('.expand-header').forEach(header => {
+  header.addEventListener('click', () => {
+    header.parentElement.classList.toggle('open');
+  });
+});
+
+// ── Quiz ──
+function checkQuiz(btn, correct) {
+  const options = btn.parentElement.querySelectorAll('.quiz-option');
+  options.forEach(opt => {
+    opt.classList.remove('correct', 'wrong');
+    opt.style.pointerEvents = 'none';
+  });
+  if (correct) {
+    btn.classList.add('correct');
+  } else {
+    btn.classList.add('wrong');
+    options.forEach(opt => {
+      if (opt.dataset.correct === 'true') opt.classList.add('correct');
+    });
+  }
+  const result = btn.closest('.quiz-container').querySelector('.quiz-result');
+  result.classList.add('show');
+}
+
+update();
+</script>
+</body>
+</html>

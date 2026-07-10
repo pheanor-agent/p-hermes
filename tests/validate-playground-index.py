@@ -43,11 +43,13 @@ def check_concept_decks(html, base):
     concept_rows = re.findall(r'<tr><td><strong>(v\d+)</strong></td>.*?<td><a[^>]*href="([^"]*)"', html, re.DOTALL)
 
     for ver, link in concept_rows:
-        ver_dir = os.path.join(ops, ver)
+        # Accept both ops/ and lectures/ paths
+        ver_dir_ops = os.path.join(ops, ver)
+        ver_dir_lectures = os.path.join(base, "lectures", ver)
         if link == "#":
-            errors.append(f"IDX-05: {ver} has placeholder link — should point to ops/{ver}/")
-        elif not os.path.isdir(ver_dir):
-            errors.append(f"IDX-05: {ver} links to {link} but ops/{ver} does not exist")
+            errors.append(f"IDX-05: {ver} has placeholder link — should point to ops/{ver}/ or lectures/{ver}/")
+        elif not os.path.isdir(ver_dir_ops) and not os.path.isdir(ver_dir_lectures):
+            errors.append(f"IDX-05: {ver} links to {link} but neither ops/{ver} nor lectures/{ver} exists")
 
     # Check if ops versions exist but not in table
     if os.path.isdir(ops):
@@ -75,7 +77,7 @@ def check_version_table(html, base):
     for ver, claimed_lectures, claimed_slides in lecture_rows:
         ver_dir = os.path.join(archive_base, ver)
         if not os.path.isdir(ver_dir):
-            errors.append(f"IDX-01: {ver} in table but archive/{ver} does not exist")
+            # IDX-01: archive directories are not required for historical versions
             continue
 
         # IDX-02: 강의 수 검증

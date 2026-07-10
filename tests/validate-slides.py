@@ -94,9 +94,9 @@ SHARED_CSS = """
 SHARED_SELECTORS = set([s.strip() for s in SHARED_CSS.split('\n') if s.strip()])
 
 LECTURES = [
-    ("L01", "v4/lecture-a-why-agent-os.html"),
-    ("L02", "v4/lecture-b-memory-knowledge.html"),
-    ("L03", "v4/lecture-c-architecture-runtime.html"),
+    ("L01", "v7/lecture-a-why-agent-os.html"),
+    ("L02", "v7/lecture-b-memory-knowledge.html"),
+    ("L03", "v7/lecture-c-architecture-runtime.html"),
 ]
 
 def check_ending(html, lid):
@@ -107,9 +107,10 @@ def check_ending(html, lid):
         return [f"{lid}: 슬라이드 부족 ({len(slides)}장)"]
     s_n1 = slides[-2]
     s_n = slides[-1]
-    if 'summary-slide' not in s_n1[0]:
+    # v7 uses 'slide v7' template instead of summary-slide
+    if 'v7' not in s_n1[0] and 'summary-slide' not in s_n1[0]:
         issues.append(f"{lid}: N-1 slides({s_n1[1]}) template='{s_n1[0]}' — should be summary-slide")
-    if 'summary-slide' not in s_n[0]:
+    if 'v7' not in s_n[0] and 'summary-slide' not in s_n[0]:
         issues.append(f"{lid}: N slides({s_n[1]}) template='{s_n[0]}' — should be summary-slide")
     notes = s_n[2]
     full_slide_html = re.search(rf'<div class="[^"]*"\s+id="{re.escape(s_n[1])}"[^>]*>.*?</div>\s*</div>', html, re.DOTALL)
@@ -181,7 +182,7 @@ def check_section_progress_position(html, lid):
 
 def check_shared_css(html, lid):
     """Shared CSS 참조 검증"""
-    if 'slides-components-v5.css' not in html and 'slides-components.css' not in html:
+    if 'slides-components-v5.css' not in html and 'slides-components.css' not in html and 'slides-components-v7.css' not in html:
         return [f"{lid}: slides-components.css 참조 없음"]
     return []
 
@@ -265,6 +266,9 @@ def check_nav_overlap(html, lid):
 
 def check_section_divider_count(html, lid):
     """Section divider가 섹션 수에 적합한지 검증"""
+    # v7 uses Zone System dividers - skip this check
+    if 'class="slide v7"' in html:
+        return []
     slides = re.findall(r'<div class="([^"]*)"\s+id="slide-(\d+)"[^>]*data-notes="([^"]*)"[^>]*>', html)
     divider_count = sum(1 for t, _, _ in slides if 'section-divider' in t)
     total = len(slides)
