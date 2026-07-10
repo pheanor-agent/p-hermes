@@ -362,50 +362,87 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 .callout-text { font-size: 15px; line-height: 1.6; }
 .callout-text strong { color: var(--memory); }
 
-/* ── Click Ripple: 클릭 시 확산 이펙트 ── */
-.click-ripple-effect {
+/* ── Click Game Effect: 미니게임 스타일 클릭 이펙트 ── */
+
+/* 점수 팝업: "+N" 숫자가 위로 떠오름 */
+.click-game-score {
   position: absolute;
   pointer-events: none;
+  z-index: 1001;
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.8), 0 2px 4px rgba(0,0,0,0.3);
+  animation: score-float 1s ease-out forwards;
+  transform: translate(-50%, -50%);
+}
+@keyframes score-float {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+  30% { transform: translate(-50%, calc(-50% - 30px)) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, calc(-50% - 80px)) scale(1); opacity: 0; }
+}
+
+/* 파티클: 사방으로 흩어지는 작은 점들 */
+.click-game-particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  pointer-events: none;
   z-index: 1000;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
+  animation: particle-fly 0.8s ease-out forwards;
 }
-.click-ripple-ring {
+@keyframes particle-fly {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+
+/* 스파클: 번쩍이는 별 모양 */
+.click-game-sparkle {
   position: absolute;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  animation: ripple-expand 1.2s ease-out forwards;
+  pointer-events: none;
+  z-index: 999;
+  font-size: 16px;
+  animation: sparkle-twinkle 0.6s ease-out forwards;
 }
-@keyframes ripple-expand {
-  0% {
-    width: 0; height: 0;
-    opacity: 1;
-    border-width: 4px;
-  }
-  60% {
-    opacity: 0.6;
-    border-width: 2px;
-  }
-  100% {
-    width: 300px; height: 300px;
-    opacity: 0;
-    border-width: 0;
-  }
+@keyframes sparkle-twinkle {
+  0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(1.5) rotate(180deg); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(0) rotate(360deg); opacity: 0; }
 }
-.click-ripple-core {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  animation: ripple-core 0.6s ease-out forwards;
-  background: var(--accent);
-  box-shadow: 0 0 20px 8px rgba(245, 158, 11, 0.6);
+
+/* 콤보 표시: 우측 상단 고정 */
+.click-combo-display {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 9999;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.95), rgba(217, 115, 13, 0.95));
+  color: white;
+  font-size: 18px;
+  font-weight: 900;
+  padding: 8px 20px;
+  border-radius: 99px;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.3s, transform 0.3s;
 }
-@keyframes ripple-core {
-  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
-  50% { transform: translate(-50%, -50%) scale(3); opacity: 0.8; }
-  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+.click-combo-display.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+.click-combo-display .combo-count {
+  font-size: 28px;
+  display: block;
+  line-height: 1;
+}
+.click-combo-display .combo-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.9;
 }
 
 /* ── Mouse hover: .in-focus 효과 일시 숨김 ── */
@@ -443,6 +480,12 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 </style>
 </head>
 <body>
+
+<!-- 콤보 표시 -->
+<div class="click-combo-display" id="comboDisplay">
+  <span class="combo-count" id="comboCount">0</span>
+  <span class="combo-label">COMBO</span>
+</div>
 
 <div class="progress-bar" id="progressBar"></div>
 
@@ -813,13 +856,13 @@ requestAnimationFrame(() => {
       el.addEventListener('click', (e) => {
         currentFocus = idx;
         updateFocus();
-        triggerClickRipple(slide, e.clientX, e.clientY);
+        triggerClickGame(slide, e.clientX, e.clientY);
       });
     });
 
-    // slide 전체 클릭 시 ripple 이펙트
+    // slide 전체 클릭 시 게임 이펙트
     slide.addEventListener('click', (e) => {
-      triggerClickRipple(slide, e.clientX, e.clientY);
+      triggerClickGame(slide, e.clientX, e.clientY);
     });
   });
 });
@@ -829,41 +872,81 @@ function isTabButton(el) {
   return el && el.classList.contains('tab-btn');
 }
 
-function triggerClickRipple(slide, clientX, clientY) {
-  const old = slide.querySelector('.click-ripple-effect');
-  if (old) old.remove();
+// ── Click Game: 미니게임 이펙트 시스템 ──
+let clickCombo = 0;
+let comboTimer = null;
+const comboDisplay = document.getElementById('comboDisplay');
+const comboCount = document.getElementById('comboCount');
 
+function updateComboDisplay(count) {
+  comboCount.textContent = count;
+  comboDisplay.classList.toggle('visible', count > 1);
+}
+
+function triggerClickGame(slide, clientX, clientY) {
   const rect = slide.getBoundingClientRect();
   const x = clientX - rect.left;
   const y = clientY - rect.top;
 
-  const wrapper = document.createElement('div');
-  wrapper.className = 'click-ripple-effect';
-  wrapper.style.left = x + 'px';
-  wrapper.style.top = y + 'px';
+  // 콤보 업데이트
+  clickCombo++;
+  clearTimeout(comboTimer);
+  updateComboDisplay(clickCombo);
+  comboTimer = setTimeout(() => {
+    clickCombo = 0;
+    updateComboDisplay(0);
+  }, 2000);
 
-  // 코어 (가운데 밝은 점)
-  const core = document.createElement('div');
-  core.className = 'click-ripple-core';
-  wrapper.appendChild(core);
+  // 점수 팝업 (+1 ~ +5 랜덤, 콤보越高越高)
+  const score = Math.min(1 + Math.floor(Math.random() * 5), 5 + Math.floor(clickCombo / 3));
+  const scoreEl = document.createElement('div');
+  scoreEl.className = 'click-game-score';
+  scoreEl.textContent = `+${score}`;
+  scoreEl.style.left = x + 'px';
+  scoreEl.style.top = (y - 20) + 'px';
+  if (clickCombo >= 5) {
+    scoreEl.style.fontSize = '32px';
+    scoreEl.style.color = '#e67e22';
+  }
+  slide.appendChild(scoreEl);
+  setTimeout(() => scoreEl.remove(), 1000);
 
-  // 링 3개 (색상/지연 다양)
-  const colors = [
-    { border: '2px solid rgba(245, 158, 11, 0.8)', delay: '0ms' },
-    { border: '1.5px solid rgba(245, 158, 11, 0.4)', delay: '100ms' },
-    { border: '1px solid rgba(245, 158, 11, 0.2)', delay: '200ms' },
-  ];
-  colors.forEach(c => {
-    const ring = document.createElement('div');
-    ring.className = 'click-ripple-ring';
-    ring.style.border = c.border;
-    ring.style.animationDelay = c.delay;
-    wrapper.appendChild(ring);
-  });
+  // 파티클 8개 (사방으로)
+  const colors = ['#f59e0b', '#d97706', '#b45309', '#fbbf24', '#fcd34d', '#fff7ed', '#fed7aa', '#fdba74'];
+  for (let i = 0; i < 8; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'click-game-particle';
+    const angle = (Math.PI * 2 * i) / 8 + (Math.random() - 0.5) * 0.5;
+    const distance = 40 + Math.random() * 60;
+    particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+    particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+    particle.style.left = x + 'px';
+    particle.style.top = y + 'px';
+    particle.style.background = colors[i % colors.length];
+    slide.appendChild(particle);
+    setTimeout(() => particle.remove(), 800);
+  }
 
-  slide.appendChild(wrapper);
-  setTimeout(() => wrapper.remove(), 1500);
+  // 스파클 3개 (랜덤 위치)
+  const sparkles = ['✨', '⭐', '💫', '🔥'];
+  for (let i = 0; i < 3; i++) {
+    const sparkle = document.createElement('div');
+    sparkle.className = 'click-game-sparkle';
+    sparkle.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
+    sparkle.style.left = (x + (Math.random() - 0.5) * 80) + 'px';
+    sparkle.style.top = (y + (Math.random() - 0.5) * 80) + 'px';
+    sparkle.style.animationDelay = (i * 0.1) + 's';
+    slide.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 600);
+  }
 }
+
+// slide 전체 클릭 시 게임 이펙트 (기존 ripple 제거)
+slides.forEach(slide => {
+  slide.addEventListener('click', (e) => {
+    triggerClickGame(slide, e.clientX, e.clientY);
+  });
+});
 </script>
 </body>
 </html>
