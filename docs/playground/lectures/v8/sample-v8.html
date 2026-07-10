@@ -365,27 +365,47 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 /* ── Click Ripple: 클릭 시 확산 이펙트 ── */
 .click-ripple-effect {
   position: absolute;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
   pointer-events: none;
   z-index: 1000;
-  animation: ripple-expand 1s ease-out forwards;
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.5) 0%, rgba(245, 158, 11, 0.2) 40%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.click-ripple-ring {
+  position: absolute;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: ripple-expand 1.2s ease-out forwards;
 }
 @keyframes ripple-expand {
   0% {
-    transform: translate(-50%, -50%) scale(0);
+    width: 0; height: 0;
     opacity: 1;
+    border-width: 4px;
   }
-  50% {
-    transform: translate(-50%, -50%) scale(8);
-    opacity: 0.5;
+  60% {
+    opacity: 0.6;
+    border-width: 2px;
   }
   100% {
-    transform: translate(-50%, -50%) scale(16);
+    width: 300px; height: 300px;
     opacity: 0;
+    border-width: 0;
   }
+}
+.click-ripple-core {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: ripple-core 0.6s ease-out forwards;
+  background: var(--accent);
+  box-shadow: 0 0 20px 8px rgba(245, 158, 11, 0.6);
+}
+@keyframes ripple-core {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(3); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
 }
 
 /* ── Mouse hover: .in-focus 효과 일시 숨김 ── */
@@ -700,6 +720,13 @@ function moveFocus(direction) {
   
   currentFocus = Math.max(0, Math.min(currentFocus + direction, focusables.length - 1));
   updateFocus();
+  
+  // 포커스된 요소가 탭 버튼이면 switchTab 호출
+  const focused = focusables[currentFocus];
+  if (focused && focused.classList.contains('tab-btn')) {
+    const tabIdx = Array.from(focused.parentElement.querySelectorAll('.tab-btn')).indexOf(focused);
+    if (tabIdx >= 0) switchTab(tabIdx);
+  }
 }
 
 // ── Keyboard Navigation ──
@@ -783,34 +810,59 @@ requestAnimationFrame(() => {
         }
         updateFocus();
       });
-      el.addEventListener('click', () => {
+      el.addEventListener('click', (e) => {
         currentFocus = idx;
         updateFocus();
-        // 클릭 이펙트: slide 전체에 ripple
-        triggerClickRipple(slide, el);
+        triggerClickRipple(slide, e.clientX, e.clientY);
       });
     });
 
     // slide 전체 클릭 시 ripple 이펙트
     slide.addEventListener('click', (e) => {
-      triggerClickRipple(slide, e.target);
+      triggerClickRipple(slide, e.clientX, e.clientY);
     });
   });
 });
 
-function triggerClickRipple(slide, target) {
-  // 기존 ripple 제거
+// 탭 버튼 감지: .tab-btn이면 true
+function isTabButton(el) {
+  return el && el.classList.contains('tab-btn');
+}
+
+function triggerClickRipple(slide, clientX, clientY) {
   const old = slide.querySelector('.click-ripple-effect');
   if (old) old.remove();
 
   const rect = slide.getBoundingClientRect();
-  const ripple = document.createElement('div');
-  ripple.className = 'click-ripple-effect';
-  ripple.style.left = (target.getBoundingClientRect().left - rect.left + target.getBoundingClientRect().width / 2) + 'px';
-  ripple.style.top = (target.getBoundingClientRect().top - rect.top + target.getBoundingClientRect().height / 2) + 'px';
-  slide.appendChild(ripple);
+  const x = clientX - rect.left;
+  const y = clientY - rect.top;
 
-  setTimeout(() => ripple.remove(), 1200);
+  const wrapper = document.createElement('div');
+  wrapper.className = 'click-ripple-effect';
+  wrapper.style.left = x + 'px';
+  wrapper.style.top = y + 'px';
+
+  // 코어 (가운데 밝은 점)
+  const core = document.createElement('div');
+  core.className = 'click-ripple-core';
+  wrapper.appendChild(core);
+
+  // 링 3개 (색상/지연 다양)
+  const colors = [
+    { border: '2px solid rgba(245, 158, 11, 0.8)', delay: '0ms' },
+    { border: '1.5px solid rgba(245, 158, 11, 0.4)', delay: '100ms' },
+    { border: '1px solid rgba(245, 158, 11, 0.2)', delay: '200ms' },
+  ];
+  colors.forEach(c => {
+    const ring = document.createElement('div');
+    ring.className = 'click-ripple-ring';
+    ring.style.border = c.border;
+    ring.style.animationDelay = c.delay;
+    wrapper.appendChild(ring);
+  });
+
+  slide.appendChild(wrapper);
+  setTimeout(() => wrapper.remove(), 1500);
 }
 </script>
 </body>
