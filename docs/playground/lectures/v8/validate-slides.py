@@ -299,8 +299,8 @@ def main():
         page = f" (P{issue['page']})" if 'page' in issue else ''
         pages = f" (P{issue['pages'][0]}↔P{issue['pages'][1]})" if 'pages' in issue else ''
         print(f"  {icon} [{sev}] {issue['type']}{page}{pages}")
-        print(f"     → {issue['detail']}")
-        print(f"     → 해결: {issue['fix']}")
+        print(f"     → {issue.get('detail', issue.get('text', 'N/A'))}")
+        print(f"     → 해결: {issue.get('fix', 'N/A')}")
         print()
 
     # JSON 출력
