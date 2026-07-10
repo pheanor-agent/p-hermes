@@ -22,7 +22,7 @@
   --font: 'Inter', 'Noto Sans KR', sans-serif;
 }
 
-html { scroll-behavior: smooth; scroll-snap-type: y mandatory; overflow-y: scroll; }
+html { scroll-snap-type: y mandatory; overflow-y: scroll; }
 body { font-family: var(--font); background: var(--bg); color: var(--text); }
 
 /* ── Progress Bar ── */
@@ -1716,7 +1716,7 @@ function goToSlide(index) {
   slides[currentSlide].classList.remove('active');
   currentSlide = index;
   slides[currentSlide].classList.add('active');
-  slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
+  window.scrollTo({ top: slides[currentSlide].offsetTop, left: 0 });
   updateUI();
 }
 
