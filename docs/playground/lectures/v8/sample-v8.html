@@ -743,16 +743,15 @@ updateSlide();
 // 마우스를 쓰지 못하는 상황을 위해 키보드 포커스를 기본으로 하되,
 // 마우스 호버 시 키보드 포커스 효과 숨기고 호버 효과만 보임
 slides.forEach(slide => {
-  slide.addEventListener('mouseover', (e) => {
-    const target = e.target.closest('[data-focusable]');
-    if (target) {
-      // 마우스 호버 시작: 기존 .in-focus 숨김 (CSS로)
+  // 마우스가 focusable 요소 위에 오면 slide에 mouse-hovering 추가
+  slide.querySelectorAll('[data-focusable]').forEach(el => {
+    el.addEventListener('mouseenter', () => {
       slide.classList.add('mouse-hovering');
-    }
-  });
-  slide.addEventListener('mouseout', (e) => {
-    // 마우스 벗어남: 키보드 포커스 복원
-    slide.classList.remove('mouse-hovering');
+    });
+    el.addEventListener('mouseleave', () => {
+      slide.classList.remove('mouse-hovering');
+      updateFocus(); // 마지막 포커스 위치 복원
+    });
   });
 });
 </script>
