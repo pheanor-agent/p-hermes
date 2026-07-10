@@ -635,15 +635,15 @@ function goSlide(n) {
 }
 
 function updateFocus() {
+  // 모든 슬라이드의 .in-focus 제거
+  document.querySelectorAll('.in-focus').forEach(el => el.classList.remove('in-focus'));
+  
+  // 현재 슬라이드의 포커스 설정
   const focusables = getFocusables(slides[currentSlide]);
-  focusables.forEach((el, i) => {
-    const isActive = (i === currentFocus);
-    el.classList.toggle('in-focus', isActive);
-    if (isActive) {
-      // 화면에 보이도록 스크롤
-      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  });
+  if (currentFocus >= 0 && currentFocus < focusables.length) {
+    focusables[currentFocus].classList.add('in-focus');
+    focusables[currentFocus].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
 }
 
 function moveFocus(direction) {
