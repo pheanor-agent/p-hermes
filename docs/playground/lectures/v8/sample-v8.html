@@ -224,7 +224,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 .concept-card.knowledge::before { background: var(--knowledge); }
 .concept-card.skill::before    { background: var(--skill); }
 .concept-card.workflow::before { background: var(--workflow); }
-.concept-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+.concept-card:hover,
 .concept-card[data-focusable].in-focus {
   transform: translateY(-4px);
   box-shadow: 0 0 0 3px var(--accent), 0 12px 32px rgba(0,0,0,0.08);
@@ -280,10 +280,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
   padding: 16px; border-radius: 12px; background: var(--card); border: 1px solid var(--border);
   transition: all 0.3s ease;
 }
-.feature-item:hover {
-  border-color: var(--accent);
-  transform: translateX(4px);
-}
+.feature-item:hover,
 .feature-item[data-focusable].in-focus {
   border-color: var(--accent);
   transform: translateX(4px);
@@ -319,12 +316,16 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
   color: var(--text-dim); cursor: pointer; transition: all 0.2s ease;
   font-family: var(--font); margin-bottom: -2px;
 }
-.tab-btn:hover { color: var(--text); }
-.tab-btn.active { color: var(--memory); border-bottom-color: var(--memory); }
+.tab-btn:hover,
 .tab-btn[data-focusable].in-focus {
   color: var(--memory);
   border-bottom-color: var(--memory);
   background: var(--memory-bg);
+}
+.tab-btn.active {
+  color: var(--memory);
+  border-bottom-color: var(--memory);
+  font-weight: 700;
 }
 
 .tab-panel { display: none; animation: fadeIn 0.4s ease; }
@@ -651,51 +652,48 @@ function moveFocus(direction) {
   
   currentFocus = Math.max(0, Math.min(currentFocus + direction, focusables.length - 1));
   updateFocus();
-  
-  // 탭 버튼인 경우 자동으로 탭 전환
-  const focused = focusables[currentFocus];
-  if (focused.classList.contains('tab-btn')) {
-    const tabId = Array.from(focused.parentElement.querySelectorAll('.tab-btn')).indexOf(focused);
-    switchTab(tabId);
-  }
 }
 
 // ── Keyboard Navigation ──
+// 캡처 단계에서 처리하여 브라우저 기본 동작 완전히 차단
 document.addEventListener('keydown', (e) => {
-  // ↑↓ = 슬라이드 이동
-  if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+  const key = e.key;
+  
+  // ←→ = 슬라이드 내 컴포넌트 이동 (페이지 이동 절대 없음)
+  if (key === 'ArrowLeft' || key === 'ArrowRight') {
+    e.stopImmediatePropagation();
     e.preventDefault();
-    currentSlide = Math.min(currentSlide + 1, slides.length - 1);
-    slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
-    updateSlide();
+    moveFocus(key === 'ArrowLeft' ? -1 : 1);
+    return;
   }
-  if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+  
+  // ↑↓ = 슬라이드 이동
+  if (key === 'ArrowUp' || key === 'PageUp') {
+    e.stopImmediatePropagation();
     e.preventDefault();
     currentSlide = Math.max(0, currentSlide - 1);
     slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
     updateSlide();
+    return;
+  }
+  if (key === 'ArrowDown' || key === 'PageDown') {
+    e.stopImmediatePropagation();
+    e.preventDefault();
+    currentSlide = Math.min(currentSlide + 1, slides.length - 1);
+    slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
+    updateSlide();
+    return;
   }
   
-  // ←→ = 슬라이드 내 컴포넌트 이동
-  if (e.key === 'ArrowRight') {
-    e.preventDefault();
-    moveFocus(1);
-  }
-  if (e.key === 'ArrowLeft') {
-    e.preventDefault();
-    moveFocus(-1);
-  }
-  
-  // Enter/Space = 현재 컴포넌트 활성화
-  if (e.key === 'Enter' || e.key === ' ') {
+  // Enter = 현재 컴포넌트 활성화
+  if (key === 'Enter') {
     const focusables = getFocusables(slides[currentSlide]);
     if (currentFocus >= 0 && currentFocus < focusables.length) {
       e.preventDefault();
-      const focused = focusables[currentFocus];
-      focused.click();
+      focusables[currentFocus].click();
     }
   }
-});
+}, true); // capture=true
 
 // Scroll spy
 const observer = new IntersectionObserver((entries) => {
