@@ -362,6 +362,28 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 .callout-text { font-size: 15px; line-height: 1.6; }
 .callout-text strong { color: var(--memory); }
 
+/* ── Mouse hover: .in-focus 효과 일시 숨김 ── */
+.slide.mouse-hovering [data-focusable].in-focus {
+  box-shadow: none !important;
+  border-color: var(--border) !important;
+  transform: none !important;
+  background: none !important;
+  color: var(--text-dim) !important;
+}
+/* 마우스 호버 중인 요소는 :hover 효과만 보임 */
+.slide.mouse-hovering [data-focusable]:hover {
+  box-shadow: 0 0 0 3px var(--accent), 0 12px 32px rgba(0,0,0,0.08);
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  color: var(--text);
+}
+/* 탭 버튼 호버 */
+.slide.mouse-hovering .tab-btn[data-focusable]:hover {
+  color: var(--memory);
+  border-bottom-color: var(--memory);
+  background: var(--memory-bg);
+}
+
 /* ── Responsive ── */
 @media (max-width: 1024px) {
   .card-grid { grid-template-columns: repeat(2, 1fr); }
@@ -716,6 +738,23 @@ function switchTab(tabId) {
 
 // 초기화
 updateSlide();
+
+// ── Mouse hover: 포커스 일시 숨김 ──
+// 마우스를 쓰지 못하는 상황을 위해 키보드 포커스를 기본으로 하되,
+// 마우스 호버 시 키보드 포커스 효과 숨기고 호버 효과만 보임
+slides.forEach(slide => {
+  slide.addEventListener('mouseover', (e) => {
+    const target = e.target.closest('[data-focusable]');
+    if (target) {
+      // 마우스 호버 시작: 기존 .in-focus 숨김 (CSS로)
+      slide.classList.add('mouse-hovering');
+    }
+  });
+  slide.addEventListener('mouseout', (e) => {
+    // 마우스 벗어남: 키보드 포커스 복원
+    slide.classList.remove('mouse-hovering');
+  });
+});
 </script>
 </body>
 </html>
