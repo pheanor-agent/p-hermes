@@ -22,7 +22,21 @@
   --font: 'Inter', 'Noto Sans KR', sans-serif;
 }
 
-html { scroll-behavior: smooth; scroll-snap-type: y mandatory; overflow-y: scroll; }
+html { scroll-snap-type: y mandatory; overflow-y: scroll; }
+.compare-content .compare-col {
+  width: 100%;
+}
+.compare-content .compare-col .feature-item {
+  width: 100%;
+}
+.compare-content .compare-col .feature-item > div:last-child {
+  flex: 1;
+  min-width: 0;
+}
+.compare-content .compare-col .feature-item p {
+  white-space: normal;
+  word-break: keep-all;
+}
 body { font-family: var(--font); background: var(--bg); color: var(--text); }
 
 /* ── Progress Bar ── */
@@ -1439,52 +1453,45 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
   </div>
 </section>
 
-<!-- SLIDE 28: 실전 시나리오 -->
+<!-- SLIDE 28: 4기능이 필요한 이유 (왜 모두 필요한가) -->
 <section class="slide content-slide" id="slide-27">
   <div class="slide-header">
     <div style="display:flex;align-items:center;gap:12px;">
       <span class="lecture-tag animate" data-delay="1">Deck A</span>
-      <span class="section-title animate" data-delay="2">실전 시나리오</span>
+      <span class="section-title animate" data-delay="2">핵심 질문</span>
     </div>
-    <span class="slide-number animate" data-delay="3">28 / 34</span>
+    <span class="slide-number animate" data-delay="2">28 / 34</span>
   </div>
   <div class="slide-body">
     <div class="content-wrapper">
-      <h2 class="content-title animate" data-delay="1">"보고서를 만들어줘" — 4가지가 동시에 작동</h2>
-      <div class="animate" data-delay="2" style="max-width:750px; display:grid; gap:16px; text-align:left;">
-        <div class="feature-item" style="border-left: 4px solid var(--memory);">
-          <div class="feature-icon">🧠</div>
-          <div>
-            <strong style="color:var(--memory);">Memory</strong>
-            <span style="color:var(--text-dim); margin-left:8px;">→ 지난주 회의록, 선호하는 형식 자동 로딩</span>
-          </div>
+      <h2 class="content-title animate" data-delay="1">왜 4가지가 모두 필요한가요?</h2>
+      <div class="animate" data-delay="2" style="max-width:800px; display:grid; grid-template-columns:repeat(2,1fr); gap:20px; text-align:left;">
+        <div class="concept-card" style="border-color:var(--danger-bg);">
+          <div class="card-icon">🧠</div>
+          <h3 class="card-title" style="font-size:18px;">Memory만 있으면</h3>
+          <p class="card-desc">기억은 하지만,<br><strong style="color:var(--danger);">체계나 절차가 없음</strong></p>
         </div>
-        <div class="feature-item" style="border-left: 4px solid var(--knowledge);">
-          <div class="feature-icon">📚</div>
-          <div>
-            <strong style="color:var(--knowledge);">Knowledge</strong>
-            <span style="color:var(--text-dim); margin-left:8px;">→ 사내 템플릿, 관련 정책 검색</span>
-          </div>
+        <div class="concept-card" style="border-color:var(--danger-bg);">
+          <div class="card-icon">📚</div>
+          <h3 class="card-title" style="font-size:18px;">Knowledge만 있으면</h3>
+          <p class="card-desc">지식은 많지만,<br><strong style="color:var(--danger);">실행력이 없음</strong></p>
         </div>
-        <div class="feature-item" style="border-left: 4px solid var(--skill);">
-          <div class="feature-icon">⚡</div>
-          <div>
-            <strong style="color:var(--skill);">Skill</strong>
-            <span style="color:var(--text-dim); margin-left:8px;">→ 보고서 작성 절차서 발동</span>
-          </div>
+        <div class="concept-card" style="border-color:var(--danger-bg);">
+          <div class="card-icon">⚡</div>
+          <h3 class="card-title" style="font-size:18px;">Skill만 있으면</h3>
+          <p class="card-desc">절차는 있지만,<br><strong style="color:var(--danger);">맥락 이해가 없음</strong></p>
         </div>
-        <div class="feature-item" style="border-left: 4px solid var(--workflow);">
-          <div class="feature-icon">🔄</div>
-          <div>
-            <strong style="color:var(--workflow);">Workflow</strong>
-            <span style="color:var(--text-dim); margin-left:8px;">→ 9단계 상태 머신으로 체계적 실행</span>
-          </div>
+        <div class="concept-card" style="border-color:var(--danger-bg);">
+          <div class="card-icon">🔄</div>
+          <h3 class="card-title" style="font-size:18px;">Workflow만 있으면</h3>
+          <p class="card-desc">흐름은 있지만,<br><strong style="color:var(--danger);">학습이 없음</strong></p>
         </div>
       </div>
+      <p class="content-desc animate" data-delay="3" style="margin-top:24px;text-align:center;">각 기능은 필요조건이지만 충분조건은 아닙니다. 4가지가 <strong>결합</strong>되어야 완전한 Agent OS가 됩니다</p>
     </div>
   </div>
   <div class="slide-footer">
-    <span class="animate" data-delay="3">4가지 기능이 동시에 작동할 때 Agent는 진화합니다</span>
+    <span class="animate" data-delay="4">부분의 합이 아닌, 시너지를 만들어야 합니다</span>
   </div>
 </section>
 
@@ -1573,7 +1580,15 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
     <div class="hero-content">
       <h2 class="hero-title animate" data-delay="1" style="font-size:clamp(28px,4vw,48px);">"좋은 Agent는<br>기억하고, 이해하고, 실천하고, 흐릅니다"</h2>
       <div class="hero-divider animate" data-delay="2"></div>
-      <p class="hero-subtitle animate" data-delay="3">기억(Memory) → 지식(Knowledge) → 기술(Skill) → 흐름(Workflow)</p>
+      <div class="animate" data-delay="3" style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px 24px;align-items:center;margin-top:16px;">
+        <span style="color:var(--memory);font-weight:700;font-size:20px;">🧠 기억(Memory)</span>
+        <span style="color:var(--text-dim);font-size:24px;">→</span>
+        <span style="color:var(--knowledge);font-weight:700;font-size:20px;">📚 지식(Knowledge)</span>
+        <span style="color:var(--text-dim);font-size:24px;">→</span>
+        <span style="color:var(--skill);font-weight:700;font-size:20px;">⚡ 기술(Skill)</span>
+        <span style="color:var(--text-dim);font-size:24px;">→</span>
+        <span style="color:var(--workflow);font-weight:700;font-size:20px;">🔄 흐름(Workflow)</span>
+      </div>
     </div>
   </div>
   <div class="slide-footer">
@@ -1701,7 +1716,7 @@ function updateSlide() {
 
 function goSlide(n) {
   currentSlide = n;
-  slides[n].scrollIntoView({ behavior: 'auto' });
+  window.scrollTo({ top: slides[n].offsetTop, left: 0 });
   updateSlide();
 }
 
@@ -1710,7 +1725,6 @@ function updateFocus() {
   const focusables = getFocusables(slides[currentSlide]);
   if (currentFocus >= 0 && currentFocus < focusables.length) {
     focusables[currentFocus].classList.add('in-focus');
-    focusables[currentFocus].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 }
 
@@ -1739,7 +1753,7 @@ document.addEventListener('keydown', (e) => {
     e.stopImmediatePropagation();
     e.preventDefault();
     currentSlide = Math.max(0, currentSlide - 1);
-    slides[currentSlide].scrollIntoView({ behavior: 'auto' });
+    window.scrollTo({ top: slides[currentSlide].offsetTop, left: 0 });
     updateSlide();
     return;
   }
@@ -1747,7 +1761,7 @@ document.addEventListener('keydown', (e) => {
     e.stopImmediatePropagation();
     e.preventDefault();
     currentSlide = Math.min(currentSlide + 1, slides.length - 1);
-    slides[currentSlide].scrollIntoView({ behavior: 'auto' });
+    window.scrollTo({ top: slides[currentSlide].offsetTop, left: 0 });
     updateSlide();
     return;
   }
