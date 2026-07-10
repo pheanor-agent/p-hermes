@@ -76,6 +76,89 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 .nav-dot.active { background: var(--accent); border-color: var(--accent); transform: scale(1.3); }
 
 /* ═══════════════════════════════════════════
+   ANIMATION SYSTEM
+   ═══════════════════════════════════════════ */
+
+/* 기본: 애니메이션 대상은 처음에 보이지 않음 */
+.animate {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+/* 슬라이드가 활성화되면 애니메이션 적용 */
+.slide.active .animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 순차적 등장 (delay 기반) */
+.slide.active .animate[data-delay="1"] { transition-delay: 0.1s; }
+.slide.active .animate[data-delay="2"] { transition-delay: 0.2s; }
+.slide.active .animate[data-delay="3"] { transition-delay: 0.3s; }
+.slide.active .animate[data-delay="4"] { transition-delay: 0.4s; }
+.slide.active .animate[data-delay="5"] { transition-delay: 0.5s; }
+.slide.active .animate[data-delay="6"] { transition-delay: 0.6s; }
+.slide.active .animate[data-delay="7"] { transition-delay: 0.7s; }
+.slide.active .animate[data-delay="8"] { transition-delay: 0.8s; }
+
+/* 애니메이션 변형: Scale-in */
+.animate[data-anim="scale"] {
+  transform: scale(0.9);
+}
+.slide.active .animate[data-anim="scale"] {
+  transform: scale(1);
+}
+
+/* 애니메이션 변형: Fade-only (transform 없음) */
+.animate[data-anim="fade"] {
+  transform: none;
+}
+
+/* 애니메이션 변형: Slide-left */
+.animate[data-anim="slide-left"] {
+  transform: translateX(-24px);
+}
+.slide.active .animate[data-anim="slide-left"] {
+  transform: translateX(0);
+}
+
+/* 애니메이션 변형: Slide-right */
+.animate[data-anim="slide-right"] {
+  transform: translateX(24px);
+}
+.slide.active .animate[data-anim="slide-right"] {
+  transform: translateX(0);
+}
+
+/* 강조 효과: Pulse (중요 텍스트용) */
+@keyframes pulse-highlight {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+.pulse {
+  animation: pulse-highlight 2s ease-in-out infinite;
+}
+
+/* Hero 아이콘 Float 애니메이션 */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* 카드 Hover 시 Glow 효과 */
+@keyframes glow {
+  0%, 100% { box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
+  50% { box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+}
+
+/* 순차적 카운트업 (숫자 강조) */
+@keyframes count-up {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ═══════════════════════════════════════════
    SLIDE 0: HERO COVER
    ═══════════════════════════════════════════ */
 .hero-slide { background: var(--bg-dark); color: var(--text-light); }
@@ -92,10 +175,6 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 .hero-icon {
   font-size: 120px; margin-bottom: 32px;
   animation: float 3s ease-in-out infinite;
-}
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
 }
 .hero-title {
   font-size: clamp(40px, 6vw, 72px); font-weight: 900;
@@ -182,6 +261,10 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
   background: var(--bg); border: 2px solid var(--border);
   display: flex; align-items: center; justify-content: center;
   font-size: 16px; font-weight: 800; color: var(--text-dim);
+  transition: all 0.3s ease;
+}
+.slide.active .compare-vs {
+  animation: pulse-highlight 2s ease-in-out infinite;
 }
 
 .feature-list {
@@ -190,6 +273,11 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 .feature-item {
   display: flex; align-items: flex-start; gap: 12px;
   padding: 16px; border-radius: 12px; background: var(--card); border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+.feature-item:hover {
+  border-color: var(--accent);
+  transform: translateX(4px);
 }
 .feature-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
 .feature-text { font-size: 15px; line-height: 1.5; }
@@ -224,7 +312,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 .tab-btn:hover { color: var(--text); }
 .tab-btn.active { color: var(--memory); border-bottom-color: var(--memory); }
 
-.tab-panel { display: none; animation: fadeIn 0.3s ease; }
+.tab-panel { display: none; animation: fadeIn 0.4s ease; }
 .tab-panel.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -232,6 +320,11 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
   display: flex; gap: 24px; padding: 32px;
   background: var(--card); border: 1px solid var(--border); border-radius: 16px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+  transition: all 0.3s ease;
+}
+.metaphor-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
 }
 .metaphor-icon { font-size: 48px; flex-shrink: 0; width: 80px; height: 80px;
   display: flex; align-items: center; justify-content: center;
@@ -243,6 +336,11 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 .callout {
   display: flex; gap: 16px; padding: 20px 24px;
   background: var(--memory-bg); border-left: 4px solid var(--memory); border-radius: 0 12px 12px 0;
+  transition: all 0.3s ease;
+}
+.callout:hover {
+  background: var(--memory-border);
+  transform: translateX(4px);
 }
 .callout-icon { font-size: 24px; }
 .callout-text { font-size: 15px; line-height: 1.6; }
@@ -275,24 +373,24 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 <!-- ═══════════════════════════════════════════
      SLIDE 0: HERO COVER
      ═══════════════════════════════════════════ -->
-<section class="slide hero-slide" id="slide-0" data-notes="[커버] v8 디자인 시스템 샘플입니다. 풀스크린 슬라이드 방식으로 스크롤 또는 화살표 키로 이동합니다.">
+<section class="slide hero-slide active" id="slide-0" data-notes="[커버] v8 디자인 시스템 샘플입니다. 풀스크린 슬라이드 방식으로 스크롤 또는 화살표 키로 이동합니다.">
   <div class="slide-header">
     <div style="display:flex;align-items:center;gap:12px;">
-      <span class="lecture-tag">Lecture A</span>
-      <span class="section-title">4가지 핵심 기능</span>
+      <span class="lecture-tag animate" data-delay="1">Lecture A</span>
+      <span class="section-title animate" data-delay="2">4가지 핵심 기능</span>
     </div>
-    <span class="slide-number">01 / 40</span>
+    <span class="slide-number animate" data-delay="3">01 / 40</span>
   </div>
   <div class="slide-body">
     <div class="hero-content">
-      <div class="hero-icon">🧠</div>
-      <h1 class="hero-title">Hermes Agent의<br>4가지 핵심 기능</h1>
-      <div class="hero-divider"></div>
-      <p class="hero-subtitle">기억 · 지식 · 능력 · 규칙<br>Stateless Agent를 Stateful OS로 만드는 네 가지 힘</p>
+      <div class="hero-icon animate" data-delay="1">🧠</div>
+      <h1 class="hero-title animate" data-delay="2">Hermes Agent의<br>4가지 핵심 기능</h1>
+      <div class="hero-divider animate" data-delay="3"></div>
+      <p class="hero-subtitle animate" data-delay="4">기억 · 지식 · 능력 · 규칙<br>Stateless Agent를 Stateful OS로 만드는 네 가지 힘</p>
     </div>
   </div>
   <div class="slide-footer">
-    <span>Stateless Agent를 Stateful Agent OS로</span>
+    <span class="animate" data-delay="5">Stateless Agent를 Stateful Agent OS로</span>
   </div>
 </section>
 
@@ -302,35 +400,35 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 <section class="slide intro-slide" id="slide-1" data-notes="[4기능 소개] Memory(기억), Knowledge(지식), Skill(능력), Workflow(규칙) 4가지 핵심 기능을 카드 4개로 소개합니다. 각 기능은 색상 코딩으로 구분됩니다.">
   <div class="slide-header">
     <div style="display:flex;align-items:center;gap:12px;">
-      <span class="lecture-tag">Lecture A</span>
-      <span class="section-title">핵심 기능</span>
+      <span class="lecture-tag animate" data-delay="1">Lecture A</span>
+      <span class="section-title animate" data-delay="2">핵심 기능</span>
     </div>
-    <span class="slide-number">02 / 40</span>
+    <span class="slide-number animate" data-delay="3">02 / 40</span>
   </div>
   <div class="slide-body">
     <div class="intro-content">
-      <h2 class="intro-heading">Agent가 갖추는 4가지 능력</h2>
-      <p class="intro-desc">매일 새로운 대화만 하는 Agent는 성장할 수 없습니다.<br>4가지 기능이 Stateful OS를 만듭니다.</p>
+      <h2 class="intro-heading animate" data-delay="1">Agent가 갖추는 4가지 능력</h2>
+      <p class="intro-desc animate" data-delay="2">매일 새로운 대화만 하는 Agent는 성장할 수 없습니다.<br>4가지 기능이 Stateful OS를 만듭니다.</p>
       <div class="card-grid">
-        <div class="concept-card memory">
+        <div class="concept-card memory animate" data-delay="3">
           <span class="card-icon">🧠</span>
           <h3 class="card-title">Memory</h3>
           <div class="card-keyword" style="color:var(--memory)">기억</div>
           <p class="card-desc">어제 한 일을<br>잊지 않습니다</p>
         </div>
-        <div class="concept-card knowledge">
+        <div class="concept-card knowledge animate" data-delay="4">
           <span class="card-icon">📚</span>
           <h3 class="card-title">Knowledge</h3>
           <div class="card-keyword" style="color:var(--knowledge)">지식</div>
           <p class="card-desc">정보를 연결하고<br>의미를 만듭니다</p>
         </div>
-        <div class="concept-card skill">
+        <div class="concept-card skill animate" data-delay="5">
           <span class="card-icon">⚡</span>
           <h3 class="card-title">Skill</h3>
           <div class="card-keyword" style="color:var(--skill)">능력</div>
           <p class="card-desc">새로운 작업을<br>스스로 수행합니다</p>
         </div>
-        <div class="concept-card workflow">
+        <div class="concept-card workflow animate" data-delay="6">
           <span class="card-icon">🔄</span>
           <h3 class="card-title">Workflow</h3>
           <div class="card-keyword" style="color:var(--workflow)">규칙</div>
@@ -340,7 +438,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
     </div>
   </div>
   <div class="slide-footer">
-    <span>4가지 기능이 함께 작동할 때 Agent는 진정한 파트너가 됩니다</span>
+    <span class="animate" data-delay="7">4가지 기능이 함께 작동할 때 Agent는 진정한 파트너가 됩니다</span>
   </div>
 </section>
 
@@ -350,30 +448,30 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 <section class="slide compare-slide" id="slide-2" data-notes="[Memory vs Knowledge] 사람들은 기억과 지식을 비슷하다고 생각하지만 완전히 다릅니다. Memory는 '무엇을 기억하는가'(사실, 데이터), Knowledge는 '무엇을 이해하는가'(연결, 패턴, 의미)입니다. 일상 비유를 사용하여 개념을 명확히 구분합니다.">
   <div class="slide-header">
     <div style="display:flex;align-items:center;gap:12px;">
-      <span class="lecture-tag">Lecture A</span>
-      <span class="section-title">Memory vs Knowledge</span>
-      <span class="concept-tag">개념 구분</span>
+      <span class="lecture-tag animate" data-delay="1">Lecture A</span>
+      <span class="section-title animate" data-delay="2">Memory vs Knowledge</span>
+      <span class="concept-tag animate" data-delay="3">개념 구분</span>
     </div>
-    <span class="slide-number">03 / 40</span>
+    <span class="slide-number animate" data-delay="4">03 / 40</span>
   </div>
   <div class="slide-body">
     <div class="compare-content">
       <!-- Memory Column -->
-      <div class="compare-col">
+      <div class="compare-col animate" data-anim="slide-left" data-delay="2">
         <div class="compare-icon">🧠</div>
         <span class="compare-label memory">Memory</span>
         <h3 class="compare-title">기억</h3>
         <p class="compare-what">"무엇을" 기억하는가</p>
         <div class="feature-list">
-          <div class="feature-item">
+          <div class="feature-item animate" data-delay="3">
             <span class="feature-icon">📝</span>
             <span class="feature-text"><strong>사실 저장</strong><br>"지난주에 회의록을 작성했어"</span>
           </div>
-          <div class="feature-item">
+          <div class="feature-item animate" data-delay="4">
             <span class="feature-icon">🔍</span>
             <span class="feature-text"><strong>검색 가능</strong><br>과거 대화에서 관련 정보 찾기</span>
           </div>
-          <div class="feature-item">
+          <div class="feature-item animate" data-delay="5">
             <span class="feature-icon">👤</span>
             <span class="feature-text"><strong>사용자 정보</strong><br>이름, 선호도, 작업 패턴</span>
           </div>
@@ -381,24 +479,24 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
 
       <!-- VS -->
-      <div class="compare-vs">VS</div>
+      <div class="compare-vs animate" data-anim="scale" data-delay="1">VS</div>
 
       <!-- Knowledge Column -->
-      <div class="compare-col">
+      <div class="compare-col animate" data-anim="slide-right" data-delay="2">
         <div class="compare-icon">💡</div>
         <span class="compare-label knowledge">Knowledge</span>
         <h3 class="compare-title">지식</h3>
         <p class="compare-what">"무엇을" 이해하는가</p>
         <div class="feature-list">
-          <div class="feature-item">
+          <div class="feature-item animate" data-delay="3">
             <span class="feature-icon">🔗</span>
             <span class="feature-text"><strong>연결 형성</strong><br>"이 프로젝트는 지난 회의록과 관련이 있어"</span>
           </div>
-          <div class="feature-item">
+          <div class="feature-item animate" data-delay="4">
             <span class="feature-icon">🧩</span>
             <span class="feature-text"><strong>패턴 인식</strong><br>비슷한 문제가 반복된다는 발견</span>
           </div>
-          <div class="feature-item">
+          <div class="feature-item animate" data-delay="5">
             <span class="feature-icon">🎯</span>
             <span class="feature-text"><strong>맥락 이해</strong><br>"이 작업의 진짜 목표는 ~"</span>
           </div>
@@ -407,7 +505,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
     </div>
   </div>
   <div class="slide-footer">
-    <span>Memory는 데이터를 저장합니다. Knowledge는 의미를 만듭니다.</span>
+    <span class="animate" data-delay="6">Memory는 데이터를 저장합니다. Knowledge는 의미를 만듭니다.</span>
   </div>
 </section>
 
@@ -417,23 +515,23 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 <section class="slide deep-slide" id="slide-3" data-notes="[Memory 심화] Memory의 3가지 유형을 탭으로 전환하여 보여줍니다. User Memory(사용자 기억), Session Memory(대화 기록), Workspace Memory(작업 기록). 각 유형은 일상 비유를 통해 설명합니다.">
   <div class="slide-header">
     <div style="display:flex;align-items:center;gap:12px;">
-      <span class="lecture-tag">Lecture A</span>
-      <span class="section-title">Memory: 기억의 힘</span>
+      <span class="lecture-tag animate" data-delay="1">Lecture A</span>
+      <span class="section-title animate" data-delay="2">Memory: 기억의 힘</span>
     </div>
-    <span class="slide-number">04 / 40</span>
+    <span class="slide-number animate" data-delay="3">04 / 40</span>
   </div>
   <div class="slide-body">
     <div class="deep-content">
       <div class="deep-header">
-        <span class="deep-icon">🧠</span>
+        <span class="deep-icon animate" data-anim="scale" data-delay="1">🧠</span>
         <div>
-          <h2 class="deep-title">Memory — Agent의 기억</h2>
-          <p class="deep-subtitle">인간이 어제 일을 기억하듯, Agent도 과거를 기억해야 합니다</p>
+          <h2 class="deep-title animate" data-delay="2">Memory — Agent의 기억</h2>
+          <p class="deep-subtitle animate" data-delay="3">인간이 어제 일을 기억하듯, Agent도 과거를 기억해야 합니다</p>
         </div>
       </div>
 
       <!-- Tabs -->
-      <div class="tab-nav">
+      <div class="tab-nav animate" data-delay="4">
         <button class="tab-btn active" onclick="switchTab(0)">👤 사용자 기억</button>
         <button class="tab-btn" onclick="switchTab(1)">💬 대화 기록</button>
         <button class="tab-btn" onclick="switchTab(2)">📁 작업 기록</button>
@@ -469,14 +567,14 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
         </div>
       </div>
 
-      <div class="callout">
+      <div class="callout animate" data-delay="5">
         <span class="callout-icon">💡</span>
         <span class="callout-text"><strong>비유:</strong> Memory는 Agent의 '개인 일기'입니다. 매일 새로운 일기를 쓰면, 과거의 내가 무엇을 했는지 잊지 않습니다.</span>
       </div>
     </div>
   </div>
   <div class="slide-footer">
-    <span>Memory 3가지 유형 — 탭을 클릭하면 유형별 설명이 전환됩니다</span>
+    <span class="animate" data-delay="6">Memory 3가지 유형 — 탭을 클릭하면 유형별 설명이 전환됩니다</span>
   </div>
 </section>
 
@@ -492,6 +590,9 @@ function updateSlide() {
   const pct = ((current + 1) / slides.length) * 100;
   progressBar.style.width = pct + '%';
   dots.forEach((d, i) => d.classList.toggle('active', i === current));
+  
+  // 활성화된 슬라이드에 active 클래스 추가 (애니메이션 트리거)
+  slides.forEach((s, i) => s.classList.toggle('active', i === current));
 }
 
 function goSlide(n) { current = n; slides[n].scrollIntoView({ behavior: 'smooth' }); updateSlide(); }
@@ -527,6 +628,7 @@ function switchTab(tabId) {
   document.querySelector(`.tab-panel[data-tab="${tabId}"]`).classList.add('active');
 }
 
+// 초기화
 updateSlide();
 </script>
 </body>
