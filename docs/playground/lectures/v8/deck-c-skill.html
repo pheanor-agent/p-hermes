@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데크 C: Skill 심화 — 37페이지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --memory: #06B6D4; --memory-bg: #ECFEFF; --memory-border: #A5F3FC;
+  --knowledge: #8B5CF6; --knowledge-bg: #F5F3FF; --knowledge-border: #DDD6FE;
+  --skill: #F97316; --skill-bg: #FFF7ED; --skill-border: #FED7AA;
+  --workflow: #22C55E; --workflow-bg: #F0FDF4; --workflow-border: #BBF7D0;
+  --bg: #FAFAFA; --bg-dark: #0F0F1A; --card: #FFFFFF;
+  --text: #111827; --text-dim: #6B7280; --text-light: #F9FAFB;
+  --accent: #F59E0B; --highlight: #FEF3C7; --border: #E5E7EB;
+  --danger: #EF4444; --danger-bg: #FEF2F2;
+  --success: #22C55E; --success-bg: #F0FDF4;
+  --font: 'Inter', 'Noto Sans KR', sans-serif;
+}
+
+html { scroll-behavior: smooth; scroll-snap-type: y mandatory; overflow-y: scroll; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); }
+
+/* ── Progress Bar ── */
+.progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px; z-index: 1000;
+  background: linear-gradient(90deg, var(--skill), #FBBF24, var(--skill), #FB923C);
+  transition: width 0.4s ease;
+}
+
+/* ── Slide Base ── */
+.slide {
+  min-height: 100vh; width: 100%;
+  scroll-snap-align: start;
+  display: flex; flex-direction: column;
+  position: relative; overflow: hidden;
+}
+.slide-body {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  padding: 32px 64px; position: relative;
+}
+
+/* ── Navigation Dots ── */
+.nav-dots {
+  position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 6px; z-index: 100;
+}
+.nav-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 2px solid var(--border); background: transparent;
+  cursor: pointer; transition: all 0.3s ease;
+}
+.nav-dot.active { background: var(--skill); border-color: var(--skill); transform: scale(1.4); }
+
+/* ── Animations ── */
+.animate {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.slide.active .animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+.slide.active .animate[data-delay="1"] { transition-delay: 0.1s; }
+.slide.active .animate[data-delay="2"] { transition-delay: 0.2s; }
+.slide.active .animate[data-delay="3"] { transition-delay: 0.3s; }
+.slide.active .animate[data-delay="4"] { transition-delay: 0.4s; }
+.slide.active .animate[data-delay="5"] { transition-delay: 0.5s; }
+.slide.active .animate[data-delay="6"] { transition-delay: 0.6s; }
+.slide.active .animate[data-delay="7"] { transition-delay: 0.7s; }
+.slide.active .animate[data-delay="8"] { transition-delay: 0.8s; }
+.slide.active .animate[data-delay="9"] { transition-delay: 0.9s; }
+.slide.active .animate[data-delay="10"] { transition-delay: 1.0s; }
+
+/* ── Focus / Mouse ── */
+[data-focusable] {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  outline: none;
+}
+[data-focusable].in-focus {
+  outline: 3px solid var(--skill);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 6px rgba(249, 115, 22, 0.15);
+}
+.mouse-hovering .in-focus { opacity: 0; pointer-events: none; }
+[data-focusable]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* ── Click Game Effects ── */
+.click-particle {
+  position: fixed; pointer-events: none; z-index: 9999;
+  width: 8px; height: 8px; border-radius: 50%;
+  animation: particle-fly 0.8s ease-out forwards;
+}
+@keyframes particle-fly {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
+}
+.click-score {
+  position: fixed; pointer-events: none; z-index: 9999;
+  font-size: 24px; font-weight: 800; color: var(--skill);
+  animation: score-pop 0.8s ease-out forwards;
+}
+@keyframes score-pop {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-60px) scale(1.5); }
+}
+.click-sparkle {
+  position: fixed; pointer-events: none; z-index: 9999;
+  font-size: 20px; animation: sparkle 0.6s ease-out forwards;
+}
+@keyframes sparkle {
+  0% { opacity: 1; transform: translate(0, 0) scale(1) rotate(0deg); }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0) rotate(360deg); }
+}
+.combo-counter {
+  position: fixed; bottom: 24px; left: 24px; z-index: 9999;
+  font-size: 18px; font-weight: 800; color: var(--skill);
+  background: var(--card); padding: 8px 16px; border-radius: 99px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+.combo-counter.pop { animation: combo-pop 0.3s ease; }
+@keyframes combo-pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+/* ══════════════════════════════════════════════
+   SLIDE COMPONENTS
+   ══════════════════════════════════════════════ */
+
+/* ── Hero Slide ── */
+.hero-slide {
+  background: var(--bg-dark);
+  color: var(--text-light);
+}
+.hero-slide .slide-body {
+  flex-direction: column; text-align: center; gap: 32px;
+}
+.hero-title {
+  font-size: clamp(32px, 5vw, 60px);
+  font-weight: 900; line-height: 1.2;
+  background: linear-gradient(135deg, #fff 0%, #FED7AA 30%, #F97316 60%, #FB923C 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-subtitle {
+  font-size: clamp(16px, 2.2vw, 24px);
+  font-weight: 300; color: rgba(255,255,255,0.65);
+  max-width: 750px;
+}
+.hero-tag {
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.15em; padding: 6px 20px; border-radius: 99px;
+  background: rgba(249,115,22,0.2); border: 1px solid rgba(249,115,22,0.4);
+  display: inline-block; color: #FED7AA;
+}
+
+/* ── Act Transition ── */
+.act-slide {
+  background: var(--bg-dark);
+  color: var(--text-light);
+}
+.act-number {
+  font-size: clamp(80px, 15vw, 200px);
+  font-weight: 900; line-height: 1;
+  opacity: 0.1; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+.act-title {
+  font-size: clamp(26px, 3.8vw, 44px);
+  font-weight: 800; text-align: center;
+}
+.act-desc {
+  font-size: clamp(14px, 1.8vw, 20px);
+  font-weight: 300; color: rgba(255,255,255,0.55);
+  text-align: center; margin-top: 16px;
+}
+
+/* ── Problem Card ── */
+.problem-card {
+  background: var(--danger-bg);
+  border: 2px solid #FECACA;
+  border-radius: 16px;
+  padding: 28px;
+  text-align: center;
+}
+.problem-icon { font-size: 42px; margin-bottom: 12px; }
+.problem-title { font-size: 20px; font-weight: 700; color: var(--danger); margin-bottom: 6px; }
+.problem-desc { font-size: 14px; color: #991B1B; line-height: 1.5; }
+
+/* ── Solution Card ── */
+.solution-card {
+  background: var(--success-bg);
+  border: 2px solid #BBF7D0;
+  border-radius: 16px;
+  padding: 28px;
+  text-align: center;
+}
+.solution-icon { font-size: 42px; margin-bottom: 12px; }
+.solution-title { font-size: 20px; font-weight: 700; color: var(--success); margin-bottom: 6px; }
+.solution-desc { font-size: 14px; color: #166534; line-height: 1.5; }
+
+/* ── Before/After Split ── */
+.split-screen {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 28px;
+  width: 100%; max-width: 1100px;
+}
+.before-panel, .after-panel {
+  border-radius: 16px; padding: 28px; text-align: center;
+}
+.before-panel {
+  background: var(--danger-bg); border: 2px solid #FECACA;
+}
+.after-panel {
+  background: var(--success-bg); border: 2px solid #BBF7D0;
+}
+.panel-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; padding: 4px 12px; border-radius: 99px;
+  display: inline-block; margin-bottom: 12px;
+}
+.before-panel .panel-label { background: var(--danger); color: white; }
+.after-panel .panel-label { background: var(--success); color: white; }
+
+/* ── Feature Grid ── */
+.feature-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+  width: 100%; max-width: 1000px;
+}
+.feature-card {
+  border-radius: 16px; padding: 28px; text-align: center;
+  border: 2px solid var(--border);
+  background: var(--card);
+  transition: all 0.3s ease;
+}
+.feature-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+.feature-card.skill { border-color: var(--skill-border); background: var(--skill-bg); }
+.feature-card.memory { border-color: var(--memory-border); }
+.feature-card.knowledge { border-color: var(--knowledge-border); }
+.feature-card.workflow { border-color: var(--workflow-border); }
+.feature-icon { font-size: 42px; margin-bottom: 12px; }
+.feature-name { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+.feature-card.skill .feature-name { color: var(--skill); }
+.feature-card.memory .feature-name { color: var(--memory); }
+.feature-card.knowledge .feature-name { color: var(--knowledge); }
+.feature-card.workflow .feature-name { color: var(--workflow); }
+.feature-desc { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+
+/* ── VS Card ── */
+.vs-container {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px;
+  align-items: center; width: 100%; max-width: 1100px;
+}
+.vs-badge {
+  font-size: 28px; font-weight: 900;
+  background: var(--skill); color: white;
+  width: 56px; height: 56px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.vs-panel {
+  border-radius: 16px; padding: 28px; text-align: left;
+}
+.vs-panel.skill-panel {
+  background: var(--skill-bg); border: 2px solid var(--skill-border);
+}
+.vs-panel.auto-panel {
+  background: var(--danger-bg); border: 2px solid #FECACA;
+}
+.vs-panel-title { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+.vs-panel-title.skill-title { color: var(--skill); }
+.vs-item { font-size: 14px; margin-bottom: 10px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.5; }
+.vs-item::before { content: '→'; font-weight: 700; flex-shrink: 0; color: var(--skill); }
+
+/* ── Metaphor Card ── */
+.metaphor-card {
+  display: grid; grid-template-columns: auto 1fr; gap: 20px;
+  align-items: center; max-width: 900px;
+  background: var(--card); border-radius: 16px;
+  border: 2px solid var(--border); padding: 28px;
+}
+.metaphor-card.skill-border { border-color: var(--skill-border); background: var(--skill-bg); }
+.metaphor-icon { font-size: 56px; }
+.metaphor-text { font-size: 17px; line-height: 1.7; }
+.metaphor-text strong { font-weight: 700; }
+
+/* ── Content Slide ── */
+.content-slide .slide-body {
+  flex-direction: column; align-items: center; gap: 20px;
+  text-align: center;
+}
+.content-title {
+  font-size: clamp(22px, 2.8vw, 34px);
+  font-weight: 800; line-height: 1.3;
+}
+.content-desc {
+  font-size: clamp(14px, 1.8vw, 18px);
+  color: var(--text-dim); max-width: 780px; line-height: 1.6;
+}
+
+/* ── Summary Grid ── */
+.summary-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px; width: 100%; max-width: 1000px;
+}
+.summary-card {
+  border-radius: 12px; padding: 20px; text-align: center;
+  border: 2px solid var(--border); background: var(--card);
+}
+.summary-number { font-size: 28px; font-weight: 900; margin-bottom: 6px; }
+.summary-label { font-size: 13px; font-weight: 600; color: var(--text-dim); }
+
+/* ── Integration Diagram ── */
+.integration-diagram {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, auto);
+  gap: 14px; max-width: 480px; position: relative;
+}
+.integration-node {
+  border-radius: 12px; padding: 20px; text-align: center;
+  font-weight: 700; font-size: 16px;
+}
+.integration-node.memory-node { background: var(--memory-bg); color: var(--memory); border: 2px solid var(--memory-border); }
+.integration-node.knowledge-node { background: var(--knowledge-bg); color: var(--knowledge); border: 2px solid var(--knowledge-border); }
+.integration-node.skill-node { background: var(--skill-bg); color: var(--skill); border: 2px solid var(--skill-border); }
+.integration-node.workflow-node { background: var(--workflow-bg); color: var(--workflow); border: 2px solid var(--workflow-border); }
+.integration-center {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  background: white; border-radius: 50%; width: 72px; height: 72px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 2;
+}
+
+/* ── Q&A ── */
+.qa-slide {
+  background: var(--bg-dark); color: var(--text-light);
+}
+.qa-title {
+  font-size: clamp(44px, 8vw, 90px);
+  font-weight: 900; text-align: center;
+  background: linear-gradient(135deg, #fff, #FED7AA, #F97316);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.qa-subtitle {
+  font-size: 18px; color: rgba(255,255,255,0.5); text-align: center; margin-top: 12px;
+}
+
+/* ── Slide Header ── */
+.slide-header {
+  flex: 0 0 60px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px; z-index: 10;
+}
+.lecture-tag {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 4px 12px; border-radius: 99px;
+  background: var(--skill); color: white;
+}
+.slide-number { font-size: 13px; color: var(--text-dim); font-weight: 500; }
+
+/* ── Nav Arrows ── */
+.nav-arrow {
+  position: fixed; bottom: 24px; right: 24px; z-index: 100;
+  display: flex; gap: 8px;
+}
+.nav-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--card); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 16px; transition: all 0.2s ease;
+}
+.nav-btn:hover { background: var(--skill); color: white; border-color: var(--skill); }
+
+/* ── Skill File Structure ── */
+.skill-file-tree {
+  max-width: 700px; text-align: left;
+  background: var(--card); border-radius: 16px;
+  border: 2px solid var(--skill-border); padding: 28px 32px;
+  font-family: 'Courier New', monospace; font-size: 14px; line-height: 2;
+}
+.tree-folder { color: var(--skill); font-weight: 700; }
+.tree-file { color: var(--text); }
+.tree-comment { color: var(--text-dim); font-style: italic; }
+.tree-highlight { background: var(--skill-bg); padding: 2px 8px; border-radius: 4px; }
+
+/* ── Step List ── */
+.step-list {
+  max-width: 700px; text-align: left;
+}
+.step-item {
+  display: flex; gap: 16px; align-items: flex-start;
+  margin-bottom: 16px; padding: 16px 20px;
+  background: var(--card); border-radius: 12px;
+  border: 1px solid var(--border);
+}
+.step-num {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--skill); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 16px; flex-shrink: 0;
+}
+.step-content { flex: 1; }
+.step-content strong { color: var(--skill); font-weight: 700; }
+.step-content p { font-size: 14px; color: var(--text-dim); margin-top: 4px; line-height: 1.5; }
+
+/* ── Persuasion Card ── */
+.persuasion-card {
+  max-width: 700px; padding: 28px 32px;
+  background: linear-gradient(135deg, var(--skill-bg), #FFF1E6);
+  border-radius: 16px; border: 2px solid var(--skill-border);
+  text-align: center;
+}
+.persuasion-quote {
+  font-size: 22px; font-weight: 700; color: var(--skill);
+  line-height: 1.5; margin-bottom: 12px;
+}
+.persuasion-desc {
+  font-size: 15px; color: #9A3412; line-height: 1.6;
+}
+
+/* ── 3-column card ── */
+.tri-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  width: 100%; max-width: 1000px;
+}
+.tri-card {
+  border-radius: 14px; padding: 22px; text-align: center;
+  border: 2px solid var(--border); background: var(--card);
+}
+.tri-card.highlight { border-color: var(--skill-border); background: var(--skill-bg); }
+.tri-icon { font-size: 36px; margin-bottom: 10px; }
+.tri-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.tri-desc { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+
+/* ── Timeline ── */
+.timeline {
+  display: flex; gap: 0; align-items: center;
+  max-width: 1000px; flex-wrap: wrap; justify-content: center;
+}
+.timeline-step {
+  background: var(--skill-bg); border: 2px solid var(--skill-border);
+  border-radius: 10px; padding: 10px 14px;
+  font-weight: 600; font-size: 13px; white-space: nowrap;
+}
+.timeline-arrow {
+  color: var(--skill); font-size: 18px; font-weight: 700;
+  margin: 0 4px;
+}
+
+/* ── Domain cards ── */
+.domain-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  width: 100%; max-width: 1000px;
+}
+.domain-card {
+  border-radius: 12px; padding: 18px; text-align: center;
+  border: 2px solid var(--border); background: var(--card);
+  transition: all 0.3s ease;
+}
+.domain-card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+.domain-card .domain-icon { font-size: 32px; margin-bottom: 8px; }
+.domain-card .domain-name { font-size: 15px; font-weight: 700; color: var(--skill); margin-bottom: 4px; }
+.domain-card .domain-desc { font-size: 12px; color: var(--text-dim); line-height: 1.4; }
+
+/* ── Flow diagram ── */
+.flow-diagram {
+  display: flex; gap: 12px; align-items: center;
+  max-width: 1000px; flex-wrap: wrap; justify-content: center;
+}
+.flow-node {
+  border-radius: 12px; padding: 16px 20px;
+  text-align: center; font-weight: 600; font-size: 14px;
+  border: 2px solid; min-width: 120px;
+}
+.flow-node.skill-node { background: var(--skill-bg); border-color: var(--skill-border); color: var(--skill); }
+.flow-node.memory-node { background: var(--memory-bg); border-color: var(--memory-border); color: var(--memory); }
+.flow-node.knowledge-node { background: var(--knowledge-bg); border-color: var(--knowledge-border); color: var(--knowledge); }
+.flow-node.workflow-node { background: var(--workflow-bg); border-color: var(--workflow-border); color: var(--workflow); }
+.flow-arrow { font-size: 22px; color: var(--text-dim); font-weight: 700; }
+
+/* ── Highlight block ── */
+.highlight-block {
+  max-width: 800px; padding: 24px 32px;
+  background: var(--skill-bg); border-left: 4px solid var(--skill);
+  border-radius: 0 12px 12px 0; text-align: left;
+}
+.highlight-block .hl-title { font-size: 18px; font-weight: 700; color: var(--skill); margin-bottom: 8px; }
+.highlight-block .hl-text { font-size: 15px; line-height: 1.7; color: #9A3412; }
+
+/* ── Thank you slide ── */
+.thankyou-slide .hero-title {
+  background: linear-gradient(135deg, #fff 0%, #FED7AA 50%, #F97316 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .slide-body { padding: 24px; }
+  .split-screen { grid-template-columns: 1fr; }
+  .feature-grid { grid-template-columns: 1fr; }
+  .tri-grid { grid-template-columns: 1fr; }
+  .domain-grid { grid-template-columns: repeat(2, 1fr); }
+  .vs-container { grid-template-columns: 1fr; }
+  .nav-dots { display: none; }
+  .timeline { flex-direction: column; }
+  .timeline-arrow { transform: rotate(90deg); }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+<div class="nav-dots" id="navDots"></div>
+<div class="nav-arrow">
+  <div class="nav-btn" onclick="changeSlide(-1)">↑</div>
+  <div class="nav-btn" onclick="changeSlide(1)">↓</div>
+</div>
+<div class="combo-counter" id="comboCounter" style="display:none;">🔥 Combo x<span id="comboCount">0</span></div>
+
+<!-- ═══════════════════════════════════════════
+     데크 C: Skill 심화 (37페이지)
+     ═══════════════════════════════════════════ -->
+
+<!-- SLIDE 1: Hero -->
+<div class="slide hero-slide" data-slide="0">
+  <div class="slide-header" style="color:white;">
+    <span class="lecture-tag">Deck C</span>
+    <span class="slide-number">1 / 37</span>
+  </div>
+  <div class="slide-body">
+    <div class="animate" data-delay="1">
+      <span class="hero-tag">Skill 심화</span>
+    </div>
+    <div class="animate" data-delay="2">
+      <h1 class="hero-title">알고 하는 것은<br>완전히 다릅니다</h1>
+    </div>
+    <div class="animate" data-delay="3">
+      <p class="hero-subtitle">Agent가 매번 같은 결과를 내는 방법<br>표준화된 절차 설계부터 유지보수까지</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 2: 개론 복습 — 4기능 요약 -->
+<div class="slide" data-slide="1">
+  <div class="slide-header">
+    <span class="lecture-tag">Deck C</span>
+    <span class="slide-number">2 / 37</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-title animate" data-delay="1" style="margin-bottom:20px;">개론 복습 — Agent의 4가지 기능</div>
+    <div class="feature-grid animate" data-delay="2">
+      <div class="feature-card memory" data-focusable>
+        <div class="feature-icon">🧠</div>
+        <div class="feature-name">Memory</div>
+        <div class="feature-desc">경험을 기억하고<br>다음 대화에 활용</div>
+      </div>
+      <div class="feature-card knowledge" data-focusable>
+        <div class="feature-icon">📚</div>
+        <div class="feature-name">Knowledge</div>
+        <div class="feature-desc">지식을 체계적으로<br>관리하고 검색</div>
+      </div>
+      <div class="feature-card skill" data-focusable>
+        <div class="feature-icon">🛠️</div>
+        <div class="feature-name">Skill</div>
+        <div class="feature-desc">절차를 표준화하고<br>일관된 결과 도출</div>
+      </div>
+      <div class="feature-card workflow" data-focusable>
+        <div class="feature-icon">🔄</div>
+        <div class="feature-name">Workflow</div>
+        <div class="feature-desc">작업을 체계적으로<br>흐르게 설계</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: Skill의 위치 -->
+<div class="slide" data-slide="2">
+  <div class="slide-header">
+    <span class="lecture-tag">Deck C</span>
+    <span class="slide-number">3 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">4가지 사이에서 Skill이 차지하는 위치</h2>
+    </div>
+    <div class="flow-diagram animate" data-delay="2">
+      <div class="flow-node memory-node">🧠 Memory<br><small style="font-weight:400;font-size:12px;">경험 기억</small></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-node knowledge-node">📚 Knowledge<br><small style="font-weight:400;font-size:12px;">정보 검색</small></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-node skill-node" style="border-width:3px; transform:scale(1.05);">🛠️ Skill<br><small style="font-weight:400;font-size:12px;">절차 실행</small></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-node workflow-node">🔄 Workflow<br><small style="font-weight:400;font-size:12px;">흐름 관리</small></div>
+    </div>
+    <div class="animate" data-delay="3">
+      <p class="content-desc" style="margin-top:12px;">이 데크에서는 <strong style="color:var(--skill);">Skill</strong>을 심층적으로 파헤칩니다</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: 문제 — 같은 작업, 다른 결과 -->
+<div class="slide" data-slide="3">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--danger);">Problem</span>
+    <span class="slide-number">4 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">同样的 작업인데 결과가 매번 다릅니다</h2>
+    </div>
+    <div class="split-screen animate" data-delay="2">
+      <div class="before-panel">
+        <span class="panel-label">Skill X</span>
+        <h3 style="font-size:17px; margin-bottom:10px; color:var(--danger);">레시피 없는 요리</h3>
+        <p style="font-size:13px; color:#991B1B; line-height:1.7;">
+          • 같은 요청 → 다른 형식<br>
+          • 중요한 단계가 누락됨<br>
+          • 품질이 예측 불가능<br>
+          • 리뷰에 2배의 시간
+        </p>
+      </div>
+      <div class="after-panel">
+        <span class="panel-label">Skill O</span>
+        <h3 style="font-size:17px; margin-bottom:10px; color:var(--success);">표준화된 레시피</h3>
+        <p style="font-size:13px; color:#166534; line-height:1.7;">
+          • 매번 같은 형식과 품질<br>
+          • 단계별 검증 포함<br>
+          • 개선이 기록으로 남음<br>
+          • 리뷰 시간 50% 절감
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5: 문제 — 3가지 손실 -->
+<div class="slide" data-slide="4">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--danger);">Problem</span>
+    <span class="slide-number">5 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">Skill 없이 잃는 3가지</h2>
+    </div>
+    <div class="tri-grid animate" data-delay="2">
+      <div class="problem-card">
+        <div class="problem-icon">⏰</div>
+        <div class="problem-title">시간</div>
+        <div class="problem-desc">같은 절차를<br>매번 다시 설명해야 함</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">📐</div>
+        <div class="problem-title">일관성</div>
+        <div class="problem-desc">같은 작업도<br>결과가 매번 다름</div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">🔍</div>
+        <div class="problem-title">신뢰도</div>
+        <div class="problem-desc">누가 했냐에 따라<br>품질이 결정됨</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: 문제 — 근본 원인 -->
+<div class="slide" data-slide="5">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--danger);">Problem</span>
+    <span class="slide-number">6 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">왜 Agent는 매번 다른 방법을 쓸까요?</h2>
+    </div>
+    <div class="metaphor-card animate" data-delay="2">
+      <div class="metaphor-icon">👨‍🍳</div>
+      <div class="metaphor-text">
+        <strong>레시피 없이 요리는?</strong><br><br>
+        똑같은 재료, 똑같은灶台<br>
+        그런데 매번 다른 맛이 나면?<br><br>
+        Agent는 <strong>절차가 없으면</strong> 그때그때<br>자신이 아는 최선의 방법을 고릅니다.<br>
+        <strong>최선이 매번 다르다는 것</strong>이 문제입니다.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7: Act 2 전환 -->
+<div class="slide act-slide" data-slide="6">
+  <div class="slide-header" style="color: white;">
+    <span class="lecture-tag">Act 2</span>
+    <span class="slide-number">7 / 37</span>
+  </div>
+  <div class="slide-body">
+    <div class="act-number">02</div>
+    <div class="animate" data-delay="1">
+      <h2 class="act-title" style="color: var(--skill);">Skill은 Agent의 근육 기억입니다</h2>
+    </div>
+    <div class="animate" data-delay="2">
+      <p class="act-desc">Skill이 어떤 형태인지, 어떻게 만드는지</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: 레시피 비유 -->
+<div class="slide" data-slide="7">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">Skill</span>
+    <span class="slide-number">8 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">일상 속의 Skill — 레시피</h2>
+    </div>
+    <div class="metaphor-card skill-border animate" data-delay="2">
+      <div class="metaphor-icon">📖</div>
+      <div class="metaphor-text">
+        좋은 레시피에는 4가지가 있습니다:<br><br>
+        <strong style="color:var(--skill);">① 언제 만들지</strong> → "화요일 저녁, 손님 있을 때"<br>
+        <strong style="color:var(--skill);">② 어떤 순서로</strong> → 1→2→3 단계별 지침<br>
+        <strong style="color:var(--skill);">③ 주의사항</strong> → "소금은 마지막에"<br>
+        <strong style="color:var(--skill);">④ 완성 체크</strong> → "황금빛 갈색이면 OK"
+      </div>
+    </div>
+    <div class="animate" data-delay="3">
+      <p class="content-desc" style="margin-top:12px;">Skill도 똑같이 4가지 요소를 가집니다</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9: SKILL.md 전체 모습 -->
+<div class="slide" data-slide="8">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">Skill</span>
+    <span class="slide-number">9 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">Skill은 하나의 파일 — SKILL.md</h2>
+    </div>
+    <div class="skill-file-tree animate" data-delay="2">
+      <span class="tree-folder">📁 skills/</span><br>
+      &nbsp;&nbsp;<span class="tree-file">📄 SKILL.md</span> <span class="tree-comment">← 핵심 파일</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;├── <span class="tree-highlight">Frontmatter</span> <span class="tree-comment">→ 메타데이터</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;├── <span class="tree-highlight">본문</span> <span class="tree-comment">→ 단계별 지침</span><br>
+      &nbsp;&nbsp;├── <span class="tree-folder">📁 references/</span> <span class="tree-comment">→ 참고 문서</span><br>
+      &nbsp;&nbsp;├── <span class="tree-folder">📁 templates/</span> <span class="tree-comment">→ 템플릿 파일</span><br>
+      &nbsp;&nbsp;└── <span class="tree-folder">📁 scripts/</span> <span class="tree-comment">→ 자동화 스크립트</span>
+    </div>
+    <div class="animate" data-delay="3">
+      <p class="content-desc" style="margin-top:12px;">하나의 폴더에 모든 절차가 담깁니다</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10: 프론트마터 -->
+<div class="slide" data-slide="9">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">Skill</span>
+    <span class="slide-number">10 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">프론트마터 — Skill의 이름표</h2>
+    </div>
+    <div class="metaphor-card skill-border animate" data-delay="2">
+      <div class="metaphor-icon">🏷️</div>
+      <div class="metaphor-text">
+        레시피 커버에 적힌 것과 같습니다:<br><br>
+        <strong>이름</strong> → 이 Skill을 무엇이라 부를지<br>
+        <strong>트리거</strong> → 언제 이 Skill을 꺼내볼지<br>
+        <strong>카테고리</strong> → 어떤 종류의 Skill인지<br>
+        <strong>설명</strong> → 한 줄 요약
+      </div>
+    </div>
+    <div class="highlight-block animate" data-delay="3" style="margin-top:12px;">
+      <div class="hl-title">💡 핵심 포인트</div>
+      <div class="hl-text">트리거가 정확해야 Agent가 적절한 때에 Skill을 자동으로 찾습니다. 너무 넓으면 항상 뜨고, 너무 좁으면 절대 안 뜹니다.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11: 본문 구조 -->
+<div class="slide" data-slide="10">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">Skill</span>
+    <span class="slide-number">11 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">본문 — 단계별 레시피</h2>
+    </div>
+    <div class="step-list animate" data-delay="2">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>트리거 조건</strong>
+          <p>이 Skill이 언제 필요한지 명확히 정의</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>단계별 절차</strong>
+          <p>① → ② → ③ 순서대로 실행할 작업</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>주의사항 (Pitfalls)</strong>
+          <p>실수하기 쉬운 지점과 우회 방법</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>검증 단계</strong>
+          <p>끝나면 결과가 올바른지 확인하는 방법</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 12: 지원 파일 + 설득 -->
+<div class="slide" data-slide="11">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">Skill</span>
+    <span class="slide-number">12 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">지원 파일 — 레시피의 도구와 재료</h2>
+    </div>
+    <div class="tri-grid animate" data-delay="2">
+      <div class="tri-card highlight">
+        <div class="tri-icon">📄</div>
+        <div class="tri-title">references/</div>
+        <div class="tri-desc">참고 문서<br>API 가이드, 공식 문서 링크</div>
+      </div>
+      <div class="tri-card highlight">
+        <div class="tri-icon">📋</div>
+        <div class="tri-title">templates/</div>
+        <div class="tri-desc">템플릿 파일<br>출력 형식, 설정 패턴</div>
+      </div>
+      <div class="tri-card highlight">
+        <div class="tri-icon">⚙️</div>
+        <div class="tri-title">scripts/</div>
+        <div class="tri-desc">자동화 스크립트<br>검증, 변환, 테스트</div>
+      </div>
+    </div>
+    <div class="persuasion-card animate" data-delay="3" style="margin-top:16px;">
+      <div class="persuasion-quote">"레시피 + 도구 + 재료 = 완성"</div>
+      <div class="persuasion-desc">SKILL.md만으로도 충분하지만, 지원 파일이 있으면<br>복잡한 작업도 정확하게 반복 가능합니다</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 13: Act 3 전환 -->
+<div class="slide act-slide" data-slide="12">
+  <div class="slide-header" style="color: white;">
+    <span class="lecture-tag">Act 3</span>
+    <span class="slide-number">13 / 37</span>
+  </div>
+  <div class="slide-body">
+    <div class="act-number">03</div>
+    <div class="animate" data-delay="1">
+      <h2 class="act-title" style="color: var(--skill);">Skill은 어떻게 관리될까요?</h2>
+    </div>
+    <div class="animate" data-delay="2">
+      <p class="act-desc">6개 도메인, 목록/로드/관리 시스템</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 14: 6개 도메인 -->
+<div class="slide" data-slide="13">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">System</span>
+    <span class="slide-number">14 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">Skill은 6개 도메인으로 분류됩니다</h2>
+    </div>
+    <div class="domain-grid animate" data-delay="2">
+      <div class="domain-card" data-focusable>
+        <div class="domain-icon">🤖</div>
+        <div class="domain-name">autonomous-ai-agents</div>
+        <div class="domain-desc">자율 에이전트 제어 및 오케스트레이션</div>
+      </div>
+      <div class="domain-card" data-focusable>
+        <div class="domain-icon">🎨</div>
+        <div class="domain-name">creative</div>
+        <div class="domain-desc">이미지, 동영상, 디자인, ASCII</div>
+      </div>
+      <div class="domain-card" data-focusable>
+        <div class="domain-icon">📊</div>
+        <div class="domain-name">data-science</div>
+        <div class="domain-desc">데이터 분석, Jupyter 노트북</div>
+      </div>
+      <div class="domain-card" data-focusable>
+        <div class="domain-icon">🔬</div>
+        <div class="domain-name">research</div>
+        <div class="domain-desc">논문 검색, 블로그 감시, 사실 확인</div>
+      </div>
+      <div class="domain-card" data-focusable>
+        <div class="domain-icon">💻</div>
+        <div class="domain-name">software-development</div>
+        <div class="domain-desc">코드 리뷰, 테스트, 디버깅</div>
+      </div>
+      <div class="domain-card" data-focusable>
+        <div class="domain-icon">📎</div>
+        <div class="domain-name">productivity</div>
+        <div class="domain-desc">문서, 프리젠테이션, 캘린더</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 15: Skill 목록/로드 -->
+<div class="slide" data-slide="14">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">System</span>
+    <span class="slide-number">15 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">Agent는 Skill을 어떻게 찾을까요?</h2>
+    </div>
+    <div class="step-list animate" data-delay="2">
+      <div class="step-item">
+        <div class="step-num">📋</div>
+        <div class="step-content">
+          <strong>목록 확인 (skills_list)</strong>
+          <p>모든 Skill 이름과 설명을 빠르게 훑어봅니다</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">📖</div>
+        <div class="step-content">
+          <strong>내용 로드 (skill_view)</strong>
+          <p>해당 Skill의 전체 내용을 불러옵니다</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">🎯</div>
+        <div class="step-content">
+          <strong>조건 매칭</strong>
+          <p>트리거 조건과 현재 작업을 비교해 적합성 판단</p>
+        </div>
+      </div>
+    </div>
+    <div class="highlight-block animate" data-delay="3" style="margin-top:12px;">
+      <div class="hl-title">💡 비유</div>
+      <div class="hl-text">요리할 때 냉장고 문을 열어보듯, Agent도 Skill 목록을 훑어보고 적절한 것을 선택합니다. 너무 많은 Skill이 있으면 찾는 데 시간이 걸립니다 — 정리된 주방이 효율적인 것과 같습니다.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 16: Skill 관리 -->
+<div class="slide" data-slide="15">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">System</span>
+    <span class="slide-number">16 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">Skill은 언제 만들고, 수정할까요?</h2>
+    </div>
+    <div class="split-screen animate" data-delay="2">
+      <div class="before-panel">
+        <span class="panel-label">만들 때</span>
+        <h3 style="font-size:16px; margin-bottom:10px;">이런 상황에서</h3>
+        <p style="font-size:13px; color:#991B1B; line-height:1.7;">
+          • 복잡한 작업이 성공했을 때<br>
+          • 여러 번의 수정 끝에 완성<br>
+          • 사용자가 "기억해줘" 요청<br>
+          • 반복적인 패턴 발견
+        </p>
+      </div>
+      <div class="after-panel">
+        <span class="panel-label">수정할 때</span>
+        <h3 style="font-size:16px; margin-bottom:10px;">이런 상황에서</h3>
+        <p style="font-size:13px; color:#166534; line-height:1.7;">
+          • 명령어가 달라졌을 때<br>
+          • 누락된 단계 발견<br>
+          • 새로운 주의사항 추가<br>
+          • 더 효율적인 방법 발견
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 17: 설득 — 유지 관리의 중요성 -->
+<div class="slide" data-slide="16">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">System</span>
+    <span class="slide-number">17 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">관리되지 않는 Skill은 독이 됩니다</h2>
+    </div>
+    <div class="metaphor-card animate" data-delay="2">
+      <div class="metaphor-icon">⚠️</div>
+      <div class="metaphor-text">
+        <strong>오래된 레시피 책</strong>을 생각해보세요.<br><br>
+        5년 전 재료로 된 레시피를 따라하면<br>
+        재료가 없고, 양념은 대체품이 나와서<br>
+        결과는 기대와 완전히 다릅니다.<br><br>
+        <strong style="color:var(--danger);">陳腐한 Skill은</strong> Agent를 오도합니다.<br>
+        <strong style="color:var(--success);">정기 점검</strong>이 필수입니다.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 18: 시스템 설득 -->
+<div class="slide" data-slide="17">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">System</span>
+    <span class="slide-number">18 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">Skill 시스템이 주는 신뢰</h2>
+    </div>
+    <div class="tri-grid animate" data-delay="2">
+      <div class="tri-card highlight">
+        <div class="tri-icon">📂</div>
+        <div class="tri-title">분류</div>
+        <div class="tri-desc">6개 도메인으로<br>정리된 Skill</div>
+      </div>
+      <div class="tri-card highlight">
+        <div class="tri-icon">🔄</div>
+        <div class="tri-title">자동 발견</div>
+        <div class="tri-desc">적절한 Skill을<br>Agent가 직접 찾음</div>
+      </div>
+      <div class="tri-card highlight">
+        <div class="tri-icon">🛡️</div>
+        <div class="tri-title">안정성</div>
+        <div class="tri-desc">Pinned Skill은<br>실수로 삭제 불가</div>
+      </div>
+    </div>
+    <div class="persuasion-card animate" data-delay="3" style="margin-top:16px;">
+      <div class="persuasion-quote">"나쁜 Skill은 없는 Skill보다 낫습니다"</div>
+      <div class="persuasion-desc">하지만 오래된 Skill은 나쁜 Skill보다 더 나쁩니다.<br>정기적인 관리가 Skill 시스템의 핵심입니다</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 19: Act 4 전환 -->
+<div class="slide act-slide" data-slide="18">
+  <div class="slide-header" style="color: white;">
+    <span class="lecture-tag">Act 4</span>
+    <span class="slide-number">19 / 37</span>
+  </div>
+  <div class="slide-body">
+    <div class="act-number">04</div>
+    <div class="animate" data-delay="1">
+      <h2 class="act-title" style="color: var(--skill);">Skill은 어떻게 실행될까요?</h2>
+    </div>
+    <div class="animate" data-delay="2">
+      <p class="act-desc">자동 발견부터 매개변수, 에러 처리까지</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 20: 자동 발견 -->
+<div class="slide" data-slide="19">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">Execution</span>
+    <span class="slide-number">20 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">Step 1 — Agent가 Skill을 자동으로 찾습니다</h2>
+    </div>
+    <div class="metaphor-card skill-border animate" data-delay="2">
+      <div class="metaphor-icon">🔍</div>
+      <div class="metaphor-text">
+        <strong>작업 요청</strong>: "GitHub PR을 만들어줘"<br><br>
+        ① Agent는 Skill 목록을 훑어봄<br>
+        ② "github-pr-workflow"의 트리거가 "PR"과 매칭<br>
+        ③ Skill 내용을 로드하고 지침을 따름<br>
+        ④ 단계별로 실행 → 검증 → 완료<br><br>
+        <span style="color:var(--text-dim);">👤 당신은 그냥 요청만 하면 됩니다</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 21: 매개변수 -->
+<div class="slide" data-slide="20">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">Execution</span>
+    <span class="slide-number">21 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">Step 2 — 매개변수로 유연하게 실행</h2>
+    </div>
+    <div class="metaphor-card animate" data-delay="2">
+      <div class="metaphor-icon">🎛️</div>
+      <div class="metaphor-text">
+        레시피에서 <strong>"재료 양을 조정"</strong>하는 것과 같습니다:<br><br>
+        <strong>기본:</strong> "보고서를 만들어줘"<br>
+        → 표준 형식 + 기본 길이<br><br>
+        <strong>매개변수:</strong> "5페이지 요약 보고서를 만들어줘"<br>
+        → 같은 절차, 다른 파라미터 적용<br><br>
+        같은 Skill, <strong style="color:var(--skill);">상황에 맞게</strong> 유연하게 작동
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 22: 조건부 실행 -->
+<div class="slide" data-slide="21">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">Execution</span>
+    <span class="slide-number">22 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">Step 3 — 조건부 분기</h2>
+    </div>
+    <div class="highlight-block animate" data-delay="2">
+      <div class="hl-title">if → else 분기로 정교하게</div>
+      <div class="hl-text">
+        <strong>파일 타입이 Python이면</strong> → 파이썬 린터 실행<br>
+        <strong>JSON이면</strong> → 스키마 검증 실행<br>
+        <strong>둘 다 아니면</strong> → 기본 텍스트 검증<br><br>
+        한 개의 Skill이 여러 상황을<br>조건에 맞게 처리합니다
+      </div>
+    </div>
+    <div class="metaphor-card animate" data-delay="3" style="margin-top:16px;">
+      <div class="metaphor-icon">🍳</div>
+      <div class="metaphor-text">
+        <strong>"계란이 있다면 프라이, 없으면 토스트"</strong><br>
+        같은 레시피 책이지만 상황에 맞게 조정 — 바로 조건부 분기
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 23: 에러 처리 -->
+<div class="slide" data-slide="22">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">Execution</span>
+    <span class="slide-number">23 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">Step 4 — 실패해도 멈추지 않습니다</h2>
+    </div>
+    <div class="split-screen animate" data-delay="2">
+      <div class="before-panel">
+        <span class="panel-label">에러 처리 X</span>
+        <h3 style="font-size:17px; margin-bottom:10px; color:var(--danger);">한 단계 실패면 멈춤</h3>
+        <p style="font-size:13px; color:#991B1B; line-height:1.7;">
+          • 에러 발생 → 바로 종료<br>
+          • 원인 파악은 사용자에게<br>
+          • 부분 완료 결과 손실
+        </p>
+      </div>
+      <div class="after-panel">
+        <span class="panel-label">에러 처리 O</span>
+        <h3 style="font-size:17px; margin-bottom:10px; color:var(--success);">에러를 알고 있음</h3>
+        <p style="font-size:13px; color:#166534; line-height:1.7;">
+          • Pitfalls 섹션에서 예방<br>
+          • 대체 방법 제시<br>
+          • 실패 단계 로깅 + 복구
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 24: 자동 vs 수동 -->
+<div class="slide" data-slide="23">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">Execution</span>
+    <span class="slide-number">24 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">자동 vs 수동 — 언제 무엇을 쓸까?</h2>
+    </div>
+    <div class="vs-container animate" data-delay="2">
+      <div class="vs-panel skill-panel">
+        <div class="vs-panel-title skill-title">⚡ 자동 발견</div>
+        <div class="vs-item">Agent가 스스로 Skill 검색</div>
+        <div class="vs-item">트리거 조건에 매칭되면 자동 실행</div>
+        <div class="vs-item">사용자 개입 없음 — 그냥 요청만</div>
+        <div class="vs-item">일상적·반복 작업에 최적</div>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div class="vs-panel auto-panel" style="background:var(--skill-bg);border-color:var(--skill-border);">
+        <div class="vs-panel-title skill-title">🎯 명시적 호출</div>
+        <div class="vs-item">직접 Skill 이름을 지정</div>
+        <div class="vs-item">특정 버전/변형 강제 적용</div>
+        <div class="vs-item">사용자가 통제력을 유지</div>
+        <div class="vs-item">복잡한·민감한 작업에 적합</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 25: Act 5 전환 -->
+<div class="slide act-slide" data-slide="24">
+  <div class="slide-header" style="color: white;">
+    <span class="lecture-tag">Act 5</span>
+    <span class="slide-number">25 / 37</span>
+  </div>
+  <div class="slide-body">
+    <div class="act-number">05</div>
+    <div class="animate" data-delay="1">
+      <h2 class="act-title" style="color: var(--skill);">Skill은 어떻게 관리될까요?</h2>
+    </div>
+    <div class="animate" data-delay="2">
+      <p class="act-desc">패치, 버전, 검증, 분리/병합</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 26: 패치 -->
+<div class="slide" data-slide="25">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">Maintenance</span>
+    <span class="slide-number">26 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">패치 — 부분 수정만</h2>
+    </div>
+    <div class="metaphor-card skill-border animate" data-delay="2">
+      <div class="metaphor-icon">🩹</div>
+      <div class="metaphor-text">
+        레시피 책 전체를 다시 쓸 필요 없습니다:<br><br>
+        <strong>"소금 1ts → 1/2ts로"</strong> 라고<br>한 줄만 고치면 됩니다.<br><br>
+        Skill도 <strong style="color:var(--skill);">patch 모드로</strong><br>바꿀 부분만 지정하면 자동으로 반영됩니다.<br>
+        전체를 다시 쓸 필요 없이 <strong>정확한 수정</strong>.
+      </div>
+    </div>
+    <div class="highlight-block animate" data-delay="3" style="margin-top:12px;">
+      <div class="hl-title">💡 규칙</div>
+      <div class="hl-text">Skill을 실행하다가 문제가 발견되면 바로 patch합니다. 나중에 고치다가 잊어버리면 잘못된 Skill이 계속 실행됩니다.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 27: 버전 관리 -->
+<div class="slide" data-slide="26">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">Maintenance</span>
+    <span class="slide-number">27 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">버전 — Skill도 진화합니다</h2>
+    </div>
+    <div class="timeline animate" data-delay="2">
+      <div class="timeline-step">🌱 v1<br><small>최초 작성</small></div>
+      <span class="timeline-arrow">→</span>
+      <div class="timeline-step">🔧 v2<br><small>주의사항 추가</small></div>
+      <span class="timeline-arrow">→</span>
+      <div class="timeline-step">⚡ v3<br><small>단계 최적화</small></div>
+      <span class="timeline-arrow">→</span>
+      <div class="timeline-step" style="border-color:var(--success);background:var(--success-bg);">✅ v4<br><small>검증 자동화</small></div>
+    </div>
+    <div class="metaphor-card animate" data-delay="3" style="margin-top:16px;">
+      <div class="metaphor-icon">📈</div>
+      <div class="metaphor-text">
+        <strong>좋은 Skill은 시간이 지나면 더 나아집니다.</strong><br>
+        10번 실행하면 10개의 개선점이 보입니다.<br>
+        기록 → 수정 → 다시 실행 → 더 잘됨
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 28: 검증 -->
+<div class="slide" data-slide="27">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">Maintenance</span>
+    <span class="slide-number">28 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">검증 — Skill이 진짜 작동하는지 확인</h2>
+    </div>
+    <div class="tri-grid animate" data-delay="2">
+      <div class="tri-card highlight">
+        <div class="tri-icon">🔍</div>
+        <div class="tri-title">자동 검사</div>
+        <div class="tri-desc">패치 후 자동으로<br>구문 검사 실행</div>
+      </div>
+      <div class="tri-card highlight">
+        <div class="tri-icon">🧪</div>
+        <div class="tri-title">실제 테스트</div>
+        <div class="tri-desc">가상의 작업으로<br>전체 흐름 검증</div>
+      </div>
+      <div class="tri-card highlight">
+        <div class="tri-icon">👥</div>
+        <div class="tri-title">사용자 리뷰</div>
+        <div class="tri-desc">실제 사용자가<br>결과 확인 후 피드백</div>
+      </div>
+    </div>
+    <div class="persuasion-card animate" data-delay="3" style="margin-top:16px;">
+      <div class="persuasion-quote">"검증되지 않은 Skill은 아직 완성되지 않았습니다"</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 29: 분리/병합 + 설득 -->
+<div class="slide" data-slide="28">
+  <div class="slide-header">
+    <span class="lecture-tag" style="background:var(--skill);">Maintenance</span>
+    <span class="slide-number">29 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">분리 ↔ 병합 — 적절한 크기</h2>
+    </div>
+    <div class="split-screen animate" data-delay="2">
+      <div class="before-panel">
+        <span class="panel-label">분리가 필요할 때</span>
+        <h3 style="font-size:16px; margin-bottom:10px; color:var(--danger);">덩어리가 너무 큰 Skill</h3>
+        <p style="font-size:13px; color:#991B1B; line-height:1.7;">
+          • 100줄이 넘는 긴 Skill<br>
+          • 여러 작업을 한 파일에<br>
+          → <strong>작은 Skill로 분리</strong>
+        </p>
+      </div>
+      <div class="after-panel">
+        <span class="panel-label">병합이 필요할 때</span>
+        <h3 style="font-size:16px; margin-bottom:10px; color:var(--success);">너무 많은 작은 Skill</h3>
+        <p style="font-size:13px; color:#166534; line-height:1.7;">
+          • 비슷한 Skill이 5개 넘게<br>
+          • 서로 중복된 내용<br>
+          → <strong>큰 Skill로 통합</strong>
+        </p>
+      </div>
+    </div>
+    <div class="persuasion-card animate" data-delay="3" style="margin-top:14px;">
+      <div class="persuasion-quote">"올바른 크기의 Skill이 가장 강력합니다"</div>
+      <div class="persuasion-desc">너무 크면 복잡하고, 너무 작으면 찾기 힘듭니다.<br>한 Skill이 하나의 명확한 문제를 해결할 때 가장 효율적입니다</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 30: Act 6 전환 -->
+<div class="slide act-slide" data-slide="29">
+  <div class="slide-header" style="color: white;">
+    <span class="lecture-tag">Act 6</span>
+    <span class="slide-number">30 / 37</span>
+  </div>
+  <div class="slide-body">
+    <div class="act-number">06</div>
+    <div class="animate" data-delay="1">
+      <h2 class="act-title" style="color: var(--skill);">4가지가 하나로 — 통합</h2>
+    </div>
+    <div class="animate" data-delay="2">
+      <p class="act-desc">Skill은 혼자 작동하지 않습니다</p>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 31: K/M/W/Skill 관계도 -->
+<div class="slide" data-slide="30">
+  <div class="slide-header">
+    <span class="lecture-tag">Deck C</span>
+    <span class="slide-number">31 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">Skill은 다른 기능과 연결됩니다</h2>
+    </div>
+    <div class="integration-diagram animate" data-delay="2">
+      <div class="integration-node memory-node">🧠 Memory</div>
+      <div class="integration-node knowledge-node">📚 Knowledge</div>
+      <div class="integration-node skill-node" style="border-width:3px;transform:scale(1.05);">🛠️ Skill</div>
+      <div class="integration-node workflow-node">🔄 Workflow</div>
+      <div class="integration-center">Agent</div>
+    </div>
+    <div class="animate" data-delay="3" style="margin-top:20px;">
+      <div class="flow-diagram">
+        <div class="flow-node knowledge-node">지식 검색</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-node skill-node" style="border-width:3px;">Skill 실행</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-node memory-node">경험 저장</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 32: 시나리오 1 -->
+<div class="slide" data-slide="31">
+  <div class="slide-header">
+    <span class="lecture-tag">Deck C</span>
+    <span class="slide-number">32 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">실제 시나리오 ① — 코드 리뷰</h2>
+    </div>
+    <div class="step-list animate" data-delay="2">
+      <div class="step-item">
+        <div class="step-num" style="background:var(--knowledge);">📚</div>
+        <div class="step-content">
+          <strong>Knowledge</strong>: 프로젝트 스타일 가이드 검색
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num" style="background:var(--skill);">🛠️</div>
+        <div class="step-content">
+          <strong>Skill</strong>: "github-code-review" 절차 자동 실행
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num" style="background:var(--workflow);">🔄</div>
+        <div class="step-content">
+          <strong>Workflow</strong>: 단계별 상태 추적 (조사→설계→검증)
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num" style="background:var(--memory);">🧠</div>
+        <div class="step-content">
+          <strong>Memory</strong>: "이 팀은 보안 검토를 중요시함" 기록
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 33: 시나리오 2 -->
+<div class="slide" data-slide="32">
+  <div class="slide-header">
+    <span class="lecture-tag">Deck C</span>
+    <span class="slide-number">33 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">실제 시나리오 ② — 보고서 작성</h2>
+    </div>
+    <div class="step-list animate" data-delay="2">
+      <div class="step-item">
+        <div class="step-num" style="background:var(--workflow);">🔄</div>
+        <div class="step-content">
+          <strong>Workflow</strong>: 9단계 진행 — 요청→조사를 거쳐 실행까지
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num" style="background:var(--knowledge);">📚</div>
+        <div class="step-content">
+          <strong>Knowledge</strong>: 관련 문서/데이터 검색
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num" style="background:var(--skill);">🛠️</div>
+        <div class="step-content">
+          <strong>Skill</strong>: "보고서 작성" 표준 형식 + 검증 절차 실행
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num" style="background:var(--memory);">🧠</div>
+        <div class="step-content">
+          <strong>Memory</strong>: "김 팀장은 간결한 스타일 선호" 적용
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 34: 통합 설득 -->
+<div class="slide" data-slide="33">
+  <div class="slide-header">
+    <span class="lecture-tag">Deck C</span>
+    <span class="slide-number">34 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">4가지가 함께 작동할 때</h2>
+    </div>
+    <div class="split-screen animate" data-delay="2">
+      <div class="before-panel">
+        <span class="panel-label">Skill만 있으면</span>
+        <h3 style="font-size:16px; margin-bottom:10px; color:var(--danger);">절차는 있지만 맥락 부족</h3>
+        <p style="font-size:13px; color:#991B1B; line-height:1.7;">
+          • 표준 형식은 맞지만<br>
+          • 사용자 스타일 반영 안 됨<br>
+          • 프로젝트 정보 모름<br>
+          • 다음 단계로 연결 안 됨
+        </p>
+      </div>
+      <div class="after-panel">
+        <span class="panel-label">4가지 모두</span>
+        <h3 style="font-size:16px; margin-bottom:10px; color:var(--success);">맥락 + 절차 + 흐름</h3>
+        <p style="font-size:13px; color:#166534; line-height:1.7;">
+          • 표준 형식 + 사용자 스타일<br>
+          • 프로젝트 지식 활용<br>
+          • 단계별 검증 + 다음으로<br>
+          • 경험을 다음에 반영
+        </p>
+      </div>
+    </div>
+    <div class="persuasion-card animate" data-delay="3" style="margin-top:14px;">
+      <div class="persuasion-quote">"Skill은 핵심이지만, 혼자서는 부족합니다"</div>
+      <div class="persuasion-desc">Memory + Knowledge + Workflow와 연결될 때<br>정말 강력한 Agent 시스템이 됩니다</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 35: 핵심 요약 -->
+<div class="slide" data-slide="34">
+  <div class="slide-header">
+    <span class="lecture-tag">Deck C</span>
+    <span class="slide-number">35 / 37</span>
+  </div>
+  <div class="slide-body content-slide">
+    <div class="animate" data-delay="1">
+      <h2 class="content-title">핵심 7가지 요약</h2>
+    </div>
+    <div class="animate" data-delay="2" style="max-width:700px; text-align:left;">
+      <div style="font-size:16px; line-height:2.2;">
+        <strong>1.</strong> Skill은 Agent의 <strong style="color:var(--skill);">근육 기억</strong> — 매번 같은 결과<br>
+        <strong>2.</strong> 레시피 = <strong>트리거</strong> + <strong>단계</strong> + <strong>주의사항</strong> + <strong>검증</strong><br>
+        <strong>3.</strong> SKILL.md 하나에 모든 절차가 담긴다<br>
+        <strong>4.</strong> 6개 도메인으로 분류되어 자동 발견된다<br>
+        <strong>5.</strong> 조건부 분기로 유연하게 실행된다<br>
+        <strong>6.</strong> 패치로 즉시 수정, 버전으로 진화한다<br>
+        <strong>7.</strong> 4기능과 연결될 때 <strong>최대의 효과</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 36: Q&A -->
+<div class="slide qa-slide" data-slide="35">
+  <div class="slide-header" style="color: white;">
+    <span class="lecture-tag">Deck C</span>
+    <span class="slide-number">36 / 37</span>
+  </div>
+  <div class="slide-body">
+    <div class="animate" data-delay="1">
+      <h1 class="qa-title">Q & A</h1>
+    </div>
+    <div class="animate" data-delay="2">
+      <p class="qa-subtitle">Skill 심화에 대해 질문해 보세요</p>
+    </div>
+    <div class="animate" data-delay="3" style="margin-top:24px; text-align:center;">
+      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <div style="background:rgba(249,115,22,0.15); border:1px solid rgba(249,115,22,0.3); border-radius:12px; padding:10px 16px; font-size:14px; color:#FED7AA;">🤔 어떤 Skill이 필요할까요?</div>
+        <div style="background:rgba(249,115,22,0.15); border:1px solid rgba(249,115,22,0.3); border-radius:12px; padding:10px 16px; font-size:14px; color:#FED7AA;">✏️ 기존 Skill은 개선될까요?</div>
+        <div style="background:rgba(249,115,22,0.15); border:1px solid rgba(249,115,22,0.3); border-radius:12px; padding:10px 16px; font-size:14px; color:#FED7AA;">🔗 다른 기능과 어떻게 연결?</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 37: 감사합니다 -->
+<div class="slide hero-slide thankyou-slide" data-slide="36">
+  <div class="slide-header" style="color: white;">
+    <span class="lecture-tag">Deck C</span>
+    <span class="slide-number">37 / 37</span>
+  </div>
+  <div class="slide-body">
+    <div class="animate" data-delay="1">
+      <h1 class="hero-title">감사합니다</h1>
+    </div>
+    <div class="animate" data-delay="2">
+      <p class="hero-subtitle">"알고 하는 것은 완전히 다릅니다"</p>
+    </div>
+    <div class="animate" data-delay="3" style="margin-top:16px;">
+      <p style="font-size:14px; color:rgba(255,255,255,0.4);">Hermes Agent — Skill 심화 데크</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Slide Navigation ──
+const slides = document.querySelectorAll('.slide');
+const navDots = document.getElementById('navDots');
+const progressBar = document.getElementById('progressBar');
+let currentSlide = 0;
+let clickCombo = 0;
+let comboTimer = null;
+
+// Create nav dots
+slides.forEach((_, i) => {
+  const dot = document.createElement('div');
+  dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+  dot.onclick = () => goToSlide(i);
+  navDots.appendChild(dot);
+});
+
+function goToSlide(index) {
+  if (index < 0 || index >= slides.length) return;
+  slides[currentSlide].classList.remove('active');
+  currentSlide = index;
+  slides[currentSlide].classList.add('active');
+  slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
+  updateUI();
+}
+
+function changeSlide(delta) {
+  goToSlide(currentSlide + delta);
+}
+
+function updateUI() {
+  const progress = ((currentSlide + 1) / slides.length) * 100;
+  progressBar.style.width = progress + '%';
+  document.querySelectorAll('.nav-dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === currentSlide);
+  });
+}
+
+// Keyboard navigation: ↑↓=page, ←→=focus
+document.addEventListener('keydown', (e) => {
+  if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown'].includes(e.key)) {
+    e.preventDefault();
+    changeSlide(e.key === 'ArrowUp' || e.key === 'PageUp' ? -1 : 1);
+    return;
+  }
+  if (['ArrowLeft', 'ArrowRight'].includes(e.key)) {
+    e.preventDefault();
+    moveFocus(e.key === 'ArrowRight' ? 1 : -1);
+    return;
+  }
+});
+
+function moveFocus(dir) {
+  const focusables = Array.from(document.querySelectorAll('.slide.active [data-focusable]'));
+  if (focusables.length === 0) return;
+  const current = focusables.findIndex(el => el.classList.contains('in-focus'));
+  focusables.forEach(el => el.classList.remove('in-focus'));
+  const next = dir > 0
+    ? current < focusables.length - 1 ? current + 1 : 0
+    : current > 0 ? current - 1 : focusables.length - 1;
+  focusables[next].classList.add('in-focus');
+}
+
+// Click game effects
+const particleColors = ['#F97316', '#FB923C', '#FBBF24', '#FDE68A', '#7C3AED', '#EC4899'];
+const sparkles = ['✨', '⭐', '💫', '🔥', '⚡'];
+
+document.addEventListener('click', (e) => {
+  const x = e.clientX;
+  const y = e.clientY;
+
+  clickCombo++;
+  clearTimeout(comboTimer);
+  comboTimer = setTimeout(() => {
+    clickCombo = 0;
+    document.getElementById('comboCounter').style.display = 'none';
+  }, 2000);
+
+  if (clickCombo > 1) {
+    const counter = document.getElementById('comboCounter');
+    counter.style.display = 'block';
+    counter.classList.remove('pop');
+    void counter.offsetWidth;
+    counter.classList.add('pop');
+    document.getElementById('comboCount').textContent = clickCombo;
+  }
+
+  for (let i = 0; i < 8; i++) {
+    const p = document.createElement('div');
+    p.className = 'click-particle';
+    p.style.left = x + 'px';
+    p.style.top = y + 'px';
+    p.style.background = particleColors[Math.floor(Math.random() * particleColors.length)];
+    const angle = (Math.PI * 2 / 8) * i;
+    const dist = 30 + Math.random() * 40;
+    p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+    p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 800);
+  }
+
+  const score = document.createElement('div');
+  score.className = 'click-score';
+  score.textContent = `+${Math.min(clickCombo, 5)}`;
+  score.style.left = x + 'px';
+  score.style.top = (y - 20) + 'px';
+  document.body.appendChild(score);
+  setTimeout(() => score.remove(), 800);
+
+  for (let i = 0; i < 3; i++) {
+    const s = document.createElement('div');
+    s.className = 'click-sparkle';
+    s.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
+    s.style.left = (x + (Math.random() - 0.5) * 60) + 'px';
+    s.style.top = (y + (Math.random() - 0.5) * 60) + 'px';
+    s.style.setProperty('--tx', (Math.random() - 0.5) * 80 + 'px');
+    s.style.setProperty('--ty', -30 - Math.random() * 40 + 'px');
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 600);
+  }
+});
+
+// Initial
+goToSlide(0);
+</script>
+</body>
+</html>
