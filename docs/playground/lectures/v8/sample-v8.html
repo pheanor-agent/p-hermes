@@ -225,6 +225,11 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 .concept-card.skill::before    { background: var(--skill); }
 .concept-card.workflow::before { background: var(--workflow); }
 .concept-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+.concept-card[data-focusable].in-focus {
+  transform: translateY(-4px);
+  box-shadow: 0 0 0 3px var(--accent), 0 12px 32px rgba(0,0,0,0.08);
+  border-color: var(--accent);
+}
 
 .card-icon { font-size: 48px; margin-bottom: 16px; display: block; }
 .card-title { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
@@ -279,6 +284,11 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
   border-color: var(--accent);
   transform: translateX(4px);
 }
+.feature-item[data-focusable].in-focus {
+  border-color: var(--accent);
+  transform: translateX(4px);
+  box-shadow: 0 0 0 2px var(--accent);
+}
 .feature-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
 .feature-text { font-size: 15px; line-height: 1.5; }
 .feature-text strong { font-weight: 700; }
@@ -311,6 +321,11 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 }
 .tab-btn:hover { color: var(--text); }
 .tab-btn.active { color: var(--memory); border-bottom-color: var(--memory); }
+.tab-btn[data-focusable].in-focus {
+  color: var(--memory);
+  border-bottom-color: var(--memory);
+  background: var(--memory-bg);
+}
 
 .tab-panel { display: none; animation: fadeIn 0.4s ease; }
 .tab-panel.active { display: block; }
@@ -410,25 +425,25 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       <h2 class="intro-heading animate" data-delay="1">Agent가 갖추는 4가지 능력</h2>
       <p class="intro-desc animate" data-delay="2">매일 새로운 대화만 하는 Agent는 성장할 수 없습니다.<br>4가지 기능이 Stateful OS를 만듭니다.</p>
       <div class="card-grid">
-        <div class="concept-card memory animate" data-delay="3">
+        <div class="concept-card memory animate" data-delay="3" data-focusable>
           <span class="card-icon">🧠</span>
           <h3 class="card-title">Memory</h3>
           <div class="card-keyword" style="color:var(--memory)">기억</div>
           <p class="card-desc">어제 한 일을<br>잊지 않습니다</p>
         </div>
-        <div class="concept-card knowledge animate" data-delay="4">
+        <div class="concept-card knowledge animate" data-delay="4" data-focusable>
           <span class="card-icon">📚</span>
           <h3 class="card-title">Knowledge</h3>
           <div class="card-keyword" style="color:var(--knowledge)">지식</div>
           <p class="card-desc">정보를 연결하고<br>의미를 만듭니다</p>
         </div>
-        <div class="concept-card skill animate" data-delay="5">
+        <div class="concept-card skill animate" data-delay="5" data-focusable>
           <span class="card-icon">⚡</span>
           <h3 class="card-title">Skill</h3>
           <div class="card-keyword" style="color:var(--skill)">능력</div>
           <p class="card-desc">새로운 작업을<br>스스로 수행합니다</p>
         </div>
-        <div class="concept-card workflow animate" data-delay="6">
+        <div class="concept-card workflow animate" data-delay="6" data-focusable>
           <span class="card-icon">🔄</span>
           <h3 class="card-title">Workflow</h3>
           <div class="card-keyword" style="color:var(--workflow)">규칙</div>
@@ -463,15 +478,15 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
         <h3 class="compare-title">기억</h3>
         <p class="compare-what">"무엇을" 기억하는가</p>
         <div class="feature-list">
-          <div class="feature-item animate" data-delay="3">
+          <div class="feature-item animate" data-delay="3" data-focusable>
             <span class="feature-icon">📝</span>
             <span class="feature-text"><strong>사실 저장</strong><br>"지난주에 회의록을 작성했어"</span>
           </div>
-          <div class="feature-item animate" data-delay="4">
+          <div class="feature-item animate" data-delay="4" data-focusable>
             <span class="feature-icon">🔍</span>
             <span class="feature-text"><strong>검색 가능</strong><br>과거 대화에서 관련 정보 찾기</span>
           </div>
-          <div class="feature-item animate" data-delay="5">
+          <div class="feature-item animate" data-delay="5" data-focusable>
             <span class="feature-icon">👤</span>
             <span class="feature-text"><strong>사용자 정보</strong><br>이름, 선호도, 작업 패턴</span>
           </div>
@@ -488,15 +503,15 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
         <h3 class="compare-title">지식</h3>
         <p class="compare-what">"무엇을" 이해하는가</p>
         <div class="feature-list">
-          <div class="feature-item animate" data-delay="3">
+          <div class="feature-item animate" data-delay="3" data-focusable>
             <span class="feature-icon">🔗</span>
             <span class="feature-text"><strong>연결 형성</strong><br>"이 프로젝트는 지난 회의록과 관련이 있어"</span>
           </div>
-          <div class="feature-item animate" data-delay="4">
+          <div class="feature-item animate" data-delay="4" data-focusable>
             <span class="feature-icon">🧩</span>
             <span class="feature-text"><strong>패턴 인식</strong><br>비슷한 문제가 반복된다는 발견</span>
           </div>
-          <div class="feature-item animate" data-delay="5">
+          <div class="feature-item animate" data-delay="5" data-focusable>
             <span class="feature-icon">🎯</span>
             <span class="feature-text"><strong>맥락 이해</strong><br>"이 작업의 진짜 목표는 ~"</span>
           </div>
@@ -532,9 +547,9 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 
       <!-- Tabs -->
       <div class="tab-nav animate" data-delay="4">
-        <button class="tab-btn active" onclick="switchTab(0)">👤 사용자 기억</button>
-        <button class="tab-btn" onclick="switchTab(1)">💬 대화 기록</button>
-        <button class="tab-btn" onclick="switchTab(2)">📁 작업 기록</button>
+        <button class="tab-btn active" onclick="switchTab(0)" data-focusable>👤 사용자 기억</button>
+        <button class="tab-btn" onclick="switchTab(1)" data-focusable>💬 대화 기록</button>
+        <button class="tab-btn" onclick="switchTab(2)" data-focusable>📁 작업 기록</button>
       </div>
 
       <div class="tab-panel active" data-tab="0">
@@ -579,33 +594,106 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 </section>
 
 <script>
-// ── Slide Navigation ──
+// ═══════════════════════════════════════════
+// NAVIGATION SYSTEM
+// ═══════════════════════════════════════════
+// ↑↓ = 슬라이드 이동 (페이지)
+// ←→ = 슬라이드 내 컴포넌트 이동 (탭/카드)
+// Enter/Space = 현재 컴포넌트 활성화
+
 const slides = document.querySelectorAll('.slide');
 const dots = document.querySelectorAll('.nav-dot');
 const progressBar = document.getElementById('progressBar');
-let current = 0;
+let currentSlide = 0;
+let currentFocus = -1; // 현재 슬라이드 내 포커스 인덱스
 
-function updateSlide() {
-  current = Math.max(0, Math.min(current, slides.length - 1));
-  const pct = ((current + 1) / slides.length) * 100;
-  progressBar.style.width = pct + '%';
-  dots.forEach((d, i) => d.classList.toggle('active', i === current));
-  
-  // 활성화된 슬라이드에 active 클래스 추가 (애니메이션 트리거)
-  slides.forEach((s, i) => s.classList.toggle('active', i === current));
+// 슬라이드별 포커스 가능한 요소 (data-focusable 어트리뷰트 기준)
+function getFocusables(slide) {
+  return Array.from(slide.querySelectorAll('[data-focusable]'));
 }
 
-function goSlide(n) { current = n; slides[n].scrollIntoView({ behavior: 'smooth' }); updateSlide(); }
+function updateSlide() {
+  currentSlide = Math.max(0, Math.min(currentSlide, slides.length - 1));
+  const pct = ((currentSlide + 1) / slides.length) * 100;
+  progressBar.style.width = pct + '%';
+  dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+  
+  // 활성화된 슬라이드에 active 클래스 추가 (애니메이션 트리거)
+  slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+  
+  // 포커스 초기화 (현재 슬라이드 첫 요소)
+  const focusables = getFocusables(slides[currentSlide]);
+  currentFocus = focusables.length > 0 ? 0 : -1;
+  updateFocus();
+}
 
-// Keyboard
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
-    e.preventDefault(); current = Math.min(current + 1, slides.length - 1);
-    slides[current].scrollIntoView({ behavior: 'smooth' }); updateSlide();
+function goSlide(n) {
+  currentSlide = n;
+  slides[n].scrollIntoView({ behavior: 'smooth' });
+  updateSlide();
+}
+
+function updateFocus() {
+  const focusables = getFocusables(slides[currentSlide]);
+  focusables.forEach((el, i) => {
+    const isActive = (i === currentFocus);
+    el.classList.toggle('in-focus', isActive);
+    if (isActive) {
+      // 화면에 보이도록 스크롤
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  });
+}
+
+function moveFocus(direction) {
+  const focusables = getFocusables(slides[currentSlide]);
+  if (focusables.length === 0) return;
+  
+  currentFocus = Math.max(0, Math.min(currentFocus + direction, focusables.length - 1));
+  updateFocus();
+  
+  // 탭 버튼인 경우 자동으로 탭 전환
+  const focused = focusables[currentFocus];
+  if (focused.classList.contains('tab-btn')) {
+    const tabId = Array.from(focused.parentElement.querySelectorAll('.tab-btn')).indexOf(focused);
+    switchTab(tabId);
   }
-  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-    e.preventDefault(); current = Math.max(0, current - 1);
-    slides[current].scrollIntoView({ behavior: 'smooth' }); updateSlide();
+}
+
+// ── Keyboard Navigation ──
+document.addEventListener('keydown', (e) => {
+  // ↑↓ = 슬라이드 이동
+  if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+    e.preventDefault();
+    currentSlide = Math.min(currentSlide + 1, slides.length - 1);
+    slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
+    updateSlide();
+  }
+  if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+    e.preventDefault();
+    currentSlide = Math.max(0, currentSlide - 1);
+    slides[currentSlide].scrollIntoView({ behavior: 'smooth' });
+    updateSlide();
+  }
+  
+  // ←→ = 슬라이드 내 컴포넌트 이동
+  if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    moveFocus(1);
+  }
+  if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    moveFocus(-1);
+  }
+  
+  // Enter/Space = 현재 컴포넌트 활성화
+  if (e.key === 'Enter' || e.key === ' ') {
+    const focusables = getFocusables(slides[currentSlide]);
+    if (currentFocus >= 0 && currentFocus < focusables.length) {
+      e.preventDefault();
+      const focused = focusables[currentFocus];
+      focused.click();
+    }
   }
 });
 
@@ -613,7 +701,7 @@ document.addEventListener('keydown', (e) => {
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      current = Array.from(slides).indexOf(entry.target);
+      currentSlide = Array.from(slides).indexOf(entry.target);
       updateSlide();
     }
   });
