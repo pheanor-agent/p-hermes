@@ -1,8 +1,22 @@
 {
-  "current_version": "v7",
+  "current_version": "v8",
   "category": "lectures",
   "description": "학습용 강의 시리즈 (Slide Design System)",
   "versions": [
+    {
+      "id": "v8",
+      "label": "v8 — 4데크 심화 시리즈",
+      "path": "v8/",
+      "job": "JOB-2190",
+      "releasedAt": "2026-07-11",
+      "summary": "4개 데크(A:종합/B:Knowledge/C:Skill/D:Workflow) 152페이지, Scroll-Snap + Zone System, 비전문가 청중 타겟",
+      "lectures": [
+        {"id": "A", "file": "deck-a-core.html", "title": "Hermes Agent — 4가지 핵심 기능", "slides": 34, "framework": "4 Core Functions"},
+        {"id": "B", "file": "deck-b-knowledge.html", "title": "Knowledge 완전 정복", "slides": 35, "framework": "Progressive Disclosure"},
+        {"id": "C", "file": "deck-c-skill.html", "title": "Skill 심화 — 표준화된 절차", "slides": 37, "framework": "6-Act Structure"},
+        {"id": "D", "file": "deck-d-workflow.html", "title": "Workflow 심화 — 9단계 상태 머신", "slides": 46, "framework": "7-Act Structure"}
+      ]
+    },
     {
       "id": "v7",
       "label": "v7 — Zone System",

@@ -17,6 +17,8 @@
 - **docs/blog/posts/why-ai-has-no-memory.md** (139 lines): 왜 AI는 기억하지 못하는가
 - **docs/blog/posts/why-we-built-hermes.md** (154 lines): Hermes를 만든 이유
 - **docs/blog/posts/workflow-gate-philosophy.md** (194 lines): Workflow Gate 설계 철학
+- **docs/jobs/JOB-2173-v8-slide-replace/output/validation-improvement.md** (146 lines): p-hermes Playground v8 슬라이드 — 2차 버그 수정 및 시스템 개선 산출물
+- **docs/jobs/JOB-2173-v8-slide-replace/output/work-status.md** (111 lines): p-hermes Playground v8 슬라이드 — 작업 현황
 - **docs/wiki/core-concepts.md** (211 lines): 🧠 Core Concepts — Hermes 핵심 개념
 - **docs/wiki/faq.md** (124 lines): 자주 묻는 질문 (FAQ)
 - **docs/wiki/getting-started/configuration.md** (80 lines): 기본 설정 가이드

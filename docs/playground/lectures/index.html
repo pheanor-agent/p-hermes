@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>p-hermes slide</title>
+<title>p-hermes slides</title>
 <style>
   body { font-family: sans-serif; background: #2e3440; color: #eceff4;
          max-width: 800px; margin: 0 auto; padding: 40px 20px; }
@@ -15,7 +15,8 @@
   .version h3 { font-size: 1.1rem; font-weight: 700; color: #88c0d0; margin: 0 0 0.3rem; }
   .version .meta { font-size: 0.8rem; color: #616e88; margin-bottom: 0.5rem; }
   .version .summary { font-size: 0.85rem; color: #d8dee9; margin-bottom: 0.75rem; }
-  .lectures { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+  .lectures { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+  .lectures.three-col { grid-template-columns: repeat(3, 1fr); }
   .lectures a { display: block; padding: 0.6rem; background: #434c5e;
                 border: 1px solid #4c566a; border-radius: 8px; color: #eceff4;
                 text-decoration: none; text-align: center; font-size: 0.85rem; }
@@ -27,45 +28,66 @@
   .archive a { color: #88c0d0; text-decoration: none; font-size: 0.85rem; }
 </style></head>
 <body>
-<h1>p-hermes slide</h1>
-<p class="desc">Lecture A: Agent OS | Lecture B: Memory and Knowledge | Lecture C: Architecture</p>
+<h1>p-hermes slides — v8 Concept Decks</h1>
+<p class="desc">Playground SSOT: Concept Decks A/B/C/D | <a href="../" style="color:#88c0d0;">← Playground</a></p>
+
+<!-- ═══ v8 - Current ═══ -->
 <div class="version current">
-  <h3>v7 - Zone System (current)</h3>
+  <h3>v8 — 4데크 심화 시리즈 <span style="font-size:0.75rem;color:#bf616a;font-weight:400;">(현재)</span></h3>
+  <div class="meta">2026-07-11 | JOB-2190 | 152페이지</div>
+  <div class="summary">4개 데크 독립 강의 — Scroll-Snap + Zone System, 비전문가 청중 타겟</div>
+  <div class="lectures">
+    <a href="v8/deck-a-core.html">Deck A: 4가지 핵심 기능<span class="count">34p · 4 Core Functions</span></a>
+    <a href="v8/deck-b-knowledge.html">Deck B: Knowledge 완전 정복<span class="count">35p · Progressive Disclosure</span></a>
+    <a href="v8/deck-c-skill.html">Deck C: Skill 심화<span class="count">37p · 6-Act Structure</span></a>
+    <a href="v8/deck-d-workflow.html">Deck D: Workflow 심화<span class="count">46p · 7-Act Structure</span></a>
+  </div>
+</div>
+
+<!-- ═══ v7 ═══ -->
+<div class="version">
+  <h3>v7 — Zone System</h3>
   <div class="meta">2026-07-07 | JOB-2104</div>
   <div class="summary">Zone System (Zone-A/B/C), dark theme redesign</div>
-  <div class="lectures">
+  <div class="lectures three-col">
     <a href="v7/lecture-a-why-agent-os.html">Lecture A<span class="count">13, SCQA</span></a>
     <a href="v7/lecture-b-memory-knowledge.html">Lecture B<span class="count">21, Progressive</span></a>
     <a href="v7/lecture-c-architecture-runtime.html">Lecture C<span class="count">16, Pyramid</span></a>
   </div>
 </div>
+
+<!-- ═══ v5 ═══ -->
 <div class="version">
-  <h3>v5 - slide reorg</h3>
+  <h3>v5 — slide reorg</h3>
   <div class="meta">2026-07-06 | JOB-2096</div>
   <div class="summary">3-split, .h-flow fix, components separation</div>
-  <div class="lectures">
+  <div class="lectures three-col">
     <a href="v5/lecture-a-why-agent-os.html">Lecture A<span class="count">13</span></a>
     <a href="v5/lecture-b-memory-knowledge.html">Lecture B<span class="count">21</span></a>
     <a href="v5/lecture-c-architecture-runtime.html">Lecture C<span class="count">16</span></a>
   </div>
 </div>
+
+<!-- ═══ v4 ═══ -->
 <div class="version">
-  <h3>v4 - Slide Design System</h3>
+  <h3>v4 — Slide Design System</h3>
   <div class="meta">2026-07-05 | JOB-2058</div>
   <div class="summary">Nord theme, Slide Taxonomy/Grammar/Diagram Rules</div>
-  <div class="lectures">
+  <div class="lectures three-col">
     <a href="v4/lecture-a-why-agent-os.html">Lecture A<span class="count">15</span></a>
     <a href="v4/lecture-b-memory-knowledge.html">Lecture B<span class="count">20</span></a>
     <a href="v4/lecture-c-architecture-runtime.html">Lecture C<span class="count">20</span></a>
   </div>
 </div>
+
+<!-- ═══ Archive ═══ -->
 <div class="archive">
   <h3>Archive</h3>
   <ul>
-    <li><a href="archive/v1.9/">v1.9 - 6 Gold+Dark</a> (2026-06-29)</li>
-    <li><a href="archive/v1.8/">v1.8 - early</a></li>
-    <li><a href="archive/v1.1/">v1.1 - expansion</a></li>
-    <li><a href="archive/v1.0/">v1.0 - draft</a></li>
+    <li><a href="archive/v1.9/">v1.9 — 6 Gold+Dark</a> (2026-06-29)</li>
+    <li><a href="archive/v1.8/">v1.8 — early</a></li>
+    <li><a href="archive/v1.1/">v1.1 — expansion</a></li>
+    <li><a href="archive/v1.0/">v1.0 — draft</a></li>
   </ul>
 </div>
 </body></html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>p-hermes Playground — Versions &amp; Experiments</title>
+<title>p-hermes Playground — Concept Decks &amp; Archive</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -22,99 +22,142 @@
   .badge-orange{background:rgba(255,159,67,.15);color:var(--accent-orange)}
   .section{position:relative;margin-bottom:40px}
   .section-title{font-size:14px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
-  .table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);background:var(--card)}
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  th{background:var(--surface);color:var(--text-dim);font-weight:600;text-align:left;padding:12px 16px;border-bottom:1px solid var(--border);white-space:nowrap}
-  td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text)}
-  tr:last-child td{border-bottom:none}
-  tr:hover td{background:rgba(240,180,41,.04)}
-  .tag{padding:2px 10px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1px;white-space:nowrap}
-  .tag-ready{background:rgba(0,245,212,.15);color:var(--accent-green)}
-  .tag-dev{background:rgba(91,192,235,.15);color:var(--accent-cyan)}
-  .tag-deprecated{background:rgba(255,107,107,.15);color:var(--accent-red)}
-  .tag-experimental{background:rgba(177,151,252,.15);color:var(--accent-purple)}
   .link{color:var(--accent-cyan);text-decoration:none;transition:var(--transition)}
   .link:hover{color:var(--gold)}
-  .card-link{display:block;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;text-decoration:none;color:var(--text);transition:var(--transition)}
-  .card-link:hover{border-color:var(--gold);transform:translateY(-1px)}
-  .card-link .label{font-size:13px;color:var(--text-dim);margin-top:4px}
   .footer{text-align:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--border);color:var(--text-dim);font-size:13px}
   .footer a{color:var(--accent-cyan);text-decoration:none}
   .footer a:hover{color:var(--gold)}
+
+  /* ── v8 Current Card Grid ── */
+  .deck-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:16px;margin-bottom:32px}
+  .deck-card{display:block;background:var(--card);border:1px solid var(--gold-dim);border-radius:var(--radius);padding:20px 24px;text-decoration:none;color:var(--text);transition:var(--transition);position:relative;overflow:hidden}
+  .deck-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--accent-cyan));opacity:0.6}
+  .deck-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 0 24px var(--gold-glow)}
+  .deck-card .top{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .deck-card .tag{margin-left:auto}
+  .deck-card h3{font-size:18px;font-weight:800}
+  .deck-card .desc{font-size:13px;color:var(--text-dim);margin-bottom:6px;line-height:1.4}
+  .deck-card .meta-line{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--text-dim)}
+  .deck-card .meta-line span{display:inline-flex;align-items:center;gap:4px}
+  .deck-card.deck-a .meta-line span:last-child{color:var(--accent-cyan)}
+  .deck-card.deck-b .meta-line span:last-child{color:var(--accent-orange)}
+  .deck-card.deck-c .meta-line span:last-child{color:var(--accent-purple)}
+  .deck-card.deck-d .meta-line span:last-child{color:var(--accent-green)}
+  .tag-ready{padding:2px 10px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1px;background:rgba(0,245,212,.15);color:var(--accent-green)}
+  .tag-p2{background:rgba(255,159,67,.15);color:var(--accent-orange)}
+  .tag-dev{background:rgba(91,192,235,.15);color:var(--accent-cyan)}
+  .tag-deprecated{background:rgba(255,107,107,.15);color:var(--accent-red)}
+  .tag-experimental{background:rgba(177,151,252,.15);color:var(--accent-purple)}
+
+  /* ── Version Timeline Table ── */
+  .table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);background:var(--card)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{background:var(--surface);color:var(--text-dim);font-weight:600;text-align:left;padding:10px 16px;border-bottom:1px solid var(--border);white-space:nowrap}
+  td{padding:10px 16px;border-bottom:1px solid var(--border);color:var(--text)}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:rgba(240,180,41,.04)}
+  td.current-version{position:relative}
+  td.current-version::before{content:'⭐ ';font-size:12px}
+
+  /* ── Collapsible ── */
+  .collapsible-toggle{display:block;cursor:pointer;padding:12px 0;font-size:13px;color:var(--text-dim);text-decoration:none;transition:var(--transition);border-bottom:1px solid var(--border);margin-bottom:12px}
+  .collapsible-toggle:hover{color:var(--gold)}
+  .collapsible-content{display:block}
+
+  .card-link{display:block;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;text-decoration:none;color:var(--text);transition:var(--transition);margin-bottom:10px}
+  .card-link:hover{border-color:var(--gold);transform:translateY(-1px)}
+  .card-link .label{font-size:13px;color:var(--text-dim);margin-top:4px}
 </style>
 </head>
 <body>
 <div class="container">
+
+  <!-- ═══ HEADER ═══ -->
   <div class="header">
     <div class="title">p-hermes <span class="hl">Playground</span></div>
-    <div class="subtitle">Version History, Concept Decks &amp; Experiments</div>
+    <div class="subtitle">Concept Decks &bull; Lecture Archive &bull; Experiments</div>
     <div class="badge-row">
-      <span class="badge badge-gold">Lectures</span>
-      <span class="badge badge-cyan">Concept Decks</span>
-      <span class="badge badge-purple">Experiments</span>
+      <span class="badge badge-gold">v8 Current</span>
+      <span class="badge badge-cyan">152 Slides</span>
+      <span class="badge badge-purple">4 Decks</span>
     </div>
   </div>
 
-  <!-- Lecture Courses -->
+  <!-- ═══ v8 — Current Concept Decks ═══ -->
   <div class="section">
-    <div class="section-title">📖 Lecture Courses</div>
+    <div class="section-title">⭐ Current — v8 Concept Decks</div>
+    <div class="deck-grid">
+      <a href="lectures/v8/deck-a-core.html" class="deck-card deck-a">
+        <div class="top">
+          <h3>Deck A &mdash; 4가지 핵심 기능</h3>
+          <span class="tag tag-ready">Ready</span>
+        </div>
+        <div class="desc">Hermes Agent의 4가지 기능(Memory, Knowledge, Skill, Workflow)을 하나의 데크로 종합. Scroll-Snap + Zone System.</div>
+        <div class="meta-line"><span>34 slides</span><span>4 Core Functions</span><span>✅ 검증 완료</span></div>
+      </a>
+      <a href="lectures/v8/deck-b-knowledge.html" class="deck-card deck-b">
+        <div class="top">
+          <h3>Deck B &mdash; Knowledge 완전 정복</h3>
+          <span class="tag tag-p2">P2 Check</span>
+        </div>
+        <div class="desc">Knowledge 시스템 심화 — 3계층 구조, 자동 수집, 검색, 유지보수. 비전문가 청중 타겟 다이어그램 중심.</div>
+        <div class="meta-line"><span>35 slides</span><span>Progressive Disclosure</span><span>⚠️ P2 6개 (텍스트 넘침)</span></div>
+      </a>
+      <a href="lectures/v8/deck-c-skill.html" class="deck-card deck-c">
+        <div class="top">
+          <h3>Deck C &mdash; Skill 심화</h3>
+          <span class="tag tag-ready">Ready</span>
+        </div>
+        <div class="desc">Skill 시스템 심화 — 표준화된 절차 설계, SKILL.md 구조, 카테고리 관리, patch-management. 요리 비유 활용.</div>
+        <div class="meta-line"><span>37 slides</span><span>6-Act Structure</span><span>✅ 검증 완료</span></div>
+      </a>
+      <a href="lectures/v8/deck-d-workflow.html" class="deck-card deck-d">
+        <div class="top">
+          <h3>Deck D &mdash; Workflow 심화</h3>
+          <span class="tag tag-ready">Ready</span>
+        </div>
+        <div class="desc">9단계 상태 머신 워크플로우 — 게이트 시스템, 자동화, 실패 처리. 여행 계획 비유로 비전문가도 이해 가능.</div>
+        <div class="meta-line"><span>46 slides</span><span>7-Act Structure</span><span>✅ 검증 완료</span></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══ Lecture Course Archive ═══ -->
+  <div class="section">
+    <div class="section-title">📖 Lecture Course Archive (Version Timeline)</div>
     <div class="table-wrap">
       <table>
         <thead>
-          <tr><th>Version</th><th>Lectures</th><th>Slides</th><th>Status</th><th>Link</th></tr>
+          <tr><th>Version</th><th>Lectures</th><th>Slides</th><th>Status</th><th>V8 연계</th></tr>
         </thead>
         <tbody>
-          <tr><td><strong>v1.9</strong></td><td>6</td><td>~146</td><td><span class="tag tag-dev">In Development</span></td><td><a class="link" href="lectures/">Current</a></td></tr>
+          <tr><td class="current-version"><strong>v8</strong></td><td>4 Concept Decks</td><td>152</td><td><span class="tag tag-ready">Ready</span></td><td><a class="link" href="#v8">Current</a></td></tr>
+          <tr><td><strong>v7</strong></td><td>3 (Zone System)</td><td>50</td><td><span class="tag tag-ready">Ready</span></td><td><a class="link" href="lectures/v7/lecture-a-why-agent-os.html">v7 Deck</a></td></tr>
+          <tr><td><strong>v5</strong></td><td>3 (slide reorg)</td><td>50</td><td><span class="tag tag-ready">Ready</span></td><td><a class="link" href="lectures/v5/lecture-a-why-agent-os.html">v5 Deck</a></td></tr>
+          <tr><td><strong>v4</strong></td><td>3 (Design System)</td><td>55</td><td><span class="tag tag-ready">Ready</span></td><td><a class="link" href="lectures/v4/lecture-a-why-agent-os.html">v4 Deck</a></td></tr>
+          <tr><td><strong>v1.9</strong></td><td>6</td><td>~146</td><td><span class="tag tag-dev">In Development</span></td><td><a class="link" href="lectures/archive/v1.9/">Archive</a></td></tr>
           <tr><td><strong>v1.8</strong></td><td>4</td><td>~101</td><td><span class="tag tag-ready">Ready</span></td><td>—</td></tr>
           <tr><td><strong>v1.7</strong></td><td>8</td><td>240</td><td><span class="tag tag-ready">Ready</span></td><td>—</td></tr>
-          <tr><td><strong>v1.6</strong></td><td>7</td><td>210</td><td><span class="tag tag-ready">Ready</span></td><td>—</td></tr>
-          <tr><td><strong>v1.5</strong></td><td>6</td><td>180</td><td><span class="tag tag-ready">Ready</span></td><td>—</td></tr>
-          <tr><td><strong>v1.4</strong></td><td>5</td><td>155</td><td><span class="tag tag-ready">Ready</span></td><td>—</td></tr>
-          <tr><td><strong>v1.3</strong></td><td>4</td><td>120</td><td><span class="tag tag-ready">Ready</span></td><td>—</td></tr>
-          <tr><td><strong>v1.2</strong></td><td>3</td><td>85</td><td><span class="tag tag-deprecated">Deprecated</span></td><td>—</td></tr>
-          <tr><td><strong>v1.1</strong></td><td>2</td><td>55</td><td><span class="tag tag-deprecated">Deprecated</span></td><td>—</td></tr>
-          <tr><td><strong>v1.0</strong></td><td>2</td><td>~25</td><td><span class="tag tag-deprecated">Deprecated</span></td><td>—</td></tr>
+          <tr><td><strong>v1.6~v1.0</strong></td><td>2~7</td><td>25~210</td><td><span class="tag tag-deprecated">Deprecated</span></td><td>—</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- Concept Decks -->
+  <!-- ═══ Earlier Concept Decks ═══ -->
   <div class="section">
-    <div class="section-title">🧪 Concept Decks</div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Deck</th><th>Focus</th><th>Slides</th><th>Status</th><th>Link</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><strong>v8-A</strong></td><td>4가지 핵심 기능 종합</td><td>34</td><td><span class="tag tag-dev">In Development</span></td><td><a class="link" href="lectures/v8/deck-a-core.html">Deck A</a></td></tr>
-          <tr><td><strong>v8-B</strong></td><td>Knowledge 심화</td><td>39</td><td><span class="tag tag-dev">In Development</span></td><td><a class="link" href="lectures/v8/deck-b-knowledge.html">Deck B</a></td></tr>
-          <tr><td><strong>v8-C</strong></td><td>Skill 심화</td><td>37</td><td><span class="tag tag-dev">In Development</span></td><td><a class="link" href="lectures/v8/deck-c-skill.html">Deck C</a></td></tr>
-          <tr><td><strong>v8-D</strong></td><td>Workflow 심화</td><td>46</td><td><span class="tag tag-dev">In Development</span></td><td><a class="link" href="lectures/v8/deck-d-workflow.html">Deck D</a></td></tr>
-          <tr><td><strong>v7</strong></td><td>Zone System + 다크 테마</td><td>50</td><td><span class="tag tag-ready">Ready</span></td><td><a class="link" href="lectures/v7/">v7 Deck</a></td></tr>
-          <tr><td><strong>v5</strong></td><td>Agent OS Architecture</td><td>50</td><td><span class="tag tag-ready">Ready</span></td><td><a class="link" href="lectures/v5/">v5 Deck</a></td></tr>
-          <tr><td><strong>v4</strong></td><td>Memory &amp; Knowledge Systems</td><td>50</td><td><span class="tag tag-ready">Ready</span></td><td><a class="link" href="lectures/v4/">v4 Deck</a></td></tr>
-          <tr><td><strong>v3</strong></td><td>Workflow &amp; Skills Engine</td><td>30</td><td><span class="tag tag-ready">Ready</span></td><td><a class="link" href="ops/v3/">v3 Deck</a></td></tr>
-          <tr><td><strong>v2</strong></td><td>Content Factory Pipeline</td><td>20</td><td><span class="tag tag-experimental">Experimental</span></td><td><a class="link" href="ops/v2/">v2 Deck</a></td></tr>
-          <tr><td><strong>v1</strong></td><td>Why Agents Fail</td><td>45</td><td><span class="tag tag-deprecated">Deprecated</span></td><td>—</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <div class="section-title">🧪 Earlier Concept Decks (Archive)</div>
+    <a href="lectures/v7/lecture-a-why-agent-os.html" class="card-link"><div><strong>v7 — Zone System</strong> <span class="tag tag-ready">Ready</span></div><div class="label">Dark theme, Zone-A/B/C, 50 slides</div></a>
+    <a href="lectures/v5/lecture-a-why-agent-os.html" class="card-link"><div><strong>v5 — Slide Reorg</strong> <span class="tag tag-ready">Ready</span></div><div class="label">3-split, components separation, 50 slides</div></a>
+    <a href="lectures/v4/lecture-a-why-agent-os.html" class="card-link"><div><strong>v4 — Slide Design System</strong> <span class="tag tag-ready">Ready</span></div><div class="label">Nord theme, Taxonomy/Grammar, 55 slides</div></a>
+    <a href="lectures/archive/" class="card-link"><div><strong>📜 Archive &amp; Version History</strong></div><div class="label">Browse past versions, experimental content, and deprecated decks</div></a>
   </div>
 
-  <!-- Experiments -->
-  <div class="section">
-    <div class="section-title">🔬 Experiments</div>
-    <a href="lectures/archive/" class="card-link">
-      <div><strong>📜 Archive &amp; Version History</strong></div>
-      <div class="label">Browse past versions, archived lecture decks, and experimental content</div>
-    </a>
-  </div>
-
+  <!-- ═══ Footer ═══ -->
   <div class="footer">
-    <p><a href="https://pheanor-agent.github.io/p-hermes/">← Back to Lectures</a> · Building an Agent OS with Hermes · p-hermes Playground</p>
+    <p><a href="https://pheanor-agent.github.io/p-hermes/">← Main Lectures</a> · Building an Agent OS with Hermes · p-hermes Playground</p>
   </div>
+
 </div>
 </body>
 </html>

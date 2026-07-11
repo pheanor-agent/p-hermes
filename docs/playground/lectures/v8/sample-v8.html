@@ -897,7 +897,7 @@ function triggerClickGame(slide, clientX, clientY) {
     updateComboDisplay(0);
   }, 2000);
 
-  // 점수 팝업 (+1 ~ +5 랜덤, 콤보越高越高)
+  // 점수 팝업 (+1 ~ +5 랜덤, 콤보가 높을수록 점수 상승)
   const score = Math.min(1 + Math.floor(Math.random() * 5), 5 + Math.floor(clickCombo / 3));
   const scoreEl = document.createElement('div');
   scoreEl.className = 'click-game-score';
