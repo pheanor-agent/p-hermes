@@ -32,22 +32,41 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
   transition: width 0.4s ease;
 }
 
-/* ── Slide Base ── */
+/* ── Zone-A: Header (80px) ── */
 .slide {
   min-height: 100vh; width: 100%;
   scroll-snap-align: start;
   display: flex; flex-direction: column;
   position: relative; overflow: hidden;
 }
+.slide-header {
+  flex: 0 0 80px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px; z-index: 10;
+}
+.lecture-tag {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 4px 12px; border-radius: 99px;
+}
+.slide-header .section-title { font-size: 18px; font-weight: 700; }
+.slide-header .slide-number { font-size: 14px; color: var(--text-dim); font-weight: 500; }
+
+/* ── Zone-B: Body ── */
 .slide-body {
   flex: 1; display: flex; align-items: center; justify-content: center;
-  padding: 32px 64px; position: relative;
+  padding: 32px 48px; position: relative;
 }
+
+/* ── Zone-C: Footer (48px) ── */
+.slide-footer {
+  flex: 0 0 48px; display: flex; align-items: center; justify-content: center;
+  padding: 0 48px;
+}
+.slide-footer span { font-size: 13px; color: var(--text-dim); font-weight: 500; }
 
 /* ── Navigation Dots ── */
 .nav-dots {
   position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
-  display: flex; flex-direction: column; gap: 6px; z-index: 100;
+  display: flex; flex-direction: column; gap: 8px; z-index: 100;
 }
 .nav-dot {
   width: 8px; height: 8px; border-radius: 50%;
@@ -359,7 +378,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 
 /* ── Slide Header ── */
 .slide-header {
-  flex: 0 0 60px; display: flex; align-items: center; justify-content: space-between;
+  flex: 0 0 80px; display: flex; align-items: center; justify-content: space-between;
   padding: 0 48px; z-index: 10;
 }
 .lecture-tag {
@@ -534,7 +553,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
      ═══════════════════════════════════════════ -->
 
 <!-- SLIDE 1: Hero -->
-<section class="slide hero-slide" id="slide-0">
+<section class="slide hero-slide active" id="slide-0">
   <div class="slide-header" style="color:white;">
     <span class="lecture-tag">Deck C</span>
     <span class="slide-number">1 / 37</span>
