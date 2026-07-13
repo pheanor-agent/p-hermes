@@ -547,17 +547,57 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 .conn-node .conn-label { font-size: 14px; font-weight: 700; }
 .conn-arrow { font-size: 28px; color: var(--text-dim); }
 </style>
-</head>
+<style>
+/* ── Deck A/B shared contract: injected by normalize-lecture-deck-contract.py ── */
+.slide { min-height:100vh; display:flex; flex-direction:column; position:relative; overflow:hidden; }
+.slide-header { flex:0 0 80px; display:flex; align-items:center; justify-content:space-between; padding:0 48px; z-index:10; }
+.slide-body { flex:1 1 auto; min-height:0; display:flex; align-items:center; justify-content:center; padding:32px 48px; position:relative; }
+.slide-footer { flex:0 0 48px; display:flex; align-items:center; justify-content:center; padding:0 48px; border-top:1px solid var(--border); }
+.slide-footer span { font-size:13px; line-height:1.4; color:var(--text-dim); font-weight:500; text-align:center; }
+.hero-slide .slide-footer, .qa-slide .slide-footer, .section-divider .slide-footer { border-top-color:rgba(255,255,255,.12); }
+.section-divider { background:var(--bg-dark); color:var(--text-light); }
+.section-divider .slide-header, .section-divider .slide-footer { display:none; }
+.section-divider .slide-body { padding:0; }
+.section-divider .divider-content { display:flex; flex-direction:column; align-items:center; text-align:center; gap:16px; }
+.section-divider .divider-label { font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); }
+.section-divider .divider-title { font-size:clamp(36px,5vw,60px); font-weight:900; letter-spacing:-.03em; }
+.section-divider .divider-desc { max-width:580px; font-size:20px; color:rgba(255,255,255,.62); line-height:1.6; }
+.intro-slide .slide-body, .compare-slide .slide-body, .deep-slide .slide-body { flex-direction:column; }
+.intro-slide .intro-content, .compare-slide .compare-content, .deep-slide .deep-content { width:min(100%,1100px); }
+.deep-content { display:flex; flex-direction:column; gap:22px; }
+.deep-slide .slide-body > .animate > h2 { display:none; }
+.deep-header { display:flex; align-items:center; gap:18px; text-align:left; }
+.deep-title { font-size:36px; font-weight:900; letter-spacing:-.02em; }
+.deep-subtitle { font-size:16px; color:var(--text-dim); line-height:1.5; }
+.tab-nav { display:flex; gap:8px; border-bottom:2px solid var(--border); }
+.tab-btn { padding:10px 18px; border:0; border-bottom:3px solid transparent; background:none; color:var(--text-dim); font:600 15px var(--font); cursor:pointer; }
+.tab-btn:hover, .tab-btn.active, .tab-btn.in-focus { color:var(--accent); border-bottom-color:var(--accent); background:var(--highlight); }
+.tab-panel { display:none; padding:18px 22px; background:var(--card); border:1px solid var(--border); border-radius:12px; font-size:15px; line-height:1.6; }
+.tab-panel.active { display:block; }
+.compare-slide .split-screen, .compare-slide .vs-container { width:min(100%,1100px); }
+[data-focusable].in-focus { outline:3px solid var(--accent); outline-offset:4px; }
+.slide.mouse-hovering [data-focusable].in-focus { outline:none; box-shadow:none; pointer-events:auto; }
+.nav-arrow { display:none !important; }
+.combo-counter { display:none !important; }
+.click-combo-display { position:fixed; top:16px; right:16px; z-index:9999; background:var(--accent); color:white; padding:8px 16px; border-radius:99px; font-weight:800; opacity:0; transform:scale(.8); transition:.2s; pointer-events:none; }
+.click-combo-display.visible { opacity:1; transform:scale(1); }
+.click-game-score,.click-game-particle,.click-game-sparkle { position:absolute; pointer-events:none; z-index:20; }
+.click-game-score { color:var(--accent); font-size:24px; font-weight:900; animation:score-float 1s ease-out forwards; }
+.click-game-particle { width:6px; height:6px; border-radius:50%; animation:particle-fly .8s ease-out forwards; }
+.click-game-sparkle { font-size:16px; animation:sparkle-twinkle .6s ease-out forwards; }
+@keyframes score-float { to { transform:translateY(-76px); opacity:0; } }
+@keyframes particle-fly { to { transform:translate(var(--tx),var(--ty)) scale(0); opacity:0; } }
+@keyframes sparkle-twinkle { to { transform:translateY(-32px) rotate(180deg) scale(0); opacity:0; } }
+@media (max-width:768px) { .slide-header,.slide-body,.slide-footer { padding-left:24px; padding-right:24px; } .slide-footer { flex-basis:44px; } }
+</style></head>
 <body>
 
 <div class="progress-bar" id="progressBar"></div>
-<div class="nav-dots" id="navDots"></div>
+<div class="nav-dots" id="navDots" aria-label="슬라이드 탐색"></div><div class="click-combo-display" id="comboDisplay"><span id="comboCount">0</span> COMBO</div>
 <div class="nav-arrow">
   <div class="nav-btn" onclick="changeSlide(-1)">↑</div>
   <div class="nav-btn" onclick="changeSlide(1)">↓</div>
 </div>
-<div class="combo-counter" id="comboCounter" style="display:none;">🔥 Combo x<span id="comboCount">0</span></div>
-
 <!-- ═══════════════════════════════════════════
      데크 D: Workflow 심화 (46페이지)
      ═══════════════════════════════════════════ -->
@@ -579,42 +619,46 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       <p class="hero-subtitle">9단계 상태 머신으로 체계적인 작업 흐름을 만듭니다<br>Workflow 완전 가이드 — 문제 → 규칙 → 승인 → 추적 → 실행</p>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 계획 없는 실행은재앙입니다</span></div>
 </section>
 
 <!-- SLIDE 2: 개론 복습 - 4기능 요약 -->
-<section class="slide" id="slide-1">
+<section class="slide intro-slide" id="slide-1">
   <div class="slide-header">
     <span class="lecture-tag" style="background:var(--workflow);">Deck D</span>
     <span class="slide-number">2 / 46</span>
   </div>
   <div class="slide-body">
     <div class="feature-grid">
-      <div class="feature-card memory animate" data-delay="1" data-focusable>
+      <div class="feature-card memory animate" data-focusable data-delay="1" data-focusable>
         <div class="feature-icon">🧠</div>
         <div class="feature-name">Memory</div>
         <div class="feature-desc">경험을 기억하고<br>다음 대화에 활용합니다</div>
       </div>
-      <div class="feature-card knowledge animate" data-delay="2" data-focusable>
+      <div class="feature-card knowledge animate" data-focusable data-delay="2" data-focusable>
         <div class="feature-icon">📚</div>
         <div class="feature-name">Knowledge</div>
         <div class="feature-desc">지식을 체계적으로<br>관리하고 검색합니다</div>
       </div>
-      <div class="feature-card skill animate" data-delay="3" data-focusable>
+      <div class="feature-card skill animate" data-focusable data-delay="3" data-focusable>
         <div class="feature-icon">🛠️</div>
         <div class="feature-name">Skill</div>
         <div class="feature-desc">절차를 표준화하고<br>일관된 결과를 냅니다</div>
       </div>
-      <div class="feature-card workflow animate" data-delay="4" data-focusable>
+      <div class="feature-card workflow animate" data-focusable data-delay="4" data-focusable>
         <div class="feature-icon">🔄</div>
         <div class="feature-name">Workflow</div>
         <div class="feature-desc">작업을 체계적으로<br>흐르게 만듭니다 ⭐</div>
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · Workflow 심화</span></div>
 </section>
 
 <!-- SLIDE 3: Workflow 위치 -->
-<section class="slide" id="slide-2">
+<section class="slide intro-slide" id="slide-2">
   <div class="slide-header">
     <span class="lecture-tag" style="background:var(--workflow);">Deck D</span>
     <span class="slide-number">3 / 46</span>
@@ -634,10 +678,12 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       <p class="content-desc">Workflow는 Memory·Knowledge·Skill을 조율하는 <strong style="color:var(--workflow);">지휘탑</strong>입니다.<br>다른 3가지 기능은 Workflow라는 틀 속에서 함께 작동합니다.</p>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · Workflow는 다른 기능을 이끕니다</span></div>
 </section>
 
 <!-- SLIDE 4: 문제 - 동시에 여러개 → 실패 -->
-<section class="slide" id="slide-3">
+<section class="slide compare-slide" id="slide-3">
   <div class="slide-header">
     <span class="lecture-tag" style="background:var(--danger);">Problem</span>
     <span class="slide-number">4 / 46</span>
@@ -647,7 +693,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       <h2 class="content-title">Agent에게 동시에 두 개를 요청하면?</h2>
     </div>
     <div class="split-screen animate" data-delay="2">
-      <div class="before-panel">
+      <div class="before-panel" data-focusable>
         <span class="panel-label">문제</span>
         <h3 style="font-size:18px; margin-bottom:12px; color: var(--danger);">혼란스러운 결과</h3>
         <p style="font-size:14px; color: #991B1B; line-height:1.6;">
@@ -656,7 +702,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
           • 어느 작업이 진행 중인지 모름
         </p>
       </div>
-      <div class="after-panel">
+      <div class="after-panel" data-focusable>
         <span class="panel-label">Workflow</span>
         <h3 style="font-size:18px; margin-bottom:12px; color: var(--success);">한 개씩 체계적으로</h3>
         <p style="font-size:14px; color: #166534; line-height:1.6;">
@@ -667,10 +713,12 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · Agent에게 동시에 두 개를 요청하면?</span></div>
 </section>
 
 <!-- SLIDE 5: 문제 - 3가지 실패 패턴 -->
-<section class="slide" id="slide-4">
+<section class="slide compare-slide" id="slide-4">
   <div class="slide-header">
     <span class="lecture-tag" style="background:var(--danger);">Problem</span>
     <span class="slide-number">5 / 46</span>
@@ -680,27 +728,29 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       <h2 class="content-title">3가지 전형적인 실패 패턴</h2>
     </div>
     <div class="feature-grid-3 animate" data-delay="2">
-      <div class="problem-card" style="max-width:100%;">
+      <div class="problem-card" data-focusable style="max-width:100%;">
         <div class="problem-icon">🔀</div>
         <div class="problem-title">단계 건너뜀</div>
         <div class="problem-desc">설계 없이 바로 실행 → 방향 잃음 → 재시작</div>
       </div>
-      <div class="problem-card" style="max-width:100%;">
+      <div class="problem-card" data-focusable style="max-width:100%;">
         <div class="problem-icon">🔁</div>
         <div class="problem-title">무한 루프</div>
         <div class="problem-desc">검증 없이 반복 실행 → 같은 오류 반복</div>
       </div>
-      <div class="problem-card" style="max-width:100%;">
+      <div class="problem-card" data-focusable style="max-width:100%;">
         <div class="problem-icon">💥</div>
         <div class="problem-title">돌이킬 수 없음</div>
         <div class="problem-desc">백업 없이 실행 → 실패 시 원상복구 불가</div>
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 3가지 전형적인 실패 패턴</span></div>
 </section>
 
 <!-- SLIDE 6: 문제 - 상태 관리 없음 -->
-<section class="slide" id="slide-5">
+<section class="slide compare-slide" id="slide-5">
   <div class="slide-header">
     <span class="lecture-tag" style="background:var(--danger);">Problem</span>
     <span class="slide-number">6 / 46</span>
@@ -719,6 +769,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 상태를 모르니 모든 게 불안정합니다</span></div>
 </section>
 
 <!-- SLIDE 7: 설득 - 왜 Workflow인가 -->
@@ -749,23 +801,15 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </p>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · Workflow가 필요한 이유</span></div>
 </section>
 
 <!-- SLIDE 8: 전환 (Act 1 마무리) -->
-<section class="slide act-slide" id="slide-7">
-  <div class="slide-header" style="color: white;">
-    <span class="lecture-tag" style="background:var(--workflow);">Act 1 → 2</span>
-    <span class="slide-number">8 / 46</span>
-  </div>
-  <div class="slide-body">
-    <div class="act-number">01</div>
-    <div class="animate" data-delay="1">
-      <h2 class="act-title" style="color:var(--workflow);">문제를 알았습니다</h2>
-    </div>
-    <div class="animate" data-delay="2">
-      <p class="act-desc">이제 어떻게 해결하는지 보여드립니다</p>
-    </div>
-  </div>
+<section class="slide act-slide section-divider" id="slide-7">
+  <div class="slide-header"></div>
+  <div class="slide-body"><div class="divider-content animate" data-delay="1"><div class="divider-label">Part 01</div><h2 class="divider-title">계획</h2><p class="divider-desc">요청을 조사·설계·검토하고 사용자 승인으로 실행 범위를 고정합니다</p></div></div>
+  <div class="slide-footer"></div>
 </section>
 
 <!-- SLIDE 9: Act2 전환 -->
@@ -783,10 +827,12 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       <p class="act-desc">하지만 그 뒤에 9단계의 체계가 있습니다 — 이제 그 체계를 봅니다</p>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · "좋은 흐름은 보이지 않습니다"</span></div>
 </section>
 
 <!-- SLIDE 10: 전체도 9단계 -->
-<section class="slide" id="slide-9">
+<section class="slide deep-slide" id="slide-9">
   <div class="slide-header">
     <span class="lecture-tag" style="background:var(--workflow);">9단계</span>
     <span class="slide-number">10 / 46</span>
@@ -794,30 +840,32 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
   <div class="slide-body content-slide">
     <div class="animate" data-delay="1">
       <h2 class="content-title">9단계 상태 머신 — 전체도</h2>
-    </div>
+    <div class="deep-content animate" data-delay="2"><div class="deep-header"><div><h2 class="deep-title">9단계 상태 머신 — 전체도</h2><p class="deep-subtitle">핵심 개념을 선택해 살펴보세요</p></div></div><div class="tab-nav"><button class="tab-btn active" type="button" data-focusable data-tab="plan">계획</button><button class="tab-btn" type="button" data-focusable data-tab="execute">실행</button><button class="tab-btn" type="button" data-focusable data-tab="close">완료</button></div><div class="tab-panel active" data-tab="plan">Request → Investigation → Design → Review → Approval은 실행 전 불확실성을 줄이는 구간입니다.</div><div class="tab-panel" data-tab="execute">Execution → Test → Execution Review는 승인된 설계를 구현하고 검증하는 구간입니다.</div><div class="tab-panel" data-tab="close">Done은 결과·검증·교훈이 남았을 때만 도달합니다.</div></div></div>
     <div class="process-bar animate" data-delay="2">
-      <div class="process-step">① Request</div>
+      <div class="process-step" data-focusable>① Request</div>
       <div class="process-arrow">→</div>
-      <div class="process-step">② Investigation</div>
+      <div class="process-step" data-focusable>② Investigation</div>
       <div class="process-arrow">→</div>
-      <div class="process-step">③ Design</div>
+      <div class="process-step" data-focusable>③ Design</div>
       <div class="process-arrow">→</div>
-      <div class="process-step">④ Review</div>
+      <div class="process-step" data-focusable>④ Review</div>
       <div class="process-arrow">→</div>
-      <div class="process-step highlight">⑤ Approval ⏳</div>
+      <div class="process-step highlight" data-focusable>⑤ Approval ⏳</div>
       <div class="process-arrow">→</div>
-      <div class="process-step">⑥ Execution</div>
+      <div class="process-step" data-focusable>⑥ Execution</div>
       <div class="process-arrow">→</div>
-      <div class="process-step">⑦ Test</div>
+      <div class="process-step" data-focusable>⑦ Test</div>
       <div class="process-arrow">→</div>
-      <div class="process-step">⑧ Exe Review</div>
+      <div class="process-step" data-focusable>⑧ Exe Review</div>
       <div class="process-arrow">→</div>
-      <div class="process-step done">⑨ Done ✅</div>
+      <div class="process-step done" data-focusable>⑨ Done ✅</div>
     </div>
     <div class="animate" data-delay="3">
       <p class="content-desc" style="margin-top:16px;">각 단계는 명확한 출입 기준을 가집니다. <span style="color:var(--accent); font-weight:700;">⑤ Approval</span>은 사람의 승인이 필요합니다.</p>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 9단계 상태 머신 — 전체도</span></div>
 </section>
 
 <!-- SLIDE 11: Step 1 Request -->
@@ -843,6 +891,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 단계 ①: Request — 요청</span></div>
 </section>
 
 <!-- SLIDE 12: Step 2 Investigation -->
@@ -868,6 +918,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 단계 ②: Investigation — 조사</span></div>
 </section>
 
 <!-- SLIDE 13: Step 3 Design -->
@@ -893,6 +945,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 단계 ③: Design — 설계</span></div>
 </section>
 
 <!-- SLIDE 14: Step 4 Review -->
@@ -918,10 +972,12 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 단계 ④: Review — 검토</span></div>
 </section>
 
 <!-- SLIDE 15: Step 5 Approval -->
-<section class="slide" id="slide-14">
+<section class="slide deep-slide" id="slide-14">
   <div class="slide-header">
     <span class="lecture-tag" style="background:var(--accent);">Step 5</span>
     <span class="slide-number">15 / 46</span>
@@ -929,7 +985,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
   <div class="slide-body content-slide">
     <div class="animate" data-delay="1">
       <h2 class="content-title">단계 ⑤: Approval — 승인 ⏳</h2>
-    </div>
+    <div class="deep-content animate" data-delay="2"><div class="deep-header"><div><h2 class="deep-title">단계 ⑤: Approval — 승인 ⏳</h2><p class="deep-subtitle">핵심 개념을 선택해 살펴보세요</p></div></div><div class="tab-nav"><button class="tab-btn active" type="button" data-focusable data-tab="authority">권한</button><button class="tab-btn" type="button" data-focusable data-tab="evidence">근거</button><button class="tab-btn" type="button" data-focusable data-tab="rollback">복구</button></div><div class="tab-panel active" data-tab="authority">Approval은 사용자만 결정하며 Agent는 근거와 선택지를 제공합니다.</div><div class="tab-panel" data-tab="evidence">검토 가능한 설계·리스크·산출물이 승인 판단의 입력입니다.</div><div class="tab-panel" data-tab="rollback">실패 시 현재 상태와 변경 범위를 기록하고 안전한 지점으로 되돌립니다.</div></div></div>
     <div class="step-detail animate" data-delay="2">
       <div class="step-number approval">5</div>
       <div class="step-info">
@@ -943,6 +999,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 단계 ⑤: Approval — 승인 ⏳</span></div>
 </section>
 
 <!-- SLIDE 16: Step 6 Execution -->
@@ -968,6 +1026,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 단계 ⑥: Execution — 실행</span></div>
 </section>
 
 <!-- SLIDE 17: Step 7 Test + Step 8 Exe Review -->
@@ -981,7 +1041,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       <h2 class="content-title">단계 ⑦ Test + 단계 ⑧ Exe Review</h2>
     </div>
     <div class="split-screen animate" data-delay="2">
-      <div class="after-panel">
+      <div class="after-panel" data-focusable>
         <span class="panel-label">⑦ Test</span>
         <h3 style="font-size:18px; margin-bottom:12px; color: var(--success);">결과 검증</h3>
         <p style="font-size:14px; color: #166534; line-height:1.6;">
@@ -990,7 +1050,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
           • 실패 시 Execution으로 되감기
         </p>
       </div>
-      <div class="after-panel">
+      <div class="after-panel" data-focusable>
         <span class="panel-label">⑧ Exe Review</span>
         <h3 style="font-size:18px; margin-bottom:12px; color: var(--success);">실행 후 반성</h3>
         <p style="font-size:14px; color: #166534; line-height:1.6;">
@@ -1001,6 +1061,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 단계 ⑦ Test + 단계 ⑧ Exe Review</span></div>
 </section>
 
 <!-- SLIDE 18: Step 9 Done -->
@@ -1026,27 +1088,19 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 단계 ⑨: Done — 완료 ✅</span></div>
 </section>
 
 <!-- SLIDE 19: Act3 전환 -->
-<section class="slide act-slide" id="slide-18">
-  <div class="slide-header" style="color: white;">
-    <span class="lecture-tag" style="background:var(--workflow);">Act 3</span>
-    <span class="slide-number">19 / 46</span>
-  </div>
-  <div class="slide-body">
-    <div class="act-number">03</div>
-    <div class="animate" data-delay="1">
-      <h2 class="act-title" style="color:var(--workflow);">"규칙이 흐름을 만듭니다"</h2>
-    </div>
-    <div class="animate" data-delay="2">
-      <p class="act-desc">9단계가 어떻게 연결되고, 어떤 규칙이 지켜지는지</p>
-    </div>
-  </div>
+<section class="slide act-slide section-divider" id="slide-18">
+  <div class="slide-header"></div>
+  <div class="slide-body"><div class="divider-content animate" data-delay="1"><div class="divider-label">Part 02</div><h2 class="divider-title">실행</h2><p class="divider-desc">허용된 전이와 검증으로 작업을 통제 가능한 상태로 진행합니다</p></div></div>
+  <div class="slide-footer"></div>
 </section>
 
 <!-- SLIDE 20: 허용 전이 -->
-<section class="slide" id="slide-19">
+<section class="slide compare-slide" id="slide-19">
   <div class="slide-header">
     <span class="lecture-tag" style="background:var(--success);">전이</span>
     <span class="slide-number">20 / 46</span>
@@ -1073,6 +1127,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 허용되는 전이 — 앞쪽과 뒤쪽</span></div>
 </section>
 
 <!-- SLIDE 21: 금지 전이 -->
@@ -1108,6 +1164,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 금지되는 전이 — 절대 건너뛰기 금지</span></div>
 </section>
 
 <!-- SLIDE 22: .workflow-state -->
@@ -1130,6 +1188,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 현재 상태를 한 줄로 파악합니다</span></div>
 </section>
 
 <!-- SLIDE 23: workflow-gate.sh -->
@@ -1143,7 +1203,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       <h2 class="content-title">게이트는 규칙을 강제합니다</h2>
     </div>
     <div class="split-screen animate" data-delay="2">
-      <div class="before-panel">
+      <div class="before-panel" data-focusable>
         <span class="panel-label">게이트 X</span>
         <h3 style="font-size:18px; margin-bottom:12px; color: var(--danger);">누구나 언제든 진행</h3>
         <p style="font-size:14px; color: #991B1B; line-height:1.6;">
@@ -1152,7 +1212,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
           • 상태 추적 불가
         </p>
       </div>
-      <div class="after-panel">
+      <div class="after-panel" data-focusable>
         <span class="panel-label">게이트 O</span>
         <h3 style="font-size:18px; margin-bottom:12px; color: var(--success);">규칙대로만 진행</h3>
         <p style="font-size:14px; color: #166534; line-height:1.6;">
@@ -1163,27 +1223,19 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 게이트는 규칙을 강제합니다</span></div>
 </section>
 
 <!-- SLIDE 24: Act4 전환 -->
-<section class="slide act-slide" id="slide-23">
-  <div class="slide-header" style="color: white;">
-    <span class="lecture-tag" style="background:var(--accent);">Act 4</span>
-    <span class="slide-number">24 / 46</span>
-  </div>
-  <div class="slide-body">
-    <div class="act-number">04</div>
-    <div class="animate" data-delay="1">
-      <h2 class="act-title" style="color:var(--accent);">"스스로 승인할 수 없습니다"</h2>
-    </div>
-    <div class="animate" data-delay="2">
-      <p class="act-desc">승인과 롤백 — Agent 스스로 판단하고 결정하면 안 되는 이유</p>
-    </div>
-  </div>
+<section class="slide act-slide section-divider" id="slide-23">
+  <div class="slide-header"></div>
+  <div class="slide-body"><div class="divider-content animate" data-delay="1"><div class="divider-label">Part 03</div><h2 class="divider-title">승인과 복구</h2><p class="divider-desc">Agent는 승인자가 아니며 실패는 추적 가능한 롤백으로 다룹니다</p></div></div>
+  <div class="slide-footer"></div>
 </section>
 
 <!-- SLIDE 25: 왜 승인인가 -->
-<section class="slide" id="slide-24">
+<section class="slide compare-slide" id="slide-24">
   <div class="slide-header">
     <span class="lecture-tag" style="background:var(--accent);">승인</span>
     <span class="slide-number">25 / 46</span>
@@ -1203,6 +1255,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 왜 Agent가 스스로 승인하면 안 될까요?</span></div>
 </section>
 
 <!-- SLIDE 26: 승인 프로토콜 -->
@@ -1215,29 +1269,31 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
     <div class="animate" data-delay="1">
       <h2 class="content-title">승인 프로토콜 — 4단계</h2>
     </div>
-    <div class="protocol-steps animate" data-delay="2">
-      <div class="protocol-step">
+    <div class="protocol-steps animate" data-focusable data-delay="2">
+      <div class="protocol-step" data-focusable>
         <div class="p-num">1</div>
         <h4>계획 제시</h4>
         <p>Agent가 무엇을 어떻게 할지 상세히 설명</p>
       </div>
-      <div class="protocol-step">
+      <div class="protocol-step" data-focusable>
         <div class="p-num">2</div>
         <h4>리스크 명시</h4>
         <p>잠재적 위험과 대안 제시</p>
       </div>
-      <div class="protocol-step">
+      <div class="protocol-step" data-focusable>
         <div class="p-num">3</div>
         <h4>사용자 확인</h4>
         <p>"확인하고 진행" 또는 "수정 요청"</p>
       </div>
-      <div class="protocol-step">
+      <div class="protocol-step" data-focusable>
         <div class="p-num">4</div>
         <h4>기록</h4>
         <p>누가, 언제, 무엇을 승인했는지 기록</p>
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 승인 프로토콜 — 4단계</span></div>
 </section>
 
 <!-- SLIDE 27: 롤백 -->
@@ -1260,6 +1316,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 실패했을 때 — 롤백</span></div>
 </section>
 
 <!-- SLIDE 28: 설득 - 승인의 가치 -->
@@ -1290,23 +1348,15 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </p>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 승인이 왜 중요한가요?</span></div>
 </section>
 
 <!-- SLIDE 29: Act5 전환 -->
-<section class="slide act-slide" id="slide-28">
-  <div class="slide-header" style="color: white;">
-    <span class="lecture-tag" style="background:var(--workflow);">Act 5</span>
-    <span class="slide-number">29 / 46</span>
-  </div>
-  <div class="slide-body">
-    <div class="act-number">05</div>
-    <div class="animate" data-delay="1">
-      <h2 class="act-title" style="color:var(--workflow);">"작업은 추적되어야 합니다"</h2>
-    </div>
-    <div class="animate" data-delay="2">
-      <p class="act-desc">JOB과 프로젝트 관리 — 작업을 구조화하고 추적하는 방법</p>
-    </div>
-  </div>
+<section class="slide act-slide section-divider" id="slide-28">
+  <div class="slide-header"></div>
+  <div class="slide-body"><div class="divider-content animate" data-delay="1"><div class="divider-label">Part 04</div><h2 class="divider-title">추적</h2><p class="divider-desc">JOB은 작업의 근거·산출물·검증을 한 곳에 남깁니다</p></div></div>
+  <div class="slide-footer"></div>
 </section>
 
 <!-- SLIDE 30: JOB 개념 -->
@@ -1329,6 +1379,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · JOB — 작업 단위</span></div>
 </section>
 
 <!-- SLIDE 31: create-job.sh -->
@@ -1353,6 +1405,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · JOB 만들기 — create-job.sh</span></div>
 </section>
 
 <!-- SLIDE 32: 폴더 구조 -->
@@ -1378,6 +1432,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       <p class="content-desc" style="margin-top:16px;">모든 파일이 의미 있는 위치에 있습니다. <strong style="color:var(--workflow);">구조가 정보입니다.</strong></p>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · JOB 폴더 구조 — 모든 것이 제 자리에</span></div>
 </section>
 
 <!-- SLIDE 33: 프로젝트 관리 -->
@@ -1391,7 +1447,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       <h2 class="content-title">프로젝트 — JOB의 모음</h2>
     </div>
     <div class="split-screen animate" data-delay="2">
-      <div class="after-panel">
+      <div class="after-panel" data-focusable>
         <span class="panel-label">작업 관리</span>
         <h3 style="font-size:18px; margin-bottom:12px; color: var(--success);">프로젝트 보드</h3>
         <p style="font-size:14px; color: #166534; line-height:1.6;">
@@ -1400,7 +1456,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
           • 한 눈에 전체 현황 파악
         </p>
       </div>
-      <div class="after-panel">
+      <div class="after-panel" data-focusable>
         <span class="panel-label">관계</span>
         <h3 style="font-size:18px; margin-bottom:12px; color: var(--success);">JOB 간 의존성</h3>
         <p style="font-size:14px; color: #166534; line-height:1.6;">
@@ -1411,6 +1467,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 프로젝트 — JOB의 모음</span></div>
 </section>
 
 <!-- SLIDE 34: 파일 삭제 규칙 -->
@@ -1434,6 +1492,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 파일 삭제 규칙 — 무조건 백업 후 삭제</span></div>
 </section>
 
 <!-- SLIDE 35: 심링크 -->
@@ -1447,7 +1507,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       <h2 class="content-title">심링크 — 복제 없이 연결</h2>
     </div>
     <div class="split-screen animate" data-delay="2">
-      <div class="before-panel">
+      <div class="before-panel" data-focusable>
         <span class="panel-label">복제</span>
         <h3 style="font-size:18px; margin-bottom:12px; color: var(--danger);">같은 파일 10개</h3>
         <p style="font-size:14px; color: #991B1B; line-height:1.6;">
@@ -1456,7 +1516,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
           • 버전 혼란
         </p>
       </div>
-      <div class="after-panel">
+      <div class="after-panel" data-focusable>
         <span class="panel-label">심링크</span>
         <h3 style="font-size:18px; margin-bottom:12px; color: var(--success);">하나만 두고 연결</h3>
         <p style="font-size:14px; color: #166534; line-height:1.6;">
@@ -1467,6 +1527,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 심링크 — 복제 없이 연결</span></div>
 </section>
 
 <!-- SLIDE 36: 설득 - JOB의 가치 -->
@@ -1496,23 +1558,15 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </p>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · JOB 시스템이 왜 필요한가요?</span></div>
 </section>
 
 <!-- SLIDE 37: Act6 전환 -->
-<section class="slide act-slide" id="slide-36">
-  <div class="slide-header" style="color: white;">
-    <span class="lecture-tag" style="background:var(--workflow);">Act 6</span>
-    <span class="slide-number">37 / 46</span>
-  </div>
-  <div class="slide-body">
-    <div class="act-number">06</div>
-    <div class="animate" data-delay="1">
-      <h2 class="act-title" style="color:var(--workflow);">"혼자 할 수 없는 것들"</h2>
-    </div>
-    <div class="animate" data-delay="2">
-      <p class="act-desc">서브에이전트와 실전 시나리오 — 혼자서는 해결할 수 없는 문제</p>
-    </div>
-  </div>
+<section class="slide act-slide section-divider" id="slide-36">
+  <div class="slide-header"></div>
+  <div class="slide-body"><div class="divider-content animate" data-delay="1"><div class="divider-label">Part 05</div><h2 class="divider-title">협업</h2><p class="divider-desc">서브에이전트도 상태·소유권·결과를 가진 작업 단위입니다</p></div></div>
+  <div class="slide-footer"></div>
 </section>
 
 <!-- SLIDE 38: 서브에이전트 fork -->
@@ -1535,6 +1589,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 서브에이전트 — 일을 나눠 맡긴다</span></div>
 </section>
 
 <!-- SLIDE 39: 서브에이전트 상태 관리 -->
@@ -1548,23 +1604,25 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       <h2 class="content-title">서브에이전트 상태 관리</h2>
     </div>
     <div class="feature-grid animate" data-delay="2">
-      <div class="scenario-card" style="border-color:var(--workflow-border);">
+      <div class="scenario-card" data-focusable style="border-color:var(--workflow-border);">
         <div class="scenario-badge" style="background:var(--workflow-bg);color:var(--workflow);">진행 중</div>
         <div class="scenario-title">🔄 Working</div>
         <div class="scenario-desc">서브에이전트가 작업 중 — 부모는 결과를 기다림</div>
       </div>
-      <div class="scenario-card" style="border-color:var(--success);">
+      <div class="scenario-card" data-focusable style="border-color:var(--success);">
         <div class="scenario-badge" style="background:var(--success-bg);color:var(--success);">완료</div>
         <div class="scenario-title">✅ Done</div>
         <div class="scenario-desc">결과물을 부모에게 전달하고 종료</div>
       </div>
-      <div class="scenario-card" style="border-color:var(--danger);">
+      <div class="scenario-card" data-focusable style="border-color:var(--danger);">
         <div class="scenario-badge" style="background:var(--danger-bg);color:var(--danger);">실패</div>
         <div class="scenario-title">❌ Failed</div>
         <div class="scenario-desc">에러 보고 → 부모가 대응 결정 (재시도 / 대체)</div>
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 서브에이전트 상태 관리</span></div>
 </section>
 
 <!-- SLIDE 40: 서브에이전트 통신 -->
@@ -1589,6 +1647,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 서브에이전트 간 통신</span></div>
 </section>
 
 <!-- SLIDE 41: 시나리오 1 - 작은 작업 -->
@@ -1601,7 +1661,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
     <div class="animate" data-delay="1">
       <h2 class="content-title">실전 시나리오 ① — 작은 작업</h2>
     </div>
-    <div class="scenario-card small animate" data-delay="2" style="max-width:700px;">
+    <div class="scenario-card small animate" data-focusable data-delay="2" style="max-width:700px;">
       <div class="scenario-badge">작 · 5분 내외</div>
       <div class="scenario-title">📄 파일 이름 변경하기</div>
       <div class="scenario-desc">
@@ -1616,6 +1676,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 실전 시나리오 ① — 작은 작업</span></div>
 </section>
 
 <!-- SLIDE 42: 시나리오 2 - 중간 작업 -->
@@ -1628,7 +1690,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
     <div class="animate" data-delay="1">
       <h2 class="content-title">실전 시나리오 ② — 중간 작업</h2>
     </div>
-    <div class="scenario-card medium animate" data-delay="2" style="max-width:700px;">
+    <div class="scenario-card medium animate" data-focusable data-delay="2" style="max-width:700px;">
       <div class="scenario-badge">중 · 30분 내외</div>
       <div class="scenario-title">📊 보고서 작성하기</div>
       <div class="scenario-desc">
@@ -1644,6 +1706,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 실전 시나리오 ② — 중간 작업</span></div>
 </section>
 
 <!-- SLIDE 43: 시나리오 3 - 큰 작업 -->
@@ -1656,7 +1720,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
     <div class="animate" data-delay="1">
       <h2 class="content-title">실전 시나리오 ③ — 큰 작업</h2>
     </div>
-    <div class="scenario-card large animate" data-delay="2" style="max-width:700px;">
+    <div class="scenario-card large animate" data-focusable data-delay="2" style="max-width:700px;">
       <div class="scenario-badge">대 · 여러 시간</div>
       <div class="scenario-title">🏗️ 새 프로젝트 구축</div>
       <div class="scenario-desc">
@@ -1672,10 +1736,12 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 실전 시나리오 ③ — 큰 작업</span></div>
 </section>
 
 <!-- SLIDE 44: 연결 - 다른 기능과 관계 -->
-<section class="slide" id="slide-43">
+<section class="slide compare-slide" id="slide-43">
   <div class="slide-header">
     <span class="lecture-tag" style="background:var(--workflow);">연결</span>
     <span class="slide-number">44 / 46</span>
@@ -1685,35 +1751,37 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       <h2 class="content-title">Workflow는 혼자 작동하지 않습니다</h2>
     </div>
     <div class="connection-diagram animate" data-delay="2">
-      <div class="conn-node">
+      <div class="conn-node" data-focusable>
         <div class="conn-icon">🧠</div>
         <div class="conn-label">Memory</div>
         <p style="font-size:12px; color:var(--text-dim); margin-top:8px;">Done 시 경험 저장</p>
       </div>
       <div class="conn-arrow">⇄</div>
-      <div class="conn-node workflow-center">
+      <div class="conn-node workflow-center" data-focusable>
         <div class="conn-icon">🔄</div>
         <div class="conn-label">Workflow</div>
         <p style="font-size:12px; color:var(--text-dim); margin-top:8px;">9단계 상태 머신</p>
       </div>
       <div class="conn-arrow">⇄</div>
-      <div class="conn-node">
+      <div class="conn-node" data-focusable>
         <div class="conn-icon">📚</div>
         <div class="conn-label">Knowledge</div>
         <p style="font-size:12px; color:var(--text-dim); margin-top:8px;">Investigation 시 검색</p>
       </div>
       <div class="conn-arrow">⇄</div>
-      <div class="conn-node">
+      <div class="conn-node" data-focusable>
         <div class="conn-icon">🛠️</div>
         <div class="conn-label">Skill</div>
         <p style="font-size:12px; color:var(--text-dim); margin-top:8px;">Execution 시 절차 실행</p>
       </div>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · Workflow는 혼자 작동하지 않습니다</span></div>
 </section>
 
 <!-- SLIDE 45: 요약 + Q&A -->
-<section class="slide" id="slide-44">
+<section class="slide content-slide" id="slide-44">
   <div class="slide-header">
     <span class="lecture-tag" style="background:var(--workflow);">요약</span>
     <span class="slide-number">45 / 46</span>
@@ -1738,6 +1806,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       <p class="content-desc">질문 있으신가요? 👇</p>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · Today의 핵심 8가지</span></div>
 </section>
 
 <!-- SLIDE 46: 감사합니다 -->
@@ -1759,132 +1829,87 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </p>
     </div>
   </div>
+
+  <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 감사합니다</span></div>
 </section>
 
 <script>
-// ── Slide Navigation ──
-const slides = document.querySelectorAll('.slide');
+/* Deck A/B shared navigation + focus + click interaction contract. */
+const slides = Array.from(document.querySelectorAll('.slide'));
 const navDots = document.getElementById('navDots');
 const progressBar = document.getElementById('progressBar');
 let currentSlide = 0;
+let currentFocus = -1;
 let clickCombo = 0;
 let comboTimer = null;
 
-// Create nav dots
-slides.forEach((_, i) => {
-  const dot = document.createElement('div');
-  dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
-  dot.onclick = () => goToSlide(i);
+slides.forEach((slide, index) => {
+  const dot = document.createElement('button');
+  dot.className = 'nav-dot' + (index === 0 ? ' active' : '');
+  dot.type = 'button'; dot.setAttribute('aria-label', `슬라이드 ${index + 1}`);
+  dot.addEventListener('click', () => goSlide(index));
   navDots.appendChild(dot);
 });
-
-function goToSlide(index) {
-  if (index < 0 || index >= slides.length) return;
-  slides[currentSlide].classList.remove('active');
+const dots = Array.from(document.querySelectorAll('.nav-dot'));
+const focusables = slide => Array.from(slide.querySelectorAll('[data-focusable]'));
+function updateFocus() {
+  document.querySelectorAll('.in-focus').forEach(el => el.classList.remove('in-focus'));
+  const items = focusables(slides[currentSlide]);
+  if (currentFocus >= 0 && currentFocus < items.length) items[currentFocus].classList.add('in-focus');
+}
+function updateSlide() {
+  currentSlide = Math.max(0, Math.min(currentSlide, slides.length - 1));
+  progressBar.style.width = `${((currentSlide + 1) / slides.length) * 100}%`;
+  slides.forEach((slide, index) => slide.classList.toggle('active', index === currentSlide));
+  dots.forEach((dot, index) => dot.classList.toggle('active', index === currentSlide));
+  currentFocus = focusables(slides[currentSlide]).length ? 0 : -1;
+  updateFocus();
+}
+function goSlide(index) {
   currentSlide = index;
-  slides[currentSlide].classList.add('active');
-  window.scrollTo({ top: slides[currentSlide].offsetTop, left: 0 });
-  updateUI();
+  window.scrollTo({top: slides[index].offsetTop, behavior:'auto'});
+  updateSlide();
 }
-
-function changeSlide(delta) {
-  goToSlide(currentSlide + delta);
+function moveFocus(direction) {
+  const items = focusables(slides[currentSlide]);
+  if (!items.length) return;
+  currentFocus = Math.max(0, Math.min(currentFocus + direction, items.length - 1));
+  updateFocus();
+  const focused = items[currentFocus];
+  if (focused.classList.contains('tab-btn')) switchTab(focused);
 }
-
-function updateUI() {
-  const progress = ((currentSlide + 1) / slides.length) * 100;
-  progressBar.style.width = progress + '%';
-  document.querySelectorAll('.nav-dot').forEach((dot, i) => {
-    dot.classList.toggle('active', i === currentSlide);
-  });
+function switchTab(button) {
+  const slide = button.closest('.slide');
+  const key = button.dataset.tab;
+  slide.querySelectorAll('.tab-btn').forEach(item => item.classList.toggle('active', item === button));
+  slide.querySelectorAll('.tab-panel').forEach(panel => panel.classList.toggle('active', panel.dataset.tab === key));
 }
-
-// Keyboard navigation
-document.addEventListener('keydown', (e) => {
-  if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown'].includes(e.key)) {
-    e.preventDefault();
-    changeSlide(e.key === 'ArrowUp' || e.key === 'PageUp' ? -1 : 1);
-    return;
-  }
-  if (['ArrowLeft', 'ArrowRight'].includes(e.key)) {
-    e.preventDefault();
-    moveFocus(e.key === 'ArrowRight' ? 1 : -1);
-    return;
-  }
+document.addEventListener('keydown', event => {
+  const key = event.key;
+  if (key === 'ArrowLeft' || key === 'ArrowRight') { event.stopImmediatePropagation(); event.preventDefault(); moveFocus(key === 'ArrowLeft' ? -1 : 1); }
+  if (key === 'ArrowUp' || key === 'PageUp') { event.stopImmediatePropagation(); event.preventDefault(); goSlide(Math.max(0,currentSlide-1)); }
+  if (key === 'ArrowDown' || key === 'PageDown') { event.stopImmediatePropagation(); event.preventDefault(); goSlide(Math.min(slides.length-1,currentSlide+1)); }
+}, true);
+const slideObserver = new IntersectionObserver(entries => entries.forEach(entry => {
+  if (entry.isIntersecting) { currentSlide = slides.indexOf(entry.target); updateSlide(); }
+}), {threshold:.5});
+slides.forEach(slide => slideObserver.observe(slide));
+function triggerClickGame(slide, x, y) {
+  const rect = slide.getBoundingClientRect(), left = x - rect.left, top = y - rect.top;
+  clickCombo++; clearTimeout(comboTimer);
+  const display = document.getElementById('comboDisplay');
+  document.getElementById('comboCount').textContent = clickCombo;
+  display.classList.toggle('visible', clickCombo > 1);
+  comboTimer = setTimeout(() => { clickCombo=0; display.classList.remove('visible'); }, 2000);
+  const score = document.createElement('div'); score.className='click-game-score'; score.textContent=`+${Math.min(clickCombo,5)}`; score.style.left=`${left}px`; score.style.top=`${top}px`; slide.appendChild(score); setTimeout(()=>score.remove(),1000);
+  for(let i=0;i<8;i++) { const node=document.createElement('div'); node.className='click-game-particle'; const a=(Math.PI*2*i)/8; node.style.left=`${left}px`; node.style.top=`${top}px`; node.style.background='var(--accent)'; node.style.setProperty('--tx',`${Math.cos(a)*(36+Math.random()*42)}px`); node.style.setProperty('--ty',`${Math.sin(a)*(36+Math.random()*42)}px`); slide.appendChild(node); setTimeout(()=>node.remove(),800); }
+}
+slides.forEach(slide => {
+  const items = focusables(slide); let lastHovered = -1;
+  items.forEach((item,index) => { item.addEventListener('mouseenter',()=>{lastHovered=index;slide.classList.add('mouse-hovering');}); item.addEventListener('mouseleave',()=>{slide.classList.remove('mouse-hovering'); if(lastHovered>=0){currentFocus=lastHovered;updateFocus();}}); item.addEventListener('click', event => { if(item.classList.contains('tab-btn')) switchTab(item); triggerClickGame(slide,event.clientX,event.clientY); }); });
+  slide.addEventListener('click', event => { if (!event.target.closest('[data-focusable]')) triggerClickGame(slide,event.clientX,event.clientY); });
 });
-
-function moveFocus(dir) {
-  const focusables = Array.from(document.querySelectorAll('.slide.active [data-focusable]'));
-  if (focusables.length === 0) return;
-  const current = focusables.findIndex(el => el.classList.contains('in-focus'));
-  focusables.forEach(el => el.classList.remove('in-focus'));
-  const next = dir > 0
-    ? current < focusables.length - 1 ? current + 1 : 0
-    : current > 0 ? current - 1 : focusables.length - 1;
-  focusables[next].classList.add('in-focus');
-}
-
-// Click game effect
-const particleColors = ['#22C55E', '#16A34A', '#15803D', '#F59E0B', '#EF4444', '#3B82F6'];
-const sparkles = ['✨', '⭐', '💫', '🔥', '💥'];
-
-document.addEventListener('click', (e) => {
-  const x = e.clientX;
-  const y = e.clientY;
-
-  clickCombo++;
-  clearTimeout(comboTimer);
-  comboTimer = setTimeout(() => {
-    clickCombo = 0;
-    document.getElementById('comboCounter').style.display = 'none';
-  }, 2000);
-
-  if (clickCombo > 1) {
-    const counter = document.getElementById('comboCounter');
-    counter.style.display = 'block';
-    counter.classList.remove('pop');
-    void counter.offsetWidth;
-    counter.classList.add('pop');
-    document.getElementById('comboCount').textContent = clickCombo;
-  }
-
-  for (let i = 0; i < 8; i++) {
-    const p = document.createElement('div');
-    p.className = 'click-particle';
-    p.style.left = x + 'px';
-    p.style.top = y + 'px';
-    p.style.background = particleColors[Math.floor(Math.random() * particleColors.length)];
-    const angle = (Math.PI * 2 / 8) * i;
-    const dist = 30 + Math.random() * 40;
-    p.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
-    p.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
-    document.body.appendChild(p);
-    setTimeout(() => p.remove(), 800);
-  }
-
-  const score = document.createElement('div');
-  score.className = 'click-score';
-  score.textContent = `+${Math.min(clickCombo, 5)}`;
-  score.style.left = x + 'px';
-  score.style.top = (y - 20) + 'px';
-  document.body.appendChild(score);
-  setTimeout(() => score.remove(), 800);
-
-  for (let i = 0; i < 3; i++) {
-    const s = document.createElement('div');
-    s.className = 'click-sparkle';
-    s.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
-    s.style.left = (x + (Math.random() - 0.5) * 60) + 'px';
-    s.style.top = (y + (Math.random() - 0.5) * 60) + 'px';
-    s.style.setProperty('--tx', (Math.random() - 0.5) * 80 + 'px');
-    s.style.setProperty('--ty', -30 - Math.random() * 40 + 'px');
-    document.body.appendChild(s);
-    setTimeout(() => s.remove(), 600);
-  }
-});
-
-// Initial
-goToSlide(0);
+updateSlide();
 </script>
 </body>
 </html>
