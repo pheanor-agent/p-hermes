@@ -1,15 +1,33 @@
 {
-  "current_version": "v8",
+  "current_version": "v8.1",
   "category": "lectures",
   "description": "학습용 강의 시리즈 (Slide Design System)",
   "versions": [
     {
+      "id": "v8.1",
+      "label": "v8.1 — 외부 자산 독립 패키지",
+      "path": "v8.1/",
+      "job": "JOB-2278",
+      "releasedAt": "2026-07-14",
+      "status": "current",
+      "assetModel": "external-local-css-js",
+      "summary": "4개 독립 덱(A:종합/B:Knowledge/C:Skill/D:Workflow) 156페이지. 사용자 제공 HTML/CSS/JS를 원문 그대로 보존한 현재 버전.",
+      "lectures": [
+        {"id": "A", "file": "deck-a-core.html", "title": "Hermes Agent — 4가지 핵심 기능", "slides": 35, "framework": "4 Core Functions"},
+        {"id": "B", "file": "deck-b-knowledge.html", "title": "Knowledge 완전 정복", "slides": 36, "framework": "Progressive Disclosure"},
+        {"id": "C", "file": "deck-c-skill.html", "title": "Skill 심화 — 표준화된 절차", "slides": 38, "framework": "6-Act Structure"},
+        {"id": "D", "file": "deck-d-workflow.html", "title": "Workflow 심화 — 9단계 상태 머신", "slides": 47, "framework": "7-Act Structure"}
+      ]
+    },
+    {
       "id": "v8",
-      "label": "v8 — 4데크 심화 시리즈",
+      "label": "v8 — 4데크 심화 시리즈 (Stable)",
       "path": "v8/",
       "job": "JOB-2190",
       "releasedAt": "2026-07-11",
-      "summary": "4개 데크(A:종합/B:Knowledge/C:Skill/D:Workflow) 152페이지, Scroll-Snap + Zone System, 비전문가 청중 타겟",
+      "status": "stable",
+      "assetModel": "inline-css-js",
+      "summary": "4개 덱(A:종합/B:Knowledge/C:Skill/D:Workflow) 152페이지. commit 12426be 기준 원본 안정판.",
       "lectures": [
         {"id": "A", "file": "deck-a-core.html", "title": "Hermes Agent — 4가지 핵심 기능", "slides": 34, "framework": "4 Core Functions"},
         {"id": "B", "file": "deck-b-knowledge.html", "title": "Knowledge 완전 정복", "slides": 35, "framework": "Progressive Disclosure"},
@@ -36,12 +54,7 @@
       "path": "v5/",
       "job": "JOB-2096",
       "releasedAt": "2026-07-06",
-      "summary": "3분할 구조, .h-flow 수정, components 분리",
-      "lectures": [
-        {"id": "A", "title": "왜 Agent OS인가?", "slides": 13, "framework": "SCQA→Golden Circle"},
-        {"id": "B", "title": "Memory vs Knowledge", "slides": 21, "framework": "Progressive Disclosure"},
-        {"id": "C", "title": "Architecture & Runtime", "slides": 16, "framework": "Pyramid Principle"}
-      ]
+      "summary": "3분할 구조, .h-flow 수정, components 분리"
     },
     {
       "id": "v4",
@@ -49,12 +62,7 @@
       "path": "v4/",
       "job": "JOB-2058",
       "releasedAt": "2026-07-05",
-      "summary": "Nord 테마, 3강(55장), Slide Taxonomy/Grammar/Diagram Rules",
-      "lectures": [
-        {"id": "A", "title": "왜 Agent OS인가?", "slides": 15, "framework": "SCQA→Golden Circle"},
-        {"id": "B", "title": "Memory vs Knowledge", "slides": 20, "framework": "Progressive Disclosure"},
-        {"id": "C", "title": "Architecture & Runtime", "slides": 20, "framework": "Pyramid Principle"}
-      ]
+      "summary": "Nord 테마, 3강(55장), Slide Taxonomy/Grammar/Diagram Rules"
     },
     {
       "id": "v1.9",

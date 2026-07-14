@@ -2,92 +2,64 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>p-hermes slides</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>p-hermes lectures — v8 / v8.1</title>
 <style>
-  body { font-family: sans-serif; background: #2e3440; color: #eceff4;
-         max-width: 800px; margin: 0 auto; padding: 40px 20px; }
-  h1 { font-size: 2rem; font-weight: 800; border-bottom: 2px solid #88c0d0;
-       padding-bottom: 1rem; }
-  .desc { font-size: 0.9rem; color: #616e88; margin-bottom: 2rem; }
-  .version { background: #3b4252; border: 1px solid #4c566a;
-             border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
-  .version.current { border-color: #88c0d0; box-shadow: 0 0 12px rgba(136,192,208,0.15); }
-  .version h3 { font-size: 1.1rem; font-weight: 700; color: #88c0d0; margin: 0 0 0.3rem; }
-  .version .meta { font-size: 0.8rem; color: #616e88; margin-bottom: 0.5rem; }
-  .version .summary { font-size: 0.85rem; color: #d8dee9; margin-bottom: 0.75rem; }
-  .lectures { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
-  .lectures.three-col { grid-template-columns: repeat(3, 1fr); }
-  .lectures a { display: block; padding: 0.6rem; background: #434c5e;
-                border: 1px solid #4c566a; border-radius: 8px; color: #eceff4;
-                text-decoration: none; text-align: center; font-size: 0.85rem; }
-  .lectures a:hover { border-color: #88c0d0; background: rgba(136,192,208,0.08); }
-  .lectures .count { font-size: 0.7rem; color: #616e88; display: block; margin-top: 0.2rem; }
-  .archive { margin-top: 1.5rem; padding: 1rem; background: rgba(59,66,82,0.5);
-             border-radius: 12px; border: 1px solid #4c566a; }
-  .archive h3 { color: #616e88; font-size: 0.95rem; }
-  .archive a { color: #88c0d0; text-decoration: none; font-size: 0.85rem; }
-</style></head>
+  :root { --bg:#2e3440; --surface:#3b4252; --surface2:#434c5e; --border:#4c566a; --text:#eceff4; --dim:#a6b1c6; --cyan:#88c0d0; --green:#a3be8c; --gold:#ebcb8b; }
+  * { box-sizing:border-box; }
+  body { font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif; background:var(--bg); color:var(--text); max-width:880px; margin:0 auto; padding:40px 20px 64px; }
+  h1 { font-size:2rem; font-weight:800; border-bottom:2px solid var(--cyan); padding-bottom:1rem; margin:0 0 .5rem; }
+  h2 { font-size:1.1rem; margin:0; color:var(--cyan); }
+  .desc,.note { color:var(--dim); line-height:1.6; }
+  .desc { margin:0 0 2rem; font-size:.95rem; }
+  .version { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.25rem; margin:1rem 0; }
+  .version.current { border-color:var(--cyan); box-shadow:0 0 12px rgba(136,192,208,.15); }
+  .version.stable { border-color:rgba(163,190,140,.55); }
+  .meta { color:var(--dim); font-size:.82rem; margin:.4rem 0 .7rem; }
+  .badge { display:inline-block; margin-left:.5rem; padding:2px 8px; border-radius:99px; font-size:.7rem; vertical-align:middle; }
+  .current .badge { background:rgba(136,192,208,.16); color:var(--cyan); }
+  .stable .badge { background:rgba(163,190,140,.16); color:var(--green); }
+  .lectures { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.55rem; }
+  .lectures a { display:block; padding:.7rem; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); text-decoration:none; text-align:center; font-size:.86rem; }
+  .lectures a:hover { border-color:var(--cyan); background:rgba(136,192,208,.09); }
+  .count { display:block; font-size:.72rem; color:var(--dim); margin-top:.25rem; }
+  .archive { margin-top:1.5rem; padding:1rem; background:rgba(59,66,82,.5); border:1px solid var(--border); border-radius:12px; }
+  .archive h3 { margin:0 0 .6rem; color:var(--dim); font-size:.95rem; }
+  .archive a, a { color:var(--cyan); }
+  @media (max-width:620px) { .lectures { grid-template-columns:1fr; } }
+</style>
+</head>
 <body>
-<h1>p-hermes slides — v8 Concept Decks</h1>
-<p class="desc">Playground SSOT: Concept Decks A/B/C/D | <a href="../" style="color:#88c0d0;">← Playground</a></p>
+<h1>p-hermes lectures</h1>
+<p class="desc">Concept Decks A/B/C/D · <a href="../">← Playground</a> · 버전별 자산과 공개 링크를 명확히 분리합니다.</p>
 
-<!-- ═══ v8 - Current ═══ -->
-<div class="version current">
-  <h3>v8 — 4데크 심화 시리즈 <span style="font-size:0.75rem;color:#bf616a;font-weight:400;">(현재)</span></h3>
-  <div class="meta">2026-07-11 | JOB-2190 | 152페이지</div>
-  <div class="summary">4개 데크 독립 강의 — Scroll-Snap + Zone System, 비전문가 청중 타겟</div>
+<section class="version current" aria-labelledby="v81-title">
+  <h2 id="v81-title">v8.1 — 외부 자산 독립 패키지 <span class="badge">CURRENT</span></h2>
+  <p class="meta">2026-07-14 · JOB-2278 · 156 slides · 외부 로컬 CSS/JS</p>
+  <p class="note">사용자가 제공한 HTML/CSS/JS 원문을 보존한 현재 버전입니다. 각 덱은 같은 `v8.1/` 폴더의 `slides-v8.css`와 `slides-v8.js`를 사용합니다.</p>
+  <div class="lectures">
+    <a href="v8.1/deck-a-core.html">Deck A: 4가지 핵심 기능<span class="count">35p · 4 Core Functions</span></a>
+    <a href="v8.1/deck-b-knowledge.html">Deck B: Knowledge 완전 정복<span class="count">36p · Progressive Disclosure</span></a>
+    <a href="v8.1/deck-c-skill.html">Deck C: Skill 심화<span class="count">38p · 6-Act Structure</span></a>
+    <a href="v8.1/deck-d-workflow.html">Deck D: Workflow 심화<span class="count">47p · 7-Act Structure</span></a>
+  </div>
+</section>
+
+<section class="version stable" aria-labelledby="v8-title">
+  <h2 id="v8-title">v8 — 원본 안정판 <span class="badge">STABLE</span></h2>
+  <p class="meta">2026-07-11 · JOB-2190 · 152 slides · commit 12426be 원본</p>
+  <p class="note">기존 북마크와 직접 URL을 보존하는 인라인 CSS/JS 기반 안정판입니다.</p>
   <div class="lectures">
     <a href="v8/deck-a-core.html">Deck A: 4가지 핵심 기능<span class="count">34p · 4 Core Functions</span></a>
     <a href="v8/deck-b-knowledge.html">Deck B: Knowledge 완전 정복<span class="count">35p · Progressive Disclosure</span></a>
     <a href="v8/deck-c-skill.html">Deck C: Skill 심화<span class="count">37p · 6-Act Structure</span></a>
     <a href="v8/deck-d-workflow.html">Deck D: Workflow 심화<span class="count">46p · 7-Act Structure</span></a>
   </div>
-</div>
+</section>
 
-<!-- ═══ v7 ═══ -->
-<div class="version">
-  <h3>v7 — Zone System</h3>
-  <div class="meta">2026-07-07 | JOB-2104</div>
-  <div class="summary">Zone System (Zone-A/B/C), dark theme redesign</div>
-  <div class="lectures three-col">
-    <a href="v7/lecture-a-why-agent-os.html">Lecture A<span class="count">13, SCQA</span></a>
-    <a href="v7/lecture-b-memory-knowledge.html">Lecture B<span class="count">21, Progressive</span></a>
-    <a href="v7/lecture-c-architecture-runtime.html">Lecture C<span class="count">16, Pyramid</span></a>
-  </div>
-</div>
-
-<!-- ═══ v5 ═══ -->
-<div class="version">
-  <h3>v5 — slide reorg</h3>
-  <div class="meta">2026-07-06 | JOB-2096</div>
-  <div class="summary">3-split, .h-flow fix, components separation</div>
-  <div class="lectures three-col">
-    <a href="v5/lecture-a-why-agent-os.html">Lecture A<span class="count">13</span></a>
-    <a href="v5/lecture-b-memory-knowledge.html">Lecture B<span class="count">21</span></a>
-    <a href="v5/lecture-c-architecture-runtime.html">Lecture C<span class="count">16</span></a>
-  </div>
-</div>
-
-<!-- ═══ v4 ═══ -->
-<div class="version">
-  <h3>v4 — Slide Design System</h3>
-  <div class="meta">2026-07-05 | JOB-2058</div>
-  <div class="summary">Nord theme, Slide Taxonomy/Grammar/Diagram Rules</div>
-  <div class="lectures three-col">
-    <a href="v4/lecture-a-why-agent-os.html">Lecture A<span class="count">15</span></a>
-    <a href="v4/lecture-b-memory-knowledge.html">Lecture B<span class="count">20</span></a>
-    <a href="v4/lecture-c-architecture-runtime.html">Lecture C<span class="count">20</span></a>
-  </div>
-</div>
-
-<!-- ═══ Archive ═══ -->
-<div class="archive">
-  <h3>Archive</h3>
-  <ul>
-    <li><a href="archive/v1.9/">v1.9 — 6 Gold+Dark</a> (2026-06-29)</li>
-    <li><a href="archive/v1.8/">v1.8 — early</a></li>
-    <li><a href="archive/v1.1/">v1.1 — expansion</a></li>
-    <li><a href="archive/v1.0/">v1.0 — draft</a></li>
-  </ul>
-</div>
-</body></html>
+<section class="archive" aria-labelledby="archive-title">
+  <h3 id="archive-title">Earlier versions</h3>
+  <p><a href="v7/lecture-a-why-agent-os.html">v7 — Zone System</a> · <a href="v5/lecture-a-why-agent-os.html">v5 — Slide reorg</a> · <a href="v4/lecture-a-why-agent-os.html">v4 — Slide Design System</a> · <a href="archive/">Archive</a></p>
+</section>
+</body>
+</html>

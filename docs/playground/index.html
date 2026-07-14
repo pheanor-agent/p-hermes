@@ -28,7 +28,7 @@
   .footer a{color:var(--accent-cyan);text-decoration:none}
   .footer a:hover{color:var(--gold)}
 
-  /* ── v8 Current Card Grid ── */
+  /* ── Current / Stable deck grids ── */
   .deck-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:16px;margin-bottom:32px}
   .deck-card{display:block;background:var(--card);border:1px solid var(--gold-dim);border-radius:var(--radius);padding:20px 24px;text-decoration:none;color:var(--text);transition:var(--transition);position:relative;overflow:hidden}
   .deck-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--accent-cyan));opacity:0.6}
@@ -43,6 +43,10 @@
   .deck-card.deck-b .meta-line span:last-child{color:var(--accent-orange)}
   .deck-card.deck-c .meta-line span:last-child{color:var(--accent-purple)}
   .deck-card.deck-d .meta-line span:last-child{color:var(--accent-green)}
+  .stable-note{font-size:13px;color:var(--text-dim);margin:-4px 0 16px;line-height:1.55}
+  .stable-grid .deck-card{border-color:var(--border)}
+  .stable-grid .deck-card::before{background:linear-gradient(90deg,var(--accent-green),var(--accent-cyan));}
+  .stable-grid .deck-card:hover{border-color:var(--accent-green);box-shadow:0 0 24px rgba(0,245,212,.10)}
   .tag-ready{padding:2px 10px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:1px;background:rgba(0,245,212,.15);color:var(--accent-green)}
   .tag-p2{background:rgba(255,159,67,.15);color:var(--accent-orange)}
   .tag-dev{background:rgba(91,192,235,.15);color:var(--accent-cyan)}
@@ -77,48 +81,60 @@
     <div class="title">p-hermes <span class="hl">Playground</span></div>
     <div class="subtitle">Concept Decks &bull; Lecture Archive &bull; Experiments</div>
     <div class="badge-row">
-      <span class="badge badge-gold">v8 Current</span>
-      <span class="badge badge-cyan">152 Slides</span>
+      <span class="badge badge-gold">v8.1 Current</span>
+      <span class="badge badge-cyan">156 Slides</span>
       <span class="badge badge-purple">4 Decks</span>
     </div>
   </div>
 
-  <!-- ═══ v8 — Current Concept Decks ═══ -->
-  <div class="section">
-    <div class="section-title">⭐ Current — v8 Concept Decks</div>
+  <!-- ═══ v8.1 — Current Concept Decks ═══ -->
+  <div class="section" id="current-v81">
+    <div class="section-title">⭐ Current — v8.1 Concept Decks</div>
     <div class="deck-grid">
-      <a href="lectures/v8/deck-a-core.html" class="deck-card deck-a">
+      <a href="lectures/v8.1/deck-a-core.html" class="deck-card deck-a">
         <div class="top">
           <h3>Deck A &mdash; 4가지 핵심 기능</h3>
           <span class="tag tag-ready">Ready</span>
         </div>
         <div class="desc">Hermes Agent의 4가지 기능(Memory, Knowledge, Skill, Workflow)을 하나의 데크로 종합. Scroll-Snap + Zone System.</div>
-        <div class="meta-line"><span>34 slides</span><span>4 Core Functions</span><span>✅ 검증 완료</span></div>
+        <div class="meta-line"><span>35 slides</span><span>4 Core Functions</span><span>✅ 검증 완료</span></div>
       </a>
-      <a href="lectures/v8/deck-b-knowledge.html" class="deck-card deck-b">
+      <a href="lectures/v8.1/deck-b-knowledge.html" class="deck-card deck-b">
         <div class="top">
           <h3>Deck B &mdash; Knowledge 완전 정복</h3>
           <span class="tag tag-p2">P2 Check</span>
         </div>
         <div class="desc">Knowledge 시스템 심화 — 3계층 구조, 자동 수집, 검색, 유지보수. 비전문가 청중 타겟 다이어그램 중심.</div>
-        <div class="meta-line"><span>35 slides</span><span>Progressive Disclosure</span><span>⚠️ P2 6개 (텍스트 넘침)</span></div>
+        <div class="meta-line"><span>36 slides</span><span>Progressive Disclosure</span><span>⚠️ P2 6개 (텍스트 넘침)</span></div>
       </a>
-      <a href="lectures/v8/deck-c-skill.html" class="deck-card deck-c">
+      <a href="lectures/v8.1/deck-c-skill.html" class="deck-card deck-c">
         <div class="top">
           <h3>Deck C &mdash; Skill 심화</h3>
           <span class="tag tag-ready">Ready</span>
         </div>
         <div class="desc">Skill 시스템 심화 — 표준화된 절차 설계, SKILL.md 구조, 카테고리 관리, patch-management. 요리 비유 활용.</div>
-        <div class="meta-line"><span>37 slides</span><span>6-Act Structure</span><span>✅ 검증 완료</span></div>
+        <div class="meta-line"><span>38 slides</span><span>6-Act Structure</span><span>✅ 검증 완료</span></div>
       </a>
-      <a href="lectures/v8/deck-d-workflow.html" class="deck-card deck-d">
+      <a href="lectures/v8.1/deck-d-workflow.html" class="deck-card deck-d">
         <div class="top">
           <h3>Deck D &mdash; Workflow 심화</h3>
           <span class="tag tag-ready">Ready</span>
         </div>
         <div class="desc">9단계 상태 머신 워크플로우 — 게이트 시스템, 자동화, 실패 처리. 여행 계획 비유로 비전문가도 이해 가능.</div>
-        <div class="meta-line"><span>46 slides</span><span>7-Act Structure</span><span>✅ 검증 완료</span></div>
+        <div class="meta-line"><span>47 slides</span><span>7-Act Structure</span><span>✅ 검증 완료</span></div>
       </a>
+    </div>
+  </div>
+
+  <!-- ═══ v8 — Stable Concept Decks ═══ -->
+  <div class="section stable-grid" id="stable-v8">
+    <div class="section-title">✓ Stable — v8 Original Concept Decks</div>
+    <p class="stable-note">commit 12426be 기준 원본 안정판입니다. 기존 북마크와 직접 URL을 유지하며, v8.1과 CSS/JS 자산을 공유하지 않습니다.</p>
+    <div class="deck-grid">
+      <a href="lectures/v8/deck-a-core.html" class="deck-card deck-a"><div class="top"><h3>Deck A — 4가지 핵심 기능</h3><span class="tag tag-ready">Stable</span></div><div class="meta-line"><span>34 slides</span><span>4 Core Functions</span></div></a>
+      <a href="lectures/v8/deck-b-knowledge.html" class="deck-card deck-b"><div class="top"><h3>Deck B — Knowledge 완전 정복</h3><span class="tag tag-ready">Stable</span></div><div class="meta-line"><span>35 slides</span><span>Progressive Disclosure</span></div></a>
+      <a href="lectures/v8/deck-c-skill.html" class="deck-card deck-c"><div class="top"><h3>Deck C — Skill 심화</h3><span class="tag tag-ready">Stable</span></div><div class="meta-line"><span>37 slides</span><span>6-Act Structure</span></div></a>
+      <a href="lectures/v8/deck-d-workflow.html" class="deck-card deck-d"><div class="top"><h3>Deck D — Workflow 심화</h3><span class="tag tag-ready">Stable</span></div><div class="meta-line"><span>46 slides</span><span>7-Act Structure</span></div></a>
     </div>
   </div>
 
@@ -131,7 +147,8 @@
           <tr><th>Version</th><th>Lectures</th><th>Slides</th><th>Status</th><th>V8 연계</th></tr>
         </thead>
         <tbody>
-          <tr><td class="current-version"><strong>v8</strong></td><td>4 Concept Decks</td><td>152</td><td><span class="tag tag-ready">Ready</span></td><td><a class="link" href="#v8">Current</a></td></tr>
+          <tr><td class="current-version"><strong>v8.1</strong></td><td>4 Concept Decks</td><td>156</td><td><span class="tag tag-ready">Current</span></td><td><a class="link" href="#current-v81">Current</a></td></tr>
+          <tr><td><strong>v8</strong></td><td>4 Concept Decks</td><td>152</td><td><span class="tag tag-ready">Stable</span></td><td><a class="link" href="#stable-v8">Stable</a></td></tr>
           <tr><td><strong>v7</strong></td><td>3 (Zone System)</td><td>50</td><td><span class="tag tag-ready">Ready</span></td><td><a class="link" href="lectures/v7/lecture-a-why-agent-os.html">v7 Deck</a></td></tr>
           <tr><td><strong>v5</strong></td><td>3 (slide reorg)</td><td>50</td><td><span class="tag tag-ready">Ready</span></td><td><a class="link" href="lectures/v5/lecture-a-why-agent-os.html">v5 Deck</a></td></tr>
           <tr><td><strong>v4</strong></td><td>3 (Design System)</td><td>55</td><td><span class="tag tag-ready">Ready</span></td><td><a class="link" href="lectures/v4/lecture-a-why-agent-os.html">v4 Deck</a></td></tr>
@@ -150,6 +167,8 @@
     <a href="lectures/v7/lecture-a-why-agent-os.html" class="card-link"><div><strong>v7 — Zone System</strong> <span class="tag tag-ready">Ready</span></div><div class="label">Dark theme, Zone-A/B/C, 50 slides</div></a>
     <a href="lectures/v5/lecture-a-why-agent-os.html" class="card-link"><div><strong>v5 — Slide Reorg</strong> <span class="tag tag-ready">Ready</span></div><div class="label">3-split, components separation, 50 slides</div></a>
     <a href="lectures/v4/lecture-a-why-agent-os.html" class="card-link"><div><strong>v4 — Slide Design System</strong> <span class="tag tag-ready">Ready</span></div><div class="label">Nord theme, Taxonomy/Grammar, 55 slides</div></a>
+    <a href="ops/v3/" class="card-link"><div><strong>v3 — Historical Slides</strong> <span class="tag tag-experimental">Archive</span></div><div class="label">Early playground slide index</div></a>
+    <a href="ops/v2/" class="card-link"><div><strong>v2 — Historical Slides</strong> <span class="tag tag-experimental">Archive</span></div><div class="label">Early playground experiments and slide index</div></a>
     <a href="lectures/archive/" class="card-link"><div><strong>📜 Archive &amp; Version History</strong></div><div class="label">Browse past versions, experimental content, and deprecated decks</div></a>
   </div>
 

@@ -472,15 +472,12 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 .tag-badge.workflow { background: var(--workflow-bg); color: var(--workflow); }
 .tag-badge.accent { background: var(--highlight); color: var(--accent); }
 </style>
+<meta name="theme-color" content="#121827">
+<link rel="stylesheet" href="./slides-v8.css">
 </head>
-<body>
+<body class="deck-shell deck-b" data-deck="b">
 
 <!-- 콤보 표시 -->
-<div class="click-combo-display" id="comboDisplay">
-  <span class="combo-count" id="comboCount">0</span>
-  <span class="combo-label">COMBO</span>
-</div>
-
 <div class="progress-bar" id="progressBar"></div>
 <div class="nav-dots" id="navDots"></div>
 
@@ -1238,6 +1235,48 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 </section>
 
 <!-- SLIDE 24: Act 4 요약 -->
+
+<!-- INTERACTIVE LAB: retrieval ranking with relevance, authority, freshness -->
+<section class="slide content-slide learning-lab" id="lab-knowledge" aria-labelledby="lab-knowledge-title">
+  <div class="slide-header">
+    <div><span class="lecture-tag">LIVE LAB</span><span class="section-title">지식 검색</span></div>
+    <span class="slide-number"></span>
+  </div>
+  <div class="slide-body">
+    <div class="learning-lab-shell" data-demo="knowledge">
+      <header>
+        <div class="lab-kicker">Interactive example · 02</div>
+        <h2 class="lab-title" id="lab-knowledge-title">검색어가 아니라 “쓸 수 있는 근거”를 찾습니다</h2>
+        <p class="lab-desc">사내 지식 6건에서 실제 답변에 인용할 문서를 골라봅니다. 필터를 바꾸면 순위와 선택 근거가 함께 변합니다.</p>
+      </header>
+      <div class="lab-grid">
+        <div class="lab-panel">
+          <label class="lab-control">질문
+            <input type="text" value="해외 출장 숙박비 한도는?" data-knowledge-query aria-label="지식 검색 질문">
+          </label>
+          <div class="lab-pills" aria-label="예시 질문">
+            <button type="button" class="lab-pill" data-query="해외 출장 숙박비 한도는?">출장비</button>
+            <button type="button" class="lab-pill" data-query="보안 사고는 누구에게 보고해?">보안 사고</button>
+            <button type="button" class="lab-pill" data-query="신규 입사자 첫 주 체크리스트">온보딩</button>
+          </div>
+          <div class="lab-controls" style="margin-top:12px">
+            <label class="lab-check"><input type="checkbox" data-filter="official" checked> 공식·검증 문서 우선</label>
+            <label class="lab-check"><input type="checkbox" data-filter="fresh" checked> 최신 문서 우선</label>
+            <label class="lab-check"><input type="checkbox" data-filter="multi" checked> 한국어↔영어 의미 확장</label>
+          </div>
+          <button type="button" class="lab-button primary" data-knowledge-search style="margin-top:10px">지식 검색 실행</button>
+        </div>
+        <div class="lab-panel">
+          <h3>추천 근거 <small>관련성 + 문서 권위 + 신선도로 재정렬</small></h3>
+          <div class="search-results" data-knowledge-results aria-live="polite"></div>
+          <p class="lab-status" data-knowledge-status></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>핵심: 좋은 검색은 비슷한 문서가 아니라 지금 인용해도 되는 근거를 찾습니다</span></div>
+</section>
+
 <section class="slide hero-slide" id="slide-23">
   <div class="slide-header">
     <div style="display:flex;align-items:center;gap:12px;">
@@ -1626,220 +1665,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
   </div>
 </section>
 
-<script>
-// ═══════════════════════════════════════════
-// NAVIGATION SYSTEM
-// ═══════════════════════════════════════════
 
-const slides = document.querySelectorAll('.slide');
-const dotsContainer = document.getElementById('navDots');
-const progressBar = document.getElementById('progressBar');
-let currentSlide = 0;
-let currentFocus = -1;
-
-// Create nav dots
-slides.forEach((_, i) => {
-  const dot = document.createElement('button');
-  dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
-  dot.setAttribute('aria-label', `슬라이드 ${i + 1}`);
-  dot.onclick = () => goSlide(i);
-  dotsContainer.appendChild(dot);
-});
-const dots = document.querySelectorAll('.nav-dot');
-
-function getFocusables(slide) {
-  return Array.from(slide.querySelectorAll('[data-focusable]'));
-}
-
-function updateSlide() {
-  currentSlide = Math.max(0, Math.min(currentSlide, slides.length - 1));
-  const pct = ((currentSlide + 1) / slides.length) * 100;
-  progressBar.style.width = pct + '%';
-  dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
-  slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
-  const focusables = getFocusables(slides[currentSlide]);
-  currentFocus = focusables.length > 0 ? 0 : -1;
-  updateFocus();
-}
-
-function goSlide(n) {
-  currentSlide = n;
-  window.scrollTo({ top: slides[n].offsetTop, left: 0 });
-  updateSlide();
-}
-
-function updateFocus() {
-  document.querySelectorAll('.in-focus').forEach(el => el.classList.remove('in-focus'));
-  const focusables = getFocusables(slides[currentSlide]);
-  if (currentFocus >= 0 && currentFocus < focusables.length) {
-    focusables[currentFocus].classList.add('in-focus');
-  }
-}
-
-function moveFocus(direction) {
-  const focusables = getFocusables(slides[currentSlide]);
-  if (focusables.length === 0) return;
-  currentFocus = Math.max(0, Math.min(currentFocus + direction, focusables.length - 1));
-  updateFocus();
-  const focused = focusables[currentFocus];
-  if (focused && focused.classList.contains('tab-btn')) {
-    const tabIdx = Array.from(focused.parentElement.querySelectorAll('.tab-btn')).indexOf(focused);
-    if (tabIdx >= 0) switchTab(tabIdx);
-  }
-}
-
-// ── Keyboard Navigation ──
-document.addEventListener('keydown', (e) => {
-  const key = e.key;
-  if (key === 'ArrowLeft' || key === 'ArrowRight') {
-    e.stopImmediatePropagation();
-    e.preventDefault();
-    moveFocus(key === 'ArrowLeft' ? -1 : 1);
-    return;
-  }
-  if (key === 'ArrowUp' || key === 'PageUp') {
-    e.stopImmediatePropagation();
-    e.preventDefault();
-    currentSlide = Math.max(0, currentSlide - 1);
-    window.scrollTo({ top: slides[currentSlide].offsetTop, left: 0 });
-    updateSlide();
-    return;
-  }
-  if (key === 'ArrowDown' || key === 'PageDown') {
-    e.stopImmediatePropagation();
-    e.preventDefault();
-    currentSlide = Math.min(currentSlide + 1, slides.length - 1);
-    window.scrollTo({ top: slides[currentSlide].offsetTop, left: 0 });
-    updateSlide();
-    return;
-  }
-  if (key === 'Enter') {
-    const focusables = getFocusables(slides[currentSlide]);
-    if (currentFocus >= 0 && currentFocus < focusables.length) {
-      e.preventDefault();
-      focusables[currentFocus].click();
-    }
-  }
-}, true);
-
-// Scroll spy
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      currentSlide = Array.from(slides).indexOf(entry.target);
-      updateSlide();
-    }
-  });
-}, { threshold: 0.5 });
-slides.forEach(s => observer.observe(s));
-
-// ── Tab Switching ──
-function switchTab(tabId) {
-  const activeSlide = slides[currentSlide];
-  activeSlide.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  activeSlide.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  activeSlide.querySelectorAll('.tab-btn')[tabId].classList.add('active');
-  activeSlide.querySelector(`.tab-panel[data-tab="${tabId}"]`).classList.add('active');
-}
-
-// 초기화
-updateSlide();
-
-// ── Mouse hover + click ──
-requestAnimationFrame(() => {
-  slides.forEach(slide => {
-    const focusables = slide.querySelectorAll('[data-focusable]');
-    let lastHoveredIdx = -1;
-
-    focusables.forEach((el, idx) => {
-      el.addEventListener('mouseenter', () => {
-        lastHoveredIdx = idx;
-        slide.classList.add('mouse-hovering');
-      });
-      el.addEventListener('mouseleave', () => {
-        slide.classList.remove('mouse-hovering');
-        if (lastHoveredIdx >= 0) {
-          currentFocus = lastHoveredIdx;
-        }
-        updateFocus();
-      });
-      el.addEventListener('click', (e) => {
-        currentFocus = idx;
-        updateFocus();
-        triggerClickGame(slide, e.clientX, e.clientY);
-      });
-    });
-
-    slide.addEventListener('click', (e) => {
-      triggerClickGame(slide, e.clientX, e.clientY);
-    });
-  });
-});
-
-// ── Click Game ──
-let clickCombo = 0;
-let comboTimer = null;
-const comboDisplay = document.getElementById('comboDisplay');
-const comboCount = document.getElementById('comboCount');
-
-function updateComboDisplay(count) {
-  comboCount.textContent = count;
-  comboDisplay.classList.toggle('visible', count > 1);
-}
-
-function triggerClickGame(slide, clientX, clientY) {
-  const rect = slide.getBoundingClientRect();
-  const x = clientX - rect.left;
-  const y = clientY - rect.top;
-
-  clickCombo++;
-  clearTimeout(comboTimer);
-  updateComboDisplay(clickCombo);
-  comboTimer = setTimeout(() => {
-    clickCombo = 0;
-    updateComboDisplay(0);
-  }, 2000);
-
-  const score = Math.min(1 + Math.floor(Math.random() * 5), 5 + Math.floor(clickCombo / 3));
-  const scoreEl = document.createElement('div');
-  scoreEl.className = 'click-game-score';
-  scoreEl.textContent = `+${score}`;
-  scoreEl.style.left = x + 'px';
-  scoreEl.style.top = (y - 20) + 'px';
-  if (clickCombo >= 5) {
-    scoreEl.style.fontSize = '32px';
-    scoreEl.style.color = '#8B5CF6';
-  }
-  slide.appendChild(scoreEl);
-  setTimeout(() => scoreEl.remove(), 1000);
-
-  const colors = ['#8B5CF6', '#7C3AED', '#6D28D9', '#A78BFA', '#C4B5FD', '#F5F3FF', '#DDD6FE', '#LDB5FA'];
-  for (let i = 0; i < 8; i++) {
-    const particle = document.createElement('div');
-    particle.className = 'click-game-particle';
-    const angle = (Math.PI * 2 * i) / 8 + (Math.random() - 0.5) * 0.5;
-    const distance = 40 + Math.random() * 60;
-    particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
-    particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
-    particle.style.left = x + 'px';
-    particle.style.top = y + 'px';
-    particle.style.background = colors[i % colors.length];
-    slide.appendChild(particle);
-    setTimeout(() => particle.remove(), 800);
-  }
-
-  const sparkles = ['✨', '⭐', '💫', '🔥'];
-  for (let i = 0; i < 3; i++) {
-    const sparkle = document.createElement('div');
-    sparkle.className = 'click-game-sparkle';
-    sparkle.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
-    sparkle.style.left = (x + (Math.random() - 0.5) * 80) + 'px';
-    sparkle.style.top = (y + (Math.random() - 0.5) * 80) + 'px';
-    sparkle.style.animationDelay = (i * 0.1) + 's';
-    slide.appendChild(sparkle);
-    setTimeout(() => sparkle.remove(), 600);
-  }
-}
-</script>
+<script src="./slides-v8.js" defer></script>
 </body>
 </html>

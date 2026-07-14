@@ -1,11 +1,22 @@
 #!/usr/bin/env python3
-"""Normalize v8 lecture decks to the Deck A/B Zone and interaction contract."""
+"""Normalize only verified external v8.1 source decks to the contract.
+
+This tool is intentionally one-shot: it refuses to alter a deck unless its
+current bytes exactly match the approved external source asset.
+"""
 from __future__ import annotations
 
+import argparse
+import hashlib
 import re
 from pathlib import Path
 
-DECK_DIR = Path(__file__).resolve().parents[1] / "docs/playground/lectures/v8"
+REPO_ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_DECK_DIR = REPO_ROOT / "docs/playground/lectures/v8.1"
+APPROVED_SOURCE_SHA256 = {
+    "deck-c-skill.html": "edf797bf7731a31f22146b8af1e87eca9507f0ff6b5e954765e3073d9aae1c8b",
+    "deck-d-workflow.html": "dc1ae368f4e3a9869eb22f601d80e3c7b6ac09620a75d419782625ff0428252f",
+}
 
 BASE_CSS = r'''
 /* ── Deck A/B shared contract: injected by normalize-lecture-deck-contract.py ── */
@@ -173,8 +184,19 @@ def section_replacer(config: dict, number: int, attrs: str, content: str) -> str
     attrs = re.sub(r'class="[^"]+"', f'class="{" ".join(classes)}"', attrs)
     return f'<section{attrs}>{content}</section>'
 
-def transform(name: str, config: dict) -> None:
-    path = DECK_DIR / name
+def verify_approved_source(path: Path) -> None:
+    """Reject absent, wrong-version, or already-normalized input before writes."""
+    expected = APPROVED_SOURCE_SHA256[path.name]
+    actual = hashlib.sha256(path.read_bytes()).hexdigest()
+    if actual != expected:
+        raise RuntimeError(
+            f"refusing to modify {path}: source SHA-256 {actual} does not match "
+            f"the approved external asset {expected}"
+        )
+
+
+def transform(deck_dir: Path, name: str, config: dict) -> None:
+    path = deck_dir / name
     text = path.read_text()
     # The injected stylesheet is intentionally identified by its first comment.
     # Accept whitespace after <style> so repeated runs stay idempotent.
@@ -196,6 +218,23 @@ def transform(name: str, config: dict) -> None:
     text = re.sub(r'(?:\sdata-focusable){2,}', ' data-focusable', text)
     path.write_text(text)
 
-for filename, config in MAP.items():
-    transform(filename, config)
-    print(f'normalized {filename}')
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--deck-dir", type=Path, default=DEFAULT_DECK_DIR,
+        help="directory containing the verified v8.1 external source decks",
+    )
+    args = parser.parse_args()
+    deck_dir = args.deck_dir.resolve()
+
+    # Verify every input before the first write: a failed guard leaves all decks
+    # untouched, rather than producing a partially normalized package.
+    for filename in MAP:
+        verify_approved_source(deck_dir / filename)
+    for filename, config in MAP.items():
+        transform(deck_dir, filename, config)
+        print(f'normalized {filename}')
+
+
+if __name__ == "__main__":
+    main()

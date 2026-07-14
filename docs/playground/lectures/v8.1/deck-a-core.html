@@ -515,15 +515,12 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
   .slide-header, .slide-body, .slide-footer { padding-left: 24px; padding-right: 24px; }
 }
 </style>
+<meta name="theme-color" content="#121827">
+<link rel="stylesheet" href="./slides-v8.css">
 </head>
-<body>
+<body class="deck-shell deck-a" data-deck="a">
 
 <!-- 콤보 표시 -->
-<div class="click-combo-display" id="comboDisplay">
-  <span class="combo-count" id="comboCount">0</span>
-  <span class="combo-label">COMBO</span>
-</div>
-
 <div class="progress-bar" id="progressBar"></div>
 <div class="nav-dots" id="navDots"></div>
 
@@ -857,8 +854,8 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
 
       <div class="tab-nav animate" data-delay="4">
-        <button class="tab-btn active" onclick="switchTab(0)" data-focusable>💭 세션 메모리</button>
-        <button class="tab-btn" onclick="switchTab(1)" data-focusable>📝 지속 메모리</button>
+        <button class="tab-btn active" data-focusable>💭 세션 메모리</button>
+        <button class="tab-btn" data-focusable>📝 지속 메모리</button>
       </div>
 
       <div class="tab-panel active" data-tab="0">
@@ -1155,9 +1152,9 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
       </div>
 
       <div class="tab-nav animate" data-delay="4">
-        <button class="tab-btn active" onclick="switchTab(0)" data-focusable>📋 트리거</button>
-        <button class="tab-btn" onclick="switchTab(1)" data-focusable">📝 단계</button>
-        <button class="tab-btn" onclick="switchTab(2)" data-focusable>⚠️ 주의사항</button>
+        <button class="tab-btn active" data-focusable>📋 트리거</button>
+        <button class="tab-btn" data-focusable>📝 단계</button>
+        <button class="tab-btn" data-focusable>⚠️ 주의사항</button>
       </div>
 
       <div class="tab-panel active" data-tab="0">
@@ -1377,6 +1374,46 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 </section>
 
 <!-- SLIDE 26: Before/After 종합 -->
+
+<!-- INTERACTIVE LAB: the four systems working on one realistic request -->
+<section class="slide content-slide learning-lab" id="lab-core" aria-labelledby="lab-core-title">
+  <div class="slide-header">
+    <div><span class="lecture-tag">LIVE LAB</span><span class="section-title">4가지 기능 통합</span></div>
+    <span class="slide-number"></span>
+  </div>
+  <div class="slide-body">
+    <div class="learning-lab-shell" data-demo="core">
+      <header>
+        <div class="lab-kicker">Interactive example · 01</div>
+        <h2 class="lab-title" id="lab-core-title">같은 요청도 어떤 시스템을 쓰느냐에 따라 달라집니다</h2>
+        <p class="lab-desc">“지난주 고객 장애를 바탕으로 금요일 회고 자료를 준비해줘.” 네 가지 기능을 켜고 끄며 답변의 완성도와 위험을 비교해 보세요.</p>
+      </header>
+      <div class="lab-grid">
+        <div class="lab-panel">
+          <h3>사용할 Agent 기능 <small>각 기능이 답변에 무엇을 더하는지 확인합니다</small></h3>
+          <div class="lab-controls">
+            <label class="lab-check"><input type="checkbox" data-system="memory"> 🧠 Memory — 선호 형식·이전 결정</label>
+            <label class="lab-check"><input type="checkbox" data-system="knowledge"> 📚 Knowledge — 장애 기록·최신 문서</label>
+            <label class="lab-check"><input type="checkbox" data-system="skill"> 🛠️ Skill — 회고 템플릿·검증 기준</label>
+            <label class="lab-check"><input type="checkbox" data-system="workflow"> 🔄 Workflow — 검토·승인·배포 순서</label>
+          </div>
+          <div class="lab-button-row">
+            <button type="button" class="lab-button primary" data-core-all>네 가지 모두 적용</button>
+            <button type="button" class="lab-button" data-core-reset>초기화</button>
+          </div>
+        </div>
+        <div class="lab-panel">
+          <div class="lab-score"><span>업무 준비도</span><strong data-core-value>0%</strong></div>
+          <div class="lab-meter" aria-hidden="true"><span data-core-meter></span></div>
+          <div class="demo-answer" data-core-answer aria-live="polite"></div>
+          <ul class="demo-risk-list" data-core-risks></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>핵심: 네 기능은 대체 관계가 아니라 품질을 완성하는 조합입니다</span></div>
+</section>
+
 <section class="slide content-slide" id="slide-25">
   <div class="slide-header">
     <div style="display:flex;align-items:center;gap:12px;">
@@ -1678,220 +1715,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
   </div>
 </section>
 
-<script>
-// ═══════════════════════════════════════════
-// NAVIGATION SYSTEM
-// ═══════════════════════════════════════════
 
-const slides = document.querySelectorAll('.slide');
-const dotsContainer = document.getElementById('navDots');
-const progressBar = document.getElementById('progressBar');
-let currentSlide = 0;
-let currentFocus = -1;
-
-// Create nav dots
-slides.forEach((_, i) => {
-  const dot = document.createElement('button');
-  dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
-  dot.setAttribute('aria-label', `슬라이드 ${i + 1}`);
-  dot.onclick = () => goSlide(i);
-  dotsContainer.appendChild(dot);
-});
-const dots = document.querySelectorAll('.nav-dot');
-
-function getFocusables(slide) {
-  return Array.from(slide.querySelectorAll('[data-focusable]'));
-}
-
-function updateSlide() {
-  currentSlide = Math.max(0, Math.min(currentSlide, slides.length - 1));
-  const pct = ((currentSlide + 1) / slides.length) * 100;
-  progressBar.style.width = pct + '%';
-  dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
-  slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
-  const focusables = getFocusables(slides[currentSlide]);
-  currentFocus = focusables.length > 0 ? 0 : -1;
-  updateFocus();
-}
-
-function goSlide(n) {
-  currentSlide = n;
-  window.scrollTo({ top: slides[n].offsetTop, left: 0 });
-  updateSlide();
-}
-
-function updateFocus() {
-  document.querySelectorAll('.in-focus').forEach(el => el.classList.remove('in-focus'));
-  const focusables = getFocusables(slides[currentSlide]);
-  if (currentFocus >= 0 && currentFocus < focusables.length) {
-    focusables[currentFocus].classList.add('in-focus');
-  }
-}
-
-function moveFocus(direction) {
-  const focusables = getFocusables(slides[currentSlide]);
-  if (focusables.length === 0) return;
-  currentFocus = Math.max(0, Math.min(currentFocus + direction, focusables.length - 1));
-  updateFocus();
-  const focused = focusables[currentFocus];
-  if (focused && focused.classList.contains('tab-btn')) {
-    const tabIdx = Array.from(focused.parentElement.querySelectorAll('.tab-btn')).indexOf(focused);
-    if (tabIdx >= 0) switchTab(tabIdx);
-  }
-}
-
-// ── Keyboard Navigation ──
-document.addEventListener('keydown', (e) => {
-  const key = e.key;
-  if (key === 'ArrowLeft' || key === 'ArrowRight') {
-    e.stopImmediatePropagation();
-    e.preventDefault();
-    moveFocus(key === 'ArrowLeft' ? -1 : 1);
-    return;
-  }
-  if (key === 'ArrowUp' || key === 'PageUp') {
-    e.stopImmediatePropagation();
-    e.preventDefault();
-    currentSlide = Math.max(0, currentSlide - 1);
-    window.scrollTo({ top: slides[currentSlide].offsetTop, left: 0 });
-    updateSlide();
-    return;
-  }
-  if (key === 'ArrowDown' || key === 'PageDown') {
-    e.stopImmediatePropagation();
-    e.preventDefault();
-    currentSlide = Math.min(currentSlide + 1, slides.length - 1);
-    window.scrollTo({ top: slides[currentSlide].offsetTop, left: 0 });
-    updateSlide();
-    return;
-  }
-  if (key === 'Enter') {
-    const focusables = getFocusables(slides[currentSlide]);
-    if (currentFocus >= 0 && currentFocus < focusables.length) {
-      e.preventDefault();
-      focusables[currentFocus].click();
-    }
-  }
-}, true);
-
-// Scroll spy
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      currentSlide = Array.from(slides).indexOf(entry.target);
-      updateSlide();
-    }
-  });
-}, { threshold: 0.5 });
-slides.forEach(s => observer.observe(s));
-
-// ── Tab Switching ──
-function switchTab(tabId) {
-  const activeSlide = slides[currentSlide];
-  activeSlide.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  activeSlide.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  activeSlide.querySelectorAll('.tab-btn')[tabId].classList.add('active');
-  activeSlide.querySelector(`.tab-panel[data-tab="${tabId}"]`).classList.add('active');
-}
-
-// 초기화
-updateSlide();
-
-// ── Mouse hover + click ──
-requestAnimationFrame(() => {
-  slides.forEach(slide => {
-    const focusables = slide.querySelectorAll('[data-focusable]');
-    let lastHoveredIdx = -1;
-
-    focusables.forEach((el, idx) => {
-      el.addEventListener('mouseenter', () => {
-        lastHoveredIdx = idx;
-        slide.classList.add('mouse-hovering');
-      });
-      el.addEventListener('mouseleave', () => {
-        slide.classList.remove('mouse-hovering');
-        if (lastHoveredIdx >= 0) {
-          currentFocus = lastHoveredIdx;
-        }
-        updateFocus();
-      });
-      el.addEventListener('click', (e) => {
-        currentFocus = idx;
-        updateFocus();
-        triggerClickGame(slide, e.clientX, e.clientY);
-      });
-    });
-
-    slide.addEventListener('click', (e) => {
-      triggerClickGame(slide, e.clientX, e.clientY);
-    });
-  });
-});
-
-// ── Click Game ──
-let clickCombo = 0;
-let comboTimer = null;
-const comboDisplay = document.getElementById('comboDisplay');
-const comboCount = document.getElementById('comboCount');
-
-function updateComboDisplay(count) {
-  comboCount.textContent = count;
-  comboDisplay.classList.toggle('visible', count > 1);
-}
-
-function triggerClickGame(slide, clientX, clientY) {
-  const rect = slide.getBoundingClientRect();
-  const x = clientX - rect.left;
-  const y = clientY - rect.top;
-
-  clickCombo++;
-  clearTimeout(comboTimer);
-  updateComboDisplay(clickCombo);
-  comboTimer = setTimeout(() => {
-    clickCombo = 0;
-    updateComboDisplay(0);
-  }, 2000);
-
-  const score = Math.min(1 + Math.floor(Math.random() * 5), 5 + Math.floor(clickCombo / 3));
-  const scoreEl = document.createElement('div');
-  scoreEl.className = 'click-game-score';
-  scoreEl.textContent = `+${score}`;
-  scoreEl.style.left = x + 'px';
-  scoreEl.style.top = (y - 20) + 'px';
-  if (clickCombo >= 5) {
-    scoreEl.style.fontSize = '32px';
-    scoreEl.style.color = '#e67e22';
-  }
-  slide.appendChild(scoreEl);
-  setTimeout(() => scoreEl.remove(), 1000);
-
-  const colors = ['#f59e0b', '#d97706', '#b45309', '#fbbf24', '#fcd34d', '#fff7ed', '#fed7aa', '#fdba74'];
-  for (let i = 0; i < 8; i++) {
-    const particle = document.createElement('div');
-    particle.className = 'click-game-particle';
-    const angle = (Math.PI * 2 * i) / 8 + (Math.random() - 0.5) * 0.5;
-    const distance = 40 + Math.random() * 60;
-    particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
-    particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
-    particle.style.left = x + 'px';
-    particle.style.top = y + 'px';
-    particle.style.background = colors[i % colors.length];
-    slide.appendChild(particle);
-    setTimeout(() => particle.remove(), 800);
-  }
-
-  const sparkles = ['✨', '⭐', '💫', '🔥'];
-  for (let i = 0; i < 3; i++) {
-    const sparkle = document.createElement('div');
-    sparkle.className = 'click-game-sparkle';
-    sparkle.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
-    sparkle.style.left = (x + (Math.random() - 0.5) * 80) + 'px';
-    sparkle.style.top = (y + (Math.random() - 0.5) * 80) + 'px';
-    sparkle.style.animationDelay = (i * 0.1) + 's';
-    slide.appendChild(sparkle);
-    setTimeout(() => sparkle.remove(), 600);
-  }
-}
-</script>
+<script src="./slides-v8.js" defer></script>
 </body>
 </html>

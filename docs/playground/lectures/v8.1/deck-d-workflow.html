@@ -589,16 +589,13 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 @keyframes particle-fly { to { transform:translate(var(--tx),var(--ty)) scale(0); opacity:0; } }
 @keyframes sparkle-twinkle { to { transform:translateY(-32px) rotate(180deg) scale(0); opacity:0; } }
 @media (max-width:768px) { .slide-header,.slide-body,.slide-footer { padding-left:24px; padding-right:24px; } .slide-footer { flex-basis:44px; } }
-</style></head>
-<body>
+</style><meta name="theme-color" content="#121827">
+<link rel="stylesheet" href="./slides-v8.css">
+</head>
+<body class="deck-shell deck-d" data-deck="d">
 
 <div class="progress-bar" id="progressBar"></div>
-<div class="nav-dots" id="navDots" aria-label="슬라이드 탐색"></div><div class="click-combo-display" id="comboDisplay"><span id="comboCount">0</span> COMBO</div>
-<div class="nav-arrow">
-  <div class="nav-btn" onclick="changeSlide(-1)">↑</div>
-  <div class="nav-btn" onclick="changeSlide(1)">↓</div>
-</div>
-<!-- ═══════════════════════════════════════════
+<div class="nav-dots" id="navDots" aria-label="슬라이드 탐색"></div><!-- ═══════════════════════════════════════════
      데크 D: Workflow 심화 (46페이지)
      ═══════════════════════════════════════════ -->
 
@@ -869,6 +866,40 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
 </section>
 
 <!-- SLIDE 11: Step 1 Request -->
+
+<!-- INTERACTIVE LAB: guarded state transitions and rollback -->
+<section class="slide content-slide learning-lab" id="lab-workflow" aria-labelledby="lab-workflow-title">
+  <div class="slide-header">
+    <div><span class="lecture-tag">LIVE LAB</span><span class="section-title">상태 머신</span></div>
+    <span class="slide-number"></span>
+  </div>
+  <div class="slide-body">
+    <div class="learning-lab-shell" data-demo="workflow">
+      <header>
+        <div class="lab-kicker">Interactive example · 04</div>
+        <h2 class="lab-title" id="lab-workflow-title">승인 게이트와 롤백을 직접 통과해 보세요</h2>
+        <p class="lab-desc">“고객 포털 결제 모듈을 교체한다”는 고위험 작업입니다. 다음 단계로 진행하다 Approval에서 멈추고, 실행 중 실패도 만들어 보세요.</p>
+      </header>
+      <div class="lab-grid workflow-layout">
+        <div class="lab-panel">
+          <ol class="workflow-stages" data-workflow-stages aria-label="워크플로우 단계"></ol>
+        </div>
+        <div class="lab-panel">
+          <div class="workflow-state" data-workflow-state></div>
+          <p class="workflow-note" data-workflow-note aria-live="polite"></p>
+          <div class="lab-button-row" style="margin-top:10px">
+            <button type="button" class="lab-button primary" data-workflow-next>다음 단계</button>
+            <button type="button" class="lab-button primary" data-workflow-approve hidden>사용자 승인</button>
+            <button type="button" class="lab-button" data-workflow-fail hidden>실패 발생</button>
+            <button type="button" class="lab-button" data-workflow-reset>처음부터</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>핵심: Workflow는 단계 목록이 아니라 잘못된 전이를 막는 안전장치입니다</span></div>
+</section>
+
 <section class="slide" id="slide-10">
   <div class="slide-header">
     <span class="lecture-tag" style="background:var(--workflow);">Step 1</span>
@@ -1833,83 +1864,7 @@ body { font-family: var(--font); background: var(--bg); color: var(--text); }
   <div class="slide-footer"><span class="animate" data-delay="5">Workflow 심화 · 감사합니다</span></div>
 </section>
 
-<script>
-/* Deck A/B shared navigation + focus + click interaction contract. */
-const slides = Array.from(document.querySelectorAll('.slide'));
-const navDots = document.getElementById('navDots');
-const progressBar = document.getElementById('progressBar');
-let currentSlide = 0;
-let currentFocus = -1;
-let clickCombo = 0;
-let comboTimer = null;
 
-slides.forEach((slide, index) => {
-  const dot = document.createElement('button');
-  dot.className = 'nav-dot' + (index === 0 ? ' active' : '');
-  dot.type = 'button'; dot.setAttribute('aria-label', `슬라이드 ${index + 1}`);
-  dot.addEventListener('click', () => goSlide(index));
-  navDots.appendChild(dot);
-});
-const dots = Array.from(document.querySelectorAll('.nav-dot'));
-const focusables = slide => Array.from(slide.querySelectorAll('[data-focusable]'));
-function updateFocus() {
-  document.querySelectorAll('.in-focus').forEach(el => el.classList.remove('in-focus'));
-  const items = focusables(slides[currentSlide]);
-  if (currentFocus >= 0 && currentFocus < items.length) items[currentFocus].classList.add('in-focus');
-}
-function updateSlide() {
-  currentSlide = Math.max(0, Math.min(currentSlide, slides.length - 1));
-  progressBar.style.width = `${((currentSlide + 1) / slides.length) * 100}%`;
-  slides.forEach((slide, index) => slide.classList.toggle('active', index === currentSlide));
-  dots.forEach((dot, index) => dot.classList.toggle('active', index === currentSlide));
-  currentFocus = focusables(slides[currentSlide]).length ? 0 : -1;
-  updateFocus();
-}
-function goSlide(index) {
-  currentSlide = index;
-  window.scrollTo({top: slides[index].offsetTop, behavior:'auto'});
-  updateSlide();
-}
-function moveFocus(direction) {
-  const items = focusables(slides[currentSlide]);
-  if (!items.length) return;
-  currentFocus = Math.max(0, Math.min(currentFocus + direction, items.length - 1));
-  updateFocus();
-  const focused = items[currentFocus];
-  if (focused.classList.contains('tab-btn')) switchTab(focused);
-}
-function switchTab(button) {
-  const slide = button.closest('.slide');
-  const key = button.dataset.tab;
-  slide.querySelectorAll('.tab-btn').forEach(item => item.classList.toggle('active', item === button));
-  slide.querySelectorAll('.tab-panel').forEach(panel => panel.classList.toggle('active', panel.dataset.tab === key));
-}
-document.addEventListener('keydown', event => {
-  const key = event.key;
-  if (key === 'ArrowLeft' || key === 'ArrowRight') { event.stopImmediatePropagation(); event.preventDefault(); moveFocus(key === 'ArrowLeft' ? -1 : 1); }
-  if (key === 'ArrowUp' || key === 'PageUp') { event.stopImmediatePropagation(); event.preventDefault(); goSlide(Math.max(0,currentSlide-1)); }
-  if (key === 'ArrowDown' || key === 'PageDown') { event.stopImmediatePropagation(); event.preventDefault(); goSlide(Math.min(slides.length-1,currentSlide+1)); }
-}, true);
-const slideObserver = new IntersectionObserver(entries => entries.forEach(entry => {
-  if (entry.isIntersecting) { currentSlide = slides.indexOf(entry.target); updateSlide(); }
-}), {threshold:.5});
-slides.forEach(slide => slideObserver.observe(slide));
-function triggerClickGame(slide, x, y) {
-  const rect = slide.getBoundingClientRect(), left = x - rect.left, top = y - rect.top;
-  clickCombo++; clearTimeout(comboTimer);
-  const display = document.getElementById('comboDisplay');
-  document.getElementById('comboCount').textContent = clickCombo;
-  display.classList.toggle('visible', clickCombo > 1);
-  comboTimer = setTimeout(() => { clickCombo=0; display.classList.remove('visible'); }, 2000);
-  const score = document.createElement('div'); score.className='click-game-score'; score.textContent=`+${Math.min(clickCombo,5)}`; score.style.left=`${left}px`; score.style.top=`${top}px`; slide.appendChild(score); setTimeout(()=>score.remove(),1000);
-  for(let i=0;i<8;i++) { const node=document.createElement('div'); node.className='click-game-particle'; const a=(Math.PI*2*i)/8; node.style.left=`${left}px`; node.style.top=`${top}px`; node.style.background='var(--accent)'; node.style.setProperty('--tx',`${Math.cos(a)*(36+Math.random()*42)}px`); node.style.setProperty('--ty',`${Math.sin(a)*(36+Math.random()*42)}px`); slide.appendChild(node); setTimeout(()=>node.remove(),800); }
-}
-slides.forEach(slide => {
-  const items = focusables(slide); let lastHovered = -1;
-  items.forEach((item,index) => { item.addEventListener('mouseenter',()=>{lastHovered=index;slide.classList.add('mouse-hovering');}); item.addEventListener('mouseleave',()=>{slide.classList.remove('mouse-hovering'); if(lastHovered>=0){currentFocus=lastHovered;updateFocus();}}); item.addEventListener('click', event => { if(item.classList.contains('tab-btn')) switchTab(item); triggerClickGame(slide,event.clientX,event.clientY); }); });
-  slide.addEventListener('click', event => { if (!event.target.closest('[data-focusable]')) triggerClickGame(slide,event.clientX,event.clientY); });
-});
-updateSlide();
-</script>
+<script src="./slides-v8.js" defer></script>
 </body>
 </html>
