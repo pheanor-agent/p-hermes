@@ -1863,3 +1863,108 @@ body.deck-shell {
   .deck-shell #slide-0 .hero-series { font-size: 10px !important; }
   .causal-output { grid-template-columns: 1fr; }
 }
+
+/* ============================================================
+   v8.2 C/D reference parity — A/B content geometry
+   C/D attach `content-slide` to the body itself, while A/B attach
+   it to the section. Normalize both structures to the same stack.
+   ============================================================ */
+
+.deck-shell:is(.deck-c, .deck-d) .slide-body.content-slide {
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: clamp(18px, 2.5vh, 26px) !important;
+  text-align: center !important;
+}
+
+.deck-shell:is(.deck-c, .deck-d) .slide-body.content-slide > .animate:first-child:has(.content-title) {
+  flex: 0 0 auto;
+  width: min(100%, 1000px) !important;
+  max-width: 1000px !important;
+  text-align: center !important;
+}
+
+.deck-shell:is(.deck-c, .deck-d) .slide-body.content-slide .content-title {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto !important;
+  text-align: center !important;
+  line-height: 1.18 !important;
+  text-wrap: balance;
+}
+
+.deck-shell:is(.deck-c, .deck-d) .slide-body.content-slide > :is(
+  .split-screen,
+  .feature-grid,
+  .tri-grid,
+  .flow-diagram,
+  .domain-grid,
+  .step-detail,
+  .step-list,
+  .process-bar,
+  .timeline,
+  .vs-container,
+  .integration-diagram,
+  .connection-diagram,
+  .scenario-grid,
+  .metaphor-card,
+  .highlight-block
+) {
+  width: min(100%, 1040px) !important;
+  max-width: 1040px !important;
+  margin-inline: auto !important;
+}
+
+.deck-shell:is(.deck-c, .deck-d) .slide-body.content-slide > .animate:not(:first-child) {
+  margin-inline: auto;
+}
+
+.deck-shell .qa-slide {
+  background:
+    radial-gradient(circle at 16% 18%, color-mix(in srgb, var(--deck-accent), transparent 70%), transparent 32%),
+    radial-gradient(circle at 82% 76%, rgba(255,255,255,.08), transparent 27%),
+    #121827 !important;
+  color: #f8fafc !important;
+}
+
+.deck-shell .qa-slide::before {
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px) !important;
+  background-size: 34px 34px !important;
+  opacity: 1 !important;
+}
+
+.deck-shell .qa-slide :is(.slide-header, .slide-footer) {
+  border-color: rgba(255,255,255,.11) !important;
+  background: transparent !important;
+}
+
+.deck-shell .qa-slide .slide-body {
+  flex-direction: column !important;
+  gap: 22px !important;
+  text-align: center !important;
+}
+
+.deck-shell .qa-slide .qa-title {
+  margin: 0;
+  color: #f8fafc;
+  font-size: clamp(58px, 7vw, 88px) !important;
+  font-weight: 850;
+  line-height: 1 !important;
+  letter-spacing: -.055em;
+}
+
+.deck-shell .qa-slide .qa-subtitle {
+  margin: 0;
+  color: rgba(248,250,252,.68) !important;
+  font-size: 18px !important;
+  line-height: 1.55 !important;
+}
+
+@media (max-width: 760px) {
+  .deck-shell:is(.deck-c, .deck-d) .slide-body.content-slide {
+    gap: 14px !important;
+  }
+}

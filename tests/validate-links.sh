@@ -69,22 +69,28 @@ if [[ -d "$PLAYGROUND_DIR" ]]; then
       echo "⚠️  PLACEHOLDER: $f -> # (link not configured)"
     done < <(grep -oP 'href="#"' "$f" 2>/dev/null || true)
 
-    # HTML href="./..." 링크 검증
+    # [R1a] HTML href="./..." 링크 검증 (쿼리스트링 제거)
     while IFS= read -r link; do
       [[ -z "$link" ]] && continue
       target="${link#href=\"}"
-      full="$(dirname "$f")/$target"
+      # 쿼리스트링(?v=8.2 등) 제거 후 파일 존재 확인
+      target_noqs="${target%%\?*}"
+      full="$(dirname "$f")/$target_noqs"
       [[ -e "$full" ]] || { echo "BROKEN: $f -> $target"; ERRORS=$((ERRORS+1)); }
-    done < <(grep -oP 'href="\./[^\"]+' "$f" 2>/dev/null || true)
+    done < <(grep -oP 'href="\./[^\\"]+' "$f" 2>/dev/null || true)
 
     # [R2] HTML 상대 경로 링크 검증 (lectures/, archive/, ops/ 등) (JOB-2064)
+    # NOTE: ./ 접두사 링크는 [R1a]에서 처리 (쿼리스트링 포함) — R2에서 제외
     while IFS= read -r link; do
       [[ -z "$link" ]] && continue
       # Remove href=" prefix and trailing quote
       target=$(echo "$link" | sed 's/^href="//;s/"$//')
-      # CSS/JS/font/CDN 링크 제외
-      [[ "$target" == *.css ]] && continue
-      [[ "$target" == *.js ]] && continue
+      # ./ 로 시작하는 링크는 R1a에서 처리
+      [[ "$target" == ./* ]] && continue
+      # CSS/JS/font/CDN 링크 제외 (쿼리스트링 제거 후 확인)
+      target_noqs="${target%%\?*}"
+      [[ "$target_noqs" == *.css ]] && continue
+      [[ "$target_noqs" == *.js ]] && continue
       [[ "$target" == https* ]] && continue
       [[ "$target" == http* ]] && continue
       full="$(dirname "$f")/$target"
