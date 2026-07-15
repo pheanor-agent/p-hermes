@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데크 A: Hermes Agent — 4가지 핵심 기능</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --memory: #06B6D4; --memory-bg: #ECFEFF; --memory-border: #A5F3FC;
+  --knowledge: #8B5CF6; --knowledge-bg: #F5F3FF; --knowledge-border: #DDD6FE;
+  --skill: #F97316; --skill-bg: #FFF7ED; --skill-border: #FED7AA;
+  --workflow: #22C55E; --workflow-bg: #F0FDF4; --workflow-border: #BBF7D0;
+  --bg: #FAFAFA; --bg-dark: #0F0F1A; --card: #FFFFFF;
+  --text: #111827; --text-dim: #6B7280; --text-light: #F9FAFB;
+  --accent: #F59E0B; --highlight: #FEF3C7; --border: #E5E7EB;
+  --danger: #EF4444; --danger-bg: #FEF2F2;
+  --success: #22C55E; --success-bg: #F0FDF4;
+  --font: 'Inter', 'Noto Sans KR', sans-serif;
+}
+
+html { scroll-snap-type: y mandatory; overflow-y: scroll; }
+.compare-content .compare-col {
+  width: 100%;
+}
+.compare-content .compare-col .feature-item {
+  width: 100%;
+}
+.compare-content .compare-col .feature-item > div:last-child {
+  flex: 1;
+  min-width: 0;
+}
+.compare-content .compare-col .feature-item p {
+  white-space: normal;
+  word-break: keep-all;
+}
+body { font-family: var(--font); background: var(--bg); color: var(--text); }
+
+/* ── Progress Bar ── */
+.progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px; z-index: 1000;
+  background: linear-gradient(90deg, var(--memory), var(--knowledge), var(--skill), var(--workflow));
+  transition: width 0.4s ease;
+}
+
+/* ── Slide Base ── */
+.slide {
+  min-height: 100vh; width: 100%;
+  scroll-snap-align: start;
+  display: flex; flex-direction: column;
+  position: relative; overflow: hidden;
+}
+
+/* ── Zone-A: Header (80px) ── */
+.slide-header {
+  flex: 0 0 80px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px; z-index: 10;
+}
+.slide-header .lecture-tag {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 4px 12px; border-radius: 99px;
+}
+.slide-header .section-title { font-size: 18px; font-weight: 700; }
+.slide-header .slide-number { font-size: 14px; color: var(--text-dim); font-weight: 500; }
+
+/* ── Zone-B: Body ── */
+.slide-body {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  padding: 32px 48px; position: relative;
+}
+
+/* ── Zone-C: Footer (48px) ── */
+.slide-footer {
+  flex: 0 0 48px; display: flex; align-items: center; justify-content: center;
+  padding: 0 48px;
+}
+.slide-footer span { font-size: 13px; color: var(--text-dim); font-weight: 500; }
+
+/* ── Navigation Dots ── */
+.nav-dots {
+  position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 8px; z-index: 100;
+}
+.nav-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 2px solid var(--border); background: transparent;
+  cursor: pointer; transition: all 0.3s ease;
+}
+.nav-dot.active { background: var(--accent); border-color: var(--accent); transform: scale(1.4); }
+
+/* ═══════════════════════════════════════════
+   ANIMATION SYSTEM
+   ═══════════════════════════════════════════ */
+
+/* 기본: 애니메이션 대상은 처음에 보이지 않음 */
+.animate {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+/* 슬라이드가 활성화되면 애니메이션 적용 */
+.slide.active .animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 순차적 등장 (delay 기반) */
+.slide.active .animate[data-delay="1"] { transition-delay: 0.1s; }
+.slide.active .animate[data-delay="2"] { transition-delay: 0.2s; }
+.slide.active .animate[data-delay="3"] { transition-delay: 0.3s; }
+.slide.active .animate[data-delay="4"] { transition-delay: 0.4s; }
+.slide.active .animate[data-delay="5"] { transition-delay: 0.5s; }
+.slide.active .animate[data-delay="6"] { transition-delay: 0.6s; }
+.slide.active .animate[data-delay="7"] { transition-delay: 0.7s; }
+.slide.active .animate[data-delay="8"] { transition-delay: 0.8s; }
+.slide.active .animate[data-delay="9"] { transition-delay: 0.9s; }
+.slide.active .animate[data-delay="10"] { transition-delay: 1.0s; }
+
+/* 애니메이션 변형: Scale-in */
+.animate[data-anim="scale"] {
+  transform: scale(0.9);
+}
+.slide.active .animate[data-anim="scale"] {
+  transform: scale(1);
+}
+
+/* 애니메이션 변형: Fade-only (transform 없음) */
+.animate[data-anim="fade"] {
+  transform: none;
+}
+
+/* 애니메이션 변형: Slide-left */
+.animate[data-anim="slide-left"] {
+  transform: translateX(-24px);
+}
+.slide.active .animate[data-anim="slide-left"] {
+  transform: translateX(0);
+}
+
+/* 애니메이션 변형: Slide-right */
+.animate[data-anim="slide-right"] {
+  transform: translateX(24px);
+}
+.slide.active .animate[data-anim="slide-right"] {
+  transform: translateX(0);
+}
+
+/* 강조 효과: Pulse (중요 텍스트용) */
+@keyframes pulse-highlight {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+.pulse {
+  animation: pulse-highlight 2s ease-in-out infinite;
+}
+
+/* Hero 아이콘 Float 애니메이션 */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* ═══════════════════════════════════════════
+   HERO SLIDE
+   ═══════════════════════════════════════════ */
+.hero-slide { background: var(--bg-dark); color: var(--text-light); }
+.hero-slide .slide-header { background: transparent; }
+.hero-slide .lecture-tag { background: rgba(245,158,11,0.2); color: var(--accent); }
+.hero-slide .section-title { color: var(--text-light); }
+.hero-slide .slide-number { color: rgba(255,255,255,0.4); }
+.hero-slide .slide-footer span { color: rgba(255,255,255,0.4); }
+
+.hero-content {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  max-width: 800px;
+}
+.hero-icon {
+  font-size: 120px; margin-bottom: 32px;
+  animation: float 3s ease-in-out infinite;
+}
+.hero-title {
+  font-size: clamp(40px, 6vw, 72px); font-weight: 900;
+  line-height: 1.1; letter-spacing: -0.03em;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero-subtitle {
+  font-size: clamp(18px, 2.5vw, 24px); font-weight: 400;
+  color: rgba(255,255,255,0.6); max-width: 600px; line-height: 1.6;
+  white-space: normal;
+}
+.hero-divider {
+  width: 60px; height: 3px; border-radius: 2px;
+  background: var(--accent); margin: 32px 0;
+}
+
+/* ═══════════════════════════════════════════
+   INTRO SLIDE (4 Core Functions)
+   ═══════════════════════════════════════════ */
+.intro-slide .slide-header { background: var(--card); border-bottom: 1px solid var(--border); }
+.intro-slide .lecture-tag { background: var(--highlight); color: var(--accent); }
+
+.intro-content {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  max-width: 1000px; width: 100%;
+}
+.intro-heading {
+  font-size: clamp(32px, 4vw, 48px); font-weight: 900;
+  letter-spacing: -0.02em; margin-bottom: 12px;
+}
+.intro-desc {
+  font-size: 18px; color: var(--text-dim); margin-bottom: 48px; max-width: 600px;
+  line-height: 1.6; white-space: normal;
+}
+.card-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; width: 100%;
+}
+.concept-card {
+  background: var(--card); border-radius: 20px; padding: 32px 24px;
+  border: 1px solid var(--border); text-align: center;
+  transition: all 0.3s ease; position: relative; overflow: hidden;
+}
+.concept-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+}
+.concept-card.memory::before  { background: var(--memory); }
+.concept-card.knowledge::before { background: var(--knowledge); }
+.concept-card.skill::before    { background: var(--skill); }
+.concept-card.workflow::before { background: var(--workflow); }
+.concept-card:hover,
+.concept-card[data-focusable].in-focus {
+  transform: translateY(-4px);
+  box-shadow: 0 0 0 3px var(--accent), 0 12px 32px rgba(0,0,0,0.08);
+  border-color: var(--accent);
+}
+
+.card-icon { font-size: 48px; margin-bottom: 16px; display: block; }
+.card-title { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+.card-keyword { font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+.card-desc { font-size: 15px; color: var(--text-dim); line-height: 1.5; white-space: normal; }
+
+/* ═══════════════════════════════════════════
+   COMPARE SLIDE (VS)
+   ═══════════════════════════════════════════ */
+.compare-slide .slide-header { background: var(--card); border-bottom: 1px solid var(--border); }
+.compare-slide .lecture-tag { background: var(--memory-bg); color: var(--memory); }
+.compare-slide .concept-tag {
+  font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 99px;
+  background: var(--knowledge-bg); color: var(--knowledge); margin-left: 8px;
+}
+
+.compare-content {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 32px;
+  max-width: 1100px; width: 100%; align-items: center;
+}
+.compare-col { text-align: center; }
+.compare-icon { font-size: 64px; margin-bottom: 16px; }
+.compare-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; padding: 4px 12px; border-radius: 99px; display: inline-block; margin-bottom: 16px;
+}
+.compare-label.memory { background: var(--memory-bg); color: var(--memory); }
+.compare-label.knowledge { background: var(--knowledge-bg); color: var(--knowledge); }
+.compare-title { font-size: 28px; font-weight: 900; margin-bottom: 8px; }
+.compare-what { font-size: 16px; color: var(--text-dim); margin-bottom: 24px; font-weight: 500; }
+
+.compare-vs {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: var(--bg); border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 800; color: var(--text-dim);
+  transition: all 0.3s ease;
+}
+.slide.active .compare-vs {
+  animation: pulse-highlight 2s ease-in-out infinite;
+}
+
+.feature-list {
+  display: flex; flex-direction: column; gap: 12px; text-align: left;
+}
+.feature-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 16px; border-radius: 12px; background: var(--card); border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+.feature-item:hover,
+.feature-item[data-focusable].in-focus {
+  border-color: var(--accent);
+  transform: translateX(4px);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.feature-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+.feature-text { font-size: 15px; line-height: 1.5; white-space: normal; }
+.feature-text strong { font-weight: 700; }
+
+/* ═══════════════════════════════════════════
+   DEEP SLIDE (Tabs)
+   ═══════════════════════════════════════════ */
+.deep-slide .slide-header { background: var(--card); border-bottom: 1px solid var(--border); }
+.deep-slide .lecture-tag { background: var(--memory-bg); color: var(--memory); }
+
+.deep-content {
+  display: flex; flex-direction: column; gap: 32px;
+  max-width: 900px; width: 100%;
+}
+.deep-header {
+  display: flex; align-items: center; gap: 24px; text-align: left;
+}
+.deep-icon { font-size: 56px; }
+.deep-title { font-size: 36px; font-weight: 900; letter-spacing: -0.02em; }
+.deep-subtitle { font-size: 16px; color: var(--text-dim); margin-top: 4px; line-height: 1.5; white-space: normal; }
+
+.tab-nav {
+  display: flex; gap: 8px; border-bottom: 2px solid var(--border); padding-bottom: 0;
+}
+.tab-btn {
+  padding: 12px 24px; font-size: 16px; font-weight: 600;
+  background: none; border: none; border-bottom: 3px solid transparent;
+  color: var(--text-dim); cursor: pointer; transition: all 0.2s ease;
+  font-family: var(--font); margin-bottom: -2px;
+}
+.tab-btn:hover,
+.tab-btn[data-focusable].in-focus {
+  color: var(--memory);
+  border-bottom-color: var(--memory);
+  background: var(--memory-bg);
+}
+.tab-btn.active {
+  color: var(--memory);
+  border-bottom-color: var(--memory);
+  font-weight: 700;
+}
+
+.tab-panel { display: none; animation: fadeIn 0.4s ease; }
+.tab-panel.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.metaphor-card {
+  display: flex; gap: 24px; padding: 32px;
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+  transition: all 0.3s ease;
+}
+.metaphor-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
+}
+.metaphor-icon { font-size: 48px; flex-shrink: 0; width: 80px; height: 80px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--memory-bg); border-radius: 16px;
+}
+.metaphor-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+.metaphor-text { font-size: 16px; color: var(--text-dim); line-height: 1.7; white-space: normal; }
+
+.callout {
+  display: flex; gap: 16px; padding: 20px 24px;
+  background: var(--memory-bg); border-left: 4px solid var(--memory); border-radius: 0 12px 12px 0;
+  transition: all 0.3s ease;
+}
+.callout:hover {
+  background: var(--memory-border);
+  transform: translateX(4px);
+}
+.callout-icon { font-size: 24px; }
+.callout-text { font-size: 15px; line-height: 1.6; white-space: normal; }
+.callout-text strong { color: var(--memory); }
+
+/* ═══════════════════════════════════════════
+   CONTENT SLIDE (General)
+   ═══════════════════════════════════════════ */
+.content-slide .slide-header { background: var(--card); border-bottom: 1px solid var(--border); }
+.content-slide .lecture-tag { background: var(--highlight); color: var(--accent); }
+
+.content-wrapper {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  max-width: 900px; width: 100%; gap: 32px;
+}
+.content-title {
+  font-size: clamp(28px, 3.5vw, 42px); font-weight: 900;
+  letter-spacing: -0.02em; line-height: 1.2;
+}
+.content-desc {
+  font-size: 18px; color: var(--text-dim); max-width: 700px;
+  line-height: 1.6; white-space: normal;
+}
+
+/* ── Focus / Mouse ── */
+[data-focusable] {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  outline: none;
+}
+[data-focusable].in-focus {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.15);
+}
+.slide.mouse-hovering .in-focus { opacity: 0; pointer-events: none; }
+[data-focusable]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+/* ── Click Game Effects ── */
+.click-game-score {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1001;
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--accent);
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.8), 0 2px 4px rgba(0,0,0,0.3);
+  animation: score-float 1s ease-out forwards;
+  transform: translate(-50%, -50%);
+}
+@keyframes score-float {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+  30% { transform: translate(-50%, calc(-50% - 30px)) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, calc(-50% - 80px)) scale(1); opacity: 0; }
+}
+
+.click-game-particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1000;
+  animation: particle-fly 0.8s ease-out forwards;
+}
+@keyframes particle-fly {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+
+.click-game-sparkle {
+  position: absolute;
+  pointer-events: none;
+  z-index: 999;
+  font-size: 16px;
+  animation: sparkle-twinkle 0.6s ease-out forwards;
+}
+@keyframes sparkle-twinkle {
+  0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(1.5) rotate(180deg); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(0) rotate(360deg); opacity: 0; }
+}
+
+.click-combo-display {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 9999;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.95), rgba(217, 115, 13, 0.95));
+  color: white;
+  font-size: 18px;
+  font-weight: 900;
+  padding: 8px 20px;
+  border-radius: 99px;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.3s, transform 0.3s;
+}
+.click-combo-display.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+.click-combo-display .combo-count {
+  font-size: 28px;
+  display: block;
+  line-height: 1;
+}
+.click-combo-display .combo-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.9;
+}
+
+/* ── Mouse hover: .in-focus 효과 일시 숨김 ── */
+.slide.mouse-hovering [data-focusable].in-focus {
+  box-shadow: none !important;
+  border-color: var(--border) !important;
+  transform: none !important;
+  background: none !important;
+  color: var(--text-dim) !important;
+}
+.slide.mouse-hovering [data-focusable]:hover {
+  box-shadow: 0 0 0 3px var(--accent), 0 12px 32px rgba(0,0,0,0.08);
+  border-color: var(--accent);
+  transform: translateY(-4px);
+  color: var(--text);
+}
+.slide.mouse-hovering .tab-btn[data-focusable]:hover {
+  color: var(--memory);
+  border-bottom-color: var(--memory);
+  background: var(--memory-bg);
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .card-grid { grid-template-columns: repeat(2, 1fr); }
+  .compare-content { grid-template-columns: 1fr; gap: 24px; }
+  .compare-vs { margin: 0 auto; }
+}
+@media (max-width: 640px) {
+  .card-grid { grid-template-columns: 1fr; }
+  .slide-header, .slide-body, .slide-footer { padding-left: 24px; padding-right: 24px; }
+}
+</style>
+<meta name="theme-color" content="#121827">
+<link rel="stylesheet" href="./slides-v8.2.css">
+</head>
+<body class="deck-shell deck-a" data-deck="a">
+
+<!-- 콤보 표시 -->
+<div class="progress-bar" id="progressBar"></div>
+<div class="nav-dots" id="navDots"></div>
+
+<!-- ═══════════════════════════════════════════
+     데크 A: 4가지 핵심 기능 종합 (34페이지)
+     ═══════════════════════════════════════════ -->
+
+<!-- SLIDE 1: Hero -->
+<section class="slide hero-slide active" id="slide-0">
+  <div class="slide-header">
+    <div class="header-context"><span class="lecture-tag">Deck A</span><span class="section-title">Core Overview</span></div>
+    <span class="slide-number">01 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="hero-content">
+      <div class="hero-index" aria-hidden="true">A</div>
+      <p class="hero-series">HERMES AGENT LAB · CORE</p>
+      <h1 class="hero-title">Agent는 4가지로<br>살아갑니다</h1>
+      <div class="hero-divider"></div>
+      <p class="hero-subtitle">Memory · Knowledge · Skill · Workflow<br>AI Agent가 맥락을 기억하고 안전하게 실행하는 원리</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>HERMES AGENT LAB · 4-DECK SERIES</span>
+  </div>
+</section>
+
+<!-- SLIDE 2: 문제 인식 -->
+<section class="slide content-slide" id="slide-1">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Deck A</span>
+      <span class="section-title animate" data-delay="2">문제 인식</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">02 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">같은 질문을 100번 했습니다</h2>
+      <p class="content-desc animate" data-delay="2">Agent에게 매번 같은 설명을 반복해야 했던 경험, 있으신가요?</p>
+      <div class="metaphor-card animate" data-delay="3" style="max-width:600px;">
+        <div class="metaphor-icon" style="background:var(--danger-bg);">🔄</div>
+        <div>
+          <h3 class="metaphor-title" style="color:var(--danger);">매번 처음부터</h3>
+          <p class="metaphor-text">어제 대화한 내용을 오늘 기억하지 못하는 Agent. 매번 새로운 사람처럼 대하는 상황.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="4">기억 없는 Agent는 매번 처음부터 시작합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 3: 3가지 손실 -->
+<section class="slide content-slide" id="slide-2">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Deck A</span>
+      <span class="section-title animate" data-delay="2">문제 인식</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">03 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">Agent가 없는 세계에서 잃는 것</h2>
+      <div class="card-grid animate" data-delay="2" style="grid-template-columns:repeat(3,1fr);">
+        <div class="concept-card" style="border-color:var(--danger-bg);">
+          <span class="card-icon">⏰</span>
+          <h3 class="card-title" style="color:var(--danger);">시간</h3>
+          <p class="card-desc">반복되는 설명<br>매번 재시작</p>
+        </div>
+        <div class="concept-card" style="border-color:var(--danger-bg);">
+          <span class="card-icon">🎯</span>
+          <h3 class="card-title" style="color:var(--danger);">정확도</h3>
+          <p class="card-desc">상황에 맞지 않는<br>일관된 답변</p>
+        </div>
+        <div class="concept-card" style="border-color:var(--danger-bg);">
+          <span class="card-icon">📐</span>
+          <h3 class="card-title" style="color:var(--danger);">일관성</h3>
+          <p class="card-desc">같은 작업도<br>매번 다른 결과</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">3가지 손실: 시간, 정확도, 일관성</span>
+  </div>
+</section>
+
+<!-- SLIDE 4: 근본 원인 -->
+<section class="slide content-slide" id="slide-3">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Deck A</span>
+      <span class="section-title animate" data-delay="2">문제 인식</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">04 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">왜 Agent는 매번 처음부터 시작할까요?</h2>
+      <div class="metaphor-card animate" data-delay="2" style="max-width:700px;">
+        <div class="metaphor-icon">🧠</div>
+        <div>
+          <h3 class="metaphor-title">단기 기억만 있는 사람</h3>
+          <p class="metaphor-text">5분 전 일어난 일을 완전히 잊어버리고, 매번 새로운 사람처럼 대하는 상황. 기존 LLM은 <strong>정확히 그 상태</strong>였습니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">기억 없는 세계에서는 성장이 불가능합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 5: 전환 -->
+<section class="slide hero-slide" id="slide-4">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 1</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">05 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="hero-content">
+      <h2 class="hero-title animate" data-delay="1" style="font-size:clamp(32px,5vw,56px);">이제 Agent에<br>기억을 드립니다</h2>
+      <div class="hero-divider animate" data-delay="2"></div>
+      <p class="hero-subtitle animate" data-delay="3">4가지 기능이 문제를 어떻게 해결하는지 보여드립니다</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="4">문제를 알았습니다. 이제 해결책을 소개합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 6: 4개 기능 소개 -->
+<section class="slide content-slide" id="slide-5">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Deck A</span>
+      <span class="section-title animate" data-delay="2">핵심 기능</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">06 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">Hermes Agent의 4가지 핵심 기능</h2>
+      <p class="content-desc animate" data-delay="2">인간의 사고 방식을 모방한 4가지 시스템</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">기억 · 지식 · 기술 · 흐름</span>
+  </div>
+</section>
+
+<!-- SLIDE 7: 4기능 그리드 -->
+<section class="slide intro-slide" id="slide-6">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Deck A</span>
+      <span class="section-title animate" data-delay="2">핵심 기능</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">07 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="intro-content">
+      <h2 class="intro-heading animate" data-delay="1">Agent가 갖추는 4가지 능력</h2>
+      <p class="intro-desc animate" data-delay="2">매일 새로운 대화만 하는 Agent는 성장할 수 없습니다.<br>4가지 기능이 Stateful OS를 만듭니다.</p>
+      <div class="card-grid">
+        <div class="concept-card memory animate" data-delay="3" data-focusable>
+          <span class="card-icon">🧠</span>
+          <h3 class="card-title">Memory</h3>
+          <div class="card-keyword" style="color:var(--memory)">기억</div>
+          <p class="card-desc">어제 한 일을<br>잊지 않습니다</p>
+        </div>
+        <div class="concept-card knowledge animate" data-delay="4" data-focusable>
+          <span class="card-icon">📚</span>
+          <h3 class="card-title">Knowledge</h3>
+          <div class="card-keyword" style="color:var(--knowledge)">지식</div>
+          <p class="card-desc">정보를 연결하고<br>의미를 만듭니다</p>
+        </div>
+        <div class="concept-card skill animate" data-delay="5" data-focusable>
+          <span class="card-icon">⚡</span>
+          <h3 class="card-title">Skill</h3>
+          <div class="card-keyword" style="color:var(--skill)">능력</div>
+          <p class="card-desc">새로운 작업을<br>스스로 수행합니다</p>
+        </div>
+        <div class="concept-card workflow animate" data-delay="6" data-focusable>
+          <span class="card-icon">🔄</span>
+          <h3 class="card-title">Workflow</h3>
+          <div class="card-keyword" style="color:var(--workflow)">규칙</div>
+          <p class="card-desc">일관된 품질로<br>작업을 진행합니다</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="7">4가지 기능이 함께 작동할 때 Agent는 진정한 파트너가 됩니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 8: 비유 -->
+<section class="slide content-slide" id="slide-7">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Deck A</span>
+      <span class="section-title animate" data-delay="2">핵심 기능</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">08 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">인간과 똑같이 작동합니다</h2>
+      <div class="card-grid animate" data-delay="2" style="grid-template-columns:repeat(2,1fr);">
+        <div class="metaphor-card">
+          <div class="metaphor-icon">🧠</div>
+          <div>
+            <h3 class="metaphor-title" style="color:var(--memory);">Memory</h3>
+            <p class="metaphor-text">당신의 기억<br><span style="color:var(--text-dim);font-size:14px;">"어제 뭐했지?"를 기억함</span></p>
+          </div>
+        </div>
+        <div class="metaphor-card">
+          <div class="metaphor-icon">📚</div>
+          <div>
+            <h3 class="metaphor-title" style="color:var(--knowledge);">Knowledge</h3>
+            <p class="metaphor-text">책상 위 참고 자료<br><span style="color:var(--text-dim);font-size:14px;">체계적으로 정리된 정보</span></p>
+          </div>
+        </div>
+        <div class="metaphor-card">
+          <div class="metaphor-icon">⚡</div>
+          <div>
+            <h3 class="metaphor-title" style="color:var(--skill);">Skill</h3>
+            <p class="metaphor-text">레시피<br><span style="color:var(--text-dim);font-size:14px;">매번 같은 결과로 만듦</span></p>
+          </div>
+        </div>
+        <div class="metaphor-card">
+          <div class="metaphor-icon">🔄</div>
+          <div>
+            <h3 class="metaphor-title" style="color:var(--workflow);">Workflow</h3>
+            <p class="metaphor-text">프로젝트 관리<br><span style="color:var(--text-dim);font-size:14px;">단계를 따라 체계적 실행</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">인간의 사고를 모방한 4가지 시스템</span>
+  </div>
+</section>
+
+<!-- SLIDE 9: Act 2 전환 - Memory -->
+<section class="slide hero-slide" id="slide-8">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1" style="background:var(--memory);color:white;">Act 2</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">09 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="hero-content">
+      <div class="hero-icon animate" data-delay="1">🧠</div>
+      <h2 class="hero-title animate" data-delay="2" style="font-size:clamp(32px,5vw,56px);">Memory — 기억</h2>
+      <div class="hero-divider animate" data-delay="3"></div>
+      <p class="hero-subtitle animate" data-delay="4">Agent가 당신을 기억하는 방법</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="5">기억이 없는 Agent는 성장이 불가능합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 10: Memory Before/After -->
+<section class="slide content-slide" id="slide-9">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1" style="background:var(--memory);color:white;">Memory</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">10 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">어제 대화한 내용, 기억하시나요?</h2>
+      <div class="compare-content animate" data-delay="2" style="max-width:900px;">
+        <div class="compare-col">
+          <div class="feature-item" style="border-color:var(--danger-bg);">
+            <div class="feature-icon">❌</div>
+            <div>
+              <h3 class="metaphor-title" style="color:var(--danger);margin-bottom:8px;">Before</h3>
+              <p class="metaphor-text">• 매번 소개부터 시작<br>• 어제 결정 잊어버림<br>• 같은 질문 반복 응답</p>
+            </div>
+          </div>
+        </div>
+        <div class="compare-vs">VS</div>
+        <div class="compare-col">
+          <div class="feature-item" style="border-color:var(--success-bg);">
+            <div class="feature-icon">✅</div>
+            <div>
+              <h3 class="metaphor-title" style="color:var(--success);margin-bottom:8px;">After</h3>
+              <p class="metaphor-text">• 이전 대화 맥락 유지<br>• 사용자 선호도 기억<br>• 누적된 경험 활용</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">기억의 유무가 Agent의 능력을 결정합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 11: Memory 2종류 -->
+<section class="slide deep-slide" id="slide-10">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Memory</span>
+      <span class="section-title animate" data-delay="2">Memory: 기억의 힘</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">11 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="deep-content">
+      <div class="deep-header">
+        <span class="deep-icon animate" data-anim="scale" data-delay="1">🧠</span>
+        <div>
+          <h2 class="deep-title animate" data-delay="2">두 종류의 기억</h2>
+          <p class="deep-subtitle animate" data-delay="3">인간에도 단기 기억과 장기 기억이 있듯, Agent도 두 종류를 가집니다</p>
+        </div>
+      </div>
+
+      <div class="tab-nav animate" data-delay="4">
+        <button class="tab-btn active" data-focusable>💭 세션 메모리</button>
+        <button class="tab-btn" data-focusable>📝 지속 메모리</button>
+      </div>
+
+      <div class="tab-panel active" data-tab="0">
+        <div class="metaphor-card">
+          <div class="metaphor-icon">💭</div>
+          <div>
+            <h3 class="metaphor-title">세션 메모리 — 현재 대화</h3>
+            <p class="metaphor-text">지금 진행 중인 대화의 맥락. <strong>"아까 말씀드린 것처럼..."</strong> — 이 '아까'가 가능하게 합니다. 대화 중 실시간으로 업데이트됩니다.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" data-tab="1">
+        <div class="metaphor-card">
+          <div class="metaphor-icon">📝</div>
+          <div>
+            <h3 class="metaphor-title">지속 메모리 — 장기 저장</h3>
+            <p class="metaphor-text">세션이 끝나도 남는 기억. <strong>사용자 선호도, 작업 패턴, 프로젝트 이력</strong>. 다음에 접속해도 계속 따라다닙니다.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout animate" data-delay="5">
+        <span class="callout-icon">💡</span>
+        <span class="callout-text"><strong>비유:</strong> 세션 메모리는 '지금 생각하는 것', 지속 메모리는 '일기에 적어둔 것'입니다.</span>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="6">탭을 클릭하면 메모리 유형이 전환됩니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 12: Memory 동작 원리 -->
+<section class="slide content-slide" id="slide-11">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1" style="background:var(--memory);color:white;">Memory</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">12 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">기억은 어떻게 저장될까요?</h2>
+      <div class="metaphor-card animate" data-delay="2" style="max-width:700px;">
+        <div class="metaphor-icon">📋</div>
+        <div>
+          <h3 class="metaphor-title">4단계 기억 프로세스</h3>
+          <p class="metaphor-text">
+            <strong>1. 감지</strong> → 대화에서 중요한 정보 포착<br>
+            <strong>2. 분류</strong> → 사용자 정보 / 환경 정보 구분<br>
+            <strong>3. 저장</strong> → SQLite 데이터베이스에 기록<br>
+            <strong>4. 활용</strong> → 다음 대화에서 자동 로딩
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">감지 → 분류 → 저장 → 활용의 4단계 프로세스</span>
+  </div>
+</section>
+
+<!-- SLIDE 13: Act 3 전환 - Knowledge -->
+<section class="slide hero-slide" id="slide-12">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1" style="background:var(--knowledge);color:white;">Act 3</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">13 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="hero-content">
+      <div class="hero-icon animate" data-delay="1">📚</div>
+      <h2 class="hero-title animate" data-delay="2" style="font-size:clamp(32px,5vw,56px);">Knowledge — 지식</h2>
+      <div class="hero-divider animate" data-delay="3"></div>
+      <p class="hero-subtitle animate" data-delay="4">Agent가 정보를 체계적으로 다루는 방법</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="5">정보와 지식은 다릅니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 14: Knowledge Before/After -->
+<section class="slide content-slide" id="slide-13">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1" style="background:var(--knowledge);color:white;">Knowledge</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">14 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">정보는 있지만, 지식이 아닙니다</h2>
+      <div class="compare-content animate" data-delay="2" style="max-width:900px;">
+        <div class="compare-col">
+          <div class="feature-item" style="border-color:var(--danger-bg);">
+            <div class="feature-icon">❌</div>
+            <div>
+              <h3 class="metaphor-title" style="color:var(--danger);margin-bottom:8px;">Before</h3>
+              <p class="metaphor-text">• 파일 여기저기 흩어짐<br>• 검색해도 못 찾음<br>• outdated 정보 혼동</p>
+            </div>
+          </div>
+        </div>
+        <div class="compare-vs">VS</div>
+        <div class="compare-col">
+          <div class="feature-item" style="border-color:var(--success-bg);">
+            <div class="feature-icon">✅</div>
+            <div>
+              <h3 class="metaphor-title" style="color:var(--success);margin-bottom:8px;">After</h3>
+              <p class="metaphor-text">• 우선순위 분류<br>• 0.3초 검색 결과<br>• 자동 갱신 시스템</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">체계화된 지식이 Agent의 판단력을 높입니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 15: Memory vs Knowledge -->
+<section class="slide compare-slide" id="slide-14">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">VS</span>
+      <span class="section-title animate" data-delay="2">개념 구분</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">15 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="compare-content">
+      <div class="compare-col animate" data-anim="slide-left" data-delay="2">
+        <div class="compare-icon">🧠</div>
+        <span class="compare-label memory">Memory</span>
+        <h3 class="compare-title">기억</h3>
+        <p class="compare-what">"무엇을" 기억하는가</p>
+        <div class="feature-list">
+          <div class="feature-item animate" data-delay="3" data-focusable>
+            <span class="feature-icon">📝</span>
+            <span class="feature-text"><strong>사실 저장</strong><br>"지난주에 회의록을 작성했어"</span>
+          </div>
+          <div class="feature-item animate" data-delay="4" data-focusable>
+            <span class="feature-icon">🔍</span>
+            <span class="feature-text"><strong>검색 가능</strong><br>과거 대화에서 관련 정보 찾기</span>
+          </div>
+          <div class="feature-item animate" data-delay="5" data-focusable>
+            <span class="feature-icon">👤</span>
+            <span class="feature-text"><strong>사용자 정보</strong><br>이름, 선호도, 작업 패턴</span>
+          </div>
+        </div>
+      </div>
+      <div class="compare-vs animate" data-anim="scale" data-delay="1">VS</div>
+      <div class="compare-col animate" data-anim="slide-right" data-delay="2">
+        <div class="compare-icon">💡</div>
+        <span class="compare-label knowledge">Knowledge</span>
+        <h3 class="compare-title">지식</h3>
+        <p class="compare-what">"무엇을" 이해하는가</p>
+        <div class="feature-list">
+          <div class="feature-item animate" data-delay="3" data-focusable>
+            <span class="feature-icon">🔗</span>
+            <span class="feature-text"><strong>연결 형성</strong><br>"이 프로젝트는 지난 회의록과 관련이 있어"</span>
+          </div>
+          <div class="feature-item animate" data-delay="4" data-focusable>
+            <span class="feature-icon">🧩</span>
+            <span class="feature-text"><strong>패턴 인식</strong><br>비슷한 문제가 반복된다는 발견</span>
+          </div>
+          <div class="feature-item animate" data-delay="5" data-focusable>
+            <span class="feature-icon">🎯</span>
+            <span class="feature-text"><strong>맥락 이해</strong><br>"이 작업의 진짜 목표는 ~"</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="6">Memory는 데이터를 저장합니다. Knowledge는 의미를 만듭니다.</span>
+  </div>
+</section>
+
+<!-- SLIDE 16: Knowledge 비유 -->
+<section class="slide content-slide" id="slide-15">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1" style="background:var(--knowledge);color:white;">Knowledge</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">16 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">책상과 도서관의 차이</h2>
+      <div class="card-grid animate" data-delay="2" style="grid-template-columns:repeat(2,1fr);">
+        <div class="metaphor-card">
+          <div class="metaphor-icon" style="background:var(--knowledge-bg);">🗄️</div>
+          <div>
+            <h3 class="metaphor-title" style="color:var(--knowledge);">Knowledge</h3>
+            <p class="metaphor-text">정리된 도서관<br><span style="color:var(--text-dim);font-size:14px;">분류 → 인덱스 → 검색 → 활용</span></p>
+          </div>
+        </div>
+        <div class="metaphor-card">
+          <div class="metaphor-icon" style="background:var(--knowledge-bg);">🏷️</div>
+          <div>
+            <h3 class="metaphor-title" style="color:var(--knowledge);">T1/T2/T3 점수</h3>
+            <p class="metaphor-text">중요도 라벨<br><span style="color:var(--text-dim);font-size:14px;">자주 쓸수록 높은 순위</span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">지식은 체계에서 나옵니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 17: Act 4 전환 - Skill -->
+<section class="slide hero-slide" id="slide-16">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1" style="background:var(--skill);color:white;">Act 4</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">17 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="hero-content">
+      <div class="hero-icon animate" data-delay="1">⚡</div>
+      <h2 class="hero-title animate" data-delay="2" style="font-size:clamp(32px,5vw,56px);">Skill — 기술</h2>
+      <div class="hero-divider animate" data-delay="3"></div>
+      <p class="hero-subtitle animate" data-delay="4">Agent가 매번 같은 결과를 내는 방법</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="5">표준화된 절차가 일관된 품질을 만듭니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 18: Skill Before/After -->
+<section class="slide content-slide" id="slide-17">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1" style="background:var(--skill);color:white;">Skill</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">18 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">같은 레시피, 다른 결과?</h2>
+      <div class="compare-content animate" data-delay="2" style="max-width:900px;">
+        <div class="compare-col">
+          <div class="feature-item" style="border-color:var(--danger-bg);">
+            <div class="feature-icon">❌</div>
+            <div>
+              <h3 class="metaphor-title" style="color:var(--danger);margin-bottom:8px;">Before</h3>
+              <p class="metaphor-text">• 매번 다른 맛<br>• 중요한 단계 누락<br>• 품질 불안정</p>
+            </div>
+          </div>
+        </div>
+        <div class="compare-vs">VS</div>
+        <div class="compare-col">
+          <div class="feature-item" style="border-color:var(--success-bg);">
+            <div class="feature-icon">✅</div>
+            <div>
+              <h3 class="metaphor-title" style="color:var(--success);margin-bottom:8px;">After</h3>
+              <p class="metaphor-text">• 매번 같은 품질<br>• 단계별 검증<br>• 개선 가능한 절차</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">Skill은 Agent의 레시피 책입니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 19: Skill 구조 -->
+<section class="slide deep-slide" id="slide-18">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Skill</span>
+      <span class="section-title animate" data-delay="2">Skill: 기술의 힘</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">19 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="deep-content">
+      <div class="deep-header">
+        <span class="deep-icon animate" data-anim="scale" data-delay="1">⚡</span>
+        <div>
+          <h2 class="deep-title animate" data-delay="2">Skill은 하나의 파일에 모든 것</h2>
+          <p class="deep-subtitle animate" data-delay="3">SKILL.md = Agent의 레시피 책. 하나의 파일에 절차, 주의사항, 검증 방법이 모두 포함됩니다</p>
+        </div>
+      </div>
+
+      <div class="tab-nav animate" data-delay="4">
+        <button class="tab-btn active" data-focusable>📋 트리거</button>
+        <button class="tab-btn" data-focusable>📝 단계</button>
+        <button class="tab-btn" data-focusable>⚠️ 주의사항</button>
+      </div>
+
+      <div class="tab-panel active" data-tab="0">
+        <div class="metaphor-card">
+          <div class="metaphor-icon" style="background:var(--skill-bg);">📋</div>
+          <div>
+            <h3 class="metaphor-title">트리거 — 언제 사용할지</h3>
+            <p class="metaphor-text">어떤 상황에서 이 Skill이 발동될지 정의합니다. <strong>"보고서 작성 요청 시"</strong>, <strong>"코드 리뷰 필요 시"</strong> 등 구체적인 조건을 명시합니다.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" data-tab="1">
+        <div class="metaphor-card">
+          <div class="metaphor-icon" style="background:var(--skill-bg);">📝</div>
+          <div>
+            <h3 class="metaphor-title">단계 — 어떤 순서로 실행할지</h3>
+            <p class="metaphor-text">1, 2, 3... 순서대로 실행하는 단계. <strong>누가 봐도 이해할 수 있도록</strong> 명확하고 간결하게 작성합니다.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" data-tab="2">
+        <div class="metaphor-card">
+          <div class="metaphor-icon" style="background:var(--skill-bg);">⚠️</div>
+          <div>
+            <h3 class="metaphor-title">주의사항 — 실패하지 않기 위해</h3>
+            <p class="metaphor-text">과거에 발견된 버그, 주의할 점, 회피할 패턴. <strong>실패 경험을 절차로 남깁니다.</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout animate" data-delay="5" style="background:var(--skill-bg);border-left-color:var(--skill);">
+        <span class="callout-icon">💡</span>
+        <span class="callout-text" style="color:var(--skill);"><strong>비유:</strong> Skill은 외식 대신 집에서 만드는 레시피입니다. 매번 같은 품질을 보장합니다.</span>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="6">탭을 클릭하면 Skill 구성요소가 전환됩니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 20: Act 5 전환 - Workflow -->
+<section class="slide hero-slide" id="slide-19">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1" style="background:var(--workflow);color:white;">Act 5</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">20 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="hero-content">
+      <div class="hero-icon animate" data-delay="1">🔄</div>
+      <h2 class="hero-title animate" data-delay="2" style="font-size:clamp(32px,5vw,56px);">Workflow — 흐름</h2>
+      <div class="hero-divider animate" data-delay="3"></div>
+      <p class="hero-subtitle animate" data-delay="4">Agent가 체계적으로 작업을 완료하는 방법</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="5">계획 없는 실행은 재앙입니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 21: Workflow Before/After -->
+<section class="slide content-slide" id="slide-20">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1" style="background:var(--workflow);color:white;">Workflow</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">21 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">계획 없이 시작한 프로젝트는?</h2>
+      <div class="compare-content animate" data-delay="2" style="max-width:900px;">
+        <div class="compare-col">
+          <div class="feature-item" style="border-color:var(--danger-bg);">
+            <div class="feature-icon">❌</div>
+            <div>
+              <h3 class="metaphor-title" style="color:var(--danger);margin-bottom:8px;">Before</h3>
+              <p class="metaphor-text">• 단계 중복/누락<br>• 중간에 방향 잃음<br>• 롤백 불가능</p>
+            </div>
+          </div>
+        </div>
+        <div class="compare-vs">VS</div>
+        <div class="compare-col">
+          <div class="feature-item" style="border-color:var(--success-bg);">
+            <div class="feature-icon">✅</div>
+            <div>
+              <h3 class="metaphor-title" style="color:var(--success);margin-bottom:8px;">After</h3>
+              <p class="metaphor-text">• 단계별 상태 추적<br>• 승인/검증 게이트<br>• 실패 시 자동 롤백</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">9단계 워크플로우가 체계적 실행을 보장합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 22: 9단계 전체도 -->
+<section class="slide content-slide" id="slide-21">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1" style="background:var(--workflow);color:white;">Workflow</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">22 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">9단계 상태 머신</h2>
+      <div class="animate" data-delay="2" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:1000px;">
+        <div style="background:var(--workflow-bg);border:2px solid var(--workflow-border);border-radius:8px;padding:12px 16px;font-weight:600;font-size:13px;">① Request</div>
+        <div style="color:var(--text-dim);font-size:20px;align-self:center;">→</div>
+        <div style="background:var(--workflow-bg);border:2px solid var(--workflow-border);border-radius:8px;padding:12px 16px;font-weight:600;font-size:13px;">② Investigation</div>
+        <div style="color:var(--text-dim);font-size:20px;align-self:center;">→</div>
+        <div style="background:var(--workflow-bg);border:2px solid var(--workflow-border);border-radius:8px;padding:12px 16px;font-weight:600;font-size:13px;">③ Design</div>
+        <div style="color:var(--text-dim);font-size:20px;align-self:center;">→</div>
+        <div style="background:var(--workflow-bg);border:2px solid var(--workflow-border);border-radius:8px;padding:12px 16px;font-weight:600;font-size:13px;">④ Review</div>
+        <div style="color:var(--text-dim);font-size:20px;align-self:center;">→</div>
+        <div style="background:var(--highlight);border:2px solid var(--accent);border-radius:8px;padding:12px 16px;font-weight:600;font-size:13px;">⑤ Approval ⏳</div>
+        <div style="color:var(--text-dim);font-size:20px;align-self:center;">→</div>
+        <div style="background:var(--workflow-bg);border:2px solid var(--workflow-border);border-radius:8px;padding:12px 16px;font-weight:600;font-size:13px;">⑥ Execution</div>
+        <div style="color:var(--text-dim);font-size:20px;align-self:center;">→</div>
+        <div style="background:var(--workflow-bg);border:2px solid var(--workflow-border);border-radius:8px;padding:12px 16px;font-weight:600;font-size:13px;">⑦ Test</div>
+        <div style="color:var(--text-dim);font-size:20px;align-self:center;">→</div>
+        <div style="background:var(--workflow-bg);border:2px solid var(--workflow-border);border-radius:8px;padding:12px 16px;font-weight:600;font-size:13px;">⑧ Exe Review</div>
+        <div style="color:var(--text-dim);font-size:20px;align-self:center;">→</div>
+        <div style="background:var(--success-bg);border:2px solid var(--success);border-radius:8px;padding:12px 16px;font-weight:600;font-size:13px;">⑨ Done ✅</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">각 단계는 상태 파일로 추적되며, 게이트를 통과해야 다음으로 이동합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 23: Act 6 전환 - 통합 -->
+<section class="slide hero-slide" id="slide-22">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 6</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">23 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="hero-content">
+      <h2 class="hero-title animate" data-delay="1" style="font-size:clamp(32px,5vw,56px);">4가지가 하나로<br>작동합니다</h2>
+      <div class="hero-divider animate" data-delay="2"></div>
+      <p class="hero-subtitle animate" data-delay="3">고립된 기능이 아니라, 연결된 시스템</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="4">각 기능은 독립적이지만, 함께 작동할 때 진정한 힘이 나옵니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 24: 통합 다이어그램 -->
+<section class="slide content-slide" id="slide-23">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Deck A</span>
+      <span class="section-title animate" data-delay="2">통합</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">24 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">4가지 기능의 연결망</h2>
+      <div class="animate" data-delay="2" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:500px;position:relative;">
+        <div style="background:var(--memory-bg);color:var(--memory);border:2px solid var(--memory-border);border-radius:12px;padding:24px;text-align:center;font-weight:700;font-size:18px;">🧠 Memory</div>
+        <div style="background:var(--knowledge-bg);color:var(--knowledge);border:2px solid var(--knowledge-border);border-radius:12px;padding:24px;text-align:center;font-weight:700;font-size:18px;">📚 Knowledge</div>
+        <div style="background:var(--skill-bg);color:var(--skill);border:2px solid var(--skill-border);border-radius:12px;padding:24px;text-align:center;font-weight:700;font-size:18px;">⚡ Skill</div>
+        <div style="background:var(--workflow-bg);color:var(--workflow);border:2px solid var(--workflow-border);border-radius:12px;padding:24px;text-align:center;font-weight:700;font-size:18px;">🔄 Workflow</div>
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:white;border-radius:50%;width:80px;height:80px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;box-shadow:0 4px 12px rgba(0,0,0,0.1);z-index:2;">Agent</div>
+      </div>
+      <p class="content-desc animate" data-delay="3">Workflow가 Skill을 실행하고, Knowledge에서 정보를 찾아, Memory에 경험을 저장합니다</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="4">4가지 기능이 상호작용하여 Agent OS를 만듭니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 25: 실제 시나리오 -->
+<section class="slide content-slide" id="slide-24">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Deck A</span>
+      <span class="section-title animate" data-delay="2">실제 예시</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">25 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">실제로 어떻게 작동할까요?</h2>
+      <div class="metaphor-card animate" data-delay="2" style="max-width:700px;">
+        <div class="metaphor-icon">📋</div>
+        <div>
+          <h3 class="metaphor-title">"보고서를 만들어줘"</h3>
+          <p class="metaphor-text">
+            <strong style="color:var(--workflow);">Workflow</strong> → 9단계 시작<br>
+            <strong style="color:var(--knowledge);">Knowledge</strong> → 관련 문서 검색<br>
+            <strong style="color:var(--skill);">Skill</strong> → 보고서 작성 절차 실행<br>
+            <strong style="color:var(--memory);">Memory</strong> → 사용자 선호 스타일 적용
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">한 요청이 4가지 기능을 모두 동원합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 26: Before/After 종합 -->
+
+<!-- INTERACTIVE LAB: the four systems working on one realistic request -->
+<section class="slide content-slide learning-lab" id="lab-core" aria-labelledby="lab-core-title">
+  <div class="slide-header">
+    <div><span class="lecture-tag">LIVE LAB</span><span class="section-title">4가지 기능 통합</span></div>
+    <span class="slide-number"></span>
+  </div>
+  <div class="slide-body">
+    <div class="learning-lab-shell" data-demo="core">
+      <header>
+        <div class="lab-kicker">Interactive example · 01</div>
+        <h2 class="lab-title" id="lab-core-title">같은 요청도 어떤 시스템을 쓰느냐에 따라 달라집니다</h2>
+        <p class="lab-desc">“지난주 고객 장애를 바탕으로 금요일 회고 자료를 준비해줘.” 네 가지 기능을 켜고 끄며 답변의 완성도와 위험을 비교해 보세요.</p>
+      </header>
+      <div class="lab-grid">
+        <div class="lab-panel">
+          <h3>사용할 Agent 기능 <small>각 기능이 답변에 무엇을 더하는지 확인합니다</small></h3>
+          <div class="lab-controls">
+            <label class="lab-check"><input type="checkbox" data-system="memory"> Memory — 선호 형식·이전 결정</label>
+            <label class="lab-check"><input type="checkbox" data-system="knowledge"> Knowledge — 장애 기록·최신 문서</label>
+            <label class="lab-check"><input type="checkbox" data-system="skill"> Skill — 회고 템플릿·검증 기준</label>
+            <label class="lab-check"><input type="checkbox" data-system="workflow"> Workflow — 검토·승인·배포 순서</label>
+          </div>
+          <div class="lab-button-row">
+            <button type="button" class="lab-button primary" data-core-all>네 가지 모두 적용</button>
+            <button type="button" class="lab-button" data-core-reset>초기화</button>
+          </div>
+        </div>
+        <div class="lab-panel">
+          <div class="demo-request"><small>같은 업무 요청</small><strong>지난주 고객 장애를 바탕으로 금요일 회고 자료를 준비해줘.</strong></div>
+          <div class="causal-output" aria-live="polite">
+            <article data-core-slot="memory"><b>대상·맥락</b><p>팀장 선호 형식과 이전 결정이 없습니다.</p></article>
+            <article data-core-slot="knowledge"><b>근거</b><p>인용할 장애 기록과 최신 문서가 없습니다.</p></article>
+            <article data-core-slot="skill"><b>산출물 구조</b><p>회고 자료의 순서와 완료 기준이 없습니다.</p></article>
+            <article data-core-slot="workflow"><b>실행 상태</b><p>검토 없이 외부 공유될 수 있습니다.</p></article>
+          </div>
+          <div class="decision-line"><span>현재 판단</span><strong data-core-status>초안 생성 가능 · 공유 금지</strong></div>
+          <ul class="demo-risk-list" data-core-risks></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>핵심: 네 기능은 대체 관계가 아니라 품질을 완성하는 조합입니다</span></div>
+</section>
+
+<section class="slide content-slide" id="slide-25">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Deck A</span>
+      <span class="section-title animate" data-delay="2">종합 비교</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">26 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">통합 시스템의 차이</h2>
+      <div class="compare-content animate" data-delay="2" style="max-width:900px;">
+        <div class="compare-col">
+          <div class="feature-item" style="border-color:var(--danger-bg);">
+            <div class="feature-icon">❌</div>
+            <div>
+              <h3 class="metaphor-title" style="color:var(--danger);margin-bottom:8px;">4기능 X</h3>
+              <p class="metaphor-text">• 설명 반복 30분/일<br>• 품질 일관성 없음<br>• 작업 추적 불가<br>• 지식 분산/분실</p>
+            </div>
+          </div>
+        </div>
+        <div class="compare-vs">VS</div>
+        <div class="compare-col">
+          <div class="feature-item" style="border-color:var(--success-bg);">
+            <div class="feature-icon">✅</div>
+            <div>
+              <h3 class="metaphor-title" style="color:var(--success);margin-bottom:8px;">4기능 O</h3>
+              <p class="metaphor-text">• 맥락 자동 인식<br>• 표준화된 품질<br>• 9단계 추적/검증<br>• 지식 체계화/검색</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">시스템의 유무가 생산성을 결정합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 27: 숫자로 보는 차이 -->
+<section class="slide content-slide" id="slide-26">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Deck A</span>
+      <span class="section-title animate" data-delay="2">숫자 설득</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">27 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">숫자로 보는 변화</h2>
+      <div class="card-grid animate" data-delay="2" style="grid-template-columns:repeat(4,1fr);">
+        <div class="concept-card" style="border-color:var(--memory-border);">
+          <div style="font-size:32px;font-weight:900;color:var(--memory);margin-bottom:8px;">90%</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-dim);">설명 반복 감소</div>
+        </div>
+        <div class="concept-card" style="border-color:var(--knowledge-border);">
+          <div style="font-size:32px;font-weight:900;color:var(--knowledge);margin-bottom:8px;">0.3초</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-dim);">지식 검색 속도</div>
+        </div>
+        <div class="concept-card" style="border-color:var(--skill-border);">
+          <div style="font-size:32px;font-weight:900;color:var(--skill);margin-bottom:8px;">100%</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-dim);">절차 일관성</div>
+        </div>
+        <div class="concept-card" style="border-color:var(--workflow-border);">
+          <div style="font-size:32px;font-weight:900;color:var(--workflow);margin-bottom:8px;">9단계</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-dim);">작업 추적 체계</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">숫자로 증명되는 시스템의 효과</span>
+  </div>
+</section>
+
+<!-- SLIDE 28: 4기능이 필요한 이유 (왜 모두 필요한가) -->
+<section class="slide content-slide" id="slide-27">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Deck A</span>
+      <span class="section-title animate" data-delay="2">핵심 질문</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">28 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">왜 4가지가 모두 필요한가요?</h2>
+      <div class="animate" data-delay="2" style="max-width:800px; display:grid; grid-template-columns:repeat(2,1fr); gap:20px; text-align:left;">
+        <div class="concept-card" style="border-color:var(--danger-bg);">
+          <div class="card-icon">🧠</div>
+          <h3 class="card-title" style="font-size:18px;">Memory만 있으면</h3>
+          <p class="card-desc">기억은 하지만,<br><strong style="color:var(--danger);">체계나 절차가 없음</strong></p>
+        </div>
+        <div class="concept-card" style="border-color:var(--danger-bg);">
+          <div class="card-icon">📚</div>
+          <h3 class="card-title" style="font-size:18px;">Knowledge만 있으면</h3>
+          <p class="card-desc">지식은 많지만,<br><strong style="color:var(--danger);">실행력이 없음</strong></p>
+        </div>
+        <div class="concept-card" style="border-color:var(--danger-bg);">
+          <div class="card-icon">⚡</div>
+          <h3 class="card-title" style="font-size:18px;">Skill만 있으면</h3>
+          <p class="card-desc">절차는 있지만,<br><strong style="color:var(--danger);">맥락 이해가 없음</strong></p>
+        </div>
+        <div class="concept-card" style="border-color:var(--danger-bg);">
+          <div class="card-icon">🔄</div>
+          <h3 class="card-title" style="font-size:18px;">Workflow만 있으면</h3>
+          <p class="card-desc">흐름은 있지만,<br><strong style="color:var(--danger);">학습이 없음</strong></p>
+        </div>
+      </div>
+      <p class="content-desc animate" data-delay="3" style="margin-top:24px;text-align:center;white-space:nowrap;font-size:16px;">각 기능은 필요조건이지만 충분조건은 아닙니다. 4가지가 <strong>결합</strong>되어야 완전한 Agent OS가 됩니다</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="4">부분의 합이 아닌, 시너지를 만들어야 합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 29: 핵심 요약 1 -->
+<section class="slide content-slide" id="slide-28">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Deck A</span>
+      <span class="section-title animate" data-delay="2">요약</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">29 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">Today의 핵심 5가지</h2>
+      <div class="animate" data-delay="2" style="max-width:700px; text-align:left; display:grid; gap:12px;">
+        <div class="feature-item">
+          <div class="feature-icon">1️⃣</div>
+          <div class="feature-text">Agent는 4가지 기능으로 인간처럼 작동합니다</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🧠</div>
+          <div class="feature-text"><strong>Memory</strong> — 당신이 누구인지 기억합니다</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📚</div>
+          <div class="feature-text"><strong>Knowledge</strong> — 정보가 체계로 바뀝니다</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-text"><strong>Skill</strong> — 매번 같은 품질을 보장합니다</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🔄</div>
+          <div class="feature-text"><strong>Workflow</strong> — 작업을 체계적으로 완성합니다</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">5가지 핵심 메시지를 기억해 주세요</span>
+  </div>
+</section>
+
+<!-- SLIDE 30: 핵심 요약 2 -->
+<section class="slide content-slide" id="slide-29">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Deck A</span>
+      <span class="section-title animate" data-delay="2">요약</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">30 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">하나의 비유로 정리하면</h2>
+      <div class="metaphor-card animate" data-delay="2" style="max-width:700px;">
+        <div class="metaphor-icon">🏢</div>
+        <div>
+          <h3 class="metaphor-title">회사를 상상해보세요</h3>
+          <p class="metaphor-text">
+            🧠 <strong>Memory</strong> = 직원들의 경험과 기억<br>
+            📚 <strong>Knowledge</strong> = 사내 도서관<br>
+            ⚡ <strong>Skill</strong> = 표준 작업 절차서<br>
+            🔄 <strong>Workflow</strong> = 프로젝트 관리 시스템<br><br>
+            4가지가 함께 작동할 때 <strong>정말 강력한 조직</strong>이 됩니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">조직의 시스템을 Agent에 적용한 것입니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 31: 마지막 메시지 -->
+<section class="slide hero-slide" id="slide-30">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Deck A</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">31 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="hero-content">
+      <h2 class="hero-title animate" data-delay="1" style="font-size:clamp(28px,4vw,48px);">"좋은 Agent는<br>기억하고, 이해하고, 실천하고, 흐릅니다"</h2>
+      <div class="hero-divider animate" data-delay="2"></div>
+      <div class="animate" data-delay="3" style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px 24px;align-items:center;margin-top:16px;">
+        <span style="color:var(--memory);font-weight:700;font-size:20px;">🧠 기억(Memory)</span>
+        <span style="color:var(--text-dim);font-size:24px;">→</span>
+        <span style="color:var(--knowledge);font-weight:700;font-size:20px;">📚 지식(Knowledge)</span>
+        <span style="color:var(--text-dim);font-size:24px;">→</span>
+        <span style="color:var(--skill);font-weight:700;font-size:20px;">⚡ 기술(Skill)</span>
+        <span style="color:var(--text-dim);font-size:24px;">→</span>
+        <span style="color:var(--workflow);font-weight:700;font-size:20px;">🔄 흐름(Workflow)</span>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="4">4가지 기능이 하나될 때 Agent는 진화합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 32: Q&A -->
+<section class="slide hero-slide" id="slide-31">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Deck A</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">32 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="hero-content">
+      <h1 class="hero-title animate" data-delay="1" style="font-size:clamp(48px,8vw,96px);">Q & A</h1>
+      <div class="hero-divider animate" data-delay="2"></div>
+      <p class="hero-subtitle animate" data-delay="3">4가지 핵심 기능에 대해 질문해 보세요</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="4">궁금한 점이 있다면 언제든 물어보세요</span>
+  </div>
+</section>
+
+<!-- SLIDE 33: 심화 데크 소개 -->
+<section class="slide content-slide" id="slide-32">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1" style="background:var(--accent);color:white;">Next</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">33 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">더 깊이 배우고 싶다면</h2>
+      <div class="animate" data-delay="2" style="max-width:750px; display:grid; gap:16px; text-align:left;">
+        <div class="feature-item" style="border-left: 4px solid var(--knowledge);">
+          <div class="feature-icon">📚</div>
+          <div>
+            <strong style="color:var(--knowledge);">데크 B — Knowledge 심화</strong>
+            <span style="color:var(--text-dim); margin-left:8px;">· 지식 관리, 검색, Signal Detector (39페이지)</span>
+          </div>
+        </div>
+        <div class="feature-item" style="border-left: 4px solid var(--skill);">
+          <div class="feature-icon">⚡</div>
+          <div>
+            <strong style="color:var(--skill);">데크 C — Skill 심화</strong>
+            <span style="color:var(--text-dim); margin-left:8px;">· 표준화된 절차 설계, 작성 방법 (37페이지)</span>
+          </div>
+        </div>
+        <div class="feature-item" style="border-left: 4px solid var(--workflow);">
+          <div class="feature-icon">🔄</div>
+          <div>
+            <strong style="color:var(--workflow);">데크 D — Workflow 심화</strong>
+            <span style="color:var(--text-dim); margin-left:8px;">· 9단계 상태 머신 완전 가이드 (46페이지)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">각 데크는 1시간 분량의 심화 강의입니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 34: 감사합니다 -->
+<section class="slide hero-slide" id="slide-33">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Deck A</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">34 / 34</span>
+  </div>
+  <div class="slide-body">
+    <div class="hero-content">
+      <div class="hero-icon animate" data-delay="1">🧠</div>
+      <h1 class="hero-title animate" data-delay="2">감사합니다</h1>
+      <div class="hero-divider animate" data-delay="3"></div>
+      <p class="hero-subtitle animate" data-delay="4">Hermes Agent — 4가지 핵심 기능</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="5">Stateless Agent를 Stateful Agent OS로</span>
+  </div>
+</section>
+
+
+<script src="./slides-v8.2.js" defer></script>
+</body>
+</html>

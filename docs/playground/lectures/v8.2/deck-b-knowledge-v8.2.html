@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>데크 B: Knowledge 심화 — 지식 관리 완전 가이드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --knowledge: #8B5CF6; --knowledge-bg: #F5F3FF; --knowledge-border: #DDD6FE;
+  --memory: #06B6D4; --memory-bg: #ECFEFF; --memory-border: #A5F3FC;
+  --skill: #F97316; --skill-bg: #FFF7ED; --skill-border: #FED7AA;
+  --workflow: #22C55E; --workflow-bg: #F0FDF4; --workflow-border: #BBF7D0;
+  --bg: #FAFAFA; --bg-dark: #0F0F1A; --card: #FFFFFF;
+  --text: #111827; --text-dim: #6B7280; --text-light: #F9FAFB;
+  --accent: #F59E0B; --highlight: #FEF3C7; --border: #E5E7EB;
+  --danger: #EF4444; --danger-bg: #FEF2F2;
+  --success: #22C55E; --success-bg: #F0FDF4;
+  --font: 'Inter', 'Noto Sans KR', sans-serif;
+}
+
+html { scroll-snap-type: y mandatory; overflow-y: scroll; }
+
+.compare-content .compare-col {
+  width: 100%;
+}
+.compare-content .compare-col .feature-item {
+  width: 100%;
+}
+.compare-content .compare-col .feature-item > div:last-child {
+  flex: 1;
+  min-width: 0;
+}
+.compare-content .compare-col .feature-item p {
+  white-space: normal;
+  word-break: keep-all;
+}
+body { font-family: var(--font); background: var(--bg); color: var(--text); }
+
+/* ── Progress Bar ── */
+.progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px; z-index: 1000;
+  background: linear-gradient(90deg, var(--knowledge), var(--accent));
+  transition: width 0.4s ease;
+}
+
+/* ── Slide Base ── */
+.slide {
+  min-height: 100vh; width: 100%;
+  scroll-snap-align: start;
+  display: flex; flex-direction: column;
+  position: relative; overflow: hidden;
+}
+
+/* ── Zone-A: Header (80px) ── */
+.slide-header {
+  flex: 0 0 80px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px; z-index: 10;
+}
+.slide-header .lecture-tag {
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 4px 12px; border-radius: 99px;
+}
+.slide-header .section-title { font-size: 18px; font-weight: 700; }
+.slide-header .slide-number { font-size: 14px; color: var(--text-dim); font-weight: 500; }
+
+/* ── Zone-B: Body ── */
+.slide-body {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  padding: 32px 48px; position: relative;
+}
+
+/* ── Zone-C: Footer (48px) ── */
+.slide-footer {
+  flex: 0 0 48px; display: flex; align-items: center; justify-content: center;
+  padding: 0 48px;
+}
+.slide-footer span { font-size: 13px; color: var(--text-dim); font-weight: 500; }
+
+/* ── Navigation Dots ── */
+.nav-dots {
+  position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 8px; z-index: 100;
+}
+.nav-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  border: 2px solid var(--border); background: transparent;
+  cursor: pointer; transition: all 0.3s ease;
+}
+.nav-dot.active { background: var(--knowledge); border-color: var(--knowledge); transform: scale(1.4); }
+
+/* ═══════════════════════════════════════════
+   ANIMATION SYSTEM
+   ═══════════════════════════════════════════ */
+.animate {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.slide.active .animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+.slide.active .animate[data-delay="1"] { transition-delay: 0.1s; }
+.slide.active .animate[data-delay="2"] { transition-delay: 0.2s; }
+.slide.active .animate[data-delay="3"] { transition-delay: 0.3s; }
+.slide.active .animate[data-delay="4"] { transition-delay: 0.4s; }
+.slide.active .animate[data-delay="5"] { transition-delay: 0.5s; }
+.slide.active .animate[data-delay="6"] { transition-delay: 0.6s; }
+.slide.active .animate[data-delay="7"] { transition-delay: 0.7s; }
+.slide.active .animate[data-delay="8"] { transition-delay: 0.8s; }
+.slide.active .animate[data-delay="9"] { transition-delay: 0.9s; }
+.slide.active .animate[data-delay="10"] { transition-delay: 1.0s; }
+
+.animate[data-anim="scale"] { transform: scale(0.9); }
+.slide.active .animate[data-anim="scale"] { transform: scale(1); }
+.animate[data-anim="fade"] { transform: none; }
+.animate[data-anim="slide-left"] { transform: translateX(-24px); }
+.slide.active .animate[data-anim="slide-left"] { transform: translateX(0); }
+.animate[data-anim="slide-right"] { transform: translateX(24px); }
+.slide.active .animate[data-anim="slide-right"] { transform: translateX(0); }
+
+@keyframes pulse-highlight {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+.pulse { animation: pulse-highlight 2s ease-in-out infinite; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ═══════════════════════════════════════════
+   HERO SLIDE
+   ═══════════════════════════════════════════ */
+.hero-slide { background: var(--bg-dark); color: var(--text-light); }
+.hero-slide .slide-header { background: transparent; }
+.hero-slide .lecture-tag { background: rgba(139,92,246,0.2); color: var(--knowledge); }
+.hero-slide .section-title { color: var(--text-light); }
+.hero-slide .slide-number { color: rgba(255,255,255,0.4); }
+.hero-slide .slide-footer span { color: rgba(255,255,255,0.4); }
+
+.hero-content {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  max-width: 800px;
+}
+.hero-icon {
+  font-size: 120px; margin-bottom: 32px;
+  animation: float 3s ease-in-out infinite;
+}
+.hero-title {
+  font-size: clamp(40px, 6vw, 72px); font-weight: 900;
+  line-height: 1.1; letter-spacing: -0.03em;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero-subtitle {
+  font-size: clamp(18px, 2.5vw, 24px); font-weight: 400;
+  color: rgba(255,255,255,0.6); max-width: 600px; line-height: 1.6;
+  white-space: normal;
+}
+.hero-divider {
+  width: 60px; height: 3px; border-radius: 2px;
+  background: var(--knowledge); margin: 32px 0;
+}
+
+/* ═══════════════════════════════════════════
+   SECTION DIVIDER
+   ═══════════════════════════════════════════ */
+.section-divider { background: var(--bg-dark); color: var(--text-light); }
+.section-divider .slide-header, .section-divider .slide-footer { display: none; }
+.section-divider .slide-body { padding: 0; }
+.divider-content {
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px;
+}
+.divider-label {
+  font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--accent);
+}
+.divider-icon { font-size: 64px; margin-bottom: 8px; }
+.divider-title { font-size: clamp(32px, 5vw, 56px); font-weight: 900; letter-spacing: -0.02em; }
+.divider-desc { font-size: 20px; color: rgba(255,255,255,0.5); max-width: 500px; }
+
+/* ═══════════════════════════════════════════
+   INTRO SLIDE
+   ═══════════════════════════════════════════ */
+.intro-slide .slide-header { background: var(--card); border-bottom: 1px solid var(--border); }
+.intro-slide .lecture-tag { background: var(--knowledge-bg); color: var(--knowledge); }
+.intro-content {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  max-width: 1000px; width: 100%;
+}
+.intro-heading {
+  font-size: clamp(32px, 4vw, 48px); font-weight: 900;
+  letter-spacing: -0.02em; margin-bottom: 12px;
+}
+.intro-desc {
+  font-size: 18px; color: var(--text-dim); margin-bottom: 48px; max-width: 600px;
+  line-height: 1.6; white-space: normal;
+}
+
+/* ═══════════════════════════════════════════
+   CONTENT SLIDE (General)
+   ═══════════════════════════════════════════ */
+.content-slide .slide-header { background: var(--card); border-bottom: 1px solid var(--border); }
+.content-slide .lecture-tag { background: var(--knowledge-bg); color: var(--knowledge); }
+.content-wrapper {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  max-width: 900px; width: 100%; gap: 32px;
+}
+.content-title {
+  font-size: clamp(28px, 3.5vw, 42px); font-weight: 900;
+  letter-spacing: -0.02em; line-height: 1.2;
+}
+.content-desc {
+  font-size: 18px; color: var(--text-dim); max-width: 700px;
+  line-height: 1.6; white-space: normal;
+}
+
+/* ═══════════════════════════════════════════
+   COMPARE SLIDE (VS)
+   ═══════════════════════════════════════════ */
+.compare-slide .slide-header { background: var(--card); border-bottom: 1px solid var(--border); }
+.compare-slide .lecture-tag { background: var(--knowledge-bg); color: var(--knowledge); }
+
+.compare-content {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 32px;
+  max-width: 1100px; width: 100%; align-items: center;
+}
+.compare-col { text-align: center; }
+.compare-icon { font-size: 64px; margin-bottom: 16px; }
+.compare-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; padding: 4px 12px; border-radius: 99px; display: inline-block; margin-bottom: 16px;
+}
+.compare-label.knowledge { background: var(--knowledge-bg); color: var(--knowledge); }
+.compare-label.danger { background: var(--danger-bg); color: var(--danger); }
+.compare-title { font-size: 28px; font-weight: 900; margin-bottom: 8px; }
+.compare-what { font-size: 16px; color: var(--text-dim); margin-bottom: 24px; font-weight: 500; }
+.compare-vs {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: var(--bg); border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 800; color: var(--text-dim);
+  transition: all 0.3s ease;
+}
+.slide.active .compare-vs { animation: pulse-highlight 2s ease-in-out infinite; }
+
+/* ═══════════════════════════════════════════
+   FEATURE ITEMS
+   ═══════════════════════════════════════════ */
+.feature-list { display: flex; flex-direction: column; gap: 12px; text-align: left; }
+.feature-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 16px; border-radius: 12px; background: var(--card); border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+.feature-item > div:last-child { flex: 1; min-width: 0; }
+.feature-item:hover { border-color: var(--knowledge); transform: translateX(4px); box-shadow: 0 0 0 2px var(--knowledge-border); }
+.feature-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+.feature-text { font-size: 15px; line-height: 1.5; white-space: normal; }
+.feature-text strong { font-weight: 700; }
+
+/* ═══════════════════════════════════════════
+   METAPHOR CARD
+   ═══════════════════════════════════════════ */
+.metaphor-card {
+  display: flex; gap: 24px; padding: 32px;
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04); transition: all 0.3s ease;
+}
+.metaphor-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.06); transform: translateY(-2px); }
+.metaphor-icon {
+  font-size: 48px; flex-shrink: 0; width: 80px; height: 80px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--knowledge-bg); border-radius: 16px;
+}
+.metaphor-title { font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+.metaphor-text { font-size: 16px; color: var(--text-dim); line-height: 1.7; white-space: normal; }
+
+/* ═══════════════════════════════════════════
+   CALLOUT
+   ═══════════════════════════════════════════ */
+.callout {
+  display: flex; gap: 16px; padding: 20px 24px;
+  background: var(--knowledge-bg); border-left: 4px solid var(--knowledge); border-radius: 0 12px 12px 0;
+  transition: all 0.3s ease;
+}
+.callout:hover { background: var(--knowledge-border); transform: translateX(4px); }
+.callout-icon { font-size: 24px; }
+.callout-text { font-size: 15px; line-height: 1.6; white-space: normal; }
+.callout-text strong { color: var(--knowledge); }
+
+.callout.accent {
+  background: var(--highlight); border-left-color: var(--accent);
+}
+.callout.warning {
+  background: var(--danger-bg); border-left-color: var(--danger);
+}
+.callout.success {
+  background: var(--success-bg); border-left-color: var(--success);
+}
+
+/* ═══════════════════════════════════════════
+   TABS
+   ═══════════════════════════════════════════ */
+.deep-slide .slide-header { background: var(--card); border-bottom: 1px solid var(--border); }
+.deep-slide .lecture-tag { background: var(--knowledge-bg); color: var(--knowledge); }
+
+.deep-content { display: flex; flex-direction: column; gap: 32px; max-width: 900px; width: 100%; }
+.deep-header { display: flex; align-items: center; gap: 24px; text-align: left; }
+.deep-icon { font-size: 56px; }
+.deep-title { font-size: 36px; font-weight: 900; letter-spacing: -0.02em; }
+.deep-subtitle { font-size: 16px; color: var(--text-dim); margin-top: 4px; line-height: 1.5; white-space: normal; }
+
+.tab-nav { display: flex; gap: 8px; border-bottom: 2px solid var(--border); padding-bottom: 0; }
+.tab-btn {
+  padding: 12px 24px; font-size: 16px; font-weight: 600;
+  background: none; border: none; border-bottom: 3px solid transparent;
+  color: var(--text-dim); cursor: pointer; transition: all 0.2s ease;
+  font-family: var(--font); margin-bottom: -2px;
+}
+.tab-btn:hover { color: var(--knowledge); border-bottom-color: var(--knowledge); background: var(--knowledge-bg); }
+.tab-btn.active { color: var(--knowledge); border-bottom-color: var(--knowledge); font-weight: 700; }
+
+.tab-panel { display: none; animation: fadeIn 0.4s ease; }
+.tab-panel.active { display: block; }
+
+/* ═══════════════════════════════════════════
+   CARD GRID
+   ═══════════════════════════════════════════ */
+.card-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; width: 100%; }
+.concept-card {
+  background: var(--card); border-radius: 20px; padding: 32px 24px;
+  border: 1px solid var(--border); text-align: center;
+  transition: all 0.3s ease; position: relative; overflow: hidden;
+}
+.concept-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; }
+.concept-card.knowledge::before { background: var(--knowledge); }
+.concept-card.memory::before { background: var(--memory); }
+.concept-card.skill::before { background: var(--skill); }
+.concept-card.workflow::before { background: var(--workflow); }
+.concept-card:hover { transform: translateY(-4px); box-shadow: 0 0 0 3px var(--knowledge); border-color: var(--knowledge); }
+.card-icon { font-size: 48px; margin-bottom: 16px; display: block; }
+.card-title { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+.card-keyword { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; color: var(--text-dim); }
+.card-desc { font-size: 14px; color: var(--text-dim); line-height: 1.5; white-space: normal; }
+
+/* ═══════════════════════════════════════════
+   FLOW DIAGRAM
+   ═══════════════════════════════════════════ */
+.flow-diagram {
+  display: flex; align-items: center; gap: 16px; justify-content: center;
+  flex-wrap: wrap; max-width: 900px;
+}
+.flow-step {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 20px 16px; background: var(--card); border: 2px solid var(--border);
+  border-radius: 12px; min-width: 110px; transition: all 0.3s ease; cursor: pointer;
+}
+.flow-step:hover { border-color: var(--knowledge); transform: translateY(-2px); }
+.flow-step-icon { font-size: 32px; }
+.flow-step-label { font-size: 14px; font-weight: 700; text-align: center; }
+.flow-step-detail { font-size: 12px; color: var(--text-dim); text-align: center; max-width: 130px; }
+.flow-arrow { font-size: 24px; color: var(--knowledge); font-weight: 300; }
+
+/* ═══════════════════════════════════════════
+   LAYER STACK
+   ═══════════════════════════════════════════ */
+.layer-stack {
+  display: flex; flex-direction: column; gap: 0; width: 100%; max-width: 550px; margin: 0 auto;
+}
+.layer-item {
+  display: flex; align-items: center; gap: 16px; padding: 20px 24px;
+  border: 1px solid var(--border); position: relative; transition: all 0.3s ease;
+}
+.layer-item:first-child { border-radius: 12px 12px 0 0; }
+.layer-item:last-child { border-radius: 0 0 12px 12px; }
+.layer-item:hover { transform: scale(1.01); }
+.layer-item.t1 { background: var(--knowledge-bg); border-color: var(--knowledge-border); }
+.layer-item.t2 { background: var(--bg); border-color: var(--border); }
+.layer-item.t3 { background: var(--bg); border-color: var(--border); opacity: 0.8; }
+.layer-icon { font-size: 28px; }
+.layer-label { font-size: 18px; font-weight: 700; }
+.layer-desc { font-size: 13px; color: var(--text-dim); margin-left: auto; }
+
+/* ═══════════════════════════════════════════
+   FOCUS / Mouse
+   ═══════════════════════════════════════════ */
+[data-focusable] { transition: all 0.3s ease; cursor: pointer; outline: none; }
+[data-focusable].in-focus { outline: 3px solid var(--knowledge); outline-offset: 4px; box-shadow: 0 0 0 6px rgba(139,92,246,0.15); }
+.slide.mouse-hovering .in-focus { opacity: 0; pointer-events: none; }
+[data-focusable]:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+
+/* ── Click Game Effects ── */
+.click-game-score {
+  position: absolute; pointer-events: none; z-index: 1001; font-size: 24px; font-weight: 900;
+  color: var(--knowledge); text-shadow: 0 0 10px rgba(139,92,246,0.8), 0 2px 4px rgba(0,0,0,0.3);
+  animation: score-float 1s ease-out forwards; transform: translate(-50%, -50%);
+}
+@keyframes score-float {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+  30% { transform: translate(-50%, calc(-50% - 30px)) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, calc(-50% - 80px)) scale(1); opacity: 0; }
+}
+.click-game-particle {
+  position: absolute; width: 6px; height: 6px; border-radius: 50%; pointer-events: none;
+  z-index: 1000; animation: particle-fly 0.8s ease-out forwards;
+}
+@keyframes particle-fly {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+.click-game-sparkle {
+  position: absolute; pointer-events: none; z-index: 999; font-size: 16px;
+  animation: sparkle-twinkle 0.6s ease-out forwards;
+}
+@keyframes sparkle-twinkle {
+  0% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(1.5) rotate(180deg); opacity: 0.8; }
+  100% { transform: translate(-50%, -50%) scale(0) rotate(360deg); opacity: 0; }
+}
+.click-combo-display {
+  position: fixed; top: 16px; right: 16px; z-index: 9999;
+  background: linear-gradient(135deg, rgba(139,92,246,0.95), rgba(124,58,237,0.95));
+  color: white; font-size: 18px; font-weight: 900; padding: 8px 20px; border-radius: 99px;
+  box-shadow: 0 4px 16px rgba(139,92,246,0.4); pointer-events: none;
+  opacity: 0; transform: scale(0.8); transition: opacity 0.3s, transform 0.3s;
+}
+.click-combo-display.visible { opacity: 1; transform: scale(1); }
+.click-combo-display .combo-count { font-size: 28px; display: block; line-height: 1; }
+.click-combo-display .combo-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.9; }
+
+/* ── Mouse hover: .in-focus 효과 일시 숨김 ── */
+.slide.mouse-hovering [data-focusable].in-focus { box-shadow: none !important; border-color: var(--border) !important; transform: none !important; }
+.slide.mouse-hovering [data-focusable]:hover { box-shadow: 0 0 0 3px var(--knowledge), 0 12px 32px rgba(0,0,0,0.08); border-color: var(--knowledge); transform: translateY(-4px); }
+.slide.mouse-hovering .tab-btn[data-focusable]:hover { color: var(--knowledge); border-bottom-color: var(--knowledge); background: var(--knowledge-bg); }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .card-grid { grid-template-columns: repeat(2, 1fr); }
+  .compare-content { grid-template-columns: 1fr; gap: 24px; }
+  .compare-vs { margin: 0 auto; }
+}
+@media (max-width: 640px) {
+  .card-grid { grid-template-columns: 1fr; }
+  .slide-header, .slide-body, .slide-footer { padding-left: 24px; padding-right: 24px; }
+}
+
+/* ── Score Gauge ── */
+.score-gauge {
+  width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 36px; font-weight: 900; margin: 0 auto;
+}
+.score-gauge.high { background: var(--success-bg); color: var(--success); border: 4px solid var(--success); }
+.score-gauge.mid { background: var(--highlight); color: var(--accent); border: 4px solid var(--accent); }
+.score-gauge.low { background: var(--danger-bg); color: var(--danger); border: 4px solid var(--danger); }
+
+/* ── Tag badges ── */
+.tag-badge {
+  display: inline-block; padding: 4px 12px; border-radius: 99px; font-size: 12px; font-weight: 600; margin: 2px;
+}
+.tag-badge.knowledge { background: var(--knowledge-bg); color: var(--knowledge); }
+.tag-badge.memory { background: var(--memory-bg); color: var(--memory); }
+.tag-badge.skill { background: var(--skill-bg); color: var(--skill); }
+.tag-badge.workflow { background: var(--workflow-bg); color: var(--workflow); }
+.tag-badge.accent { background: var(--highlight); color: var(--accent); }
+</style>
+<meta name="theme-color" content="#121827">
+<link rel="stylesheet" href="./slides-v8.2.css">
+</head>
+<body class="deck-shell deck-b" data-deck="b">
+
+<!-- 콤보 표시 -->
+<div class="progress-bar" id="progressBar"></div>
+<div class="nav-dots" id="navDots"></div>
+
+<!-- ═══════════════════════════════════════════
+     데크 B: Knowledge 심화 (35페이지)
+     ═══════════════════════════════════════════ -->
+
+<!-- SLIDE 1: Hero -->
+<section class="slide hero-slide active" id="slide-0">
+  <div class="slide-header">
+    <div class="header-context"><span class="lecture-tag">Deck B</span><span class="section-title">Knowledge</span></div>
+    <span class="slide-number">01 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="hero-content">
+      <div class="hero-index" aria-hidden="true">B</div>
+      <p class="hero-series">HERMES AGENT LAB · KNOWLEDGE</p>
+      <h1 class="hero-title">지식은 체계가<br>될 때 살아납니다</h1>
+      <div class="hero-divider"></div>
+      <p class="hero-subtitle">수집 · 분류 · 검색 · 갱신<br>Agent가 지금 인용해도 되는 근거를 찾는 원리</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>HERMES AGENT LAB · 4-DECK SERIES</span>
+  </div>
+</section>
+
+<!-- SLIDE 2: 이 데크의 목차 -->
+<section class="slide content-slide" id="slide-1">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Deck B</span>
+      <span class="section-title animate" data-delay="2">목차</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">02 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">오늘 알아볼 6가지 주제</h2>
+      <div class="animate" data-delay="2" style="display:grid; grid-template-columns:1fr 1fr; gap:16px; max-width:800px; text-align:left; width:100%;">
+        <div class="feature-item">
+          <div class="feature-icon">🔍</div>
+          <div><strong style="color:var(--knowledge);">Act 1</strong> — 왜 지식 관리가 필요한가</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📡</div>
+          <div><strong style="color:var(--knowledge);">Act 2</strong> — 가치 있는 지식을 자동으로 수집하는 법</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🏷️</div>
+          <div><strong style="color:var(--knowledge);">Act 3</strong> — 중요도에 따라 체계적으로 분류</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🔎</div>
+          <div><strong style="color:var(--knowledge);">Act 4</strong> — 찾아야 쓸 수 있는 검색 기술</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🔄</div>
+          <div><strong style="color:var(--knowledge);">Act 5</strong> — 지식이 시들지 않도록 갱신</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🎯</div>
+          <div><strong style="color:var(--knowledge);">Act 6</strong> — 실전으로 연결하는 종합</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">6개 액트, 각 10-15분씩 진행합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 3: 문제 상황 - 정보 과부하 -->
+<section class="slide content-slide" id="slide-2">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 1</span>
+      <span class="section-title animate" data-delay="2">왜 지식 관리가 필요한가</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">03 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">정보는 쌓이지만, 찾을 수 없다</h2>
+      <p class="content-desc animate" data-delay="2">매일 새로운 파일, 메일, 메모가 쏟아집니다. 하지만 정말 필요할 때는 어디에 있는지 알 수 없습니다.</p>
+      <div class="metaphor-card animate" data-delay="3" style="max-width:650px;">
+        <div class="metaphor-icon" style="background:var(--danger-bg);">🗄️</div>
+        <div>
+          <h3 class="metaphor-title" style="color:var(--danger);">서랍에 무작정 넣는 상황</h3>
+          <p class="metaphor-text">서류를 분류 없이 서랍에 하나둘 넣다가, 나중에 찾아보면 어디에 넣었는지 전혀 기억이 나지 않는 경험. Agent에게도 같은 일이 매일 일어납니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="4">저장 ≠ 관리. 찾을 수 없는 지식은 없는 것과 같습니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 4: 정보 vs 지식 구분 -->
+<section class="slide compare-slide" id="slide-3">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 1</span>
+      <span class="section-title animate" data-delay="2">정보 vs 지식</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">04 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="compare-content">
+      <div class="compare-col" style="width:100%;">
+        <div class="animate" data-delay="1">
+          <div class="compare-icon">📄</div>
+          <span class="compare-label danger">Information</span>
+          <h3 class="compare-title">정보</h3>
+          <p class="compare-what">단순 데이터 조각</p>
+          <div class="feature-list">
+            <div class="feature-item">
+              <span class="feature-icon">❌</span><div class="feature-text"><strong>연결되지 않음</strong> — 다른 정보와 관계가 없음</div>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">❌</span><div class="feature-text"><strong>맥락이 없음</strong> — 언제·왜 필요한지 모름</div>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">❌</span><div class="feature-text"><strong>자동으로 가치가 떨어짐</strong> — 갱신 없으면 쓸모 없음</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="compare-vs animate" data-delay="2">VS</div>
+      <div class="compare-col" style="width:100%;">
+        <div class="animate" data-delay="3">
+          <div class="compare-icon">📚</div>
+          <span class="compare-label knowledge">Knowledge</span>
+          <h3 class="compare-title">지식</h3>
+          <p class="compare-what">체계화된 정보</p>
+          <div class="feature-list">
+            <div class="feature-item">
+              <span class="feature-icon">✅</span><div class="feature-text"><strong>연결된 네트워크</strong> — 다른 지식과 연결됨</div>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">✅</span><div class="feature-text"><strong>맥락 포함</strong> — 언제·왜 쓰는지 분명함</div>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">✅</span><div class="feature-text"><strong>지속적 갱신</strong> — 최신 상태로 유지됨</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="4">지식은 연결되고, 맥락이 있으며, 살아있는 정보입니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 5: 일상 비유 - 도서관과 요리책 -->
+<section class="slide content-slide" id="slide-4">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 1</span>
+      <span class="section-title animate" data-delay="2">일상 비유</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">05 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">도서관과 요리책의 차이</h2>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; max-width:850px; width:100%; text-align:left;">
+        <div class="metaphor-card animate" data-delay="2" style="flex-direction:column; gap:16px;">
+          <div class="metaphor-icon" style="width:100%; height:80px; font-size:48px; background:var(--danger-bg);">📖</div>
+          <h3 class="metaphor-title" style="color:var(--danger); text-align:center;">요리책 한 권만 있는 거</h3>
+          <p class="metaphor-text">레시피는 많지만, 책 한 권에 다 적혀 있어. 새로운 요리가 추가되면 메모장에 적고, 메모장은 서랍 어딘가에. 찾아볼 때마다 시간이 걸리고, 어떤 레시피가 있는지 파악하기 어렵습니다.</p>
+        </div>
+        <div class="metaphor-card animate" data-delay="3" style="flex-direction:column; gap:16px;">
+          <div class="metaphor-icon" style="width:100%; height:80px; font-size:48px; background:var(--success-bg);">📚</div>
+          <h3 class="metaphor-title" style="color:var(--success); text-align:center;">도서관처럼 체계화한 거</h3>
+          <p class="metaphor-text">요리를 카테고리별로 정리하고, 검색하면 바로 찾아서, 인기 레시피는 앞으로. 새로운 레시피가 들어오면 자동으로 분류하고, 오래된 레시피는 갱신. 필요한 정보가 바로 손에.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="4">Agent의 지식 관리도 도서관처럼 작동합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 6: Act 1 요약 -->
+<section class="slide hero-slide" id="slide-5">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 1</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">06 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="hero-content">
+      <div class="hero-icon animate" data-delay="1">💡</div>
+      <h2 class="hero-title animate" data-delay="2" style="font-size:clamp(28px,4vw,48px);">"지식이 없으면<br>Agent는 매번 처음부터 시작합니다"</h2>
+      <div class="hero-divider animate" data-delay="3"></div>
+      <p class="hero-subtitle animate" data-delay="4">이제 어떻게 수집할지 배워봅시다</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="5">Act 1 완료 — 문제 인식</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     ACT 2: 지식 수집 (slides 7-11)
+     ═══════════════════════════════════════════ -->
+
+<!-- SLIDE 7: Section Divider -->
+<section class="slide section-divider" id="slide-6">
+  <div class="slide-body">
+    <div class="divider-content">
+      <div class="divider-label animate" data-delay="1">Act 2</div>
+      <div class="divider-icon animate" data-delay="2">📡</div>
+      <h2 class="divider-title animate" data-delay="3">지식 수집</h2>
+      <p class="divider-desc animate" data-delay="4">가치 있는 정보를 자동으로 걸러내는 법</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 8: Signal Detector 개념 -->
+<section class="slide content-slide" id="slide-7">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 2</span>
+      <span class="section-title animate" data-delay="2">Signal Detector</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">08 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">가짜 뉴스 필터처럼 작동합니다</h2>
+      <p class="content-desc animate" data-delay="2">모든 정보를 다 저장하면 잡음이 됩니다. Signal Detector는 가치 있는 정보만 걸러내는 필터입니다.</p>
+      <div class="metaphor-card animate" data-delay="3" style="max-width:650px;">
+        <div class="metaphor-icon">📻</div>
+        <div>
+          <h3 class="metaphor-title">라디오 튜닝에 비유하자면</h3>
+          <p class="metaphor-text">에어중의 전파는 수천 개이지만, 우리가 듣는 채널은 몇 개뿐입니다. Signal Detector는 Agent가 필요한 '채널'만 선별해서 수신하도록 합니다. 관련 없는 정보는 아예 걸러내버립니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="4">모든 정보는 동일하지 않습니다 — 필터가 필요합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 9: 감지 대상 4가지 -->
+<section class="slide content-slide" id="slide-8">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 2</span>
+      <span class="section-title animate" data-delay="2">감지 대상</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">09 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">Signal Detector가 감지하는 4가지</h2>
+      <div class="card-grid animate" data-delay="2" style="grid-template-columns:repeat(4,1fr);">
+        <div class="concept-card knowledge" data-focusable>
+          <span class="card-icon">🔗</span>
+          <h3 class="card-title" style="color:var(--knowledge);">URL 감지</h3>
+          <p class="card-keyword">REFERENCE</p>
+          <p class="card-desc">참고할 만한 웹페이지, 문서 링크를 자동으로 발견</p>
+        </div>
+        <div class="concept-card memory" data-focusable>
+          <span class="card-icon">🎯</span>
+          <h3 class="card-title" style="color:var(--memory);">결정 감지</h3>
+          <p class="card-keyword">DECISION</p>
+          <p class="card-desc">중요한 판단이나 결정을 기록으로 남김</p>
+        </div>
+        <div class="concept-card skill" data-focusable>
+          <span class="card-icon">💡</span>
+          <h3 class="card-title" style="color:var(--skill);">개념 감지</h3>
+          <p class="card-keyword">CONCEPT</p>
+          <p class="card-desc">새로운 개념이나 용어를 학습하여 저장</p>
+        </div>
+        <div class="concept-card workflow" data-focusable>
+          <span class="card-icon">🚨</span>
+          <h3 class="card-title" style="color:var(--workflow);">문제 감지</h3>
+          <p class="card-keyword">PROBLEM</p>
+          <p class="card-desc">해결해야 할 이슈나 장애를 포착</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">4가지 신호 유형이 지식의 원료가 됩니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 10: 감지 흐름도 -->
+<section class="slide content-slide" id="slide-9">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 2</span>
+      <span class="section-title animate" data-delay="2">감지 흐름</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">10 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">정보가 지식으로 바뀌는 과정</h2>
+      <div class="flow-diagram animate" data-delay="2">
+        <div class="flow-step" data-focusable>
+          <div class="flow-step-icon">📨</div>
+          <div class="flow-step-label">수신</div>
+          <div class="flow-step-detail">채팅/문서에서 원료 정보 포착</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" data-focusable>
+          <div class="flow-step-icon">🔍</div>
+          <div class="flow-step-label">분석</div>
+          <div class="flow-step-detail">Signal Detector가 유형 분류</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" data-focusable>
+          <div class="flow-step-icon">🏷️</div>
+          <div class="flow-step-label">태그</div>
+          <div class="flow-step-detail">중요도·범주·연결점 자동 부여</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" data-focusable>
+          <div class="flow-step-icon">📂</div>
+          <div class="flow-step-label">저장</div>
+          <div class="flow-step-detail">지식 베이스에 체계적으로 기록</div>
+        </div>
+      </div>
+      <div class="callout animate" data-delay="3" style="max-width:650px; margin-top:16px;">
+        <div class="callout-icon">🎵</div>
+        <div class="callout-text">이 과정은 <strong>자동으로 1초도 안 걸립니다</strong>. 당신이 직접 분류할 필요 없습니다.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="4">수신→분석→태그→저장, 자동으로 연결됩니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 11: 인덱싱 자동화 -->
+<section class="slide content-slide" id="slide-10">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 2</span>
+      <span class="section-title animate" data-delay="2">인덱싱 자동화</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">11 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">목차와 색인이 자동으로 생깁니다</h2>
+      <p class="content-desc animate" data-delay="2">책의 목차를 수동으로 만드는 대신, Agent는 정보 저장이랑 동시에 색인도 만듭니다.</p>
+      <div style="max-width:700px; width:100%; text-align:left;">
+        <div class="feature-item animate" data-delay="3">
+          <div class="feature-icon">📑</div>
+          <div class="feature-text"><strong>키워드 자동 추출</strong> — 내용에서 핵심 단어를 알아서 찾아내어 색인</div>
+        </div>
+        <div class="feature-item animate" data-delay="4">
+          <div class="feature-icon">🔗</div>
+          <div class="feature-text"><strong>연결 관계 매핑</strong> — 같은 주제의 지식끼리 자동으로 연결 선 긋기</div>
+        </div>
+        <div class="feature-item animate" data-delay="5">
+          <div class="feature-icon">📅</div>
+          <div class="feature-text"><strong>시간 기록 포함</strong> — 언제 만들어졌는지, 언제 갱신했는지 기록</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="6">색인이 있으면 찾는 건 1초 문제입니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 12: Act 2 요약 -->
+<section class="slide hero-slide" id="slide-11">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 2</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">12 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="hero-content">
+      <div class="hero-icon animate" data-delay="1">📡</div>
+      <h2 class="hero-title animate" data-delay="2" style="font-size:clamp(28px,4vw,48px);">"가장 중요한 지식은<br>자동으로 걸러집니다"</h2>
+      <div class="hero-divider animate" data-delay="3"></div>
+      <p class="hero-subtitle animate" data-delay="4">4가지 신호 유형, 자동 인덱싱 — 수집은 여기까지</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="5">Act 2 완료 — 다음: 어떻게 분류할지</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     ACT 3: 지식 분류 (slides 13-17)
+     ═══════════════════════════════════════════ -->
+
+<!-- SLIDE 13: Section Divider -->
+<section class="slide section-divider" id="slide-12">
+  <div class="slide-body">
+    <div class="divider-content">
+      <div class="divider-label animate" data-delay="1">Act 3</div>
+      <div class="divider-icon animate" data-delay="2">🏷️</div>
+      <h2 class="divider-title animate" data-delay="3">지식 분류</h2>
+      <p class="divider-desc animate" data-delay="4">중요도에 따라 계층화하여 관리</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 14: T1/T2/T3 계층 -->
+<section class="slide content-slide" id="slide-13">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 3</span>
+      <span class="section-title animate" data-delay="2">T1 / T2 / T3 계층</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">14 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">3단계 중요도 피라미드</h2>
+      <p class="content-desc animate" data-delay="2">모든 지식이 같은 무게는 아닙니다. 중요도에 따라 세 층으로 분류합니다.</p>
+      <div class="layer-stack animate" data-delay="3">
+        <div class="layer-item t1" data-focusable>
+          <div class="layer-icon">⭐</div>
+          <div class="layer-label" style="color:var(--knowledge);">T1 — 핵심 지식</div>
+          <div class="layer-desc">Agent가 항상 먼저 참조해야 하는 필수 정보</div>
+        </div>
+        <div class="layer-item t2" data-focusable>
+          <div class="layer-icon">📋</div>
+          <div class="layer-label">T2 — 참조 지식</div>
+          <div class="layer-desc">상황에 따라 필요할 수 있는 보조 참고 자료</div>
+        </div>
+        <div class="layer-item t3" data-focusable>
+          <div class="layer-icon">📎</div>
+          <div class="layer-label">T3 — 보조 지식</div>
+          <div class="layer-desc">기억용으로 저장, 필요시 검색 가능한 배경 정보</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="4">핵심은 꼭, 참조는 가끔, 보조는 필요할 때</span>
+  </div>
+</section>
+
+<!-- SLIDE 15: 각 계층의 예시 -->
+<section class="slide content-slide" id="slide-14">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 3</span>
+      <span class="section-title animate" data-delay="2">구체적 예시</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">15 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">실제 지식 분류 예시</h2>
+      <div style="max-width:750px; width:100%; text-align:left; display:flex; flex-direction:column; gap:16px;">
+        <div class="metaphor-card animate" data-delay="2" style="border-left:4px solid var(--knowledge);">
+          <div class="metaphor-icon" style="background:var(--knowledge-bg); width:60px; height:60px; font-size:32px;">⭐</div>
+          <div>
+            <h3 class="metaphor-title" style="color:var(--knowledge); font-size:18px;">T1 — "우리 회사 브랜드 가이드라인"</h3>
+            <p class="metaphor-text" style="font-size:14px;">매일 문서 작성 시 참조. 핵심이기 때문에 Agent가 가장 먼저 기억합니다.</p>
+          </div>
+        </div>
+        <div class="metaphor-card animate" data-delay="3" style="border-left:4px solid var(--accent);">
+          <div class="metaphor-icon" style="background:var(--highlight); width:60px; height:60px; font-size:32px;">📋</div>
+          <div>
+            <h3 class="metaphor-title" style="color:var(--accent); font-size:18px;">T2 — "2024년 산업 트렌드 리포트"</h3>
+            <p class="metaphor-text" style="font-size:14px;">기획안 작성 시 도움이 되는 참고 자료. 항상 필요한 건 아니지만, 유용합니다.</p>
+          </div>
+        </div>
+        <div class="metaphor-card animate" data-delay="4" style="border-left:4px solid var(--text-dim);">
+          <div class="metaphor-icon" style="background:var(--bg); width:60px; height:60px; font-size:32px;">📎</div>
+          <div>
+            <h3 class="metaphor-title" style="color:var(--text-dim); font-size:18px;">T3 — "과거 프로젝트 산출물"</h3>
+            <p class="metaphor-text" style="font-size:14px;">기억용으로 보관. 비슷한 문제가 생겼을 때 검색하면 찾을 수 있습니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="5">어느 정보가 어느 층에 속하는지 Agent가 자동으로 판단합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 16: 우선순위 매핑 -->
+<section class="slide content-slide" id="slide-15">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 3</span>
+      <span class="section-title animate" data-delay="2">우선순위 매핑</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">16 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">중요도는 어떻게 결정될까요?</h2>
+      <p class="content-desc animate" data-delay="2">Agent는 여러 기준을 종합하여 지식을 T1~T3로 분류합니다.</p>
+      <div class="animate" data-delay="3" style="max-width:700px; width:100%; text-align:left; display:grid; gap:12px;">
+        <div class="feature-item" data-focusable>
+          <div class="feature-icon">🔁</div>
+          <div class="feature-text"><strong>참조 빈도</strong> — 자주 사용되는 지식일수록 높은 우선순위</div>
+        </div>
+        <div class="feature-item" data-focusable>
+          <div class="feature-icon">🎯</div>
+          <div class="feature-text"><strong>사용자의 명시적 지시</strong> — "이건 중요해"라고 알려주면 T1로 승격</div>
+        </div>
+        <div class="feature-item" data-focusable>
+          <div class="feature-icon">🌐</div>
+          <div class="feature-text"><strong>범위</strong> — 전사적 규칙은 T1, 부서별 규칙은 T2</div>
+        </div>
+        <div class="feature-item" data-focusable>
+          <div class="feature-icon">📊</div>
+          <div class="feature-text"><strong>연결 수</strong> — 다른 지식과 많이 연결된 건 핵심에 가까움</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="4">빈도·지시·범위·연결 — 4가지 기준으로 자동 분류</span>
+  </div>
+</section>
+
+<!-- SLIDE 17: 태그 시스템 -->
+<section class="slide content-slide" id="slide-16">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 3</span>
+      <span class="section-title animate" data-delay="2">태그 시스템</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">17 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">스티커 메모를 자동으로 붙입니다</h2>
+      <p class="content-desc animate" data-delay="2">태그는 지식을 찾기 쉽게 만드는 레이블입니다. Agent가 자동으로 붙여줍니다.</p>
+      <div class="animate" data-delay="3" style="display:flex; flex-wrap:wrap; gap:12px; justify-content:center; max-width:700px;">
+        <span class="tag-badge knowledge" style="font-size:15px; padding:8px 16px;">#정책</span>
+        <span class="tag-badge memory" style="font-size:15px; padding:8px 16px;">#프로젝트A</span>
+        <span class="tag-badge skill" style="font-size:15px; padding:8px 16px;">#디자인</span>
+        <span class="tag-badge workflow" style="font-size:15px; padding:8px 16px;">#프로세스</span>
+        <span class="tag-badge accent" style="font-size:15px; padding:8px 16px;">#고객문의</span>
+        <span class="tag-badge knowledge" style="font-size:15px; padding:8px 16px;">#기술스택</span>
+        <span class="tag-badge memory" style="font-size:15px; padding:8px 16px;">#Q4목표</span>
+        <span class="tag-badge skill" style="font-size:15px; padding:8px 16px;">#마케팅</span>
+      </div>
+      <div class="callout animate" data-delay="4" style="max-width:650px; margin-top:16px;">
+        <div class="callout-icon">🏷️</div>
+        <div class="callout-text">태그는 <strong>수평 분류</strong>입니다. T1/T2/T3가 수직 분류라면, 태그는 같은 층 내에서의 가로 방향 분류 역할을 합니다.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="5">수직(계층) + 수평(태그) = 완전한 분류망</span>
+  </div>
+</section>
+
+<!-- SLIDE 18: Act 3 요약 -->
+<section class="slide hero-slide" id="slide-17">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 3</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">18 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="hero-content">
+      <div class="hero-icon animate" data-delay="1">🏷️</div>
+      <h2 class="hero-title animate" data-delay="2" style="font-size:clamp(28px,4vw,48px);">"정리된 서랍에서<br>찾는 건 1초의 일입니다"</h2>
+      <div class="hero-divider animate" data-delay="3"></div>
+      <p class="hero-subtitle animate" data-delay="4">T1/T2/T3 계층 + 태그 = 어디든 즉시 탐색</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="5">Act 3 완료 — 다음: 어떻게 찾을지</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     ACT 4: 지식 검색 (slides 19-23)
+     ═══════════════════════════════════════════ -->
+
+<!-- SLIDE 19: Section Divider -->
+<section class="slide section-divider" id="slide-18">
+  <div class="slide-body">
+    <div class="divider-content">
+      <div class="divider-label animate" data-delay="1">Act 4</div>
+      <div class="divider-icon animate" data-delay="2">🔎</div>
+      <h2 class="divider-title animate" data-delay="3">지식 검색</h2>
+      <p class="divider-desc animate" data-delay="4">정확하고 빠른 검색의 비밀</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 20: FTS5 풀텍스트 검색 -->
+<section class="slide content-slide" id="slide-19">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 4</span>
+      <span class="section-title animate" data-delay="2">FTS5 풀텍스트</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">20 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">Ctrl+F보다 100배 똑똑한 검색</h2>
+      <p class="content-desc animate" data-delay="2">FTS5는 문서 전체 내용을 쑤셔본 뒤, 가장 관련성 높은 결과만 보여줍니다.</p>
+      <div class="metaphor-card animate" data-delay="3" style="max-width:650px;">
+        <div class="metaphor-icon">📰</div>
+        <div>
+          <h3 class="metaphor-title">신문 검색기 비유</h3>
+          <p class="metaphor-text">10년 치 신문이 쌓여 있다고 상상하세요. "기후변화"를 검색하면, 관련 기사만 필터링되고, 가장 중요한 기사부터 위로 밀려오죠. FTS5는 정확히 이 일을 Agent의 지식 전체에서 수행합니다.</p>
+        </div>
+      </div>
+      <div class="callout accent animate" data-delay="4" style="max-width:600px; margin-top:16px;">
+        <div class="callout-icon">⚡</div>
+        <div class="callout-text">수천 건의 지식도 <strong>1초도 안 걸려</strong> 검색 완료됩니다.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="5">단어 단위가 아닌 내용 전체를 탐색합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 21: Jaccard 유사도 -->
+<section class="slide content-slide" id="slide-20">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 4</span>
+      <span class="section-title animate" data-delay="2">Jaccard 유사도</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">21 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">비슷한 지식도 찾아냅니다</h2>
+      <p class="content-desc animate" data-delay="2">정확한 단어가 일치하지 않아도, 의미적으로 가까운 지식을 찾아냅니다.</p>
+      <div style="max-width:700px; width:100%; text-align:left;">
+        <div class="metaphor-card animate" data-delay="3" style="margin-bottom:16px;">
+          <div class="metaphor-icon" style="background:var(--highlight);">🥗</div>
+          <div>
+            <h3 class="metaphor-title">레시피 유사도 비유</h3>
+            <p class="metaphor-text"><strong>"토마토 파스타"</strong>를 검색했는데, 딱 맞는 레시피는 없습니다. 그런데 "토마토 소스 스파게티"가 있죠. 재료가 70% 겹치면 "이것을 추천합니다"라고 알려줍니다.</p>
+          </div>
+        </div>
+        <div class="animate" data-delay="4" style="display:flex; gap:16px; align-items:center; justify-content:center;">
+          <div style="flex:1; padding:20px; background:var(--card); border:1px solid var(--border); border-radius:12px; text-align:center;">
+            <div style="font-size:14px; color:var(--text-dim);">"토마토 파스타"</div>
+            <div style="font-size:36px; font-weight:900; color:var(--success); margin-top:8px;">70%</div>
+            <div style="font-size:14px; color:var(--text-dim);">일치도</div>
+          </div>
+          <div style="font-size:24px; color:var(--knowledge);">↔</div>
+          <div style="flex:1; padding:20px; background:var(--card); border:1px solid var(--border); border-radius:12px; text-align:center;">
+            <div style="font-size:14px; color:var(--text-dim);">"토마토 소스 스파게티"</div>
+            <div style="font-size:36px; font-weight:900; color:var(--knowledge); margin-top:8px;">MATCH</div>
+            <div style="font-size:14px; color:var(--text-dim);">추천 결과</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="5">단어가 달라도 의미로 연결합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 22: Bilingual 한영 동시 검색 -->
+<section class="slide content-slide" id="slide-21">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 4</span>
+      <span class="section-title animate" data-delay="2">Bilingual 검색</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">22 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">한국어로 물어보고, 영어 지식도 찾습니다</h2>
+      <p class="content-desc animate" data-delay="2">한국어로 검색해도 영어 문서가 포함된 결과물입니다. 반대도 마찬가지입니다.</p>
+      <div style="max-width:700px; width:100%; text-align:left; display:flex; flex-direction:column; gap:16px;">
+        <div class="metaphor-card animate" data-delay="3" style="border-left:4px solid var(--knowledge);">
+          <div class="metaphor-icon" style="background:var(--knowledge-bg); width:60px; height:60px; font-size:32px;">🇰🇷</div>
+          <div>
+            <h3 class="metaphor-title" style="font-size:18px;">"프로젝트 일정" 검색</h3>
+            <p class="metaphor-text" style="font-size:14px;">한국어로 검색 → "Project Schedule" "Timeline" 문서까지 함께 나오</p>
+          </div>
+        </div>
+        <div class="metaphor-card animate" data-delay="4" style="border-left:4px solid var(--memory);">
+          <div class="metaphor-icon" style="background:var(--memory-bg); width:60px; height:60px; font-size:32px;">🇺🇸</div>
+          <div>
+            <h3 class="metaphor-title" style="font-size:18px;">"API endpoint" 검색</h3>
+            <p class="metaphor-text" style="font-size:14px;">영어로 검색 → "API 엔드포인트" "서버 연결" 문서까지 함께 나오</p>
+          </div>
+        </div>
+      </div>
+      <div class="callout success animate" data-delay="5" style="max-width:650px; margin-top:12px;">
+        <div class="callout-icon">🌍</div>
+        <div class="callout-text">어느 언어로 질문하든 <strong>전체 지식베이스를 검색</strong>합니다. 언어 장벽이 없습니다.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="6">한국어+영어, 두 언어로 동시에 검색망을 펼칩니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 23: 검색 결과의 우선순위 -->
+<section class="slide content-slide" id="slide-22">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 4</span>
+      <span class="section-title animate" data-delay="2">검색 우선순위</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">23 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">검색 결과도 순서가 있습니다</h2>
+      <p class="content-desc animate" data-delay="2">Agent는 검색 결과를 이렇게 정렬해서 보여줍니다.</p>
+      <div class="animate" data-delay="3" style="max-width:700px; width:100%; text-align:left; display:flex; flex-direction:column; gap:12px;">
+        <div class="feature-item" style="border-left:4px solid var(--knowledge);">
+          <div class="feature-icon" style="font-size:24px;">🥇</div>
+          <div class="feature-text"><strong>T1 핵심 지식</strong>이 먼저 — 항상 가장 중요한 것부터</div>
+        </div>
+        <div class="feature-item" style="border-left:4px solid var(--accent);">
+          <div class="feature-icon" style="font-size:24px;">🥈</div>
+          <div class="feature-text"><strong>높은 유사도</strong> — 검색어와 의미적으로 가까운 결과</div>
+        </div>
+        <div class="feature-item" style="border-left:4px solid var(--success);">
+          <div class="feature-icon" style="font-size:24px;">🥉</div>
+          <div class="feature-text"><strong>최신 갱신</strong> — 같은 유사도면 더 새로운 것이 위로</div>
+        </div>
+        <div class="feature-item" style="border-left:4px solid var(--text-dim);">
+          <div class="feature-icon" style="font-size:24px;">📋</div>
+          <div class="feature-text"><strong>T2/T3 참조</strong> — 보조 지식은 하위에 배치</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="4">중요도 → 유사도 → 최신성 순서로 정렬됩니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 24: Act 4 요약 -->
+
+<!-- INTERACTIVE LAB: retrieval ranking with relevance, authority, freshness -->
+<section class="slide content-slide learning-lab" id="lab-knowledge" aria-labelledby="lab-knowledge-title">
+  <div class="slide-header">
+    <div><span class="lecture-tag">LIVE LAB</span><span class="section-title">지식 검색</span></div>
+    <span class="slide-number"></span>
+  </div>
+  <div class="slide-body">
+    <div class="learning-lab-shell" data-demo="knowledge">
+      <header>
+        <div class="lab-kicker">Interactive example · 02</div>
+        <h2 class="lab-title" id="lab-knowledge-title">검색어가 아니라 “쓸 수 있는 근거”를 찾습니다</h2>
+        <p class="lab-desc">사내 지식 6건에서 실제 답변에 인용할 문서를 골라봅니다. 필터를 바꾸면 순위와 선택 근거가 함께 변합니다.</p>
+      </header>
+      <div class="lab-grid">
+        <div class="lab-panel">
+          <label class="lab-control">질문
+            <input type="text" value="해외 출장 숙박비 한도는?" data-knowledge-query aria-label="지식 검색 질문">
+          </label>
+          <div class="lab-pills" aria-label="예시 질문">
+            <button type="button" class="lab-pill" data-query="해외 출장 숙박비 한도는?">출장비</button>
+            <button type="button" class="lab-pill" data-query="보안 사고는 누구에게 보고해?">보안 사고</button>
+            <button type="button" class="lab-pill" data-query="신규 입사자 첫 주 체크리스트">온보딩</button>
+          </div>
+          <div class="lab-controls" style="margin-top:12px">
+            <label class="lab-check"><input type="checkbox" data-filter="official" checked> 공식·검증 문서 우선</label>
+            <label class="lab-check"><input type="checkbox" data-filter="fresh" checked> 최신 문서 우선</label>
+            <label class="lab-check"><input type="checkbox" data-filter="multi" checked> 한국어↔영어 의미 확장</label>
+          </div>
+          <button type="button" class="lab-button primary" data-knowledge-search style="margin-top:10px">지식 검색 실행</button>
+        </div>
+        <div class="lab-panel">
+          <h3>추천 근거 <small>순위와 함께 “왜 선택됐는지”를 보여줍니다</small></h3>
+          <div class="search-results" data-knowledge-results aria-live="polite"></div>
+          <div class="decision-line knowledge-decision"><span>답변에 쓸 근거</span><strong data-knowledge-decision></strong></div>
+          <p class="lab-status" data-knowledge-status aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>핵심: 좋은 검색은 비슷한 문서가 아니라 지금 인용해도 되는 근거를 찾습니다</span></div>
+</section>
+
+<section class="slide hero-slide" id="slide-23">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 4</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">24 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="hero-content">
+      <div class="hero-icon animate" data-delay="1">🔎</div>
+      <h2 class="hero-title animate" data-delay="2" style="font-size:clamp(28px,4vw,48px);">"검색의 핵심은<br>정확도가 아니라 관련성입니다"</h2>
+      <div class="hero-divider animate" data-delay="3"></div>
+      <p class="hero-subtitle animate" data-delay="4">FTS5 + Jaccard + Bilingual = 언어와 형식을 넘어서는 검색</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="5">Act 4 완료 — 다음: 지식이 새롭도록 유지하는 법</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     ACT 5: 지식 갱신 (slides 25-29)
+     ═══════════════════════════════════════════ -->
+
+<!-- SLIDE 25: Section Divider -->
+<section class="slide section-divider" id="slide-24">
+  <div class="slide-body">
+    <div class="divider-content">
+      <div class="divider-label animate" data-delay="1">Act 5</div>
+      <div class="divider-icon animate" data-delay="2">🔄</div>
+      <h2 class="divider-title animate" data-delay="3">지식 갱신</h2>
+      <p class="divider-desc animate" data-delay="4">지식이 시들지 않도록 자동으로 관리</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 26: 갱신 필요성 -->
+<section class="slide content-slide" id="slide-25">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 5</span>
+      <span class="section-title animate" data-delay="2">갱신 필요성</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">26 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">낡은 지식은 잘못된 답변입니다</h2>
+      <p class="content-desc animate" data-delay="2">1년 전 정보가 그대로 남아 있다면, Agent가 옛날 기준으로 대답할 수 있습니다.</p>
+      <div class="metaphor-card animate" data-delay="3" style="max-width:650px;">
+        <div class="metaphor-icon" style="background:var(--danger-bg);">🥫</div>
+        <div>
+          <h3 class="metaphor-title" style="color:var(--danger);">유통기한 지난 소스 비유</h3>
+          <p class="metaphor-text">냉장고에 2년 전 소스가 남아있다면? 맛이 변했을 가능성이 높습니다. Agent의 지식도 마찬가집니다. 오래된 정보는 갱신하거나 없애야 합니다. "2024년 세제 규정"이라는 정보가 2026년에도 그대로라면 큰 문제가 됩니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="4">낡은 지식은 없는 것보다 더 위험합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 27: 자동 갱신 파이프라인 -->
+<section class="slide content-slide" id="slide-26">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 5</span>
+      <span class="section-title animate" data-delay="2">자동 갱신 파이프라인</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">27 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">wiki-process-filings 파이프라인</h2>
+      <p class="content-desc animate" data-delay="2">Agent가 스스로 지식을 점검하고 갱신하는 자동 프로세스입니다.</p>
+      <div class="flow-diagram animate" data-delay="3">
+        <div class="flow-step" data-focusable>
+          <div class="flow-step-icon">📋</div>
+          <div class="flow-step-label">점검</div>
+          <div class="flow-step-detail">모든 지식의 상태를 확인</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" data-focusable>
+          <div class="flow-step-icon">🔍</div>
+          <div class="flow-step-label">비교</div>
+          <div class="flow-step-detail">원본 소스와 현재 지식 비교</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" data-focusable>
+          <div class="flow-step-icon">✏️</div>
+          <div class="flow-step-label">갱신</div>
+          <div class="flow-step-detail">변경된 부분만 업데이트</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step" data-focusable>
+          <div class="flow-step-icon">🗑️</div>
+          <div class="flow-step-label">정리</div>
+          <div class="flow-step-detail">유효하지 않은 지식 제거</div>
+        </div>
+      </div>
+      <div class="callout animate" data-delay="4" style="max-width:600px; margin-top:16px;">
+        <div class="callout-icon">⏰</div>
+        <div class="callout-text">이 파이프라인은 <strong>정기적으로 자동 실행</strong>됩니다. 매번 직접 점검할 필요가 없습니다.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="5">점검→비교→갱신→정리, 자동으로 순환합니다</span>
+  </div>
+</section>
+
+<!-- SLIDE 28: 신선도 점수 -->
+<section class="slide content-slide" id="slide-27">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 5</span>
+      <span class="section-title animate" data-delay="2">신선도 점수</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">28 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">지식에도 '신선도'가 있습니다</h2>
+      <p class="content-desc animate" data-delay="2">각 지식 항목에 0~100점의 신선도 점수를 부여합니다.</p>
+      <div style="display:flex; gap:24px; justify-content:center; flex-wrap:wrap;" class="animate" data-delay="3">
+        <div style="text-align:center;">
+          <div class="score-gauge high">95</div>
+          <p style="font-size:14px; font-weight:600; margin-top:8px; color:var(--success);">최신 정보</p>
+          <p style="font-size:12px; color:var(--text-dim);">1주 이내 갱신</p>
+        </div>
+        <div style="text-align:center;">
+          <div class="score-gauge mid">60</div>
+          <p style="font-size:14px; font-weight:600; margin-top:8px; color:var(--accent);">부분 갱신 필요</p>
+          <p style="font-size:12px; color:var(--text-dim);">1~3개월 전 갱신</p>
+        </div>
+        <div style="text-align:center;">
+          <div class="score-gauge low">20</div>
+          <p style="font-size:14px; font-weight:600; margin-top:8px; color:var(--danger);">갱신 시급</p>
+          <p style="font-size:12px; color:var(--text-dim);">6개월 이상 갱신 안 함</p>
+        </div>
+      </div>
+      <div class="animate" data-delay="4" style="max-width:600px; text-align:left; display:flex; flex-direction:column; gap:10px; margin-top:16px;">
+        <div class="feature-item">
+          <div class="feature-icon">📅</div>
+          <div class="feature-text"><strong>마지막 갱신일</strong> — 가장 오래전에 갱신할수록 점수 하락</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🔁</div>
+          <div class="feature-text"><strong>원본 변경 여부</strong> — 소스 URL의 내용이 바뀌었는지 확인</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📊</div>
+          <div class="feature-text"><strong>참조 빈도</strong> — 오래된 지식이라도 자주 쓰면 점수 유지</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="5">갱신일 + 원본변경 + 참조빈도 = 신선도 3가지 지표</span>
+  </div>
+</section>
+
+<!-- SLIDE 29: 만료 정책 -->
+<section class="slide content-slide" id="slide-28">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 5</span>
+      <span class="section-title animate" data-delay="2">만료 정책</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">29 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">사용하지 않는 지식은 정리됩니다</h2>
+      <p class="content-desc animate" data-delay="2">냉장고 정리처럼, 쓸모없어지는 지식은 자동으로 관리됩니다.</p>
+      <div style="max-width:700px; width:100%; text-align:left; display:flex; flex-direction:column; gap:16px;">
+        <div class="metaphor-card animate" data-delay="3" style="border-left:4px solid var(--accent);">
+          <div class="metaphor-icon" style="background:var(--highlight); width:60px; height:60px; font-size:32px;">⚠️</div>
+          <div>
+            <h3 class="metaphor-title" style="font-size:18px; color:var(--accent);">경고 단계</h3>
+            <p class="metaphor-text" style="font-size:14px;">신선도 30점 미만 → 사용자에게 "이 지식은 갱신이 필요합니다" 알림</p>
+          </div>
+        </div>
+        <div class="metaphor-card animate" data-delay="4" style="border-left:4px solid var(--danger);">
+          <div class="metaphor-icon" style="background:var(--danger-bg); width:60px; height:60px; font-size:32px;">🗑️</div>
+          <div>
+            <h3 class="metaphor-title" style="font-size:18px; color:var(--danger);">만료 단계</h3>
+            <p class="metaphor-text" style="font-size:14px;">1년 이상 갱신 안 된 T3 지식 → 자동 아카이브 (검색 결과에서 제외)</p>
+          </div>
+        </div>
+        <div class="metaphor-card animate" data-delay="5" style="border-left:4px solid var(--success);">
+          <div class="metaphor-icon" style="background:var(--success-bg); width:60px; height:60px; font-size:32px;">✅</div>
+          <div>
+            <h3 class="metaphor-title" style="font-size:18px; color:var(--success);">T1은 절대 만료 안 됨</h3>
+            <p class="metaphor-text" style="font-size:14px;">핵심 지식은 경고는 하지만 자동으로 삭제하지 않습니다. 항상 사용자의 확인을 받습니다.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="6">T1은 보호, T2는 경고, T3는 자동 정리 — 계층별 다른 정책</span>
+  </div>
+</section>
+
+<!-- SLIDE 30: Act 5 요약 -->
+<section class="slide hero-slide" id="slide-29">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 5</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">30 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="hero-content">
+      <div class="hero-icon animate" data-delay="1">🔄</div>
+      <h2 class="hero-title animate" data-delay="2" style="font-size:clamp(28px,4vw,48px);">"살아있는 지식은<br>자신만의 청소부를 가집니다"</h2>
+      <div class="hero-divider animate" data-delay="3"></div>
+      <p class="hero-subtitle animate" data-delay="4">자동 갱신 + 신선도 점수 + 만료 정책 = 최신 상태 유지</p>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="5">Act 5 완료 — 마지막: 종합 정리</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     ACT 6: 종합 (slides 31-35)
+     ═══════════════════════════════════════════ -->
+
+<!-- SLIDE 31: Section Divider -->
+<section class="slide section-divider" id="slide-30">
+  <div class="slide-body">
+    <div class="divider-content">
+      <div class="divider-label animate" data-delay="1">Act 6</div>
+      <div class="divider-icon animate" data-delay="2">🎯</div>
+      <h2 class="divider-title animate" data-delay="3">종합</h2>
+      <p class="divider-desc animate" data-delay="4">실전 시나리오로 연결하는 종합 정리</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 32: 실전 시나리오 1 - 신규 멤버 온보딩 -->
+<section class="slide content-slide" id="slide-31">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 6</span>
+      <span class="section-title animate" data-delay="2">실전 시나리오 1</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">32 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">신규 멤버 온보딩</h2>
+      <p class="content-desc animate" data-delay="2">Agent가 신규 직원을 하루 만에 업무에 투입시키는 과정</p>
+      <div style="max-width:700px; width:100%; text-align:left; display:flex; flex-direction:column; gap:12px;">
+        <div class="feature-item animate" data-delay="3">
+          <div class="feature-icon">1️⃣</div>
+          <div class="feature-text"><strong>T1 지식 우선 제공</strong> — 회사 규칙, 브랜드 가이드라인 등 핵심만 먼저 전달</div>
+        </div>
+        <div class="feature-item animate" data-delay="4">
+          <div class="feature-icon">2️⃣</div>
+          <div class="feature-text"><strong>문즉 답변</strong> — 궁금한 것 물어보면 관련 지식 바로 찾아서</div>
+        </div>
+        <div class="feature-item animate" data-delay="5">
+          <div class="feature-icon">3️⃣</div>
+          <div class="feature-text"><strong>학습 기록</strong> — 신규 멤버가 물어본 내용을 T2로 분류하여 지식 확장</div>
+        </div>
+        <div class="feature-item animate" data-delay="6">
+          <div class="feature-icon">4️⃣</div>
+          <div class="feature-text"><strong>개인 맞춤</strong> — 역할과 부서 태그를 붙여 관련 지식만 우선 표시</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="7">핵심 먼저, 질문을 통해 확장 — 지능형 온보딩</span>
+  </div>
+</section>
+
+<!-- SLIDE 33: 실전 시나리오 2 - 프로젝트 위기 -->
+<section class="slide content-slide" id="slide-32">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 6</span>
+      <span class="section-title animate" data-delay="2">실전 시나리오 2</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">33 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">프로젝트 위기 상황</h2>
+      <p class="content-desc animate" data-delay="2">기대했던 결과가 안 나왔을 때 Agent가 어떻게 대응하는지</p>
+      <div style="max-width:700px; width:100%; text-align:left; display:flex; flex-direction:column; gap:12px;">
+        <div class="feature-item animate" data-delay="3">
+          <div class="feature-icon">🚨</div>
+          <div class="feature-text"><strong>문제 감지</strong> — Signal Detector가 이상 징후를 포착하여 즉시 경고</div>
+        </div>
+        <div class="feature-item animate" data-delay="4">
+          <div class="feature-icon">🔍</div>
+          <div class="feature-text"><strong>이전 사례 검색</strong> — 과거 비슷한 위기 상황을 지식 베이스에서 즉시 탐색</div>
+        </div>
+        <div class="feature-item animate" data-delay="5">
+          <div class="feature-icon">💡</div>
+          <div class="feature-text"><strong>해결책 제안</strong> — 유사도 높은 과거 사례의 해결 방법을 제안</div>
+        </div>
+        <div class="feature-item animate" data-delay="6">
+          <div class="feature-icon">📝</div>
+          <div class="feature-text"><strong>경험 축적</strong> — 이번 위기 경험 자체를 새로운 지식으로 저장</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="7">위기 감지 → 과거 검색 → 해결 제안 → 경험 저장</span>
+  </div>
+</section>
+
+<!-- SLIDE 34: 핵심 요약 5가지 -->
+<section class="slide content-slide" id="slide-33">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1">Act 6</span>
+      <span class="section-title animate" data-delay="2">핵심 요약</span>
+    </div>
+    <span class="slide-number animate" data-delay="3">34 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="content-wrapper">
+      <h2 class="content-title animate" data-delay="1">오늘 배운 핵심 5가지</h2>
+      <div class="animate" data-delay="2" style="max-width:700px; text-align:left; display:grid; gap:12px;">
+        <div class="feature-item">
+          <div class="feature-icon">📡</div>
+          <div class="feature-text"><strong>Signal Detector</strong> — 가치 있는 정보만 필터링하여 수집</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🏷️</div>
+          <div class="feature-text"><strong>T1/T2/T3 계층</strong> — 중요도에 따라 자동 분류, 태그로 수평 연결</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🔎</div>
+          <div class="feature-text"><strong>FTS5 + Jaccard</strong> — 전체 내용 검색 + 의미 유사도 + 한영 동시 검색</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🔄</div>
+          <div class="feature-text"><strong>자동 갱신 파이프라인</strong> — 신선도 점수와 만료 정책으로 최신 유지</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🎯</div>
+          <div class="feature-text"><strong>실전 적용</strong> — 온보딩, 위기 대응 등 일상 업무에 즉시 활용</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="3">수집 → 분류 → 검색 → 갱신 → 활용, 하나의 흐름</span>
+  </div>
+</section>
+
+<!-- SLIDE 35: 마지막 메시지 + Q&A + 데크 C 소개 -->
+<section class="slide hero-slide" id="slide-34">
+  <div class="slide-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="lecture-tag animate" data-delay="1" style="background:var(--skill-bg);color:var(--skill);">Next</span>
+    </div>
+    <span class="slide-number animate" data-delay="2">35 / 35</span>
+  </div>
+  <div class="slide-body">
+    <div class="hero-content">
+      <div class="hero-icon animate" data-delay="1">📚</div>
+      <h1 class="hero-title animate" data-delay="2">감사합니다</h1>
+      <div class="hero-divider animate" data-delay="3"></div>
+      <p class="hero-subtitle animate" data-delay="4">지식은 체계가 될 때 진정으로 강력해집니다</p>
+      <div class="animate" data-delay="5" style="margin-top:32px; display:flex; flex-direction:column; align-items:center; gap:16px; max-width:600px; width:100%; text-align:left;">
+        <div style="font-size:14px; color:rgba(255,255,255,0.5); font-weight:600; text-transform:uppercase; letter-spacing:0.1em;">Q & A — 궁금한 점을 물어보세요</div>
+        <div class="feature-item" style="border-left:4px solid var(--skill); background:rgba(255,255,255,0.05); border-color:var(--skill);">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-text"><strong style="color:var(--skill);">다음: 데크 C — Skill 심화</strong><br><span style="color:rgba(255,255,255,0.5);font-size:13px;">표준화된 절차 설계와 작성 방법 (37페이지)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="animate" data-delay="6">수집 · 분류 · 검색 · 갱신 — 지식 관리 완전 가이드</span>
+  </div>
+</section>
+
+
+<script src="./slides-v8.2.js" defer></script>
+</body>
+</html>

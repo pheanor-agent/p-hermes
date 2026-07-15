@@ -1,22 +1,86 @@
 {
-  "current_version": "v8.1",
+  "current_version": "v8.2",
   "category": "lectures",
   "description": "학습용 강의 시리즈 (Slide Design System)",
   "versions": [
+    {
+      "id": "v8.2",
+      "label": "v8.2 — 통합 덱쉘 시스템 (New)",
+      "path": "v8.2/",
+      "job": "JOB-2298",
+      "releasedAt": "2026-07-15",
+      "status": "current",
+      "assetModel": "external-css-js",
+      "summary": "4개 독립 덱(A:Core/B:Knowledge/C:Skill/D:Workflow) 156페이지. Series Nav, Presenter Controls, Interactive Labs, Slide Map 포함.",
+      "lectures": [
+        {
+          "id": "A",
+          "file": "deck-a-core-v8.2.html",
+          "title": "Hermes Agent — 4가지 핵심 기능",
+          "slides": 35,
+          "framework": "4 Core Functions"
+        },
+        {
+          "id": "B",
+          "file": "deck-b-knowledge-v8.2.html",
+          "title": "Knowledge 완전 정복",
+          "slides": 36,
+          "framework": "Progressive Disclosure"
+        },
+        {
+          "id": "C",
+          "file": "deck-c-skill-v8.2.html",
+          "title": "Skill 심화 — 표준화된 절차",
+          "slides": 38,
+          "framework": "6-Act Structure"
+        },
+        {
+          "id": "D",
+          "file": "deck-d-workflow-v8.2.html",
+          "title": "Workflow 심화 — 9단계 상태 머신",
+          "slides": 47,
+          "framework": "7-Act Structure"
+        }
+      ]
+    },
     {
       "id": "v8.1",
       "label": "v8.1 — 외부 자산 독립 패키지",
       "path": "v8.1/",
       "job": "JOB-2278",
       "releasedAt": "2026-07-14",
-      "status": "current",
+      "status": "stable",
       "assetModel": "external-local-css-js",
       "summary": "4개 독립 덱(A:종합/B:Knowledge/C:Skill/D:Workflow) 156페이지. 사용자 제공 HTML/CSS/JS를 원문 그대로 보존한 현재 버전.",
       "lectures": [
-        {"id": "A", "file": "deck-a-core.html", "title": "Hermes Agent — 4가지 핵심 기능", "slides": 35, "framework": "4 Core Functions"},
-        {"id": "B", "file": "deck-b-knowledge.html", "title": "Knowledge 완전 정복", "slides": 36, "framework": "Progressive Disclosure"},
-        {"id": "C", "file": "deck-c-skill.html", "title": "Skill 심화 — 표준화된 절차", "slides": 38, "framework": "6-Act Structure"},
-        {"id": "D", "file": "deck-d-workflow.html", "title": "Workflow 심화 — 9단계 상태 머신", "slides": 47, "framework": "7-Act Structure"}
+        {
+          "id": "A",
+          "file": "deck-a-core.html",
+          "title": "Hermes Agent — 4가지 핵심 기능",
+          "slides": 35,
+          "framework": "4 Core Functions"
+        },
+        {
+          "id": "B",
+          "file": "deck-b-knowledge.html",
+          "title": "Knowledge 완전 정복",
+          "slides": 36,
+          "framework": "Progressive Disclosure"
+        },
+        {
+          "id": "C",
+          "file": "deck-c-skill.html",
+          "title": "Skill 심화 — 표준화된 절차",
+          "slides": 38,
+          "framework": "6-Act Structure"
+        },
+        {
+          "id": "D",
+          "file": "deck-d-workflow.html",
+          "title": "Workflow 심화 — 9단계 상태 머신",
+          "slides": 47,
+          "framework": "7-Act Structure"
+        }
       ]
     },
     {
@@ -29,10 +93,34 @@
       "assetModel": "inline-css-js",
       "summary": "4개 덱(A:종합/B:Knowledge/C:Skill/D:Workflow) 152페이지. commit 12426be 기준 원본 안정판.",
       "lectures": [
-        {"id": "A", "file": "deck-a-core.html", "title": "Hermes Agent — 4가지 핵심 기능", "slides": 34, "framework": "4 Core Functions"},
-        {"id": "B", "file": "deck-b-knowledge.html", "title": "Knowledge 완전 정복", "slides": 35, "framework": "Progressive Disclosure"},
-        {"id": "C", "file": "deck-c-skill.html", "title": "Skill 심화 — 표준화된 절차", "slides": 37, "framework": "6-Act Structure"},
-        {"id": "D", "file": "deck-d-workflow.html", "title": "Workflow 심화 — 9단계 상태 머신", "slides": 46, "framework": "7-Act Structure"}
+        {
+          "id": "A",
+          "file": "deck-a-core.html",
+          "title": "Hermes Agent — 4가지 핵심 기능",
+          "slides": 34,
+          "framework": "4 Core Functions"
+        },
+        {
+          "id": "B",
+          "file": "deck-b-knowledge.html",
+          "title": "Knowledge 완전 정복",
+          "slides": 35,
+          "framework": "Progressive Disclosure"
+        },
+        {
+          "id": "C",
+          "file": "deck-c-skill.html",
+          "title": "Skill 심화 — 표준화된 절차",
+          "slides": 37,
+          "framework": "6-Act Structure"
+        },
+        {
+          "id": "D",
+          "file": "deck-d-workflow.html",
+          "title": "Workflow 심화 — 9단계 상태 머신",
+          "slides": 46,
+          "framework": "7-Act Structure"
+        }
       ]
     },
     {
@@ -43,9 +131,24 @@
       "releasedAt": "2026-07-07",
       "summary": "Zone System 도입 (Zone-A/B/C), 다크 테마 유지",
       "lectures": [
-        {"id": "A", "title": "왜 Agent OS인가?", "slides": 13, "framework": "SCQA→Golden Circle"},
-        {"id": "B", "title": "Memory vs Knowledge", "slides": 21, "framework": "Progressive Disclosure"},
-        {"id": "C", "title": "Architecture & Runtime", "slides": 16, "framework": "Pyramid Principle"}
+        {
+          "id": "A",
+          "title": "왜 Agent OS인가?",
+          "slides": 13,
+          "framework": "SCQA→Golden Circle"
+        },
+        {
+          "id": "B",
+          "title": "Memory vs Knowledge",
+          "slides": 21,
+          "framework": "Progressive Disclosure"
+        },
+        {
+          "id": "C",
+          "title": "Architecture & Runtime",
+          "slides": 16,
+          "framework": "Pyramid Principle"
+        }
       ]
     },
     {
