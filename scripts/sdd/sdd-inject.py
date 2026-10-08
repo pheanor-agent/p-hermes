@@ -62,11 +62,14 @@ def synthesize_file(file_path):
     return False
 
 def main():
-    # target directories for injection
+    # Resolve repository from this script, never from the original workstation path.
+    project_root = Path(__file__).resolve().parents[2]
+    # Only maintained entrypoints are eligible for dynamic injection. Historical
+    # playground/archive material is intentionally immutable.
     targets = [
-        '/home/pheanor/.hermes/workspace/projects/p-hermes/docs/',
-        '/home/pheanor/.hermes/workspace/projects/p-hermes/README.md',
-        '/home/pheanor/.hermes/workspace/projects/p-hermes/ARCHITECTURE.md'
+        project_root / 'docs/lectures/index.html',
+        project_root / 'README.md',
+        project_root / 'ARCHITECTURE.md',
     ]
     
     count = 0

@@ -5,17 +5,17 @@ import sys
 from pathlib import Path
 
 # Strictly limit to p-hermes documentation artifacts to avoid scanning runtime skills
-PROJECT_ROOT = Path('/home/pheanor/.hermes/workspace/projects/p-hermes')
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 VALID_DIRS = [
     PROJECT_ROOT / 'docs',
-    PROJECT_ROOT / 'archive/docs',
 ]
 
 # Playground 디렉토리는 실험 공간 + 상대 경로 구조가 GitHub Pages 환경과 다름
 # HTML 링크 검증은 validate-links.sh에서 담당 (JOB-1789)
 EXCLUDE_DIRS = [
     'docs/playground',
+    'docs/archive',
 ]
 
 VALID_ROOT_FILES = [

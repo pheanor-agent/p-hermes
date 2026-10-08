@@ -1,10 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Building an Agent OS with Hermes — Lectures</title>
-<style>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="p-hermes v1의 공식 발표 자료 v8.2와 위키, 블로그, 이전 버전 이력입니다."><title>p-hermes v1 · 공식 발표 자료</title><style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   :root{--bg:#0b0d12;--surface:#12151c;--card:#181c28;--border:#262b3a;--gold:#f0b429;--gold-dim:#b8861e;--gold-glow:rgba(240,180,41,.15);--text:#e8edf5;--text-dim:#8892a8;--accent-cyan:#5bc0eb;--accent-magenta:#f15bb5;--accent-green:#00f5d4;--accent-red:#ff6b6b;--accent-purple:#b197fc;--radius:16px;--transition:400ms cubic-bezier(.22,1,.36,1)}
@@ -40,74 +35,18 @@
   .archive-link a{color:var(--text-dim);font-size:13px;text-decoration:none;transition:var(--transition)}
   .archive-link a:hover{color:var(--gold)}
   .footer{text-align:center;margin-top:48px;padding-top:24px;border-top:1px solid var(--border);color:var(--text-dim);font-size:13px}
-</style>
-</head>
-<body>
-<div class="container">
-  <div class="header">
-    <div class="title">Building an Agent <span class="hl">OS</span><br>with Hermes</div>
-    <div class="subtitle">From Chatbots to Persistent AI Systems</div>
-    <div class="badge-row">
-      <span class="badge badge-gold">10 Lectures</span>
-      <span class="badge badge-cyan">259 Slides</span>
-      <span class="badge badge-purple">~600 min</span>
-    </div>
-  </div>
 
-  <!-- Part 1 -->
-  <div class="part">
-    <div class="part-title">Part 1 — Hermes Core</div>
-    <div class="list">
-      <a href="https://pheanor-agent.github.io/p-hermes/lectures/lecture-01-why-agents-fail.html" class="card ready">
-        <div class="num">01</div>
-        <div class="info"><div class="name">Why Agents Fail</div><div class="desc">From Chatbots to Agent Operating Systems</div></div>
-        <div class="meta"><span class="tag tag-slides">24장</span><span class="tag tag-time">60분</span><span class="tag tag-status">Ready</span></div>
-      </a>
-      <a href="https://pheanor-agent.github.io/p-hermes/lectures/lecture-02-memory-and-knowledge.html" class="card ready">
-        <div class="num">02</div>
-        <div class="info"><div class="name">Memory &amp; Knowledge</div><div class="desc">Remembering vs Understanding</div></div>
-        <div class="meta"><span class="tag tag-slides">25장</span><span class="tag tag-time">60분</span><span class="tag tag-status">Ready</span></div>
-      </a>
-      <a href="https://pheanor-agent.github.io/p-hermes/lectures/lecture-03-skills-and-workflow.html" class="card new">
-        <div class="num">03</div>
-        <div class="info"><div class="name">Skills &amp; Workflow</div><div class="desc">Knowing vs Doing</div></div>
-        <div class="meta"><span class="tag tag-slides">27장</span><span class="tag tag-time">60분</span><span class="tag tag-status">New</span></div>
-      </a>
-      <a href="https://pheanor-agent.github.io/p-hermes/lectures/lecture-04-hermes-core-architecture.html" class="card new">
-        <div class="num">04</div>
-        <div class="info"><div class="name">Hermes Core Architecture</div><div class="desc">How Everything Fits Together</div></div>
-        <div class="meta"><span class="tag tag-slides">25장</span><span class="tag tag-time">60분</span><span class="tag tag-status">New</span></div>
-      </a>
-    </div>
-  </div>
-
-  <!-- Part 2 -->
-  <div class="part">
-    <div class="part-title">Part 2 — Factory Layer</div>
-    <div class="list">
-      <div class="card pending"><div class="num">05</div><div class="info"><div class="name">Knowledge Factory</div><div class="desc">From Information to Organizational Intelligence</div></div><div class="meta"><span class="tag tag-slides">24장</span><span class="tag tag-time">60분</span></div></div>
-      <div class="card pending"><div class="num">06</div><div class="info"><div class="name">Content Factory</div><div class="desc">Turning Knowledge into Output</div></div><div class="meta"><span class="tag tag-slides">25장</span><span class="tag tag-time">60분</span></div></div>
-      <div class="card pending"><div class="num">07</div><div class="info"><div class="name">Research Factory</div><div class="desc">From Unknown to Knowledge</div></div><div class="meta"><span class="tag tag-slides">26장</span><span class="tag tag-time">60분</span></div></div>
-      <div class="card pending"><div class="num">08</div><div class="info"><div class="name">Spec-Driven Development</div><div class="desc">From Idea to Implementation</div></div><div class="meta"><span class="tag tag-slides">28장</span><span class="tag tag-time">60분</span></div></div>
-    </div>
-  </div>
-
-  <!-- Part 3 -->
-  <div class="part">
-    <div class="part-title">Part 3 — Production &amp; Operating</div>
-    <div class="list">
-      <div class="card pending"><div class="num">09</div><div class="info"><div class="name">P-Hermes Operating Model</div><div class="desc">How the Whole System Works</div></div><div class="meta"><span class="tag tag-slides">26장</span><span class="tag tag-time">60분</span></div></div>
-      <div class="card pending"><div class="num">10</div><div class="info"><div class="name">Building Your Own Agent OS</div><div class="desc">From Theory to Practice</div></div><div class="meta"><span class="tag tag-slides">30장</span><span class="tag tag-time">60분</span></div></div>
-    </div>
-  </div>
-
-  <div class="archive-link" style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;">
-    <a href="https://pheanor-agent.github.io/p-hermes/playground/" style="color:var(--accent-cyan);font-size:14px;font-weight:600;text-decoration:none;transition:400ms cubic-bezier(.22,1,.36,1);padding:8px 20px;border:1px solid rgba(91,192,235,.3);border-radius:100px;background:rgba(91,192,235,.06);">🎮 Playground — Concept Decks &amp; Archive</a>
-  </div>
-
-  <div class="footer">
-    <p>Building an Agent OS with Hermes · p-hermes Lectures</p>
-  </div>
-</div>
-</body>
-</html>
+  .part-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.part-heading a{color:var(--accent-cyan);font-size:13px;text-decoration:none}.version-note{font-size:13px;color:var(--text-dim);line-height:1.7;text-align:center;margin-top:16px}.card:focus-visible,.part-heading a:focus-visible,.archive-link a:focus-visible{outline:2px solid var(--gold);outline-offset:4px}@media(max-width:600px){.container{padding:40px 18px}.card{grid-template-columns:36px 1fr;gap:10px;padding:16px}.card .meta{grid-column:2}.name{font-size:15px}}
+</style></head><body><main class="container">
+<header class="header"><h1 class="title">Building an Agent <span class="hl">OS</span><br>with Hermes</h1><p class="subtitle">p-hermes v1 · 공식 발표 자료</p><div class="badge-row"><span class="badge badge-gold">v8.2</span><span class="badge badge-cyan">4개 덱 · 156장</span></div><p class="version-note">2026년 7월 15일 발표 자료 · 당시 버전의 내용을 그대로 담았습니다.</p></header>
+<section class="part" aria-labelledby="official-title"><div class="part-title part-heading"><h2 id="official-title" style="font-size:inherit">공식 강의</h2><a href="lectures/index.html">전체 목차 →</a></div><div class="list"><a href="lectures/v8.2/deck-a-core-v8.2.html" class="card ready"><span class="num">A</span><span class="info"><span class="name">Hermes Agent — 4가지 핵심 기능</span><span class="desc">Memory · Knowledge · Skill · Workflow</span></span><span class="meta"><span class="tag tag-slides">35장</span></span></a>
+<a href="lectures/v8.2/deck-b-knowledge-v8.2.html" class="card ready"><span class="num">B</span><span class="info"><span class="name">Knowledge 완전 정복</span><span class="desc">지식을 이해하고 활용하는 방법</span></span><span class="meta"><span class="tag tag-slides">36장</span></span></a>
+<a href="lectures/v8.2/deck-c-skill-v8.2.html" class="card ready"><span class="num">C</span><span class="info"><span class="name">Skill 심화 — 표준화된 절차</span><span class="desc">반복해서 사용할 수 있는 실행 방법</span></span><span class="meta"><span class="tag tag-slides">38장</span></span></a>
+<a href="lectures/v8.2/deck-d-workflow-v8.2.html" class="card ready"><span class="num">D</span><span class="info"><span class="name">Workflow 심화 — 9단계 상태 머신</span><span class="desc">작업의 순서·조건·상태와 검증</span></span><span class="meta"><span class="tag tag-slides">47장</span></span></a></div></section>
+<section class="part" aria-labelledby="resources-title"><h2 class="part-title" id="resources-title">관련 자료</h2><div class="list">
+<a class="card" href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/wiki/index.md"><span class="num">W</span><span class="info"><span class="name">Guide Wiki</span><span class="desc">설치·사용법·기능별 가이드 · GitHub에서 읽기</span></span></a>
+<a class="card" href="https://github.com/pheanor-agent/p-hermes/blob/main/docs/blog/index.md"><span class="num">B</span><span class="info"><span class="name">Dev Blog</span><span class="desc">설계 배경과 기술적 결정 · GitHub에서 읽기</span></span></a>
+<a class="card" href="playground/index.html"><span class="num">P</span><span class="info"><span class="name">Playground</span><span class="desc">실험 자료와 발표 자료의 버전 이력</span></span></a>
+</div></section><div class="archive-link"><a href="lectures/index.html#previous">이전 강의 6개 보기 →</a></div>
+<footer class="footer"><p>p-hermes v1 · v8.2 릴리스 2026-07-15 · 공식 자료 등록 2026-10-08</p></footer>
+</main></body></html>

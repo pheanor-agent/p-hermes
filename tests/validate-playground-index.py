@@ -21,10 +21,10 @@ def count_slides(html_path):
     return len(re.findall(r'class="[^"]*slide[^"]*"\s+id="slide-\d+"', content))
 
 def count_html_files(directory):
-    """디렉토리 내 .html 파일 수"""
+    """디렉토리 내 강의 HTML 수 (목차 제외)"""
     if not os.path.isdir(directory):
         return 0
-    return len([f for f in os.listdir(directory) if f.endswith(".html")])
+    return len([f for f in os.listdir(directory) if f.endswith(".html") and f.lower() != "index.html"])
 
 def check_placeholder_links(html):
     """IDX-04: href='#' 플레이스홀더 감지"""
@@ -89,7 +89,7 @@ def check_version_table(html, base):
         # IDX-03: 슬라이드 수 검증 (±10% 허용)
         actual_slides = 0
         for hf in os.listdir(ver_dir):
-            if hf.endswith(".html"):
+            if hf.endswith(".html") and hf.lower() != "index.html":
                 actual_slides += count_slides(os.path.join(ver_dir, hf))
 
         # Parse claimed slides (handle ~300 format)

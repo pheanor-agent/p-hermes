@@ -1,6 +1,6 @@
 # 📖 p-hermes Guide Wiki
 
-Hermes의 핵심 시스템을 이해하고 활용하기 위한 사용자 중심 가이드입니다.
+Hermes의 핵심 시스템을 이해하고 활용하기 위한 사용자 중심 가이드입니다. 공식 강의 자료는 [p-hermes v8.2 강의 목차](https://pheanor-agent.github.io/p-hermes/lectures/)에서 확인할 수 있습니다.
 
 ## 한 줄 요약
 

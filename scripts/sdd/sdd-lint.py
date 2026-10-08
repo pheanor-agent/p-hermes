@@ -7,7 +7,7 @@ import os
 import sys
 from pathlib import Path
 
-PROJECT_ROOT = Path('/home/pheanor/.hermes/workspace/projects/p-hermes')
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 VALID_DIRS = [PROJECT_ROOT / 'docs/wiki', PROJECT_ROOT / 'docs/blog']
 
 # 문서 타입별 요구 섹션 (SPEC-D03 Layered Approach)

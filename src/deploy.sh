@@ -31,6 +31,13 @@ else
   echo "  ⚠️ SDD 스크립트 디렉토리($SDD_DIR)가 없어 SDD 단계를 건너뜁니다."
 fi
 
+# Official preserved v8.2 package is checked independently; legacy source decks
+# remain untouched and are not used as the official deployment target.
+echo "  🎓 공식 강의 패키지 검증..."
+python3 tests/validate-official-lectures.py || { echo "❌ 공식 강의 검증 실패"; exit 1; }
+echo "  📚 발표 자료 버전 목차 검증..."
+python3 tests/validate-playground-index.py || { echo "❌ 버전 목차 검증 실패"; exit 1; }
+
 # 3.1 중국어 문자 검증
 echo "  🔍 중국어 문자 검증..."
 bash tests/validate-chinese.sh docs/ || { echo "❌ 중국어 문자 발견"; exit 1; }

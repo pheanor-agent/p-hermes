@@ -17,9 +17,10 @@ Hermes Agent system documentation, published via GitHub Pages.
 - Full file index: llms-full.txt
 
 ## 3-Track Structure
-- docs/wiki/ — Guide Wiki (How-to) — 14 files
-- docs/blog/ — Dev Blog (Why) — 8 posts
-- docs/slides/ — Concept Slides (What) — 8 HTML decks
+- docs/wiki/ — Guide Wiki (How-to)
+- docs/blog/ — Dev Blog (Why)
+- docs/lectures/ — Official v8.2 lectures — 4 decks, 156 slides (released 2026-07-15; officialized 2026-10-08)
+- docs/playground/ — Historical versions and experiments
 
 ## Deploy
 bash src/deploy.sh
@@ -30,10 +31,13 @@ EOF
   echo "# p-hermes Full Documentation Index"
   echo ""
   echo "## Files"
-  find "$DOCS_DIR" -name "*.md" -not -path "*/playground/*" | sort | while read -r f; do
-    rel=$(echo "$f" | sed "s|$PROJECT_DIR/||")
+  {
+    find "$DOCS_DIR" -name "*.md" -not -path "*/playground/*" -not -path "*/archive/*"
+    find "$DOCS_DIR/lectures" -maxdepth 2 \( -name "index.html" -o -path "$DOCS_DIR/lectures/v8.2/*.html" \)
+  } | sort | while read -r f; do
+    rel="${f#"$PROJECT_DIR/"}"
     lines=$(wc -l < "$f")
-    title=$(grep -m1 '^#' "$f" 2>/dev/null | sed 's/^#\{1,3\} *//' || echo "(no heading)")
+    title=$(grep -m1 -E '^#|<title>' "$f" 2>/dev/null | sed -E 's/^#{1,3} *//;s/.*<title>//;s#</title>.*##' || echo "(no heading)")
     echo "- **$rel** ($lines lines): $title"
   done
 } > "$PROJECT_DIR/llms-full.txt"

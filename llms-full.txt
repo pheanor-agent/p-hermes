@@ -1,7 +1,6 @@
 # p-hermes Full Documentation Index
 
 ## Files
-- **docs/archive/slides-v1/index.md** (28 lines): 🖼️ p-hermes Slides
 - **docs/blog/index.md** (29 lines): ✍️ p-hermes Dev Blog
 - **docs/blog/posts/architecture-layered.md** (412 lines): 레이어드 아키텍처: 왜 모듈화가 에이전트 시스템의 생존 조건인가
 - **docs/blog/posts/content-system-design.md** (448 lines): Anti-Slop 파이프라인: AI 텍스트의 품질을 보증하는 5계층 검증
@@ -19,6 +18,11 @@
 - **docs/blog/posts/workflow-gate-philosophy.md** (194 lines): Workflow Gate 설계 철학
 - **docs/jobs/JOB-2173-v8-slide-replace/output/validation-improvement.md** (146 lines): p-hermes Playground v8 슬라이드 — 2차 버그 수정 및 시스템 개선 산출물
 - **docs/jobs/JOB-2173-v8-slide-replace/output/work-status.md** (111 lines): p-hermes Playground v8 슬라이드 — 작업 현황
+- **docs/lectures/index.html** (32 lines): p-hermes 공식 강의 — v8.2
+- **docs/lectures/v8.2/deck-a-core-v8.2.html** (1724 lines): 데크 A: Hermes Agent — 4가지 핵심 기능
+- **docs/lectures/v8.2/deck-b-knowledge-v8.2.html** (1670 lines): 데크 B: Knowledge 심화 — 지식 관리 완전 가이드
+- **docs/lectures/v8.2/deck-c-skill-v8.2.html** (1702 lines): 데크 C: Skill 심화 — 38페이지
+- **docs/lectures/v8.2/deck-d-workflow-v8.2.html** (1869 lines): 데크 D: Workflow 심화 — 47페이지
 - **docs/wiki/core-concepts.md** (211 lines): 🧠 Core Concepts — Hermes 핵심 개념
 - **docs/wiki/faq.md** (124 lines): 자주 묻는 질문 (FAQ)
 - **docs/wiki/getting-started/configuration.md** (80 lines): 기본 설정 가이드
